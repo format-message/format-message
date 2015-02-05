@@ -1,0 +1,55 @@
+{
+  "name": "message-format-inline",
+  "version": "0.0.6",
+  "description": "Write default messages inline. Optionally transpile translations.",
+  "main": "dist/format.js",
+  "dependencies": {
+    "message-format": "0.0.6",
+    "recast": "0.9.17"
+  },
+  "devDependencies": {
+    "6to5": "3.1.1",
+    "6to5-core": "3.1.1",
+    "6to5-loader": "3.0.0",
+    "benchmark": "1.0.0",
+    "intl": "0.1.4",
+    "intl-messageformat": "1.0.4",
+    "istanbul": "0.3.5",
+    "istanbul-instrumenter-loader": "0.1.2",
+    "jasmine-core": "2.1.3",
+    "jasmine-node": "1.14.5",
+    "jshint": "2.6.0",
+    "karma": "0.12.31",
+    "karma-chrome-launcher": "0.1.7",
+    "karma-cli": "0.0.4",
+    "karma-coverage": "0.2.7",
+    "karma-firefox-launcher": "^0.1.4",
+    "karma-jasmine": "0.3.5",
+    "karma-phantomjs-launcher": "0.1.4",
+    "karma-safari-launcher": "0.1.1",
+    "karma-sourcemap-loader": "0.3.2",
+    "karma-webpack": "1.5.0",
+    "webpack": "1.5.3"
+  },
+  "scripts": {
+    "benchmark": "6to5-node --loose=all scripts/benchmark.js",
+    "jshint": "jshint src/*.js",
+    "prepublish": "6to5 --loose=all src --out-dir dist",
+    "test": "npm run jshint && npm run test-node && npm run test-browsers",
+    "test-browsers": "karma start --browsers Firefox,PhantomJS --single-run",
+    "test-node": "6to5-node --loose=all -t -- node_modules/.bin/jasmine-node --test-dir test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/thetalecrafter/message-format-inline.git"
+  },
+  "author": {
+    "name": "Andy VanWagoner",
+    "email": "thetalecrafter@gmail.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thetalecrafter/message-format-inline/issues"
+  },
+  "homepage": "https://github.com/thetalecrafter/message-format-inline"
+}
