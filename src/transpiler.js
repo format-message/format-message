@@ -147,8 +147,8 @@ class Transpiler {
 	}
 
 
-	static transpile(elements, ...args) {
-		return new Transpiler(...args).transpile(elements)
+	static transpile(elements, options) {
+		return new Transpiler(options).transpile(elements)
 	}
 
 }

@@ -1,5 +1,5 @@
 import recast from 'recast'
-import Parser from './parser'
+import Parser from 'message-format/dist/parser'
 import Transpiler from './transpiler'
 let builders = recast.types.builders
 let Literal = recast.types.namedTypes.Literal.toString()
@@ -42,8 +42,12 @@ class Inliner {
 			&& node.arguments[0]
 			&& node.arguments[0].type === Literal
 			&& typeof node.arguments[0].value === 'string'
-			// no specified locale
-			&& node.arguments.length <= 2
+			&& (
+				// no specified locale, or is a literal string
+				!node.arguments[2]
+				|| node.arguments[2].type === Literal
+				&& typeof node.arguments[2].value === 'string'
+			)
 		)
 	}
 
@@ -51,7 +55,8 @@ class Inliner {
 	replace(path) {
 		let
 			node = path.node,
-			pattern = this.translate(node.arguments[0].value),
+			locale = node.arguments[2] && node.arguments[2].value || this.locale,
+			pattern = this.translate(node.arguments[0].value, locale),
 			patternAst = Parser.parse(pattern),
 			otherArguments = node.arguments.slice(1),
 			replacement
@@ -65,7 +70,7 @@ class Inliner {
 			}
 
 			let
-				codeString = Transpiler.transpile(patternAst),
+				codeString = Transpiler.transpile(patternAst, { locale }),
 				codeAst = recast.parse(codeString),
 				funcExpression = codeAst.program.body[0].expression.callee
 
@@ -79,8 +84,8 @@ class Inliner {
 	}
 
 
-	static inline(source, ...args) {
-		return new Inliner(...args).inline(source)
+	static inline(source, options) {
+		return new Inliner(options).inline(source)
 	}
 
 }

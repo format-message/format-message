@@ -1,4 +1,5 @@
 import MessageFormat from 'message-format'
+import lookupClosestLocale from 'message-format/dist/lookup-closest-locale'
 
 let
 	formats = MessageFormat.data.formats,
@@ -77,7 +78,8 @@ format.time = function(locale, date, style='medium') {
 
 format.plural = function(locale, num, offset, options) {
 	let
-		plural = localeData[locale].plural,
+		closest = lookupClosestLocale(locale, localeData),
+		plural = localeData[closest].plural,
 		exactSelector = '=' + num,
 		keywordSelector = plural(num - offset),
 		func =
