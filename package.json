@@ -9,8 +9,8 @@
     "recast": "0.9.17"
   },
   "devDependencies": {
-    "6to5": "3.3.12",
-    "6to5-core": "3.3.12",
+    "6to5": "3.4.1",
+    "6to5-core": "3.4.1",
     "6to5-loader": "3.0.0",
     "benchmark": "1.0.0",
     "intl": "0.1.4",
@@ -34,8 +34,9 @@
   },
   "scripts": {
     "benchmark": "6to5-node --loose=all scripts/benchmark.js",
+    "cldr": "scripts/cldr.sh",
     "jshint": "jshint src/*.js",
-    "prepublish": "6to5 --loose=all src --out-dir dist",
+    "prepublish": "cp src/*.json dist/ && 6to5 --loose=all src --out-dir dist",
     "test": "npm run jshint && npm run test-node && npm run test-browsers",
     "test-browsers": "karma start --browsers Firefox,PhantomJS --single-run",
     "test-node": "6to5-node --loose=all -t -- node_modules/.bin/jasmine-node --test-dir test"

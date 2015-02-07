@@ -1,3 +1,6 @@
+import plurals from './plurals.json'
+import lookupClosestLocale from 'message-format/dist/lookup-closest-locale'
+
 /**
  * Transpiler
  *
@@ -9,38 +12,51 @@
  *  } ], " for sale." ]
  *
  * into this:
- *  `(function(locale, args) {
- *    return "You have " +
- *      format.plural(locale, args["numBananas"], 0, {
- *        "=0": "no bananas",
- *        "one": "a banana",
- *        "other": function() {
- *          return args["numBananas"] +
- *            " bananas";
- *        }
- *      }) +
- *      " for sale.";
- *  })("en", args)`
+ *  `(function(args, locale) {
+ *    return "You have " + format.plural(locale, args["numBananas"], 0, {
+ *      "=0": "no bananas",
+ *      "one": "a banana",
+ *      "other": function() {
+ *        return args["numBananas"] + " bananas";
+ *      }
+ *    }) + " for sale.";
+ *  })(args, "en")`
  **/
 class Transpiler {
 
 	constructor(options={}) {
+		this.vars = {}
+		this.locale = options.locale || 'en'
 		this.formatName = options.formatName || 'format'
 	}
 
 
 	transpile(elements) {
+		this.vars = {}
 		elements = elements.map(
 			element => this.transpileElement(element, null)
 		)
 
-		return '(function(locale, args) {\n' +
-			'  return ' + elements.join(' +\n    ') +
-		';\n}())'
+		if (0 === elements.length) {
+			return '""'
+		}
+
+		let
+			vars = Object.keys(this.vars),
+			init = vars.length === 0 ? '' :
+				'\tvar ' + vars.join(', ') + ';\n'
+		return '(function(args, locale) {\n' +
+			init +
+			'\treturn ' + elements.join(' + ') +
+		';\n})'
 	}
 
 
 	transpileSub(elements, parent) {
+		if (0 === elements.length) {
+			return '""'
+		}
+
 		if (1 === elements.length && 'string' === typeof elements[0]) {
 			return JSON.stringify(elements[0])
 		}
@@ -49,9 +65,7 @@ class Transpiler {
 			element => this.transpileElement(element, parent)
 		)
 
-		return 'function() {\n' +
-			'  return ' + elements.join(' +\n    ') +
-		';\n}'
+		return '(' + elements.join(' + ') + ')'
 	}
 
 
@@ -108,37 +122,77 @@ class Transpiler {
 	}
 
 
-	transpileOptions(children, parent) {
-		let options = '{'
-		Object.keys(children).forEach((key, i) => {
-			if (i > 0) { options += ',' }
-			options +=
-				'\n      ' + JSON.stringify(key) + ': ' +
-				this.transpileSub(children[key], parent).replace(/\n/g, '\n      ')
-		})
-		options += '\n    }'
-		return options
-	}
-
-
 	transpilePlural(id, offset, children) {
 		let
 			parent = [ id, 'plural', offset/*, children*/ ],
-			options = this.transpileOptions(children, parent)
-		return this.formatName + '.plural(locale, ' +
-				'args[' + JSON.stringify(id) + '], ' +
-				offset + ', ' +
-				options +
-			')'
+			closest = lookupClosestLocale(this.locale, plurals.rules),
+			conditions = plurals.rules[closest], cond,
+			other = '""', select = '', exact = '', sub,
+			vars = [
+				's=args[' + JSON.stringify(id) + ']',
+				'n=+s'
+			],
+			pvars = [],
+			refsI = false,
+			refsV = false,
+			refsW = false,
+			refsF = false,
+			refsT = false
+		this.vars.s = true
+		this.vars.n = true
+		if (offset) {
+			pvars.push('s=+s-' + offset)
+			pvars.push('n=s')
+		}
+
+		Object.keys(children).forEach((key, i) => {
+			sub = '\n\t\t\t' +
+				this.transpileSub(children[key], parent).replace(/\n/g, '\n\t\t\t')
+			if ('other' === key) {
+				other = sub
+			} else if ('=' === key.charAt(0)) {
+				exact += '\n\t\t' + key.slice(1) + ' === n ?' + sub + ' :'
+			} else if (key in conditions) {
+				cond = conditions[key]
+				if (/\bi\b/.test(cond)) { this.vars.i = refsI = true }
+				if (/\bv\b/.test(cond)) { this.vars.v = refsV = true }
+				if (/\bw\b/.test(cond)) { this.vars.w = refsW = true }
+				if (/\bf\b/.test(cond)) { this.vars.f = refsF = true }
+				if (/\bt\b/.test(cond)) { this.vars.t = refsT = true }
+				select += '\n\t\t/*' + key + '*/(' + cond + ') ?' + sub + ' :'
+			}
+		})
+		if (refsI) { pvars.push('i=' + plurals.vars.i) }
+		if (refsV) { pvars.push('v=' + plurals.vars.v) }
+		if (refsW) { pvars.push('w=' + plurals.vars.w) }
+		if (refsF) { pvars.push('f=' + plurals.vars.f) }
+		if (refsT) { pvars.push('t=' + plurals.vars.t) }
+		return '(\n\t\t(' + vars.join(', ') + ',' + exact +
+			(pvars.length ?
+				('\n\n\t\t(' + pvars.join(', ') + ',' + select + other + ')\n\t\t))') :
+				(select + other + ')\n\t\t)')
+			)
 	}
 
 
 	transpileSelect(id, children) {
-		let options = this.transpileOptions(children, null)
-		return this.formatName + '.select(locale, ' +
-				'args[' + JSON.stringify(id) + '], ' +
-				options +
-			')'
+		let
+			other = '""',
+			select = '(\n\t\t(s=args[' + JSON.stringify(id) + '],'
+		this.vars.s = true
+		Object.keys(children).forEach((key, i) => {
+			if ('other' === key) {
+				other = '\n\t\t\t' +
+					this.transpileSub(children[key]).replace(/\n/g, '\n\t\t\t')
+				return
+			}
+			select += '\n\t\t' +
+				JSON.stringify(key) + ' === s ?\n\t\t\t' +
+				this.transpileSub(children[key]).replace(/\n/g, '\n\t\t\t') +
+				' :'
+		})
+		select += other + ')\n\t\t)'
+		return select
 	}
 
 

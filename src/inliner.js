@@ -58,21 +58,23 @@ class Inliner {
 			locale = node.arguments[2] && node.arguments[2].value || this.locale,
 			pattern = this.translate(node.arguments[0].value, locale),
 			patternAst = Parser.parse(pattern),
-			otherArguments = node.arguments.slice(1),
+			params = node.arguments[1],
+			formatName = this.formatName,
 			replacement
 
 		if (patternAst.length === 1 && 'string' === typeof patternAst[0]) {
 			replacement = builders.literal(patternAst[0])
+		} else if (patternAst.length === 0) {
+			replacement = builders.literal('')
 		} else {
-			otherArguments.unshift(builders.literal(this.locale))
-			if (otherArguments.length < 2) { // no params
-				otherArguments.push(builders.literal(null))
-			}
-
 			let
-				codeString = Transpiler.transpile(patternAst, { locale }),
+				codeString = Transpiler.transpile(patternAst, { locale, formatName }),
 				codeAst = recast.parse(codeString),
-				funcExpression = codeAst.program.body[0].expression.callee
+				funcExpression = codeAst.program.body[0].expression,
+				otherArguments = [
+					params || builders.literal(null),
+					builders.literal(locale)
+				]
 
 			replacement = builders.callExpression(
 				funcExpression, // callee

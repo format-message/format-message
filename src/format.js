@@ -76,25 +76,5 @@ format.time = function(locale, date, style='medium') {
 }
 
 
-format.plural = function(locale, num, offset, options) {
-	let
-		closest = lookupClosestLocale(locale, localeData),
-		plural = localeData[closest].plural,
-		exactSelector = '=' + num,
-		keywordSelector = plural(num - offset),
-		func =
-			options[exactSelector] ||
-			options[keywordSelector] ||
-			options.other
-	return ('string' === typeof func) ? func : func()
-}
-
-
-format.select = function(locale, selector, options) {
-	let func = options[selector] || options.other
-	return ('string' === typeof func) ? func : func()
-}
-
-
 export default format
 
