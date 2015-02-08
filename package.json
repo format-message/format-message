@@ -1,6 +1,6 @@
 {
   "name": "message-format-inline",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Write default messages inline. Optionally transpile translations.",
   "main": "dist/format.js",
   "dependencies": {
