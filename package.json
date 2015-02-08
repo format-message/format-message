@@ -33,7 +33,8 @@
     "webpack": "1.5.3"
   },
   "scripts": {
-    "benchmark": "6to5-node --loose=all scripts/benchmark.js",
+    "benchmark": "npm run benchmark-compile && 6to5-node --loose=all scripts/benchmark.js",
+		"benchmark-compile": "bin/message-format-inline scripts/benchmark.src.js > scripts/benchmark.js",
     "cldr": "scripts/cldr.sh",
     "jshint": "jshint src/*.js",
     "prepublish": "mkdir -p dist && cp src/*.json dist/ && 6to5 --loose=all src --out-dir dist",

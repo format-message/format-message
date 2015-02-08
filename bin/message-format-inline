@@ -12,9 +12,9 @@ function transformFile(sourceFileName) {
 		result = Inliner.inline({ sourceCode:sourceCode, sourceFileName:sourceFileName }),
 		destCode = result.code +
 			'\n//# sourceMappingURL=data:application/json;base64,' +
-			new Buffer(result.map.toString()).toString('base64'),
-		destFileName = sourceFileName.replace(/\.js$/, '.en.js')
-	writeFileSync(destFileName, destCode, 'utf8')
+			new Buffer(result.map.toString()).toString('base64')
+//	writeFileSync(destFileName, destCode, 'utf8')
+	process.stdout.write(destCode)
 }
 
 var files = glob.sync(process.argv[2])

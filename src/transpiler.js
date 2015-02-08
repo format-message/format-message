@@ -1,5 +1,7 @@
 import plurals from './plurals.json'
 import lookupClosestLocale from 'message-format/dist/lookup-closest-locale'
+import data from 'message-format/dist/data'
+let formats = data.formats
 
 /**
  * Transpiler
@@ -102,6 +104,22 @@ class Transpiler {
 			default:
 				return this.transpileSimple(id)
 		}
+	}
+
+
+	transpileNumberInline(id, offset, style='medium') {
+		let opts = formats.number[style]
+		return 'new Intl.NumberFormat(locale, ' +
+			JSON.stringify(opts) + ').format(args[' +
+			JSON.stringify(id) + ']' + (offset ? '-' + offset : '') + ')'
+	}
+
+
+	transpileDateTimeInline(id, type, style='medium') {
+		let opts = formats[type][style]
+		return 'new Intl.DateTimeFormat(locale, ' +
+			JSON.stringify(opts) + ').format(args[' +
+			JSON.stringify(id) + '])'
 	}
 
 
