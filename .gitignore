@@ -23,4 +23,5 @@ node_modules
 dist
 tmp-cldr
 coverage
+scripts/benchmark.js
 
