@@ -28,8 +28,9 @@ class Transpiler {
 
 	constructor(options={}) {
 		this.vars = {}
-		this.locale = options.locale || 'en'
+		this.locale = JSON.stringify(options.locale || 'en')
 		this.formatName = options.formatName || 'format'
+		this.functionName = options.functionName || ''
 	}
 
 
@@ -47,10 +48,10 @@ class Transpiler {
 			vars = Object.keys(this.vars),
 			init = vars.length === 0 ? '' :
 				'\tvar ' + vars.join(', ') + ';\n'
-		return '(function(args, locale) {\n' +
+		return 'function ' + this.functionName + '(args) {\n' +
 			init +
 			'\treturn ' + elements.join(' + ') +
-		';\n})'
+		';\n}'
 	}
 
 
@@ -109,7 +110,7 @@ class Transpiler {
 
 	transpileNumberInline(id, offset, style='medium') {
 		let opts = formats.number[style]
-		return 'new Intl.NumberFormat(locale, ' +
+		return 'new Intl.NumberFormat(' + this.locale + ', ' +
 			JSON.stringify(opts) + ').format(args[' +
 			JSON.stringify(id) + ']' + (offset ? '-' + offset : '') + ')'
 	}
@@ -117,14 +118,14 @@ class Transpiler {
 
 	transpileDateTimeInline(id, type, style='medium') {
 		let opts = formats[type][style]
-		return 'new Intl.DateTimeFormat(locale, ' +
+		return 'new Intl.DateTimeFormat(' + this.locale + ', ' +
 			JSON.stringify(opts) + ').format(args[' +
 			JSON.stringify(id) + '])'
 	}
 
 
 	transpileNumber(id, offset, style) {
-		return this.formatName + '.number(locale, ' +
+		return this.formatName + '.number(' + this.locale + ', ' +
 				'args[' + JSON.stringify(id) + ']' +
 				(offset ? '-' + offset : '') +
 				(style ? ', ' + JSON.stringify(style) : '') +
@@ -133,7 +134,7 @@ class Transpiler {
 
 
 	transpileDateTime(id, type, style) {
-		return this.formatName + '.' + type + '(locale, ' +
+		return this.formatName + '.' + type + '(' + this.locale + ', ' +
 				'args[' + JSON.stringify(id) + ']' +
 				(style ? ', ' + JSON.stringify(style) : '') +
 			')'

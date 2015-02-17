@@ -14,10 +14,12 @@ class Inliner {
 		this.formatName = options.formatName || 'format'
 		this.translate = options.translate || (key => key)
 		this.locale = options.locale || 'en'
+		this.functions = []
 	}
 
 
 	inline({ sourceCode, sourceFileName, inputSourceMap }) {
+		this.functions.length = 0
 		let
 			inliner = this,
 			ast = recast.parse(sourceCode, { sourceFileName })
@@ -29,6 +31,7 @@ class Inliner {
 				}
 			}
 		})
+		ast.program.body = ast.program.body.concat(this.getFunctionsStatements())
 
 		let sourceMapName = sourceFileName + '.map'
 		return recast.print(ast, { sourceMapName, inputSourceMap })
@@ -84,21 +87,30 @@ class Inliner {
 			replacement = builders.literal('')
 		} else {
 			let
-				codeString = Transpiler.transpile(patternAst, { locale, formatName }),
-				codeAst = recast.parse(codeString),
-				funcExpression = codeAst.program.body[0].expression,
+				functionName = '$$message_format_' + this.functions.length,
+				codeString = Transpiler.transpile(patternAst, { locale, formatName, functionName }),
+				calleeExpr = builders.identifier(functionName),
 				otherArguments = [
-					params || builders.literal(null),
-					builders.literal(locale)
+					params || builders.literal(null)
 				]
+			this.functions.push(codeString)
 
 			replacement = builders.callExpression(
-				funcExpression, // callee
+				calleeExpr, // callee
 				otherArguments // arguments
 			)
 		}
 
 		path.replace(replacement)
+	}
+
+
+	getFunctionsStatements() {
+		let
+			codeString = this.functions.join('\n'),
+			codeAst = recast.parse(codeString)
+		this.functions.length = 0
+		return codeAst.program.body
 	}
 
 
