@@ -6,14 +6,7 @@ Write default messages inline. Optionally transpile translations.
 [![Dependency Status][deps-image]][deps]
 [![Build Status][build-image]][build]
 
-This was an experiment to see if rewriting your source code to inline your
-localized messages would be faster than simply saving an instance of
-MessageFormat. In many cases it is not faster, and when it is, the difference
-is extremely unlikely to be a concern in your app performance.
-
-That being the case, this module is deprecated. I consider source rewriting too
-much magic for not enough benefit, and prefer the tracability of looking up
-localized messages from JSON and passing them into a MessageFormat constructor.
+This is still a work in progress. Here be dragons.
 
 
 Quick Start
@@ -34,7 +27,7 @@ performance in repeated use on the client.
 
 message-format-inline relies on `Intl.NumberFormat` and `Intl.DateTimeFormat`
 for formatting `number`, `date`, and `time` arguments. If you are in an
-environment missing these (like node <= 0.10, IE < 11, or Safari) you'll
+environment missing these (like node <= 0.12, IE < 11, or Safari) you'll
 need to use a [polyfill][intl].
 
 
@@ -54,6 +47,10 @@ message patterns.
 This relies on [message-format][message-format] for parsing and formatting ICU
 messages, and [recast][recast] for transpiling the source code.
 
+### Supported ICU Formats
+
+See [message-format][message-format] for supported ICU formats.
+
 ### Quoting escaping rules
 
 See the [ICU site][icu-message] and [message-format][message-format] for
@@ -65,15 +62,6 @@ message-format-inline supports plurals for all CLDR languages. Locale-aware
 formatting of number, date, and time are delegated to the `Intl` objects,
 and select is the same across all locales. You don't need to load any extra
 files for particular locales for message-format-inline.
-
-### Unsupported ICU Formats
-
-`ordinal`, `duration`, and `spellout` arguments are supported by the parser,
-but will just `toString()`. These are not supported by `Intl.NumberFormat`.
-They require a lot of language-specific code, and would make the library
-undesireably large. For now, if you need these kinds of formats, you can pass
-them into the message pre-formatted, and refence them in the message pattern
-with a simple string placeholder (`{ arg }`).
 
 
 API
@@ -121,10 +109,10 @@ Parameters
 
 ### internal apis
 
-`format.number`, `format.date`, `format.time`, `format.plural`, and
-`format.select` are used internally and are not intended for external use.
-Because these appear in the transpiled code, transpiling does not remove the
-need to properly define `format` through `require` or `import`.
+`format.number`, `format.date`, and `format.time` are used internally and are
+not intended for external use. Because these appear in the transpiled code,
+transpiling does not remove the need to properly define `format` through
+`require` or `import`.
 
 
 Example Messages

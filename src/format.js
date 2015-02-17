@@ -1,9 +1,7 @@
 import MessageFormat from 'message-format'
-import lookupClosestLocale from 'message-format/dist/lookup-closest-locale'
 
 let
 	formats = MessageFormat.data.formats,
-	localeData = MessageFormat.data.locales,
 	cache = formats.cache,
 	options = {
 		enableCache: true,

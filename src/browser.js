@@ -1,0 +1,1 @@
+window.format = require('./format')

@@ -1,14 +1,12 @@
-var webpack = require('webpack'),
-
-	debug = process.argv.indexOf('-d') >= 0 ||
-		process.argv.indexOf('--debug') >= 0;
+var webpack = require('webpack')
 
 module.exports = {
 	cache: true,
 	context: __dirname + '/src',
+	devtool: 'source-map',
 	entry: {
 		browser: [
-			'./format.js'
+			'./browser.js'
 		]
 	},
 	module: {
@@ -16,14 +14,7 @@ module.exports = {
 			{
 				test: /\.jsx?$/i,
 				exclude: /node_modules/,
-				loader: '6to5?loose=all'
-			}
-		],
-		postLoaders: [
-			{
-				test: /\.js$/,
-				exclude: /(test|node_modules)\//,
-				loader: 'istanbul-instrumenter'
+				loader: 'babel?loose=all'
 			}
 		]
 	},
@@ -32,10 +23,9 @@ module.exports = {
 		path: __dirname + '/dist',
 		publicPath: '/'
 	},
-	devtool: 'inline-source-map',
-	plugins: [/*
+	plugins: [
 		new webpack.optimize.DedupePlugin(),
 		new webpack.optimize.UglifyJsPlugin()
-	*/]
+	]
 }
 

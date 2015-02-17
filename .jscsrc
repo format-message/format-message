@@ -1,0 +1,11 @@
+{
+	"disallowKeywords": ["with"],
+	"disallowOperatorBeforeLineBreak": ["."],
+	"disallowPaddingNewlinesInBlocks": true,
+	"esnext": true,
+	"requireBlocksOnNewline": 1,
+	"requireOperatorBeforeLineBreak": ["=", "+", "-", "/", "*", "==", "===", "!=", "!==", ">", ">=", "<", "<="],
+	"requireSpacesInForStatement": true,
+	"validateIndentation": "\t",
+	"validateLineBreaks": "LF"
+}

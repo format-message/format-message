@@ -1,6 +1,8 @@
 // Karma configuration
 // Generated on Wed Jan 28 2015 19:14:37 GMT-0700 (MST)
 
+var webpackConfig = require('../webpack.config')
+
 module.exports = function(config) {
   config.set({
 
@@ -31,7 +33,13 @@ module.exports = function(config) {
     },
 
 
-		webpack: require('../webpack.config'),
+		webpack: {
+			cache: true,
+			devtool: '#inline-source-map',
+			module: {
+				loaders: webpackConfig.module.loaders
+			}
+		},
 
 
     // test results reporter to use
