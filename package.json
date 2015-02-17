@@ -1,17 +1,17 @@
 {
   "name": "message-format-inline",
-  "version": "0.0.8",
+  "version": "0.1.0",
   "description": "Write default messages inline. Optionally transpile translations.",
   "main": "dist/format.js",
   "dependencies": {
     "glob": "4.3.5",
-    "message-format": "0.0.7",
-    "recast": "0.9.17"
+    "message-format": "0.1.0",
+    "recast": "0.10.0"
   },
   "devDependencies": {
-    "6to5": "3.4.1",
-    "6to5-core": "3.4.1",
-    "6to5-loader": "3.0.0",
+    "babel": "4.1.1",
+    "babel-core": "4.1.1",
+    "babel-loader": "4.0.0",
     "benchmark": "1.0.0",
     "intl": "0.1.4",
     "intl-messageformat": "1.0.4",
@@ -33,14 +33,14 @@
     "webpack": "1.5.3"
   },
   "scripts": {
-    "benchmark": "npm run benchmark-compile && 6to5-node --loose=all scripts/benchmark.js",
-		"benchmark-compile": "bin/message-format-inline scripts/benchmark.src.js > scripts/benchmark.js",
+    "benchmark": "npm run benchmark-compile && babel-node --loose=all scripts/benchmark.js",
+    "benchmark-compile": "bin/message-format-inline scripts/benchmark.src.js > scripts/benchmark.js",
     "cldr": "scripts/cldr.sh",
     "jshint": "jshint src/*.js",
-    "prepublish": "mkdir -p dist && cp src/*.json dist/ && 6to5 --loose=all src --out-dir dist",
+    "prepublish": "mkdir -p dist && cp src/*.json dist/ && babel --loose=all src --out-dir dist",
     "test": "npm run jshint && npm run test-node && npm run test-browsers",
     "test-browsers": "karma start --browsers Firefox,PhantomJS --single-run",
-    "test-node": "6to5-node --loose=all -t -- node_modules/.bin/jasmine-node --test-dir test"
+    "test-node": "babel-node --loose=all -t -- node_modules/.bin/jasmine-node --test-dir test"
   },
   "repository": {
     "type": "git",

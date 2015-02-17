@@ -55,41 +55,54 @@ benchmark(
 
 
 pattern = `{name} had {
+		gender, select,
+			male {his}
+			female {her}
+			other {their}
+		} {
+		nth, selectordinal,
+			one {#st}
+			two {#nd}
+			few {#rd}
+			other {#th}
+		} banana today, which makes {
 		numBananas, plural,
 				 =0 {no bananas}
 				 =1 {a banana}
-			other {some bananas}
-		} {
-		gender, select,
-			male {in his room.}
-			female {in her room.}
-			other {in their room.}
-		}`
-intlMF = new IntlMF(pattern, 'en-US').format
+			other {lots of bananas}
+		} total.`
+//intlMF = new IntlMF(pattern, 'en-US').format // doesn't support selectordinal
 mf = new MessageFormat(pattern, 'en-US').format
 args = {
 		date: new Date(),
 		name: 'Curious George',
 		gender: 'male',
-		numBananas: 300
+		numBananas: 300,
+		nth: 3
 	}
 benchmark(
 	'Format complex message (no numbers or dates)', {
-		'intl-messageformat (reuse object)': function() { intlMF(args) },
+//		'intl-messageformat (reuse object)': function() { intlMF(args) },
 		'message-format (reuse object)': function() { mf(args) },
 		'format': function() { format(pattern, args) },
 		'format (transpiled)': function() {
 			format(`{name} had {
-					numBananas, plural,
-							 =0 {no bananas}
-							 =1 {a banana}
-						other {some bananas}
-					} {
-					gender, select,
-						male {in his room.}
-						female {in her room.}
-						other {in their room.}
-					}`, args, 'en-US')
+				gender, select,
+					male {his}
+					female {her}
+					other {their}
+				} {
+				nth, selectordinal,
+					one {#st}
+					two {#nd}
+					few {#rd}
+					other {#th}
+				} banana today, which makes {
+				numBananas, plural,
+						 =0 {no bananas}
+						 =1 {a banana}
+					other {lots of bananas}
+				} total.`, args, 'en-US')
 		}
 	}
 )

@@ -1,4 +1,4 @@
-import plurals from './plurals.json'
+import locales from './locales.json'
 import lookupClosestLocale from 'message-format/dist/lookup-closest-locale'
 import data from 'message-format/dist/data'
 let formats = data.formats
@@ -91,15 +91,19 @@ class Transpiler {
 
 		switch (type) {
 			case 'number':
+			case 'ordinal': // TODO: rbnf
+			case 'spellout': // TODO: rbnf
+			case 'duration': // TODO: duration
 				return this.transpileNumber(id, 0, style)
 			case 'date':
 			case 'time':
 				return this.transpileDateTime(id, type, style)
 			case 'plural':
+			case 'selectordinal':
 				let
 					offset = element[2],
 					options = element[3]
-				return this.transpilePlural(id, offset, options)
+				return this.transpilePlural(id, type, offset, options)
 			case 'select':
 				return this.transpileSelect(id, style)
 			default:
@@ -141,11 +145,14 @@ class Transpiler {
 	}
 
 
-	transpilePlural(id, offset, children) {
+	transpilePlural(id, type, offset, children) {
 		let
-			parent = [ id, 'plural', offset/*, children*/ ],
-			closest = lookupClosestLocale(this.locale, plurals.rules),
-			conditions = plurals.rules[closest], cond,
+			parent = [ id, type, offset/*, children*/ ],
+			closest = lookupClosestLocale(this.locale, locales.locales),
+			conditions = locales.locales[closest].plurals[(
+        'selectordinal' === type ? 'ordinal' : 'cardinal'
+      )],
+      cond,
 			other = '""', select = '', exact = '', sub,
 			vars = [
 				's=args[' + JSON.stringify(id) + ']',
@@ -181,11 +188,11 @@ class Transpiler {
 				select += '\n\t\t/*' + key + '*/(' + cond + ') ?' + sub + ' :'
 			}
 		})
-		if (refsI) { pvars.push('i=' + plurals.vars.i) }
-		if (refsV) { pvars.push('v=' + plurals.vars.v) }
-		if (refsW) { pvars.push('w=' + plurals.vars.w) }
-		if (refsF) { pvars.push('f=' + plurals.vars.f) }
-		if (refsT) { pvars.push('t=' + plurals.vars.t) }
+		if (refsI) { pvars.push('i=' + locales.pluralVars.i) }
+		if (refsV) { pvars.push('v=' + locales.pluralVars.v) }
+		if (refsW) { pvars.push('w=' + locales.pluralVars.w) }
+		if (refsF) { pvars.push('f=' + locales.pluralVars.f) }
+		if (refsT) { pvars.push('t=' + locales.pluralVars.t) }
 		return '(\n\t\t(' + vars.join(', ') + ',' + exact +
 			(pvars.length ?
 				('\n\n\t\t(' + pvars.join(', ') + ',' + select + other + ')\n\t\t))') :

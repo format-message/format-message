@@ -14,5 +14,5 @@ if [ ! -f $DIR/tmp-cldr/supplemental/plurals.json ]
 fi
 
 cd $DIR
-../node_modules/.bin/6to5-node --loose=all cldr.js
+../node_modules/.bin/babel-node --loose=all cldr.js
 

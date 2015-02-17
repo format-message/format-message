@@ -2,10 +2,10 @@ import { readFileSync, writeFileSync } from 'fs'
 
 let pluralVars = {
 	i: 'Math.floor(Math.abs(+s))',
-	v: '(s+\'.\').split(\'.\')[1].length',
-	w: '(\'\'+s).replace(/^[^.]*\.?|0+$/g,\'\').length',
-	f: '+(s+\'.\').split(\'.\')[1]',
-	t: '+(\'\'+s).replace(/^[^.]*\.?|0+$/g,\'\')'
+	v: '(s + \'.\').split(\'.\')[1].length',
+	w: '(\'\' + s).replace(/^[^.]*\.?|0+$/g, \'\').length',
+	f: '+(s + \'.\').split(\'.\')[1]',
+	t: '+(\'\' + s).replace(/^[^.]*\.?|0+$/g, \'\')'
 }
 
 function parseRules(rules) {
@@ -49,19 +49,30 @@ function parseRules(rules) {
 
 let
 	pluralFileName = __dirname + '/tmp-cldr/supplemental/plurals.json',
-	pluralCLDR = JSON.parse(readFileSync(pluralFileName, 'utf8')),
-	pluralsTypeCardinal = pluralCLDR.supplemental['plurals-type-cardinal'],
+	ordinalFileName = __dirname + '/tmp-cldr/supplemental/ordinals.json',
+	pluralsTypeCardinal = JSON.parse(readFileSync(pluralFileName, 'utf8')).supplemental['plurals-type-cardinal'],
+	pluralsTypeOrdinal = JSON.parse(readFileSync(ordinalFileName, 'utf8')).supplemental['plurals-type-ordinal'],
 	locales = {}
 
 for (let locale in pluralsTypeCardinal) {
-	let data = parseRules(pluralsTypeCardinal[locale])
-	if (data) {
-		locales[locale] = data
+	let cardinal = parseRules(pluralsTypeCardinal[locale])
+	if (cardinal) {
+		locales[locale] = { plurals:{ cardinal } }
+	}
+}
+for (let locale in pluralsTypeOrdinal) {
+	let ordinal = parseRules(pluralsTypeOrdinal[locale])
+	if (ordinal) {
+		if (locales[locale]) {
+			locales[locale].plurals.ordinal = ordinal
+		} else {
+			locales[locale] = { plurals:{ ordinal } }
+		}
 	}
 }
 
 
-let fileData = JSON.stringify({ vars:pluralVars, rules:locales }, null, '\t')
-writeFileSync(__dirname + '/../src/plurals.json', fileData, 'utf8')
-console.log('Wrote data to src/plurals.json')
+let fileData = JSON.stringify({ pluralVars, locales }, null, '\t')
+writeFileSync(__dirname + '/../src/locales.json', fileData, 'utf8')
+console.log('Wrote data to src/locales.json')
 
