@@ -18,7 +18,24 @@ class Inliner {
 	}
 
 
-	inline({ sourceCode, sourceFileName, inputSourceMap }) {
+	scrape(sourceCode) {
+		let
+			inliner = this,
+			patterns = [],
+			ast = recast.parse(sourceCode)
+		recast.visit(ast, {
+			visitCallExpression(path) {
+				this.traverse(path) // pre-travserse children
+				if (inliner.isReplaceable(path)) {
+					patterns.push(inliner.getLiteralValue(path.node.arguments[0]))
+				}
+			}
+		})
+		return patterns
+	}
+
+
+	inline({ sourceCode, sourceFileName, sourceMapName, inputSourceMap }) {
 		this.functions.length = 0
 		let
 			inliner = this,
@@ -33,7 +50,7 @@ class Inliner {
 		})
 		ast.program.body = ast.program.body.concat(this.getFunctionsStatements())
 
-		let sourceMapName = sourceFileName + '.map'
+		sourceMapName = sourceMapName || (sourceFileName + '.map')
 		return recast.print(ast, { sourceMapName, inputSourceMap })
 	}
 
@@ -116,6 +133,11 @@ class Inliner {
 
 	static inline(source, options) {
 		return new Inliner(options).inline(source)
+	}
+
+
+	static scrape(source, options) {
+		return new Inliner(options).scrape(source)
 	}
 
 }

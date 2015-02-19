@@ -1,12 +1,14 @@
 {
   "name": "message-format-inline",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Write default messages inline. Optionally transpile translations.",
   "main": "dist/format.js",
   "dependencies": {
+    "crc32": "0.2.2",
     "glob": "4.3.5",
     "message-format": "0.1.0",
-    "recast": "0.10.0"
+    "recast": "0.10.0",
+    "speakingurl": "0.20.0"
   },
   "devDependencies": {
     "babel": "4.1.1",

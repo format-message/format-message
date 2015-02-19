@@ -9,6 +9,12 @@
 > - [Internal]
 > - [Polish]
 
+## 0.2.0
+
+* **New Feature**
+	* Added `message-format-scrape` script.
+	* Allow `sourceMapName` option in `inline`.
+
 ## 0.1.0
 
 * **New Feature**
