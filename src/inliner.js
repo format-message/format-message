@@ -11,7 +11,7 @@ let TemplateLiteral = recast.types.namedTypes.TemplateLiteral.toString()
 class Inliner {
 
 	constructor(options={}) {
-		this.formatName = options.formatName || 'format'
+		this.formatName = options.functionName || 'format'
 		this.translate = options.translate || (key => key)
 		this.locale = options.locale || 'en'
 		this.functions = []

@@ -3,7 +3,11 @@
   "version": "0.2.0",
   "description": "Write default messages inline. Optionally transpile translations.",
   "main": "dist/format.js",
+  "bin": {
+    "message-format": "bin/message-format"
+  },
   "dependencies": {
+    "commander": "2.6.0",
     "crc32": "0.2.2",
     "glob": "4.3.5",
     "message-format": "0.1.0",
