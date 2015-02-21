@@ -2,6 +2,8 @@ import program from 'commander'
 import { existsSync, readFileSync } from 'fs'
 import glob from 'glob'
 import Inliner from '../dist/inliner'
+import pkg from '../package.json'
+
 
 function flattenFiles(files) {
 	let flat = []
@@ -13,11 +15,35 @@ function flattenFiles(files) {
 }
 
 
+function addStdinToFiles(files, options, next) {
+	if (files.length === 0) {
+		let
+			sourceFileName = options.filename,
+			sourceCode = ''
+		process.stdin.setEncoding('utf8')
+		process.stdin.on('readable', function() {
+			let chunk = process.stdin.read()
+			if (chunk) {
+				sourceCode += chunk
+			}
+		})
+		process.stdin.on('end', function() {
+			files.push({ sourceCode, sourceFileName })
+			next()
+		})
+	} else {
+		next()
+	}
+}
+
+
 /**
  * version
  **/
 program
-	.version(require('../package.json').version)
+	.version(pkg.version)
+	.option('-c, --color', 'use colors in errors and warnings')
+	.option('--no-color', 'do not use colors in errors and warnings')
 
 
 /**
@@ -29,7 +55,7 @@ program
 	.description('find message patterns in files and verify there are no obvious problems')
 	.option('-f, --function-name [name]', 'find function calls with this name [format]', 'format')
 	.option('-k, --key-type [type]',
-		'derived key from source pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]',
+		'derived key from source pattern literal|normalized|underscored|underscored_crc32 [underscored_crc32]',
 		'underscored_crc32'
 	)
 	.option('-t, --translations [path]',
@@ -62,10 +88,12 @@ program
 			process.exit(2)
 		}
 
-		Inliner.lintFiles(files, {
-			functionName: options.functionName,
-			translations: options.translations,
-			keyType: options.keyType
+		addStdinToFiles(files, options, function() {
+			Inliner.lintFiles(files, {
+				functionName: options.functionName,
+				translations: options.translations,
+				keyType: options.keyType
+			})
 		})
 	})
 
@@ -98,11 +126,13 @@ program
 			process.exit(2)
 		}
 
-		Inliner.extractFromFiles(files, {
-			functionName: options.functionName,
-			locale: options.locale,
-			keyType: options.keyType,
-			outFile: options.outFile
+		addStdinToFiles(files, options, function() {
+			Inliner.extractFromFiles(files, {
+				functionName: options.functionName,
+				locale: options.locale,
+				keyType: options.keyType,
+				outFile: options.outFile
+			})
 		})
 	})
 
@@ -163,15 +193,17 @@ program
 			process.exit(2)
 		}
 
-		Inliner.inlineFiles(files, {
-			functionName: options.functionName,
-			locale: options.locale,
-			keyType: options.keyType,
-			translations: options.translations,
-			sourceMaps: options.sourceMapsInline ? 'inline' : options.sourceMaps,
-			filename: options.filename,
-			outFile: options.outFile,
-			outDir: options.outDir
+		addStdinToFiles(files, options, function() {
+			Inliner.inlineFiles(files, {
+				functionName: options.functionName,
+				locale: options.locale,
+				keyType: options.keyType,
+				translations: options.translations,
+				sourceMaps: options.sourceMapsInline ? 'inline' : options.sourceMaps,
+				filename: options.filename,
+				outFile: options.outFile,
+				outDir: options.outDir
+			})
 		})
 	})
 
