@@ -51,7 +51,7 @@ program
  *  find message patterns in files and verify there are no obvious problems
  **/
 program
-	.command('lint <files...>')
+	.command('lint [files...]')
 	.description('find message patterns in files and verify there are no obvious problems')
 	.option('-f, --function-name [name]', 'find function calls with this name [format]', 'format')
 	.option('-k, --key-type [type]',
@@ -103,7 +103,7 @@ program
  *  find and list all message patterns in files
  **/
 program
-	.command('extract <files...>')
+	.command('extract [files...]')
 	.description('find and list all message patterns in files')
 	.option('-f, --function-name [name]', 'find function calls with this name [format]', 'format')
 	.option('-k, --key-type [type]',
@@ -142,7 +142,7 @@ program
  *  find and replace message pattern calls in files with translations
  **/
 program
-	.command('inline <files...>')
+	.command('inline [files...]')
 	.alias('transpile')
 	.description('find and replace message pattern calls in files with translations')
 	.option('-f, --function-name [name]', 'find function calls with this name [format]', 'format')
