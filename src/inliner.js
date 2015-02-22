@@ -73,14 +73,14 @@ class Inliner {
 			if (null == translation) {
 				this.reportWarning(
 					path,
-					'Warning: no translation found for key ' +
+					'Warning: no ' + locale + ' translation found for key ' +
 						JSON.stringify(this.getKey(pattern))
 				)
 				++numErrors
 			} else if ((error = this.getPatternError(translation))) {
 				this.reportError(
 					path,
-					'SyntaxError: translated pattern is invalid for key ' +
+					'SyntaxError: ' + locale + ' translated pattern is invalid for key ' +
 						JSON.stringify(this.getKey(pattern)),
 					error.message
 				)
