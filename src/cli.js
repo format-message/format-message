@@ -157,6 +157,7 @@ program
 	.option('-f, --filename [filename]', 'filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]', 'stdin')
 	.option('-o, --out-file [out]', 'compile all input files into a single file')
 	.option('-d, --out-dir [out]', 'compile an input directory of modules into an output directory')
+	.option('-r, --root [path]', 'remove root path for source filename in output directory [cwd]')
 	.action(function(files, options) {
 		files = flattenFiles(files)
 
@@ -200,7 +201,8 @@ program
 				translations: options.translations,
 				sourceMaps: options.sourceMapsInline ? 'inline' : options.sourceMaps,
 				outFile: options.outFile,
-				outDir: options.outDir
+				outDir: options.outDir,
+				root: options.root || process.cwd()
 			})
 		})
 	})

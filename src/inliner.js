@@ -1,5 +1,8 @@
 import { readFileSync, writeFileSync } from 'fs'
+import { relative, resolve, dirname, join as pathJoin } from 'path'
+import mkdirp from 'mkdirp'
 import recast from 'recast'
+import sourceMap from 'source-map'
 import chalk from 'chalk'
 import Parser from 'message-format/dist/parser'
 import { getTranslate, getGetKey, getKeyNormalized } from './translate-util'
@@ -259,6 +262,28 @@ class Inliner {
 	}
 
 
+	forEachFile(files, fn, ctx) {
+		for (let file of files) {
+			let source = file
+			if ('string' === typeof file) {
+				source = {
+					sourceFileName: file,
+					sourceCode: readFileSync(file, 'utf8')
+				}
+			}
+			fn.call(ctx, source)
+		}
+	}
+
+
+	sourceMapComment(map) {
+		return (
+			'\n//# sourceMappingURL=data:application/json;base64,' +
+			new Buffer(JSON.stringify(map)).toString('base64')
+		)
+	}
+
+
 	static lint(source, options) {
 		return new Inliner(options).lint(source)
 	}
@@ -274,23 +299,9 @@ class Inliner {
 	}
 
 
-	static forEachFile(files, fn, ctx) {
-		for (let file of files) {
-			let source = file
-			if ('string' === typeof file) {
-				source = {
-					sourceFileName: file,
-					sourceCode: readFileSync(file, 'utf8')
-				}
-			}
-			fn.call(ctx, source)
-		}
-	}
-
-
 	static lintFiles(files, options) {
 		let inliner = new Inliner(options)
-		Inliner.forEachFile(files, function(source) {
+		inliner.forEachFile(files, function(source) {
 			inliner.lint(source)
 		})
 	}
@@ -300,7 +311,7 @@ class Inliner {
 		let
 			inliner = new Inliner(options),
 			translations = {}
-		Inliner.forEachFile(files, function(source) {
+		inliner.forEachFile(files, function(source) {
 			let patterns = inliner.extract(source)
 			Object.assign(translations, patterns)
 		})
@@ -316,24 +327,81 @@ class Inliner {
 
 
 	static inlineFiles(files, options) {
-		let inliner = new Inliner(options)
 		if (options.outDir) {
-			Inliner.forEachFile(files, function(source) {
-				let
-					result = inliner.inline(source),
-					outFileName = options.outDir + source.sourceFileName
-				writeFileSync(outFileName, result.code, 'utf8')
-			})
-		} else if (options.outFile) {
-			Inliner.forEachFile(files, function(source) {
-				let result = inliner.inline(source)
-				writeFileSync(options.outFile, result.code, 'utf8')
-			})
+			Inliner.inlineManyToMany(files, options)
 		} else {
-			Inliner.forEachFile(files, function(source) {
-				let result = inliner.inline(source)
-				console.log(result.code)
+			Inliner.inlineManyToOne(files, options)
+		}
+	}
+
+
+	static inlineManyToMany(files, options) {
+		let
+			inliner = new Inliner(options),
+			root = resolve(options.root),
+			outDir = options.outDir.replace(/\/$/, '') + '/'
+		inliner.forEachFile(files, function(source) {
+			let
+				result = inliner.inline(source),
+				outFileName = pathJoin(outDir, relative(root, source.sourceFileName))
+			mkdirp.sync(dirname(outFileName))
+
+			if ('inline' === options.sourceMaps) {
+				result.code += inliner.sourceMapComment(result.map)
+			} else if (options.sourceMaps) {
+				let mapFileName = outFileName + '.map'
+				writeFileSync(mapFileName, JSON.stringify(result.map), 'utf8')
+			}
+
+			writeFileSync(outFileName, result.code, 'utf8')
+		})
+	}
+
+
+	static inlineManyToOne(files, options) {
+		let
+			inliner = new Inliner(options),
+			outFileName = options.outFile || options.filename,
+			map = new sourceMap.SourceMapGenerator({
+				file: outFileName
+			}),
+			code = '',
+			offset = 0
+
+		inliner.forEachFile(files, function(source) {
+			let
+				result = inliner.inline(source),
+				filename = source.souceFileName,
+				consumer = new sourceMap.SourceMapConsumer(result.map)
+			map._sources.add(filename)
+			map.setSourceContent(filename, source.sourceCode)
+			consumer.eachMapping(function(mapping) {
+				map._mappings.add({
+					generatedLine: mapping.generatedLine + offset,
+					generatedColumn: mapping.generatedColumn,
+					originalLine: mapping.originalLine,
+					originalColumn: mapping.originalColumn,
+					source: filename
+				})
 			})
+
+			code += result.code + '\n'
+			offset = code.split('\n').length
+		})
+
+		if ('inline' === options.sourceMaps) {
+			code += inliner.sourceMapComment(map)
+		} else if (options.sourceMaps) {
+			let mapFileName = outFileName + '.map'
+			mkdirp.sync(dirname(mapFileName))
+			writeFileSync(mapFileName, JSON.stringify(map), 'utf8')
+		}
+
+		if (options.outFile) {
+			mkdirp.sync(dirname(options.outFile))
+			writeFileSync(options.outFile, code, 'utf8')
+		} else {
+			console.log(code)
 		}
 	}
 
