@@ -43,7 +43,7 @@
   },
   "scripts": {
     "benchmark": "npm run benchmark-compile && babel-node --loose=all --optional=runtime scripts/benchmark.js",
-    "benchmark-compile": "bin/message-format-inline scripts/benchmark.src.js > scripts/benchmark.js",
+    "benchmark-compile": "bin/message-format inline scripts/benchmark.src.js > scripts/benchmark.js",
     "cldr": "scripts/cldr.sh",
     "jshint": "jshint src/*.js",
     "lint": "jscs src/*.js && eslint src/*.js || true",

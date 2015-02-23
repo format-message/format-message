@@ -274,25 +274,7 @@ class Inliner {
 	}
 
 
-	static lintFiles(files, options) {
-		let inliner = new Inliner(options)
-		for (let file of files) {
-			if ('string' === typeof file) {
-				let
-					sourceFileName = file,
-					sourceCode = readFileSync(file, 'utf8')
-				inliner.lint({ sourceCode, sourceFileName })
-			} else {
-				inliner.lint(file)
-			}
-		}
-	}
-
-
-	static extractFromFiles(files, options) {
-		let
-			inliner = new Inliner(options),
-			translations = {}
+	static forEachFile(files, fn, ctx) {
 		for (let file of files) {
 			let source = file
 			if ('string' === typeof file) {
@@ -301,9 +283,27 @@ class Inliner {
 					sourceCode: readFileSync(file, 'utf8')
 				}
 			}
+			fn.call(ctx, source)
+		}
+	}
+
+
+	static lintFiles(files, options) {
+		let inliner = new Inliner(options)
+		Inliner.forEachFile(files, function(source) {
+			inliner.lint(source)
+		})
+	}
+
+
+	static extractFromFiles(files, options) {
+		let
+			inliner = new Inliner(options),
+			translations = {}
+		Inliner.forEachFile(files, function(source) {
 			let patterns = inliner.extract(source)
 			Object.assign(translations, patterns)
-		}
+		})
 		let json = JSON.stringify({
 			[inliner.locale]: translations
 		}, null, '  ')
@@ -311,6 +311,29 @@ class Inliner {
 			writeFileSync(options.outFile, json, 'utf8')
 		} else {
 			console.log(json)
+		}
+	}
+
+
+	static inlineFiles(files, options) {
+		let inliner = new Inliner(options)
+		if (options.outDir) {
+			Inliner.forEachFile(files, function(source) {
+				let
+					result = inliner.inline(source),
+					outFileName = options.outDir + source.sourceFileName
+				writeFileSync(outFileName, result.code, 'utf8')
+			})
+		} else if (options.outFile) {
+			Inliner.forEachFile(files, function(source) {
+				let result = inliner.inline(source)
+				writeFileSync(options.outFile, result.code, 'utf8')
+			})
+		} else {
+			Inliner.forEachFile(files, function(source) {
+				let result = inliner.inline(source)
+				console.log(result.code)
+			})
 		}
 	}
 

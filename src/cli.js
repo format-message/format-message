@@ -143,7 +143,7 @@ program
  **/
 program
 	.command('inline [files...]')
-	.alias('transpile')
+	.alias('translate')
 	.description('find and replace message pattern calls in files with translations')
 	.option('-f, --function-name [name]', 'find function calls with this name [format]', 'format')
 	.option('-k, --key-type [type]',
@@ -175,18 +175,17 @@ program
 		if (options.sourceMaps && !options.outFile && !options.outDir) {
 			errors.push('--source-maps requires --out-file or --out-dir')
 		}
-		if (!options.translations) {
-			errors.push('required --translations missing')
-		}
-		if (!existsSync(options.translations)) {
-			errors.push(options.translations + ' doesn\'t exist')
-		}
-		try {
-			options.translations = JSON.parse(
-				readFileSync(options.translations, 'utf8')
-			)
-		} catch(err) {
-			errors.push(err.message)
+		if (options.translations) {
+			if (!existsSync(options.translations)) {
+				errors.push(options.translations + ' doesn\'t exist')
+			}
+			try {
+				options.translations = JSON.parse(
+					readFileSync(options.translations, 'utf8')
+				)
+			} catch(err) {
+				errors.push(err.message)
+			}
 		}
 		if (errors.length) {
 			console.error(errors.join('. '))
@@ -200,7 +199,6 @@ program
 				keyType: options.keyType,
 				translations: options.translations,
 				sourceMaps: options.sourceMapsInline ? 'inline' : options.sourceMaps,
-				filename: options.filename,
 				outFile: options.outFile,
 				outDir: options.outDir
 			})
