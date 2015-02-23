@@ -1,8 +1,8 @@
-import { readFileSync } from 'fs'
+import { readFileSync, writeFileSync } from 'fs'
 import recast from 'recast'
 import chalk from 'chalk'
 import Parser from 'message-format/dist/parser'
-import { getTranslate, getGetKey } from './translate-util'
+import { getTranslate, getGetKey, getKeyNormalized } from './translate-util'
 import Transpiler from './transpiler'
 let builders = recast.types.builders
 let Literal = recast.types.namedTypes.Literal.toString()
@@ -118,15 +118,24 @@ class Inliner {
 
 
 	extract({ sourceCode, sourceFileName }) {
+		this.currentFileName = sourceFileName
 		let
 			inliner = this,
-			patterns = [],
+			patterns = {},
 			ast = recast.parse(sourceCode)
 		recast.visit(ast, {
 			visitCallExpression(path) {
 				this.traverse(path) // pre-travserse children
 				if (inliner.isReplaceable(path)) {
-					patterns.push(inliner.getStringValue(path.node.arguments[0]))
+					let
+						pattern = inliner.getStringValue(path.node.arguments[0]),
+						error = inliner.getPatternError(pattern)
+					if (error) {
+						inliner.reportError(path, 'SyntaxError: pattern is invalid', error.message)
+					} else {
+						let key = inliner.getKey(pattern)
+						patterns[key] = getKeyNormalized(pattern)
+					}
 				}
 			}
 		})
@@ -276,6 +285,32 @@ class Inliner {
 			} else {
 				inliner.lint(file)
 			}
+		}
+	}
+
+
+	static extractFromFiles(files, options) {
+		let
+			inliner = new Inliner(options),
+			translations = {}
+		for (let file of files) {
+			let source = file
+			if ('string' === typeof file) {
+				source = {
+					sourceFileName: file,
+					sourceCode: readFileSync(file, 'utf8')
+				}
+			}
+			let patterns = inliner.extract(source)
+			Object.assign(translations, patterns)
+		}
+		let json = JSON.stringify({
+			[inliner.locale]: translations
+		}, null, '  ')
+		if (options.outFile) {
+			writeFileSync(options.outFile, json, 'utf8')
+		} else {
+			console.log(json)
 		}
 	}
 

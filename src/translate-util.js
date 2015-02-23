@@ -48,7 +48,7 @@ export function getGetKey(options) {
 
 
 export function getKeyNormalized(pattern) {
-	return Printer.print(Parser.parse(pattern))
+	return Printer.print(Parser.parse(pattern)).replace(/\s+/g, ' ')
 }
 
 
