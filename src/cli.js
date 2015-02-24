@@ -42,7 +42,7 @@ function addStdinToFiles(files, options, next) {
  **/
 program
 	.version(pkg.version)
-	.option('-c, --color', 'use colors in errors and warnings')
+	.option('--color', 'use colors in errors and warnings')
 	.option('--no-color', 'do not use colors in errors and warnings')
 
 
@@ -53,7 +53,7 @@ program
 program
 	.command('lint [files...]')
 	.description('find message patterns in files and verify there are no obvious problems')
-	.option('-f, --function-name [name]', 'find function calls with this name [format]', 'format')
+	.option('-n, --function-name [name]', 'find function calls with this name [format]', 'format')
 	.option('-k, --key-type [type]',
 		'derived key from source pattern literal|normalized|underscored|underscored_crc32 [underscored_crc32]',
 		'underscored_crc32'
@@ -62,6 +62,7 @@ program
 		'location of the JSON file with message translations,' +
 			' if specified, translations are also checked for errors'
 	)
+	.option('-f, --filename [filename]', 'filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]', 'stdin')
 	.action(function(files, options) {
 		files = flattenFiles(files)
 
@@ -105,7 +106,7 @@ program
 program
 	.command('extract [files...]')
 	.description('find and list all message patterns in files')
-	.option('-f, --function-name [name]', 'find function calls with this name [format]', 'format')
+	.option('-n, --function-name [name]', 'find function calls with this name [format]', 'format')
 	.option('-k, --key-type [type]',
 		'derived key from source pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]',
 		'underscored_crc32'
@@ -145,7 +146,7 @@ program
 	.command('inline [files...]')
 	.alias('translate')
 	.description('find and replace message pattern calls in files with translations')
-	.option('-f, --function-name [name]', 'find function calls with this name [format]', 'format')
+	.option('-n, --function-name [name]', 'find function calls with this name [format]', 'format')
 	.option('-k, --key-type [type]',
 		'derived key from source pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]',
 		'underscored_crc32'

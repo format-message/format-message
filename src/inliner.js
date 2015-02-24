@@ -97,7 +97,7 @@ class Inliner {
 
 	getLocation(path) {
 		return (
-			'\n    at ' + this.formatName + ' (' +
+			'    at ' + this.formatName + ' (' +
 			this.currentFileName + ':' +
 			path.node.loc.start.line + ':' +
 			path.node.loc.start.column + ')'
@@ -106,17 +106,18 @@ class Inliner {
 
 
 	reportWarning(path, message) {
-		let loc = this.getLocation(path)
-		console.error(chalk.bold.yellow(message), chalk.yellow(loc))
+		console.warn(chalk.bold.yellow(message))
+		console.warn(chalk.yellow(this.getLocation(path)))
 	}
 
 
 	reportError(path, message, submessage) {
-		let loc = this.getLocation(path)
+		console.error(chalk.bold.red(message))
+		console.error(chalk.red(this.getLocation(path)))
 		if (submessage) {
-			loc += '\n    ' + submessage
+			let sub = '    ' + submessage.replace(/\n/g, '\n    ')
+			console.error(chalk.red(sub))
 		}
-		console.error(chalk.bold.red(message), chalk.red(loc))
 	}
 
 
