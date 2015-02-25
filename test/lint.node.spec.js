@@ -1,71 +1,59 @@
-import { spawnSync } from 'child_process'
-let encoding = 'utf8'
+import { exec } from 'child_process'
+import { expect } from 'chai'
 
 describe('message-format lint', () => {
 
 	describe('input from stdin', () => {
 
-		it('outputs nothing when no errors found', () => {
-			let
-				input = 'format("hello")',
-				result
-			result = spawnSync(
-				'bin/message-format',
-				[ 'lint' ],
-				{ input, encoding }
-			)
-			expect(result.stdout).toBe('')
-			expect(result.stderr).toBe('')
+		it('outputs nothing when no errors found', done => {
+			let input = 'format("hello")'
+			exec('bin/message-format lint', (err, stdout, stderr) => {
+				expect(stdout.toString('utf8')).to.equal('')
+				expect(stderr.toString('utf8')).to.equal('')
+				done(err)
+			}).stdin.end(input, 'utf8')
 		})
 
 
-		it('reports errors from stdin input to stderr', () => {
-			let
-				input = 'format("{")',
-				result
-			result = spawnSync(
-				'bin/message-format',
-				[ 'lint' ],
-				{ input, encoding }
-			)
-			expect(result.stdout).toBe('')
-			expect(result.stderr).toMatch(/^SyntaxError\:/)
+		it('reports errors from stdin input to stderr', done => {
+			let input = 'format("{")'
+			exec('bin/message-format lint', (err, stdout, stderr) => {
+				expect(stdout.toString('utf8')).to.equal('')
+				expect(stderr.toString('utf8')).to.match(/^SyntaxError\:/)
+				done(err)
+			}).stdin.end(input, 'utf8')
 		})
 
 
-		it('reports filename as "stdin" by default', () => {
-			let
-				input = 'format("{")',
-				result
-			result = spawnSync(
-				'bin/message-format',
-				[ 'lint' ],
-				{ input, encoding }
-			)
-			expect(result.stdout).toBe('')
-			expect(result.stderr).toContain('at format (stdin:1:0)')
+		it('reports filename as "stdin" by default', done => {
+			let input = 'format("{")'
+			exec('bin/message-format lint', (err, stdout, stderr) => {
+				expect(stdout.toString('utf8')).to.equal('')
+				expect(stderr.toString('utf8')).to.contain('at format (stdin:1:0)')
+				done(err)
+			}).stdin.end(input, 'utf8')
 		})
 
 
-		it('reports passed filename in errors', () => {
-			let
-				input = 'format("}")',
-				result
-			result = spawnSync(
-				'bin/message-format',
-				[ 'lint', '-f', 'a-file-name.js' ],
-				{ input, encoding }
-			)
-			expect(result.stdout).toBe('')
-			expect(result.stderr).toContain('at format (a-file-name.js:1:0)')
+		it('reports passed -f filename in errors', done => {
+			let input = 'format("{")'
+			exec('bin/message-format lint -f a-file-name.js', (err, stdout, stderr) => {
+				expect(stdout.toString('utf8')).to.equal('')
+				expect(stderr.toString('utf8'))
+					.to.contain('at format (a-file-name.js:1:0)')
+				done(err)
+			}).stdin.end(input, 'utf8')
+		})
 
-			result = spawnSync(
-				'bin/message-format',
-				[ 'lint', '--filename', 'b-file-name.js' ],
-				{ input, encoding }
-			)
-			expect(result.stdout).toBe('')
-			expect(result.stderr).toContain('at format (b-file-name.js:1:0)')
+
+		it('reports passed --filename filename in errors', done => {
+			let input = 'format("{")'
+			exec('bin/message-format lint --filename b-file-name.js', (err, stdout, stderr) => {
+				expect(stdout.toString('utf8')).to.equal('')
+				expect(stderr.toString('utf8'))
+					.to.contain('at format (b-file-name.js:1:0)')
+				done(err)
+			}).stdin.end(input, 'utf8')
 		})
 
 	})
@@ -73,31 +61,23 @@ describe('message-format lint', () => {
 
 	describe('colors', () => {
 
-		it('outputs in color when specified', () => {
-			let
-				input = 'format(top);format("{")',
-				result
-			result = spawnSync(
-				'bin/message-format',
-				[ 'lint', '--color' ],
-				{ input, encoding }
-			)
-			expect(result.stdout).toBe('')
-			expect(result.stderr).toContain('\x1b[')
+		it('outputs in color when specified', done => {
+			let input = 'format(top);format("{")'
+			exec('bin/message-format lint --color', (err, stdout, stderr) => {
+				expect(stdout.toString('utf8')).to.equal('')
+				expect(stderr.toString('utf8')).to.contain('\x1b[')
+				done(err)
+			}).stdin.end(input, 'utf8')
 		})
 
 
-		it('outputs without color when specified', () => {
-			let
-				input = 'format(top);format("{")',
-				result
-			result = spawnSync(
-				'bin/message-format',
-				[ 'lint', '--no-color' ],
-				{ input, encoding }
-			)
-			expect(result.stdout).toBe('')
-			expect(result.stderr).not.toContain('\x1b[')
+		it('outputs without color when specified', done => {
+			let input = 'format(top);format("{")'
+			exec('bin/message-format lint --no-color', (err, stdout, stderr) => {
+				expect(stdout.toString('utf8')).to.equal('')
+				expect(stderr.toString('utf8')).to.not.contain('\x1b[')
+				done(err)
+			}).stdin.end(input, 'utf8')
 		})
 
 	})
@@ -105,48 +85,47 @@ describe('message-format lint', () => {
 
 	describe('function name', () => {
 
-		it('finds functions with specified name', () => {
-			let
-				input = '__(top)',
-				result
-			result = spawnSync(
-				'bin/message-format',
-				[ 'lint', '-n', '__' ],
-				{ input, encoding }
-			)
-			expect(result.stdout).toBe('')
-			expect(result.stderr).toBe('Warning: called without a literal pattern\n    at __ (stdin:1:0)\n')
-
-			result = spawnSync(
-				'bin/message-format',
-				[ 'lint', '--function-name', '__' ],
-				{ input, encoding }
-			)
-			expect(result.stdout).toBe('')
-			expect(result.stderr).toBe('Warning: called without a literal pattern\n    at __ (stdin:1:0)\n')
+		it('finds functions with specified -n name', done => {
+			let input = '__(top)'
+			exec('bin/message-format lint -n __', (err, stdout, stderr) => {
+				expect(stdout.toString('utf8')).to.equal('')
+				expect(stderr.toString('utf8')).to.equal(
+					'Warning: called without a literal pattern\n    at __ (stdin:1:0)\n'
+				)
+				done(err)
+			}).stdin.end(input, 'utf8')
 		})
 
 
-		it('doesn\'t find method calls with the specified name', () => {
-			let
-				input = 'top.__(top)',
-				result
-			result = spawnSync(
-				'bin/message-format',
-				[ 'lint', '-n', '__' ],
-				{ input, encoding }
-			)
-			expect(result.stdout).toBe('')
-			expect(result.stderr).toBe('')
+		it('finds functions with specified --function-name name', done => {
+			let input = '__(top)'
+			exec('bin/message-format lint --function-name __', (err, stdout, stderr) => {
+				expect(stdout.toString('utf8')).to.equal('')
+				expect(stderr.toString('utf8')).to.equal(
+					'Warning: called without a literal pattern\n    at __ (stdin:1:0)\n'
+				)
+				done(err)
+			}).stdin.end(input, 'utf8')
+		})
 
-			input = 'foo.format("{")'
-			result = spawnSync(
-				'bin/message-format',
-				[ 'lint' ],
-				{ input, encoding }
-			)
-			expect(result.stdout).toBe('')
-			expect(result.stderr).toBe('')
+
+		it('doesn\'t find method calls with the specified name (__)', done => {
+			let input = 'top.__(top)'
+			exec('bin/message-format lint -n __', (err, stdout, stderr) => {
+				expect(stdout.toString('utf8')).to.equal('')
+				expect(stderr.toString('utf8')).to.equal('')
+				done(err)
+			}).stdin.end(input, 'utf8')
+		})
+
+
+		it('doesn\'t find method calls with the specified name (format)', done => {
+			let input = 'top.format("{")'
+			exec('bin/message-format lint', (err, stdout, stderr) => {
+				expect(stdout.toString('utf8')).to.equal('')
+				expect(stderr.toString('utf8')).to.equal('')
+				done(err)
+			}).stdin.end(input, 'utf8')
 		})
 
 	})

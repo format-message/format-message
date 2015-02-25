@@ -1,6 +1,7 @@
 if ('undefined' === typeof Intl) { require('intl') } // include polyfll for Safari and PhantomJS
 import MessageFormat from 'message-format'
 import format from '../src/format'
+import { expect } from 'chai'
 
 describe('format', () => {
 
@@ -8,19 +9,19 @@ describe('format', () => {
 
 		it('formats a simple message', () => {
 			let message = format('Simple string with nothing special')
-			expect(message).toBe('Simple string with nothing special')
+			expect(message).to.equal('Simple string with nothing special')
 		})
 
 
 		it('handles pattern with escaped text', () => {
 			let message = format('This isn\'\'t a \'{\'\'simple\'\'}\' \'string\'')
-			expect(message).toBe('This isn\'t a {\'simple\'} \'string\'')
+			expect(message).to.equal('This isn\'t a {\'simple\'} \'string\'')
 		})
 
 
 		it('accepts arguments', () => {
 			let message = format('x{ arg }z', { arg:'y' })
-			expect(message).toBe('xyz')
+			expect(message).to.equal('xyz')
 		})
 
 
@@ -29,7 +30,7 @@ describe('format', () => {
 				'{ n, number } : { d, date, short } { d, time, short }',
 				{ n:0, d:new Date(0) }
 			)
-			expect(message).toMatch(/^0 \: \d\d?\/\d\d?\/\d{2,4} \d\d?\:\d\d [AP]M$/)
+			expect(message).to.match(/^0 \: \d\d?\/\d\d?\/\d{2,4} \d\d?\:\d\d [AP]M$/)
 		})
 
 
@@ -41,7 +42,7 @@ describe('format', () => {
 				 other {drove # people.}}`,
 				{ takenDate:new Date(), name:'Bob', numPeople:5 }
 			)
-			expect(message).toMatch(/^On \d\d?\/\d\d?\/\d{2,4} Bob drove 4 people.$/)
+			expect(message).to.match(/^On \d\d?\/\d\d?\/\d{2,4} Bob drove 4 people.$/)
 		})
 
 
@@ -52,35 +53,35 @@ describe('format', () => {
 			   two {two}
 			   few {few}
 			  many {many}
-			 other {other}}`, { n:0 }, 'ar')).toBe('zero')
+			 other {other}}`, { n:0 }, 'ar')).to.equal('zero')
 			expect(format(`{n, plural,
 			  zero {zero}
 			   one {one}
 			   two {two}
 			   few {few}
 			  many {many}
-			 other {other}}`, { n:1 }, 'ar')).toBe('one')
+			 other {other}}`, { n:1 }, 'ar')).to.equal('one')
 			expect(format(`{n, plural,
 			  zero {zero}
 			   one {one}
 			   two {two}
 			   few {few}
 			  many {many}
-			 other {other}}`, { n:2 }, 'ar')).toBe('two')
+			 other {other}}`, { n:2 }, 'ar')).to.equal('two')
 			expect(format(`{n, plural,
 			  zero {zero}
 			   one {one}
 			   two {two}
 			   few {few}
 			  many {many}
-			 other {other}}`, { n:3 }, 'ar')).toBe('few')
+			 other {other}}`, { n:3 }, 'ar')).to.equal('few')
 			expect(format(`{n, plural,
 			  zero {zero}
 			   one {one}
 			   two {two}
 			   few {few}
 			  many {many}
-			 other {other}}`, { n:11 }, 'ar')).toBe('many')
+			 other {other}}`, { n:11 }, 'ar')).to.equal('many')
 		})
 
 
@@ -91,7 +92,7 @@ describe('format', () => {
 				  other {it's their turn}}`,
 				{ gender:'female' }
 			)
-			expect(message).toBe('it\'s her turn')
+			expect(message).to.equal('it\'s her turn')
 		})
 
 	})
@@ -114,7 +115,7 @@ describe('format', () => {
 			for (let locale of MessageFormat.supportedLocalesOf()) {
 				for (let n = 0; n <= 200; ++n) {
 					result = format(pattern, { n }, locale)
-					expect(result).toMatch(/^(zero|one|two|few|many|other)$/)
+					expect(result).to.match(/^(zero|one|two|few|many|other)$/)
 				}
 			}
 		})
@@ -131,9 +132,9 @@ describe('format', () => {
 			format(pattern)
 			format.setup({ cache:true })
 
-			expect(MessageFormat.data.formats.cache['en:format:cache-test']).toBeUndefined()
+			expect(MessageFormat.data.formats.cache['en:format:cache-test']).to.not.exist
 			format(pattern)
-			expect(MessageFormat.data.formats.cache['en:format:cache-test']).not.toBeUndefined()
+			expect(MessageFormat.data.formats.cache['en:format:cache-test']).to.exist
 		})
 
 
@@ -144,7 +145,7 @@ describe('format', () => {
 				message = format(pattern, { n:3 })
 			format.setup({ locale:'en' })
 
-			expect(message).toBe('few')
+			expect(message).to.equal('few')
 		})
 
 
@@ -155,7 +156,7 @@ describe('format', () => {
 				message = format(pattern)
 			format.setup({ translate(pattern) { return pattern } })
 
-			expect(message).toBe('test-success')
+			expect(message).to.equal('test-success')
 		})
 
 	})

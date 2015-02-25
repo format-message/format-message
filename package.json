@@ -23,24 +23,22 @@
     "babel-core": "4.4.5",
     "babel-loader": "4.0.0",
     "benchmark": "1.0.0",
+    "chai": "2.1.0",
     "eslint": "0.15.0",
     "intl": "0.1.4",
     "intl-messageformat": "1.0.4",
     "istanbul": "0.3.6",
-    "istanbul-instrumenter-loader": "0.1.2",
-    "jasmine-core": "2.2.0",
-    "jasmine-node": "1.14.5",
     "jscs": "1.11.3",
     "karma": "0.12.31",
     "karma-chrome-launcher": "0.1.7",
     "karma-cli": "0.0.4",
-    "karma-coverage": "0.2.7",
     "karma-firefox-launcher": "^0.1.4",
-    "karma-jasmine": "0.3.5",
+    "karma-mocha": "0.1.10",
     "karma-phantomjs-launcher": "0.1.4",
     "karma-safari-launcher": "0.1.1",
     "karma-sourcemap-loader": "0.3.4",
     "karma-webpack": "1.5.0",
+    "mocha": "2.1.0",
     "webpack": "1.5.3"
   },
   "scripts": {
@@ -52,7 +50,7 @@
     "prepublish": "mkdir -p dist && cp src/*.json dist/ && babel --loose=all --optional=runtime src --out-dir dist && webpack -p",
     "test": "npm run lint && npm run test-node && npm run test-browsers",
     "test-browsers": "karma start --browsers Firefox,PhantomJS --single-run",
-    "test-node": "babel-node --loose=all --optional=runtime -t -- node_modules/.bin/jasmine-node --test-dir test"
+    "test-node": "istanbul cover _mocha -- -cG -R dot -r ./test/setup test/**/*.spec.js"
   },
   "repository": {
     "type": "git",
