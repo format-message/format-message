@@ -1,5 +1,4 @@
 import { exec } from 'child_process'
-import { expect } from 'chai'
 
 describe('message-format lint', () => {
 

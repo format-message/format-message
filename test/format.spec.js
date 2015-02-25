@@ -1,7 +1,6 @@
 if ('undefined' === typeof Intl) { require('intl') } // include polyfll for Safari and PhantomJS
 import MessageFormat from 'message-format'
 import format from '../src/format'
-import { expect } from 'chai'
 
 describe('format', () => {
 
@@ -128,6 +127,7 @@ describe('format', () => {
 
 		it('changes the caching', () => {
 			let pattern = 'cache-test'
+			delete MessageFormat.data.formats.cache['en:format:cache-test']
 			format.setup({ cache:false })
 			format(pattern)
 			format.setup({ cache:true })
