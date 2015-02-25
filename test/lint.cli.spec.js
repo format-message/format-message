@@ -135,7 +135,7 @@ describe('message-format lint', () => {
 		it('-k literal', done => {
 			let cmd = 'bin/message-format lint' +
 				' -k literal' +
-				' -t test/translations.literal.json' +
+				' -t test/translations/lint.literal.json' +
 				' test/format.spec.js'
 			exec(cmd, (err, stdout, stderr) => {
 				expect(stdout.toString('utf8')).to.equal('')
@@ -153,7 +153,7 @@ describe('message-format lint', () => {
 		it('--key-type normalized', done => {
 			let cmd = 'bin/message-format lint' +
 				' --key-type normalized' +
-				' -t test/translations.normalized.json' +
+				' -t test/translations/lint.normalized.json' +
 				' test/format.spec.js'
 			exec(cmd, (err, stdout, stderr) => {
 				expect(stdout.toString('utf8')).to.equal('')
@@ -171,7 +171,7 @@ describe('message-format lint', () => {
 		it('--key-type underscored', done => {
 			let cmd = 'bin/message-format lint' +
 				' --key-type underscored' +
-				' -t test/translations.underscored.json' +
+				' -t test/translations/lint.underscored.json' +
 				' test/format.spec.js'
 			exec(cmd, (err, stdout, stderr) => {
 				expect(stdout.toString('utf8')).to.equal('')
@@ -188,7 +188,7 @@ describe('message-format lint', () => {
 
 		it('default underscored_crc32', done => {
 			let cmd = 'bin/message-format lint' +
-				' -t test/translations.underscored_crc32.json' +
+				' -t test/translations/lint.underscored_crc32.json' +
 				' test/format.spec.js'
 			exec(cmd, (err, stdout, stderr) => {
 				expect(stdout.toString('utf8')).to.equal('')
