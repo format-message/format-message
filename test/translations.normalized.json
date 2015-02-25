@@ -1,0 +1,10 @@
+{
+  "en": {
+    "This isn''t a '{'''simple'''}' ''string''": "This isn''t a '{'''simple'''}' ''string''",
+    "x{ arg }z": "x{ arg }z",
+    "{ n, number } : { d, date, short } { d, time, short }": "{ n, number } : { d, date, short } { d, time, short }",
+    "On { takenDate, date, short } { name } { numPeople, plural, offset:1 =0 {didn''t carpool.} =1 {drove himself.} other {drove # people.} }": "On { takenDate, date, short } { name } { numPeople, plural, offset:1 =0 {didn''t carpool.} =1 {drove himself.} other {drove # people.} }",
+    "{ n, plural, zero {zero} one {one} two {two} few {few} many {many} other {other} }": "{ n, plural, zero {zero} one {one} two {two} few {few} many {many} other {other} }",
+    "{ gender, select, male {it''s his turn} female {it''s her turn} other {it''s their turn} }": "{ gender, select, male {it''s his turn} female {it''s her turn} other {it''s their turn} }"
+  }
+}

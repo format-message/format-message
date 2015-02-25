@@ -1,0 +1,10 @@
+{
+  "en": {
+    "this_isn_t_a_simple_string": "This isn''t a '{'''simple'''}' ''string''",
+    "x_arg_z": "x{ arg }z",
+    "n_number_d_date_short_d_time_short": "{ n, number } : { d, date, short } { d, time, short }",
+    "on_takendate_date_short_name_numpeople_plural_offs": "On { takenDate, date, short } { name } { numPeople, plural, offset:1 =0 {didn''t carpool.} =1 {drove himself.} other {drove # people.} }",
+    "n_plural_zero_zero_one_one_two_two_few_few_many_ma": "{ n, plural, zero {zero} one {one} two {two} few {few} many {many} other {other} }",
+    "gender_select_male_it_s_his_turn_female_it_s_her_t": "{ gender, select, male {it''s his turn} female {it''s her turn} other {it''s their turn} }"
+  }
+}

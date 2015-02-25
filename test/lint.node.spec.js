@@ -129,5 +129,80 @@ describe('message-format lint', () => {
 
 	})
 
+
+	describe('translations and file input', done => {
+
+		it('-k literal', done => {
+			let cmd = 'bin/message-format lint' +
+				' -k literal' +
+				' -t test/translations.literal.json' +
+				' test/format.spec.js'
+			exec(cmd, (err, stdout, stderr) => {
+				expect(stdout.toString('utf8')).to.equal('')
+				stderr = stderr.toString('utf8')
+				expect(stderr).to.contain(
+					'Warning: no en translation found for key "Simple string with nothing special"'
+				)
+				expect(stderr).to.contain('Warning: called without a literal pattern')
+				expect(stderr).to.contain('Warning: called with a non-literal locale')
+				done(err)
+			})
+		})
+
+
+		it('--key-type normalized', done => {
+			let cmd = 'bin/message-format lint' +
+				' --key-type normalized' +
+				' -t test/translations.normalized.json' +
+				' test/format.spec.js'
+			exec(cmd, (err, stdout, stderr) => {
+				expect(stdout.toString('utf8')).to.equal('')
+				stderr = stderr.toString('utf8')
+				expect(stderr).to.contain(
+					'Warning: no en translation found for key "Simple string with nothing special"'
+				)
+				expect(stderr).to.contain('Warning: called without a literal pattern')
+				expect(stderr).to.contain('Warning: called with a non-literal locale')
+				done(err)
+			})
+		})
+
+
+		it('--key-type underscored', done => {
+			let cmd = 'bin/message-format lint' +
+				' --key-type underscored' +
+				' -t test/translations.underscored.json' +
+				' test/format.spec.js'
+			exec(cmd, (err, stdout, stderr) => {
+				expect(stdout.toString('utf8')).to.equal('')
+				stderr = stderr.toString('utf8')
+				expect(stderr).to.contain(
+					'Warning: no en translation found for key "simple_string_with_nothing_special"'
+				)
+				expect(stderr).to.contain('Warning: called without a literal pattern')
+				expect(stderr).to.contain('Warning: called with a non-literal locale')
+				done(err)
+			})
+		})
+
+
+		it('default underscored_crc32', done => {
+			let cmd = 'bin/message-format lint' +
+				' -t test/translations.underscored_crc32.json' +
+				' test/format.spec.js'
+			exec(cmd, (err, stdout, stderr) => {
+				expect(stdout.toString('utf8')).to.equal('')
+				stderr = stderr.toString('utf8')
+				expect(stderr).to.contain(
+					'Warning: no en translation found for key "simple_string_with_nothing_special_7eb61d5"'
+				)
+				expect(stderr).to.contain('Warning: called without a literal pattern')
+				expect(stderr).to.contain('Warning: called with a non-literal locale')
+				done(err)
+			})
+		})
+
+	})
+
 })
 
