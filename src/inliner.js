@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync } from 'fs'
-import { relative, resolve, dirname, join as pathJoin } from 'path'
+import { relative, resolve, dirname, basename, join as pathJoin } from 'path'
 import mkdirp from 'mkdirp'
 import recast from 'recast'
 import sourceMap from 'source-map'
@@ -352,6 +352,7 @@ class Inliner {
 			} else if (options.sourceMaps) {
 				let mapFileName = outFileName + '.map'
 				writeFileSync(mapFileName, JSON.stringify(result.map), 'utf8')
+				result.code += '\n//# sourceMappingURL=' + basename(mapFileName)
 			}
 
 			writeFileSync(outFileName, result.code, 'utf8')
@@ -396,6 +397,7 @@ class Inliner {
 			let mapFileName = outFileName + '.map'
 			mkdirp.sync(dirname(mapFileName))
 			writeFileSync(mapFileName, JSON.stringify(map), 'utf8')
+			code += '\n//# sourceMappingURL=' + basename(mapFileName)
 		}
 
 		if (options.outFile) {
