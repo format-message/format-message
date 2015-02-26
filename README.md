@@ -183,6 +183,95 @@ let format(`On { date, date, short } {name} ate {
 ```
 
 
+CLI Tools
+---------
+
+### message-format lint
+
+#### Usage: `message-format lint [options] [files...]`
+
+find message patterns in files and verify there are no obvious problems
+
+#### Options:
+
+    -h, --help                  output usage information
+    -n, --function-name [name]  find function calls with this name [format]
+    -k, --key-type [type]       derived key from source pattern literal|normalized|underscored|underscored_crc32 [underscored_crc32]
+    -t, --translations [path]   location of the JSON file with message translations, if specified, translations are also checked for errors
+    -f, --filename [filename]   filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]
+
+#### Examples:
+
+lint the src js files, with `__` as the function name used instead of `format`
+
+    message-format lint -n __ src/**/*.js
+
+lint the src js files and translations
+
+    message-format lint -t i18n/pt-BR.json src/**/*.js
+
+
+### message-format extract
+
+#### Usage: `message-format extract [options] [files...]`
+
+find and list all message patterns in files
+
+#### Options:
+
+    -h, --help                  output usage information
+    -n, --function-name [name]  find function calls with this name [format]
+    -k, --key-type [type]       derived key from source pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]
+    -l, --locale [locale]       BCP 47 language tags specifying the source default locale [en]
+    -o, --out-file [out]        write messages JSON object to this file instead of to stdout
+
+#### Examples:
+
+extract patterns from src js files, dump json to `stdout`. This can be helpful
+to get familiar with how `--key-type` and `--locale` change the json output.
+
+    message-format extract src/**/*.js
+
+extract patterns from `stdin`, dump to file.
+
+    someTranspiler src/*.js | message-format extract -o locales/en.json
+
+
+### message-format inline
+
+#### Usage: `message-format inline [options] [files...]`
+
+find and replace message pattern calls in files with translations
+
+#### Options:
+
+    -h, --help                  output usage information
+    -n, --function-name [name]  find function calls with this name [format]
+    -k, --key-type [type]       derived key from source pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]
+    -l, --locale [locale]       BCP 47 language tags specifying the target locale [en]
+    -t, --translations [path]   location of the JSON file with message translations
+    -i, --source-maps-inline    append sourceMappingURL comment to bottom of code
+    -s, --source-maps           save source map alongside the compiled code
+    -f, --filename [filename]   filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]
+    -o, --out-file [out]        compile all input files into a single file
+    -d, --out-dir [out]         compile an input directory of modules into an output directory
+    -r, --root [path]           remove root path for source filename in output directory [cwd]
+
+#### Examples:
+
+create locale-specific client bundles with source maps
+
+    message-format inline src/**/*.js -s -l de -t translations.json -o dist/bundle.de.js
+    message-format inline src/**/*.js -s -l en -t translations.json -o dist/bundle.en.js
+    message-format inline src/**/*.js -s -l es -t translations.json -o dist/bundle.es.js
+    message-format inline src/**/*.js -s -l pt -t translations.json -o dist/bundle.pt.js
+		...
+
+inline without translating multiple files that used `var __ = require('mesage-format-inline')`
+
+    message-format inline -d dist -r src -n __ src/*.js lib/*.js component/**/*.js
+
+
 License
 -------
 
