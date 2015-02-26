@@ -24,4 +24,5 @@ dist
 tmp-cldr
 coverage
 scripts/benchmark.js
+test/format-inline.spec.js
 
