@@ -9,6 +9,29 @@
 > - [Internal]
 > - [Polish]
 
+## 1.0.1
+
+* **Documentation**
+	* Removed dragons.
+
+## 1.0.0
+
+* **New Feature**
+	* Added `message-format lint` cli tool.
+	* Added `message-format extract` cli tool.
+	* Added `message-format inline` cli tool.
+* **Breaking Change**
+	* Removed `message-format-inline` cli tool.
+	* Removed `message-format-scrape` cli tool.
+	* Renamed `formatName` option to `functionName` in `Inliner`.
+* **Bug Fix**
+	* Correctly load target locale plural rules when inlining.
+* **Documentation**
+	* Added CLI documentation.
+* **Internal**
+	* Switch from jasmine to mocha.
+	* Add test for inlined format.
+
 ## 0.2.0
 
 * **New Feature**
