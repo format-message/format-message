@@ -6,8 +6,6 @@ Write default messages inline. Optionally transpile translations.
 [![Dependency Status][deps-image]][deps]
 [![Build Status][build-image]][build]
 
-This is still a work in progress. Here be dragons.
-
 
 Quick Start
 -----------
