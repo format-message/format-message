@@ -5,7 +5,7 @@ import recast from 'recast'
 import sourceMap from 'source-map'
 import chalk from 'chalk'
 import Parser from 'message-format/parser'
-import { getTranslate, getGetKey, getKeyNormalized } from './translate-util'
+import { getTranslate, getGetKey, getKeyNormalized, getKeyUnderscoredCrc32 } from './translate-util'
 import Transpiler from './transpiler'
 let builders = recast.types.builders
 let Literal = recast.types.namedTypes.Literal.toString()
@@ -236,13 +236,15 @@ class Inliner {
 			replacement = builders.literal('')
 		} else {
 			let
-				functionName = '$$message_format_' + this.functions.length,
+				functionName = '$$_' + getKeyUnderscoredCrc32(pattern),
 				codeString = Transpiler.transpile(patternAst, { locale, formatName, functionName }),
 				calleeExpr = builders.identifier(functionName),
 				otherArguments = [
 					params || builders.literal(null)
 				]
-			this.functions.push(codeString)
+			if (this.functions.indexOf(codeString) === -1) {
+				this.functions.push(codeString)
+			}
 
 			replacement = builders.callExpression(
 				calleeExpr, // callee

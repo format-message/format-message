@@ -9,6 +9,12 @@
 > - [Internal]
 > - [Polish]
 
+## 1.0.3
+
+* **Polish**
+	* Reduce duplication in replaced calls.
+	* Reduce probability of collisions when inlining multiple files.
+
 ## 1.0.2
 
 * **Internal**
