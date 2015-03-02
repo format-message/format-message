@@ -9,6 +9,13 @@
 > - [Internal]
 > - [Polish]
 
+## 1.0.2
+
+* **Internal**
+	* Updated dependencies.
+	* Moved built files from `dist` to `lib`.
+	* Added `index.js` for platforms that don't lookup package.json main.
+
 ## 1.0.1
 
 * **Documentation**

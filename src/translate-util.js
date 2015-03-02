@@ -1,7 +1,7 @@
 import slug from 'speakingurl'
 import crc32 from 'crc32'
-import Parser from 'message-format/dist/parser'
-import Printer from 'message-format/dist/printer'
+import Parser from 'message-format/parser'
+import Printer from 'message-format/printer'
 
 
 export function getTranslate(options) {

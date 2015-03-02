@@ -1,6 +1,6 @@
 import locales from './locales.json'
-import lookupClosestLocale from 'message-format/dist/lookup-closest-locale'
-import data from 'message-format/dist/data'
+import lookupClosestLocale from 'message-format/lib/lookup-closest-locale'
+import data from 'message-format/lib/data'
 let formats = data.formats
 
 /**

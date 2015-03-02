@@ -1,7 +1,7 @@
 import program from 'commander'
 import { existsSync, readFileSync } from 'fs'
 import glob from 'glob'
-import Inliner from '../dist/inliner'
+import Inliner from './inliner'
 import pkg from '../package.json'
 
 

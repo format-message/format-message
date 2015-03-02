@@ -20,7 +20,7 @@ Session.vim
 node_modules
 
 # generated
-dist
+lib
 tmp-cldr
 coverage
 scripts/benchmark.js

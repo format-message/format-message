@@ -4,7 +4,7 @@ import mkdirp from 'mkdirp'
 import recast from 'recast'
 import sourceMap from 'source-map'
 import chalk from 'chalk'
-import Parser from 'message-format/dist/parser'
+import Parser from 'message-format/parser'
 import { getTranslate, getGetKey, getKeyNormalized } from './translate-util'
 import Transpiler from './transpiler'
 let builders = recast.types.builders
