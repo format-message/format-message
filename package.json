@@ -2,6 +2,21 @@
   "name": "message-format-inline",
   "version": "1.0.0",
   "description": "Write default messages inline. Optionally transpile translations.",
+  "keywords": [
+    "i18n",
+    "intl",
+    "internationalization",
+    "localization",
+    "globalization",
+    "messageformat",
+    "pluralformat",
+    "selectformat",
+    "inline",
+    "transpile",
+    "plural",
+    "gender",
+    "icu"
+  ],
   "main": "dist/format.js",
   "bin": {
     "message-format": "bin/message-format"
