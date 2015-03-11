@@ -9,6 +9,13 @@
 > - [Internal]
 > - [Polish]
 
+## 1.0.4
+
+* **Bug Fix**
+	* Use caret version for glob since they delete old versions breaking npm install.
+* **Internal**
+	* Updated dependencies.
+
 ## 1.0.3
 
 * **Polish**
