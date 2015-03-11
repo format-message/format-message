@@ -5,8 +5,7 @@ contributing, please read the
 [code of conduct](https://github.com/thetalecrafter/message-format/blob/master/CODE_OF_CONDUCT.md).
 
 **NOTE:** Please do not send pull requests that fix linting issues. It's
-unlikely such issues will stick around long anyway, and eslint currently does
-not understand ES6 module syntax.
+unlikely such issues will stick around long anyway.
 
 ## Developing
 

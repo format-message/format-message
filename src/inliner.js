@@ -31,13 +31,13 @@ class Inliner {
 	lint({ sourceCode, sourceFileName }) {
 		this.currentFileName = sourceFileName
 		let
-			inliner = this,
+			self = this,
 			ast = recast.parse(sourceCode)
 		recast.visit(ast, {
 			visitCallExpression(path) {
 				this.traverse(path) // pre-travserse children
-				if (inliner.isFormatCall(path)) {
-					inliner.lintFormatCall(path)
+				if (self.isFormatCall(path)) {
+					self.lintFormatCall(path)
 				}
 			}
 		})
@@ -124,20 +124,20 @@ class Inliner {
 	extract({ sourceCode, sourceFileName }) {
 		this.currentFileName = sourceFileName
 		let
-			inliner = this,
+			self = this,
 			patterns = {},
 			ast = recast.parse(sourceCode)
 		recast.visit(ast, {
 			visitCallExpression(path) {
 				this.traverse(path) // pre-travserse children
-				if (inliner.isReplaceable(path)) {
+				if (self.isReplaceable(path)) {
 					let
-						pattern = inliner.getStringValue(path.node.arguments[0]),
-						error = inliner.getPatternError(pattern)
+						pattern = self.getStringValue(path.node.arguments[0]),
+						error = self.getPatternError(pattern)
 					if (error) {
-						inliner.reportError(path, 'SyntaxError: pattern is invalid', error.message)
+						self.reportError(path, 'SyntaxError: pattern is invalid', error.message)
 					} else {
-						let key = inliner.getKey(pattern)
+						let key = self.getKey(pattern)
 						patterns[key] = getKeyNormalized(pattern)
 					}
 				}
@@ -150,13 +150,13 @@ class Inliner {
 	inline({ sourceCode, sourceFileName, sourceMapName, inputSourceMap }) {
 		this.functions.length = 0
 		let
-			inliner = this,
+			self = this,
 			ast = recast.parse(sourceCode, { sourceFileName })
 		recast.visit(ast, {
 			visitCallExpression(path) {
 				this.traverse(path) // pre-travserse children
-				if (inliner.isReplaceable(path)) {
-					inliner.replace(path)
+				if (self.isReplaceable(path)) {
+					self.replace(path)
 				}
 			}
 		})
@@ -185,7 +185,8 @@ class Inliner {
 
 	isString(node) {
 		return node && (
-			typeof node.value === 'string'
+			node.type === Literal
+			&& typeof node.value === 'string'
 			|| (
 				node.type === TemplateLiteral
 				&& node.expressions.length === 0

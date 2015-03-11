@@ -10,7 +10,7 @@ export function getTranslate(options) {
 	}
 
 	if (!options.translations) {
-		return (pattern => pattern)
+		return pattern => pattern
 	}
 
 	let getKey = getGetKey(options)
@@ -42,7 +42,7 @@ export function getGetKey(options) {
 		case 'normalized':
 			return getKeyNormalized
 		default: // 'literal'
-			return (pattern => pattern)
+			return pattern => pattern
 	}
 }
 
