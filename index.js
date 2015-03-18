@@ -1,2 +1,2 @@
-module.exports = require('./lib/format')
+module.exports = require('./lib/format-message')
 

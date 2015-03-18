@@ -47,13 +47,13 @@ program
 
 
 /**
- * message-format lint src/*.js
+ * format-message lint src/*.js
  *  find message patterns in files and verify there are no obvious problems
  **/
 program
 	.command('lint [files...]')
 	.description('find message patterns in files and verify there are no obvious problems')
-	.option('-n, --function-name [name]', 'find function calls with this name [format]', 'format')
+	.option('-n, --function-name [name]', 'find function calls with this name [formatMessage]', 'formatMessage')
 	.option('-k, --key-type [type]',
 		'derived key from source pattern literal|normalized|underscored|underscored_crc32 [underscored_crc32]',
 		'underscored_crc32'
@@ -100,13 +100,13 @@ program
 
 
 /**
- * message-format extract src/*.js
+ * format-message extract src/*.js
  *  find and list all message patterns in files
  **/
 program
 	.command('extract [files...]')
 	.description('find and list all message patterns in files')
-	.option('-n, --function-name [name]', 'find function calls with this name [format]', 'format')
+	.option('-n, --function-name [name]', 'find function calls with this name [formatMessage]', 'formatMessage')
 	.option('-k, --key-type [type]',
 		'derived key from source pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]',
 		'underscored_crc32'
@@ -139,14 +139,14 @@ program
 
 
 /**
- * message-format inline src/*.js
+ * format-message inline src/*.js
  *  find and replace message pattern calls in files with translations
  **/
 program
 	.command('inline [files...]')
 	.alias('translate')
 	.description('find and replace message pattern calls in files with translations')
-	.option('-n, --function-name [name]', 'find function calls with this name [format]', 'format')
+	.option('-n, --function-name [name]', 'find function calls with this name [formatMessage]', 'formatMessage')
 	.option('-k, --key-type [type]',
 		'derived key from source pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]',
 		'underscored_crc32'

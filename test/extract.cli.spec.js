@@ -1,13 +1,13 @@
 import { exec } from 'child_process'
 import { readFileSync, unlinkSync } from 'fs'
 
-describe('message-format extract', () => {
+describe('format-message extract', () => {
 
 	describe('input from stdin', () => {
 
 		it('finds and extracts simple strings', done => {
-			let input = 'format("hello")'
-			exec('bin/message-format extract', (err, stdout, stderr) => {
+			let input = 'formatMessage("hello")'
+			exec('bin/format-message extract', (err, stdout, stderr) => {
 				stdout = stdout.toString('utf8')
 				let translations = JSON.parse(stdout)
 				expect(translations.en).to.eql({
@@ -20,8 +20,8 @@ describe('message-format extract', () => {
 
 
 		it('finds and extracts template strings', done => {
-			let input = 'format(`hello`)'
-			exec('bin/message-format extract', (err, stdout, stderr) => {
+			let input = 'formatMessage(`hello`)'
+			exec('bin/format-message extract', (err, stdout, stderr) => {
 				stdout = stdout.toString('utf8')
 				let translations = JSON.parse(stdout)
 				expect(translations.en).to.eql({
@@ -34,8 +34,8 @@ describe('message-format extract', () => {
 
 
 		it('dedupes repeated patterns', done => {
-			let input = 'format("hello");format(`hello`)'
-			exec('bin/message-format extract', (err, stdout, stderr) => {
+			let input = 'formatMessage("hello");formatMessage(`hello`)'
+			exec('bin/format-message extract', (err, stdout, stderr) => {
 				stdout = stdout.toString('utf8')
 				let translations = JSON.parse(stdout)
 				expect(translations.en).to.eql({
@@ -49,9 +49,9 @@ describe('message-format extract', () => {
 
 		it('can output to a -o file', done => {
 			let
-				input = 'format("hello");format(`hello`)',
+				input = 'formatMessage("hello");formatMessage(`hello`)',
 				filename = 'test/translations/extract.underscored_crc32.json',
-				cmd = 'bin/message-format extract -o ' + filename
+				cmd = 'bin/format-message extract -o ' + filename
 			exec(cmd, (err, stdout, stderr) => {
 				expect(stdout.toString('utf8')).to.equal('')
 				expect(stderr.toString('utf8')).to.equal('')
@@ -67,9 +67,9 @@ describe('message-format extract', () => {
 
 		it('can output to a --out-file file', done => {
 			let
-				input = 'format("hello");format(`hello`)',
+				input = 'formatMessage("hello");formatMessage(`hello`)',
 				filename = 'test/translations/extract.underscored_crc32.json',
-				cmd = 'bin/message-format extract --out-file ' + filename
+				cmd = 'bin/format-message extract --out-file ' + filename
 			exec(cmd, (err, stdout, stderr) => {
 				expect(stdout.toString('utf8')).to.equal('')
 				expect(stderr.toString('utf8')).to.equal('')
@@ -85,8 +85,8 @@ describe('message-format extract', () => {
 
 		it('uses specified -k key type', done => {
 			let
-				input = 'format("hello world");format(`hello world`)',
-				cmd = 'bin/message-format extract -k underscored'
+				input = 'formatMessage("hello world");formatMessage(`hello world`)',
+				cmd = 'bin/format-message extract -k underscored'
 			exec(cmd, (err, stdout, stderr) => {
 				stdout = stdout.toString('utf8')
 				let translations = JSON.parse(stdout)
@@ -101,8 +101,8 @@ describe('message-format extract', () => {
 
 		it('uses specified --key-type key type', done => {
 			let
-				input = 'format("hello world");format(`hello world`)',
-				cmd = 'bin/message-format extract --key-type underscored'
+				input = 'formatMessage("hello world");formatMessage(`hello world`)',
+				cmd = 'bin/format-message extract --key-type underscored'
 			exec(cmd, (err, stdout, stderr) => {
 				stdout = stdout.toString('utf8')
 				let translations = JSON.parse(stdout)
@@ -118,7 +118,7 @@ describe('message-format extract', () => {
 		it('finds -n named functions', done => {
 			let
 				input = '__("hello world");__(`hello world`)',
-				cmd = 'bin/message-format extract -n __'
+				cmd = 'bin/format-message extract -n __'
 			exec(cmd, (err, stdout, stderr) => {
 				stdout = stdout.toString('utf8')
 				let translations = JSON.parse(stdout)
@@ -134,7 +134,7 @@ describe('message-format extract', () => {
 		it('finds --function-name named functions', done => {
 			let
 				input = '$("hello world");$(`hello world`)',
-				cmd = 'bin/message-format extract --function-name $'
+				cmd = 'bin/format-message extract --function-name $'
 			exec(cmd, (err, stdout, stderr) => {
 				stdout = stdout.toString('utf8')
 				let translations = JSON.parse(stdout)
@@ -149,8 +149,8 @@ describe('message-format extract', () => {
 
 		it('writes to -l locale object', done => {
 			let
-				input = 'format("hello world")',
-				cmd = 'bin/message-format extract -l pt'
+				input = 'formatMessage("hello world")',
+				cmd = 'bin/format-message extract -l pt'
 			exec(cmd, (err, stdout, stderr) => {
 				stdout = stdout.toString('utf8')
 				let translations = JSON.parse(stdout)
@@ -165,8 +165,8 @@ describe('message-format extract', () => {
 
 		it('writes to --locale locale object', done => {
 			let
-				input = 'format("hello world")',
-				cmd = 'bin/message-format extract --locale en-US'
+				input = 'formatMessage("hello world")',
+				cmd = 'bin/format-message extract --locale en-US'
 			exec(cmd, (err, stdout, stderr) => {
 				stdout = stdout.toString('utf8')
 				let translations = JSON.parse(stdout)
@@ -186,7 +186,7 @@ describe('message-format extract', () => {
 		it('can read from a single file', done => {
 			let
 				filename = 'test/format.spec.js',
-				cmd = 'bin/message-format extract ' + filename
+				cmd = 'bin/format-message extract ' + filename
 			exec(cmd, (err, stdout, stderr) => {
 				stdout = stdout.toString('utf8')
 				let translations = JSON.parse(stdout)
@@ -201,7 +201,7 @@ describe('message-format extract', () => {
 		it('can read from multiple files', done => {
 			let
 				filename = 'test/setup.js test/format.spec.js',
-				cmd = 'bin/message-format extract ' + filename
+				cmd = 'bin/format-message extract ' + filename
 			exec(cmd, (err, stdout, stderr) => {
 				stdout = stdout.toString('utf8')
 				let translations = JSON.parse(stdout)
@@ -216,7 +216,7 @@ describe('message-format extract', () => {
 		it('can read from a glob pattern of multiple files', done => {
 			let
 				filename = 'test/**/*.spec.js',
-				cmd = 'bin/message-format extract ' + filename
+				cmd = 'bin/format-message extract ' + filename
 			exec(cmd, (err, stdout, stderr) => {
 				stdout = stdout.toString('utf8')
 				let translations = JSON.parse(stdout)

@@ -2,7 +2,7 @@
 
 Contributions are always welcome, no matter how large or small. Before
 contributing, please read the
-[code of conduct](https://github.com/thetalecrafter/message-format/blob/master/CODE_OF_CONDUCT.md).
+[code of conduct](https://github.com/thetalecrafter/format-message/blob/master/CODE_OF_CONDUCT.md).
 
 **NOTE:** Please do not send pull requests that fix linting issues. It's
 unlikely such issues will stick around long anyway.
@@ -12,7 +12,7 @@ unlikely such issues will stick around long anyway.
 #### Workflow
 
 * Fork the repository
-* Clone your fork and change directory to it (`git clone git@github.com:yourUserName/message-format.git && cd message-format`)
+* Clone your fork and change directory to it (`git clone git@github.com:yourUserName/format-message.git && cd format-message`)
 * Install the project dependencies (`npm install`)
 * Link your forked clone (`npm link`)
 * Develop your changes ensuring you're fetching updates from upstream often

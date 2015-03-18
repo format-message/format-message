@@ -15,7 +15,7 @@ let formats = data.formats
  *
  * into this:
  *  `(function(args, locale) {
- *    return "You have " + format.plural(locale, args["numBananas"], 0, {
+ *    return "You have " + formatMessage.plural(locale, args["numBananas"], 0, {
  *      "=0": "no bananas",
  *      "one": "a banana",
  *      "other": function() {
@@ -29,7 +29,7 @@ class Transpiler {
 	constructor(options={}) {
 		this.vars = {}
 		this.locale = options.locale || 'en'
-		this.formatName = options.formatName || 'format'
+		this.formatName = options.formatName || 'formatMessage'
 		this.functionName = options.functionName || ''
 	}
 

@@ -1,1 +1,1 @@
-window.format = require('./format')
+window.format = require('./format-message')

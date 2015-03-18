@@ -9,6 +9,13 @@
 > - [Internal]
 > - [Polish]
 
+## 2.0.0
+
+* **Breaking Change**
+	* Rename package to `format-message`
+	* Rename bin to `format-message`
+	* Rename default function-name to `formatMessage`
+
 ## 1.0.4
 
 * **Bug Fix**

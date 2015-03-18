@@ -25,7 +25,7 @@ function cached(key, fn) {
 }
 
 
-function format(pattern, args, locale) {
+function formatMessage(pattern, args, locale) {
 	locale = locale || options.locale
 	let
 		key = locale + ':format:' + pattern,
@@ -37,14 +37,14 @@ function format(pattern, args, locale) {
 }
 
 
-format.setup = function({ cache, locale, translate }={}) {
+formatMessage.setup = function({ cache, locale, translate }={}) {
 	options.enableCache = 'boolean' === typeof cache ? cache : options.enableCache
 	options.locale = locale || options.locale
 	options.translate = translate || options.translate
 }
 
 
-format.number = function(locale, num, style='medium') {
+formatMessage.number = function(locale, num, style='medium') {
 	let
 		key = locale + ':number:' + style,
 		func = cached(key, function() {
@@ -54,7 +54,7 @@ format.number = function(locale, num, style='medium') {
 }
 
 
-format.date = function(locale, date, style='medium') {
+formatMessage.date = function(locale, date, style='medium') {
 	let
 		key = locale + ':date:' + style,
 		func = cached(key, function() {
@@ -64,7 +64,7 @@ format.date = function(locale, date, style='medium') {
 }
 
 
-format.time = function(locale, date, style='medium') {
+formatMessage.time = function(locale, date, style='medium') {
 	let
 		key = locale + ':time:' + style,
 		func = cached(key, function() {
@@ -74,5 +74,5 @@ format.time = function(locale, date, style='medium') {
 }
 
 
-export default format
+export default formatMessage
 

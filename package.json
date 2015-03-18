@@ -1,6 +1,6 @@
 {
-  "name": "message-format-inline",
-  "version": "1.0.4",
+  "name": "format-message",
+  "version": "2.0.0",
   "description": "Write default messages inline. Optionally transpile translations.",
   "keywords": [
     "i18n",
@@ -17,32 +17,32 @@
     "gender",
     "icu"
   ],
-  "main": "lib/format.js",
+  "main": "lib/format-message.js",
   "bin": {
-    "message-format": "bin/message-format"
+    "format-message": "bin/format-message"
   },
   "dependencies": {
-    "babel-runtime": "4.7.8",
+    "babel-runtime": "4.7.13",
     "chalk": "1.0.0",
     "commander": "2.7.1",
     "crc32": "0.2.2",
     "glob": "^5.0.2",
     "message-format": "1.0.0",
     "mkdirp": "0.5.0",
-    "recast": "0.10.7",
-    "source-map": "0.4.1",
-    "speakingurl": "0.20.1"
+    "recast": "0.10.9",
+    "source-map": "0.4.2",
+    "speakingurl": "1.1.0"
   },
   "devDependencies": {
-    "babel": "4.7.8",
-    "babel-core": "4.7.8",
-    "babel-loader": "4.1.0",
+    "babel": "4.7.13",
+    "babel-core": "4.7.13",
+    "babel-loader": "4.2.0",
     "benchmark": "1.0.0",
-    "chai": "2.1.1",
-    "eslint": "0.16.2",
+    "chai": "2.1.2",
+    "eslint": "0.17.1",
     "intl": "0.1.4",
     "intl-messageformat": "1.1.0",
-    "istanbul": "0.3.7",
+    "istanbul": "0.3.8",
     "jscs": "1.11.3",
     "karma": "0.12.31",
     "karma-chai": "0.1.0",
@@ -55,23 +55,23 @@
     "karma-sourcemap-loader": "0.3.4",
     "karma-webpack": "1.5.0",
     "mocha": "2.2.1",
-    "webpack": "1.7.2"
+    "webpack": "1.7.3"
   },
   "scripts": {
     "benchmark": "npm run benchmark-compile && babel-node --loose=all --optional=runtime scripts/benchmark.js",
-    "benchmark-compile": "bin/message-format inline scripts/benchmark.src.js > scripts/benchmark.js",
+    "benchmark-compile": "bin/format-message inline scripts/benchmark.src.js > scripts/benchmark.js",
     "cldr": "scripts/cldr.sh",
     "jshint": "jshint src/*.js",
     "lint": "jscs src/*.js && eslint src/*.js || true",
     "prepublish": "mkdir -p lib && cp src/*.json lib/ && babel --loose=all --optional=runtime src --out-dir lib && webpack -p",
     "test": "npm run lint && npm run test-setup && npm run test-node && npm run test-browsers",
     "test-browsers": "karma start --browsers Firefox,PhantomJS --single-run",
-    "test-setup": "rm -rf test/inline && bin/message-format inline test/format.spec.js > test/format-inline.spec.js",
+    "test-setup": "rm -rf test/inline && bin/format-message inline test/format.spec.js > test/format-inline.spec.js",
     "test-node": "istanbul cover _mocha -- -cG -R dot -r ./test/setup test/**/*.spec.js"
   },
   "repository": {
     "type": "git",
-    "url": "http://github.com/thetalecrafter/message-format-inline.git"
+    "url": "http://github.com/thetalecrafter/format-message.git"
   },
   "author": {
     "name": "Andy VanWagoner",
@@ -79,7 +79,7 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/thetalecrafter/message-format-inline/issues"
+    "url": "https://github.com/thetalecrafter/format-message/issues"
   },
-  "homepage": "https://github.com/thetalecrafter/message-format-inline"
+  "homepage": "https://github.com/thetalecrafter/format-message"
 }

@@ -1,31 +1,31 @@
 if ('undefined' === typeof Intl) { require('intl') } // include polyfll for Safari and PhantomJS
 import MessageFormat from 'message-format'
-import format from '../src/format'
+import formatMessage from '../src/format-message'
 
-describe('format', () => {
+describe('formatMessage', () => {
 
-	describe('format', () => {
+	describe('formatMessage', () => {
 
 		it('formats a simple message', () => {
-			let message = format('Simple string with nothing special')
+			let message = formatMessage('Simple string with nothing special')
 			expect(message).to.equal('Simple string with nothing special')
 		})
 
 
 		it('handles pattern with escaped text', () => {
-			let message = format('This isn\'\'t a \'{\'\'simple\'\'}\' \'string\'')
+			let message = formatMessage('This isn\'\'t a \'{\'\'simple\'\'}\' \'string\'')
 			expect(message).to.equal('This isn\'t a {\'simple\'} \'string\'')
 		})
 
 
 		it('accepts arguments', () => {
-			let message = format('x{ arg }z', { arg:'y' })
+			let message = formatMessage('x{ arg }z', { arg:'y' })
 			expect(message).to.equal('xyz')
 		})
 
 
 		it('formats numbers, dates, and times', () => {
-			let message = format(
+			let message = formatMessage(
 				'{ n, number } : { d, date, short } { d, time, short }',
 				{ n:0, d:new Date(0) }
 			)
@@ -34,7 +34,7 @@ describe('format', () => {
 
 
 		it('handles plurals', () => {
-			let message = format(
+			let message = formatMessage(
 				`On {takenDate, date, short} {name} {numPeople, plural, offset:1
 				    =0 {didn't carpool.}
 				    =1 {drove himself.}
@@ -46,35 +46,35 @@ describe('format', () => {
 
 
 		it('handles plurals for other locales', () => {
-			expect(format(`{n, plural,
+			expect(formatMessage(`{n, plural,
 			  zero {zero}
 			   one {one}
 			   two {two}
 			   few {few}
 			  many {many}
 			 other {other}}`, { n:0 }, 'ar')).to.equal('zero')
-			expect(format(`{n, plural,
+			expect(formatMessage(`{n, plural,
 			  zero {zero}
 			   one {one}
 			   two {two}
 			   few {few}
 			  many {many}
 			 other {other}}`, { n:1 }, 'ar')).to.equal('one')
-			expect(format(`{n, plural,
+			expect(formatMessage(`{n, plural,
 			  zero {zero}
 			   one {one}
 			   two {two}
 			   few {few}
 			  many {many}
 			 other {other}}`, { n:2 }, 'ar')).to.equal('two')
-			expect(format(`{n, plural,
+			expect(formatMessage(`{n, plural,
 			  zero {zero}
 			   one {one}
 			   two {two}
 			   few {few}
 			  many {many}
 			 other {other}}`, { n:3 }, 'ar')).to.equal('few')
-			expect(format(`{n, plural,
+			expect(formatMessage(`{n, plural,
 			  zero {zero}
 			   one {one}
 			   two {two}
@@ -85,7 +85,7 @@ describe('format', () => {
 
 
 		it('handles select', () => {
-			let message = format(`{ gender, select,
+			let message = formatMessage(`{ gender, select,
 				   male {it's his turn}
 				 female {it's her turn}
 				  other {it's their turn}}`,
@@ -113,7 +113,7 @@ describe('format', () => {
 				result
 			for (let locale of MessageFormat.supportedLocalesOf()) {
 				for (let n = 0; n <= 200; ++n) {
-					result = format(pattern, { n }, locale)
+					result = formatMessage(pattern, { n }, locale)
 					expect(result).to.match(/^(zero|one|two|few|many|other)$/)
 				}
 			}
@@ -128,33 +128,33 @@ describe('format', () => {
 		it('changes the caching', () => {
 			let pattern = 'cache-test'
 			delete MessageFormat.data.formats.cache['en:format:cache-test']
-			format.setup({ cache:false })
-			format(pattern)
-			format.setup({ cache:true })
+			formatMessage.setup({ cache:false })
+			formatMessage(pattern)
+			formatMessage.setup({ cache:true })
 
 			expect(MessageFormat.data.formats.cache['en:format:cache-test']).to.not.exist
-			format(pattern)
+			formatMessage(pattern)
 			expect(MessageFormat.data.formats.cache['en:format:cache-test']).to.exist
 		})
 
 
 		it('changes the default locale', () => {
-			format.setup({ locale:'ar' })
+			formatMessage.setup({ locale:'ar' })
 			let
 				pattern = '{n,plural,few{few}other{other}}',
-				message = format(pattern, { n:3 })
-			format.setup({ locale:'en' })
+				message = formatMessage(pattern, { n:3 })
+			formatMessage.setup({ locale:'en' })
 
 			expect(message).to.equal('few')
 		})
 
 
 		it('changes the translation', () => {
-			format.setup({ translate() { return 'test-success' } })
+			formatMessage.setup({ translate() { return 'test-success' } })
 			let // use variable to avoid inlining
 				pattern = 'trans-test',
-				message = format(pattern)
-			format.setup({ translate(pattern) { return pattern } })
+				message = formatMessage(pattern)
+			formatMessage.setup({ translate(pattern) { return pattern } })
 
 			expect(message).to.equal('test-success')
 		})

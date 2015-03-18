@@ -13,12 +13,12 @@ let TemplateLiteral = recast.types.namedTypes.TemplateLiteral.toString()
 
 
 /**
- * Transforms source code, translating and inlining `format` calls
+ * Transforms source code, translating and inlining `formatMessage` calls
  **/
 class Inliner {
 
 	constructor(options={}) {
-		this.formatName = options.functionName || 'format'
+		this.formatName = options.functionName || 'formatMessage'
 		this.getKey = getGetKey(options)
 		this.translate = getTranslate(options)
 		this.translations = options.translations

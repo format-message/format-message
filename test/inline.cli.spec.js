@@ -1,13 +1,13 @@
 import { exec } from 'child_process'
 import { readFileSync, unlinkSync, readdirSync, rmdirSync } from 'fs'
 
-describe('message-format inline', () => {
+describe('format-message inline', () => {
 
 	describe('stdin', () => {
 
 		it('finds and replaces simple strings', done => {
-			let input = 'format("hello")'
-			exec('bin/message-format inline', (err, stdout, stderr) => {
+			let input = 'formatMessage("hello")'
+			exec('bin/format-message inline', (err, stdout, stderr) => {
 				expect(stderr.toString('utf8')).to.equal('')
 				expect(stdout.toString('utf8').trim()).to.equal('"hello"')
 				done(err)
@@ -16,8 +16,8 @@ describe('message-format inline', () => {
 
 
 		it('finds and replaces template strings', done => {
-			let input = 'format(`hello`)'
-			exec('bin/message-format inline', (err, stdout, stderr) => {
+			let input = 'formatMessage(`hello`)'
+			exec('bin/format-message inline', (err, stdout, stderr) => {
 				expect(stderr.toString('utf8')).to.equal('')
 				expect(stdout.toString('utf8').trim()).to.equal('"hello"')
 				done(err)
@@ -27,9 +27,9 @@ describe('message-format inline', () => {
 
 		it('can output to a -o file', done => {
 			let
-				input = 'format("hello")',
+				input = 'formatMessage("hello")',
 				filename = 'test/translations/inline.js',
-				cmd = 'bin/message-format inline -o ' + filename
+				cmd = 'bin/format-message inline -o ' + filename
 			exec(cmd, (err, stdout, stderr) => {
 				expect(stderr.toString('utf8')).to.equal('')
 				expect(stdout.toString('utf8')).to.equal('')
@@ -43,9 +43,9 @@ describe('message-format inline', () => {
 
 		it('can output to a --out-file file', done => {
 			let
-				input = 'format("hello")',
+				input = 'formatMessage("hello")',
 				filename = 'test/translations/inline.js',
-				cmd = 'bin/message-format inline --out-file ' + filename
+				cmd = 'bin/format-message inline --out-file ' + filename
 			exec(cmd, (err, stdout, stderr) => {
 				expect(stderr.toString('utf8')).to.equal('')
 				expect(stdout.toString('utf8')).to.equal('')
@@ -60,7 +60,7 @@ describe('message-format inline', () => {
 		it('finds -n named functions', done => {
 			let
 				input = '__("hello world")',
-				cmd = 'bin/message-format inline -n __'
+				cmd = 'bin/format-message inline -n __'
 			exec(cmd, (err, stdout, stderr) => {
 				expect(stderr.toString('utf8')).to.equal('')
 				expect(stdout.toString('utf8').trim()).to.equal('"hello world"')
@@ -72,7 +72,7 @@ describe('message-format inline', () => {
 		it('finds --function-name named functions', done => {
 			let
 				input = '$("hello world")',
-				cmd = 'bin/message-format inline --function-name $'
+				cmd = 'bin/format-message inline --function-name $'
 			exec(cmd, (err, stdout, stderr) => {
 				expect(stderr.toString('utf8')).to.equal('')
 				expect(stdout.toString('utf8').trim()).to.equal('"hello world"')
@@ -87,8 +87,8 @@ describe('message-format inline', () => {
 
 		it('uses -t translations', done => {
 			let
-				input = 'format("hello world")',
-				cmd = 'bin/message-format inline' +
+				input = 'formatMessage("hello world")',
+				cmd = 'bin/format-message inline' +
 					' -t test/translations/inline.underscored_crc32.json'
 			exec(cmd, (err, stdout, stderr) => {
 				expect(stderr.toString('utf8')).to.equal('')
@@ -100,8 +100,8 @@ describe('message-format inline', () => {
 
 		it('uses --translations translations', done => {
 			let
-				input = 'format("hello world")',
-				cmd = 'bin/message-format inline' +
+				input = 'formatMessage("hello world")',
+				cmd = 'bin/format-message inline' +
 					' --translations test/translations/inline.underscored_crc32.json'
 			exec(cmd, (err, stdout, stderr) => {
 				expect(stderr.toString('utf8')).to.equal('')
@@ -115,8 +115,8 @@ describe('message-format inline', () => {
 
 			it('uses -l locale', done => {
 				let
-					input = 'format("hello world")',
-					cmd = 'bin/message-format inline' +
+					input = 'formatMessage("hello world")',
+					cmd = 'bin/format-message inline' +
 						' -l pt' +
 						' -t test/translations/inline.underscored_crc32.json'
 				exec(cmd, (err, stdout, stderr) => {
@@ -129,8 +129,8 @@ describe('message-format inline', () => {
 
 			it('uses --locale locale', done => {
 				let
-					input = 'format("hello world")',
-					cmd = 'bin/message-format inline' +
+					input = 'formatMessage("hello world")',
+					cmd = 'bin/format-message inline' +
 						' --locale pt' +
 						' -t test/translations/inline.underscored_crc32.json'
 				exec(cmd, (err, stdout, stderr) => {
@@ -147,8 +147,8 @@ describe('message-format inline', () => {
 
 			it('uses -k key', done => {
 				let
-					input = 'format("hello world")',
-					cmd = 'bin/message-format inline' +
+					input = 'formatMessage("hello world")',
+					cmd = 'bin/format-message inline' +
 						' -k underscored' +
 						' -t test/translations/inline.underscored.json'
 				exec(cmd, (err, stdout, stderr) => {
@@ -161,8 +161,8 @@ describe('message-format inline', () => {
 
 			it('uses --key-type key', done => {
 				let
-					input = 'format("hello world")',
-					cmd = 'bin/message-format inline' +
+					input = 'formatMessage("hello world")',
+					cmd = 'bin/format-message inline' +
 						' --key-type normalized' +
 						' -t test/translations/inline.normalized.json'
 				exec(cmd, (err, stdout, stderr) => {
@@ -181,8 +181,8 @@ describe('message-format inline', () => {
 
 		it('uses -i', done => {
 			let
-				input = 'format("hello world")',
-				cmd = 'bin/message-format inline' +
+				input = 'formatMessage("hello world")',
+				cmd = 'bin/format-message inline' +
 					' -i' +
 					' -t test/translations/inline.underscored_crc32.json'
 			exec(cmd, (err, stdout, stderr) => {
@@ -197,8 +197,8 @@ describe('message-format inline', () => {
 
 		it('uses --source-maps-inline', done => {
 			let
-				input = 'format("hello world")',
-				cmd = 'bin/message-format inline' +
+				input = 'formatMessage("hello world")',
+				cmd = 'bin/format-message inline' +
 					' --source-maps-inline' +
 					' -t test/translations/inline.underscored_crc32.json'
 			exec(cmd, (err, stdout, stderr) => {
@@ -217,9 +217,9 @@ describe('message-format inline', () => {
 
 		it('uses -s', done => {
 			let
-				input = 'format("hello world")',
+				input = 'formatMessage("hello world")',
 				filename = 'test/translations/inline.js',
-				cmd = 'bin/message-format inline' +
+				cmd = 'bin/format-message inline' +
 					' -s' +
 					' -t test/translations/inline.underscored_crc32.json' +
 					' --out-file ' + filename
@@ -239,9 +239,9 @@ describe('message-format inline', () => {
 
 		it('uses --source-maps', done => {
 			let
-				input = 'format("hello world")',
+				input = 'formatMessage("hello world")',
 				filename = 'test/translations/inline.js',
-				cmd = 'bin/message-format inline' +
+				cmd = 'bin/format-message inline' +
 					' --source-maps' +
 					' -t test/translations/inline.underscored_crc32.json' +
 					' --out-file ' + filename
@@ -276,7 +276,7 @@ describe('message-format inline', () => {
 
 
 		it('outputs files to the directory relative to root', done => {
-			let cmd = 'bin/message-format inline' +
+			let cmd = 'bin/format-message inline' +
 				' -d ' + dirname +
 				' -r test' +
 				' test/*.js'
@@ -300,7 +300,7 @@ describe('message-format inline', () => {
 
 
 		it('uses -s source-maps', done => {
-			let cmd = 'bin/message-format inline' +
+			let cmd = 'bin/format-message inline' +
 				' -s' +
 				' -d ' + dirname +
 				' --root test' +
