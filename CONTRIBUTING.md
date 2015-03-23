@@ -4,9 +4,6 @@ Contributions are always welcome, no matter how large or small. Before
 contributing, please read the
 [code of conduct](https://github.com/thetalecrafter/format-message/blob/master/CODE_OF_CONDUCT.md).
 
-**NOTE:** Please do not send pull requests that fix linting issues. It's
-unlikely such issues will stick around long anyway.
-
 ## Developing
 
 #### Workflow
@@ -22,26 +19,7 @@ unlikely such issues will stick around long anyway.
 
 #### Code Standards
 
- * **General**
-   * ES6 syntax, except anything that requires the babel runtime.
-   * Max of five arguments for functions
-   * Max depth of four nested blocks
-   * real tabs
- * **Naming**
-   * CamelCase all class names
-   * camelBack all variable names
- * **Spacing**
-   * Spaces after all keywords
-   * Spaces before all left curly braces
- * **Comments**
-   * Use JSDoc-style comments for methods
-   * Single-line comments for ambiguous code
- * **Quotes**
-   * Always use single quotes
-   * Only use double quotes when the string contains a single quote
- * **Declaration**
-   * No unused variables
-   * No pollution of global variables and prototypes
+follow [JavaScript Standard Style](https://github.com/feross/standard)
 
 ## Testing
 

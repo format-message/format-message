@@ -28,4 +28,3 @@ module.exports = {
 		new webpack.optimize.UglifyJsPlugin()
 	]
 }
-

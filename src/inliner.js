@@ -7,411 +7,369 @@ import chalk from 'chalk'
 import Parser from 'message-format/parser'
 import { getTranslate, getGetKey, getKeyNormalized, getKeyUnderscoredCrc32 } from './translate-util'
 import Transpiler from './transpiler'
-let builders = recast.types.builders
-let Literal = recast.types.namedTypes.Literal.toString()
-let TemplateLiteral = recast.types.namedTypes.TemplateLiteral.toString()
-
+const builders = recast.types.builders
+const Literal = recast.types.namedTypes.Literal.toString()
+const TemplateLiteral = recast.types.namedTypes.TemplateLiteral.toString()
 
 /**
  * Transforms source code, translating and inlining `formatMessage` calls
  **/
 class Inliner {
 
-	constructor(options={}) {
-		this.formatName = options.functionName || 'formatMessage'
-		this.getKey = getGetKey(options)
-		this.translate = getTranslate(options)
-		this.translations = options.translations
-		this.locale = options.locale || 'en'
-		this.functions = []
-		this.currentFileName = null
-	}
+  constructor (options={}) {
+    this.formatName = options.functionName || 'formatMessage'
+    this.getKey = getGetKey(options)
+    this.translate = getTranslate(options)
+    this.translations = options.translations
+    this.locale = options.locale || 'en'
+    this.functions = []
+    this.currentFileName = null
+  }
 
+  lint ({ sourceCode, sourceFileName }) {
+    this.currentFileName = sourceFileName
+    const self = this
+    const ast = recast.parse(sourceCode)
+    recast.visit(ast, {
+      visitCallExpression (path) {
+        this.traverse(path) // pre-travserse children
+        if (self.isFormatCall(path)) {
+          self.lintFormatCall(path)
+        }
+      }
+    })
+  }
 
-	lint({ sourceCode, sourceFileName }) {
-		this.currentFileName = sourceFileName
-		let
-			self = this,
-			ast = recast.parse(sourceCode)
-		recast.visit(ast, {
-			visitCallExpression(path) {
-				this.traverse(path) // pre-travserse children
-				if (self.isFormatCall(path)) {
-					self.lintFormatCall(path)
-				}
-			}
-		})
-	}
+  lintFormatCall (path) {
+    const node = path.node
+    let error
+    let numErrors = 0
+    if (!this.isString(node.arguments[0])) {
+      this.reportWarning(path, 'Warning: called without a literal pattern')
+      ++numErrors
+    }
+    if (node.arguments[2] && !this.isString(node.arguments[2])) {
+      this.reportWarning(path, 'Warning: called with a non-literal locale')
+      ++numErrors
+    }
 
+    if (
+      this.isString(node.arguments[0])
+      && (error = this.getPatternError(this.getStringValue(node.arguments[0])))
+    ) {
+      this.reportError(path, 'SyntaxError: pattern is invalid', error.message)
+      return ++numErrors // can't continue validating pattern
+    }
 
-	lintFormatCall(path) {
-		let
-			node = path.node,
-			error,
-			numErrors = 0
-		if (!this.isString(node.arguments[0])) {
-			this.reportWarning(path, 'Warning: called without a literal pattern')
-			++numErrors
-		}
-		if (node.arguments[2] && !this.isString(node.arguments[2])) {
-			this.reportWarning(path, 'Warning: called with a non-literal locale')
-			++numErrors
-		}
+    if (this.isReplaceable(path) && this.translations) {
+      const locale = node.arguments[2] ?
+        this.getStringValue(node.arguments[2]) :
+        this.locale
+      const pattern = this.getStringValue(node.arguments[0])
+      const translation = this.translate(pattern, locale)
+      if (translation == null) {
+        this.reportWarning(
+          path,
+          'Warning: no ' + locale + ' translation found for key ' +
+            JSON.stringify(this.getKey(pattern))
+        )
+        ++numErrors
+      } else if ((error = this.getPatternError(translation))) {
+        this.reportError(
+          path,
+          'SyntaxError: ' + locale + ' translated pattern is invalid for key ' +
+            JSON.stringify(this.getKey(pattern)),
+          error.message
+        )
+        ++numErrors
+      }
+    }
 
-		if (
-			this.isString(node.arguments[0])
-			&& (error = this.getPatternError(this.getStringValue(node.arguments[0])))
-		) {
-			this.reportError(path, 'SyntaxError: pattern is invalid', error.message)
-			return ++numErrors // can't continue validating pattern
-		}
+    return numErrors
+  }
 
-		if (this.isReplaceable(path) && this.translations) {
-			let
-				locale = node.arguments[2] ?
-					this.getStringValue(node.arguments[2]) :
-					this.locale,
-				pattern = this.getStringValue(node.arguments[0]),
-				translation = this.translate(pattern, locale)
-			if (null == translation) {
-				this.reportWarning(
-					path,
-					'Warning: no ' + locale + ' translation found for key ' +
-						JSON.stringify(this.getKey(pattern))
-				)
-				++numErrors
-			} else if ((error = this.getPatternError(translation))) {
-				this.reportError(
-					path,
-					'SyntaxError: ' + locale + ' translated pattern is invalid for key ' +
-						JSON.stringify(this.getKey(pattern)),
-					error.message
-				)
-				++numErrors
-			}
-		}
+  getLocation (path) {
+    return (
+      '    at ' + this.formatName + ' (' +
+      this.currentFileName + ':' +
+      path.node.loc.start.line + ':' +
+      path.node.loc.start.column + ')'
+    )
+  }
 
-		return numErrors
-	}
+  reportWarning (path, message) {
+    console.warn(chalk.bold.yellow(message))
+    console.warn(chalk.yellow(this.getLocation(path)))
+  }
 
+  reportError (path, message, submessage) {
+    console.error(chalk.bold.red(message))
+    console.error(chalk.red(this.getLocation(path)))
+    if (submessage) {
+      const sub = '    ' + submessage.replace(/\n/g, '\n    ')
+      console.error(chalk.red(sub))
+    }
+  }
 
-	getLocation(path) {
-		return (
-			'    at ' + this.formatName + ' (' +
-			this.currentFileName + ':' +
-			path.node.loc.start.line + ':' +
-			path.node.loc.start.column + ')'
-		)
-	}
+  extract ({ sourceCode, sourceFileName }) {
+    this.currentFileName = sourceFileName
+    const self = this
+    const patterns = {}
+    const ast = recast.parse(sourceCode)
+    recast.visit(ast, {
+      visitCallExpression (path) {
+        this.traverse(path) // pre-travserse children
+        if (self.isReplaceable(path)) {
+          const pattern = self.getStringValue(path.node.arguments[0])
+          const error = self.getPatternError(pattern)
+          if (error) {
+            self.reportError(path, 'SyntaxError: pattern is invalid', error.message)
+          } else {
+            const key = self.getKey(pattern)
+            patterns[key] = getKeyNormalized(pattern)
+          }
+        }
+      }
+    })
+    return patterns
+  }
 
+  inline ({ sourceCode, sourceFileName, sourceMapName, inputSourceMap }) {
+    this.functions.length = 0
+    const self = this
+    const ast = recast.parse(sourceCode, { sourceFileName })
+    recast.visit(ast, {
+      visitCallExpression (path) {
+        this.traverse(path) // pre-travserse children
+        if (self.isReplaceable(path)) {
+          self.replace(path)
+        }
+      }
+    })
+    ast.program.body = ast.program.body.concat(this.getFunctionsStatements())
 
-	reportWarning(path, message) {
-		console.warn(chalk.bold.yellow(message))
-		console.warn(chalk.yellow(this.getLocation(path)))
-	}
+    sourceMapName = sourceMapName || (sourceFileName + '.map')
+    return recast.print(ast, { sourceMapName, inputSourceMap })
+  }
 
+  getStringValue (literal) {
+    if (literal.type === TemplateLiteral) {
+      return literal.quasis[0].value.cooked
+    }
+    return literal.value
+  }
 
-	reportError(path, message, submessage) {
-		console.error(chalk.bold.red(message))
-		console.error(chalk.red(this.getLocation(path)))
-		if (submessage) {
-			let sub = '    ' + submessage.replace(/\n/g, '\n    ')
-			console.error(chalk.red(sub))
-		}
-	}
+  isFormatCall (path) {
+    const node = path.node
+    return (
+      node.callee.name === this.formatName
+    )
+  }
 
+  isString (node) {
+    return node && (
+      node.type === Literal
+      && typeof node.value === 'string'
+      || (
+        node.type === TemplateLiteral
+        && node.expressions.length === 0
+        && node.quasis.length === 1
+      )
+    )
+  }
 
-	extract({ sourceCode, sourceFileName }) {
-		this.currentFileName = sourceFileName
-		let
-			self = this,
-			patterns = {},
-			ast = recast.parse(sourceCode)
-		recast.visit(ast, {
-			visitCallExpression(path) {
-				this.traverse(path) // pre-travserse children
-				if (self.isReplaceable(path)) {
-					let
-						pattern = self.getStringValue(path.node.arguments[0]),
-						error = self.getPatternError(pattern)
-					if (error) {
-						self.reportError(path, 'SyntaxError: pattern is invalid', error.message)
-					} else {
-						let key = self.getKey(pattern)
-						patterns[key] = getKeyNormalized(pattern)
-					}
-				}
-			}
-		})
-		return patterns
-	}
+  getPatternError (pattern) {
+    try {
+      Parser.parse(pattern)
+    } catch (error) {
+      return error
+    }
+  }
 
+  isReplaceable (path) {
+    const node = path.node
+    return (
+      this.isFormatCall(path)
+      // first argument is a literal string, or template literal with no expressions
+      && this.isString(node.arguments[0])
+      && (
+        // no specified locale, or is a literal string
+        !node.arguments[2]
+        || this.isString(node.arguments[2])
+      )
+    )
+  }
 
-	inline({ sourceCode, sourceFileName, sourceMapName, inputSourceMap }) {
-		this.functions.length = 0
-		let
-			self = this,
-			ast = recast.parse(sourceCode, { sourceFileName })
-		recast.visit(ast, {
-			visitCallExpression(path) {
-				this.traverse(path) // pre-travserse children
-				if (self.isReplaceable(path)) {
-					self.replace(path)
-				}
-			}
-		})
-		ast.program.body = ast.program.body.concat(this.getFunctionsStatements())
+  replace (path) {
+    const node = path.node
+    const locale = node.arguments[2] && this.getStringValue(node.arguments[2]) || this.locale
+    const originalPattern = this.getStringValue(node.arguments[0])
+    const pattern = this.translate(originalPattern, locale) || originalPattern
+    const patternAst = Parser.parse(pattern)
+    const params = node.arguments[1]
+    const formatName = this.formatName
+    let replacement
 
-		sourceMapName = sourceMapName || (sourceFileName + '.map')
-		return recast.print(ast, { sourceMapName, inputSourceMap })
-	}
+    if (patternAst.length === 1 && typeof patternAst[0] === 'string') {
+      replacement = builders.literal(patternAst[0])
+    } else if (patternAst.length === 0) {
+      replacement = builders.literal('')
+    } else {
+      const functionName = '$$_' + getKeyUnderscoredCrc32(pattern)
+      const codeString = Transpiler.transpile(patternAst, { locale, formatName, functionName })
+      const calleeExpr = builders.identifier(functionName)
+      const otherArguments = [
+        params || builders.literal(null)
+      ]
+      if (this.functions.indexOf(codeString) === -1) {
+        this.functions.push(codeString)
+      }
 
+      replacement = builders.callExpression(
+        calleeExpr, // callee
+        otherArguments // arguments
+      )
+    }
 
-	getStringValue(literal) {
-		if (literal.type === TemplateLiteral) {
-			return literal.quasis[0].value.cooked
-		}
-		return literal.value
-	}
+    path.replace(replacement)
+  }
 
+  getFunctionsStatements () {
+    const codeString = this.functions.join('\n')
+    const codeAst = recast.parse(codeString)
+    this.functions.length = 0
+    return codeAst.program.body
+  }
 
-	isFormatCall(path) {
-		let node = path.node
-		return (
-			node.callee.name === this.formatName
-		)
-	}
+  forEachFile (files, fn, ctx) {
+    for (let file of files) {
+      let source = file
+      if (typeof file === 'string') {
+        source = {
+          sourceFileName: file,
+          sourceCode: readFileSync(file, 'utf8')
+        }
+      }
+      fn.call(ctx, source)
+    }
+  }
 
+  sourceMapComment (map) {
+    return (
+      '\n//# sourceMappingURL=data:application/json;base64,' +
+      new Buffer(JSON.stringify(map)).toString('base64')
+    )
+  }
 
-	isString(node) {
-		return node && (
-			node.type === Literal
-			&& typeof node.value === 'string'
-			|| (
-				node.type === TemplateLiteral
-				&& node.expressions.length === 0
-				&& node.quasis.length === 1
-			)
-		)
-	}
+  static lint (source, options) {
+    return new Inliner(options).lint(source)
+  }
 
+  static extract (source, options) {
+    return new Inliner(options).extract(source)
+  }
 
-	getPatternError(pattern) {
-		try {
-			Parser.parse(pattern)
-		} catch (error) {
-			return error
-		}
-	}
+  static inline (source, options) {
+    return new Inliner(options).inline(source)
+  }
 
+  static lintFiles (files, options) {
+    const inliner = new Inliner(options)
+    inliner.forEachFile(files, source => inliner.lint(source))
+  }
 
-	isReplaceable(path) {
-		let node = path.node
-		return (
-			this.isFormatCall(path)
-			// first argument is a literal string, or template literal with no expressions
-			&& this.isString(node.arguments[0])
-			&& (
-				// no specified locale, or is a literal string
-				!node.arguments[2]
-				|| this.isString(node.arguments[2])
-			)
-		)
-	}
+  static extractFromFiles (files, options) {
+    const inliner = new Inliner(options)
+    const translations = {}
+    inliner.forEachFile(files, source => {
+      const patterns = inliner.extract(source)
+      Object.assign(translations, patterns)
+    })
+    const json = JSON.stringify({
+      [inliner.locale]: translations
+    }, null, '  ')
+    if (options.outFile) {
+      writeFileSync(options.outFile, json, 'utf8')
+    } else {
+      console.log(json)
+    }
+  }
 
+  static inlineFiles (files, options) {
+    if (options.outDir) {
+      Inliner.inlineManyToMany(files, options)
+    } else {
+      Inliner.inlineManyToOne(files, options)
+    }
+  }
 
-	replace(path) {
-		let
-			node = path.node,
-			locale = node.arguments[2] && this.getStringValue(node.arguments[2]) || this.locale,
-			originalPattern = this.getStringValue(node.arguments[0]),
-			pattern = this.translate(originalPattern, locale) || originalPattern,
-			patternAst = Parser.parse(pattern),
-			params = node.arguments[1],
-			formatName = this.formatName,
-			replacement
+  static inlineManyToMany (files, options) {
+    const inliner = new Inliner(options)
+    const root = resolve(options.root)
+    const outDir = options.outDir.replace(/\/$/, '') + '/'
+    inliner.forEachFile(files, source => {
+      const result = inliner.inline(source)
+      const outFileName = pathJoin(outDir, relative(root, source.sourceFileName))
+      mkdirp.sync(dirname(outFileName))
 
-		if (patternAst.length === 1 && 'string' === typeof patternAst[0]) {
-			replacement = builders.literal(patternAst[0])
-		} else if (patternAst.length === 0) {
-			replacement = builders.literal('')
-		} else {
-			let
-				functionName = '$$_' + getKeyUnderscoredCrc32(pattern),
-				codeString = Transpiler.transpile(patternAst, { locale, formatName, functionName }),
-				calleeExpr = builders.identifier(functionName),
-				otherArguments = [
-					params || builders.literal(null)
-				]
-			if (this.functions.indexOf(codeString) === -1) {
-				this.functions.push(codeString)
-			}
+      if (options.sourceMaps === 'inline') {
+        result.code += inliner.sourceMapComment(result.map)
+      } else if (options.sourceMaps) {
+        const mapFileName = outFileName + '.map'
+        writeFileSync(mapFileName, JSON.stringify(result.map), 'utf8')
+        result.code += '\n//# sourceMappingURL=' + basename(mapFileName)
+      }
 
-			replacement = builders.callExpression(
-				calleeExpr, // callee
-				otherArguments // arguments
-			)
-		}
+      writeFileSync(outFileName, result.code, 'utf8')
+    })
+  }
 
-		path.replace(replacement)
-	}
+  static inlineManyToOne (files, options) {
+    const inliner = new Inliner(options)
+    const outFileName = options.outFile || options.filename
+    const map = new sourceMap.SourceMapGenerator({
+      file: outFileName
+    })
+    let code = ''
+    let offset = 0
 
+    inliner.forEachFile(files, source => {
+      const result = inliner.inline(source)
+      const filename = source.souceFileName
+      const consumer = new sourceMap.SourceMapConsumer(result.map)
+      map._sources.add(filename)
+      map.setSourceContent(filename, source.sourceCode)
+      consumer.eachMapping(mapping => {
+        map._mappings.add({
+          generatedLine: mapping.generatedLine + offset,
+          generatedColumn: mapping.generatedColumn,
+          originalLine: mapping.originalLine,
+          originalColumn: mapping.originalColumn,
+          source: filename
+        })
+      })
 
-	getFunctionsStatements() {
-		let
-			codeString = this.functions.join('\n'),
-			codeAst = recast.parse(codeString)
-		this.functions.length = 0
-		return codeAst.program.body
-	}
+      code += result.code + '\n'
+      offset = code.split('\n').length
+    })
 
+    if (options.sourceMaps === 'inline') {
+      code += inliner.sourceMapComment(map)
+    } else if (options.sourceMaps) {
+      const mapFileName = outFileName + '.map'
+      mkdirp.sync(dirname(mapFileName))
+      writeFileSync(mapFileName, JSON.stringify(map), 'utf8')
+      code += '\n//# sourceMappingURL=' + basename(mapFileName)
+    }
 
-	forEachFile(files, fn, ctx) {
-		for (let file of files) {
-			let source = file
-			if ('string' === typeof file) {
-				source = {
-					sourceFileName: file,
-					sourceCode: readFileSync(file, 'utf8')
-				}
-			}
-			fn.call(ctx, source)
-		}
-	}
-
-
-	sourceMapComment(map) {
-		return (
-			'\n//# sourceMappingURL=data:application/json;base64,' +
-			new Buffer(JSON.stringify(map)).toString('base64')
-		)
-	}
-
-
-	static lint(source, options) {
-		return new Inliner(options).lint(source)
-	}
-
-
-	static extract(source, options) {
-		return new Inliner(options).extract(source)
-	}
-
-
-	static inline(source, options) {
-		return new Inliner(options).inline(source)
-	}
-
-
-	static lintFiles(files, options) {
-		let inliner = new Inliner(options)
-		inliner.forEachFile(files, function(source) {
-			inliner.lint(source)
-		})
-	}
-
-
-	static extractFromFiles(files, options) {
-		let
-			inliner = new Inliner(options),
-			translations = {}
-		inliner.forEachFile(files, function(source) {
-			let patterns = inliner.extract(source)
-			Object.assign(translations, patterns)
-		})
-		let json = JSON.stringify({
-			[inliner.locale]: translations
-		}, null, '  ')
-		if (options.outFile) {
-			writeFileSync(options.outFile, json, 'utf8')
-		} else {
-			console.log(json)
-		}
-	}
-
-
-	static inlineFiles(files, options) {
-		if (options.outDir) {
-			Inliner.inlineManyToMany(files, options)
-		} else {
-			Inliner.inlineManyToOne(files, options)
-		}
-	}
-
-
-	static inlineManyToMany(files, options) {
-		let
-			inliner = new Inliner(options),
-			root = resolve(options.root),
-			outDir = options.outDir.replace(/\/$/, '') + '/'
-		inliner.forEachFile(files, function(source) {
-			let
-				result = inliner.inline(source),
-				outFileName = pathJoin(outDir, relative(root, source.sourceFileName))
-			mkdirp.sync(dirname(outFileName))
-
-			if ('inline' === options.sourceMaps) {
-				result.code += inliner.sourceMapComment(result.map)
-			} else if (options.sourceMaps) {
-				let mapFileName = outFileName + '.map'
-				writeFileSync(mapFileName, JSON.stringify(result.map), 'utf8')
-				result.code += '\n//# sourceMappingURL=' + basename(mapFileName)
-			}
-
-			writeFileSync(outFileName, result.code, 'utf8')
-		})
-	}
-
-
-	static inlineManyToOne(files, options) {
-		let
-			inliner = new Inliner(options),
-			outFileName = options.outFile || options.filename,
-			map = new sourceMap.SourceMapGenerator({
-				file: outFileName
-			}),
-			code = '',
-			offset = 0
-
-		inliner.forEachFile(files, function(source) {
-			let
-				result = inliner.inline(source),
-				filename = source.souceFileName,
-				consumer = new sourceMap.SourceMapConsumer(result.map)
-			map._sources.add(filename)
-			map.setSourceContent(filename, source.sourceCode)
-			consumer.eachMapping(function(mapping) {
-				map._mappings.add({
-					generatedLine: mapping.generatedLine + offset,
-					generatedColumn: mapping.generatedColumn,
-					originalLine: mapping.originalLine,
-					originalColumn: mapping.originalColumn,
-					source: filename
-				})
-			})
-
-			code += result.code + '\n'
-			offset = code.split('\n').length
-		})
-
-		if ('inline' === options.sourceMaps) {
-			code += inliner.sourceMapComment(map)
-		} else if (options.sourceMaps) {
-			let mapFileName = outFileName + '.map'
-			mkdirp.sync(dirname(mapFileName))
-			writeFileSync(mapFileName, JSON.stringify(map), 'utf8')
-			code += '\n//# sourceMappingURL=' + basename(mapFileName)
-		}
-
-		if (options.outFile) {
-			mkdirp.sync(dirname(options.outFile))
-			writeFileSync(options.outFile, code, 'utf8')
-		} else {
-			console.log(code)
-		}
-	}
+    if (options.outFile) {
+      mkdirp.sync(dirname(options.outFile))
+      writeFileSync(options.outFile, code, 'utf8')
+    } else {
+      console.log(code)
+    }
+  }
 
 }
 
 export default Inliner
-

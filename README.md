@@ -5,6 +5,7 @@ Write default messages inline. Optionally transpile translations.
 [![npm Version][npm-image]][npm]
 [![Dependency Status][deps-image]][deps]
 [![Build Status][build-image]][build]
+[![js-standard-style][style-image]][style]
 
 
 Quick Start
@@ -283,6 +284,8 @@ See the [LICENSE-MIT file][LICENSE] for license text and copyright information.
 [deps-image]: https://img.shields.io/david/thetalecrafter/format-message.svg
 [build]: https://travis-ci.org/thetalecrafter/format-message
 [build-image]: https://img.shields.io/travis/thetalecrafter/format-message.svg
+[style]: https://github.com/feross/standard
+[style-image]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg
 [icu-message]: http://userguide.icu-project.org/formatparse/messages
 [icu-cpp]: http://icu-project.org/apiref/icu4c/classicu_1_1MessageFormat.html
 [icu-php]: http://php.net/manual/en/class.messageformatter.php

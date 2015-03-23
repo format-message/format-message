@@ -39,11 +39,9 @@
     "babel-loader": "4.2.0",
     "benchmark": "1.0.0",
     "chai": "2.1.2",
-    "eslint": "0.17.1",
     "intl": "0.1.4",
     "intl-messageformat": "1.1.0",
     "istanbul": "0.3.8",
-    "jscs": "1.11.3",
     "karma": "0.12.31",
     "karma-chai": "0.1.0",
     "karma-chrome-launcher": "0.1.7",
@@ -55,6 +53,7 @@
     "karma-sourcemap-loader": "0.3.4",
     "karma-webpack": "1.5.0",
     "mocha": "2.2.1",
+    "standard": "^3.2.1",
     "webpack": "1.7.3"
   },
   "scripts": {
@@ -62,12 +61,18 @@
     "benchmark-compile": "bin/format-message inline scripts/benchmark.src.js > scripts/benchmark.js",
     "cldr": "scripts/cldr.sh",
     "jshint": "jshint src/*.js",
-    "lint": "jscs src/*.js && eslint src/*.js || true",
+    "lint": "standard",
     "prepublish": "mkdir -p lib && cp src/*.json lib/ && babel --loose=all --optional=runtime src --out-dir lib && webpack -p",
     "test": "npm run lint && npm run test-setup && npm run test-node && npm run test-browsers",
     "test-browsers": "karma start --browsers Firefox,PhantomJS --single-run",
     "test-setup": "rm -rf test/inline && bin/format-message inline test/format.spec.js > test/format-inline.spec.js",
     "test-node": "istanbul cover _mocha -- -cG -R dot -r ./test/setup test/**/*.spec.js"
+  },
+  "standard": {
+    "ignore": [
+      "lib/**",
+      "test/format-inline.spec.js"
+    ]
   },
   "repository": {
     "type": "git",
