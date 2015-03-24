@@ -20,26 +20,26 @@ module.exports = function (config) {
 
     // list of files to exclude
     exclude: [
-			'test/**/*.cli.spec.js'
+      'test/**/*.cli.spec.js'
     ],
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-			'test/**/*.js': [ 'webpack', 'sourcemap' ]
+      'test/**/*.js': [ 'webpack', 'sourcemap' ]
     },
 
-		webpack: {
-			cache: true,
-			devtool: '#inline-source-map',
-			module: {
-				loaders: webpackConfig.module.loaders
-			}
-		},
+    webpack: {
+      cache: true,
+      devtool: '#inline-source-map',
+      module: {
+        loaders: webpackConfig.module.loaders
+      }
+    },
 
-		webpackMiddleware: {
-			noInfo: true
-		},
+    webpackMiddleware: {
+      noInfo: true
+    },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
@@ -62,7 +62,7 @@ module.exports = function (config) {
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
     browsers: [ 'Chrome', 'Firefox', 'Safari', 'PhantomJS' ],
-		browserNoActivityTimeout: 20000,
+    browserNoActivityTimeout: 30000,
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
