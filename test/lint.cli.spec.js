@@ -182,4 +182,50 @@ describe('format-message lint', () => {
       })
     })
   })
+
+  describe('autodetect function name', () => {
+    it('finds function name from require call', done => {
+      const input = 'var f=require("format-message");f("{")'
+      exec('bin/format-message lint', (err, stdout, stderr) => {
+        expect(stdout.toString('utf8')).to.equal('')
+        expect(stderr.toString('utf8')).to.match(/^SyntaxError\:/)
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('handles multiple function names in function context', done => {
+      const input = `
+        function foo(){
+          var f=require("format-message");
+          f("{")
+        }
+        function bar(){
+          formatMessage(foo)
+        }`
+      exec('bin/format-message lint', (err, stdout, stderr) => {
+        expect(stdout.toString('utf8')).to.equal('')
+        expect(stderr.toString('utf8')).to.contain('SyntaxError')
+        expect(stderr.toString('utf8')).to.contain('Warning')
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('finds function name from import', done => {
+      const input = 'import __ from "format-message";__("{")'
+      exec('bin/format-message lint', (err, stdout, stderr) => {
+        expect(stdout.toString('utf8')).to.equal('')
+        expect(stderr.toString('utf8')).to.match(/^SyntaxError\:/)
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('is disabled by --no-auto', done => {
+      const input = 'import __ from "format-message";__("{")'
+      exec('bin/format-message lint --no-auto', (err, stdout, stderr) => {
+        expect(stdout.toString('utf8')).to.equal('')
+        expect(stderr.toString('utf8')).to.equal('')
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+  })
 })

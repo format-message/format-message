@@ -7,9 +7,12 @@ import chalk from 'chalk'
 import Parser from 'message-format/parser'
 import { getTranslate, getGetKey, getKeyNormalized, getKeyUnderscoredCrc32 } from './translate-util'
 import Transpiler from './transpiler'
+import packageJson from '../package.json'
 const builders = recast.types.builders
 const Literal = recast.types.namedTypes.Literal.toString()
 const TemplateLiteral = recast.types.namedTypes.TemplateLiteral.toString()
+const CallExpression = recast.types.namedTypes.CallExpression.toString()
+const ImportDefaultSpecifier = recast.types.namedTypes.ImportDefaultSpecifier.toString()
 
 /**
  * Transforms source code, translating and inlining `formatMessage` calls
@@ -17,7 +20,9 @@ const TemplateLiteral = recast.types.namedTypes.TemplateLiteral.toString()
 class Inliner {
 
   constructor (options={}) {
-    this.formatName = options.functionName || 'formatMessage'
+    this.functionName = options.functionName || 'formatMessage'
+    this.autoDetectFunctionName = 'autoDetectFunctionName' in options ?
+      !!options.autoDetectFunctionName : true
     this.getKey = getGetKey(options)
     this.translate = getTranslate(options)
     this.translations = options.translations
@@ -30,14 +35,14 @@ class Inliner {
     this.currentFileName = sourceFileName
     const self = this
     const ast = recast.parse(sourceCode)
-    recast.visit(ast, {
+    recast.visit(ast, this.visitors({
       visitCallExpression (path) {
         this.traverse(path) // pre-travserse children
         if (self.isFormatCall(path)) {
           self.lintFormatCall(path)
         }
       }
-    })
+    }))
   }
 
   lintFormatCall (path) {
@@ -90,7 +95,7 @@ class Inliner {
 
   getLocation (path) {
     return (
-      '    at ' + this.formatName + ' (' +
+      '    at ' + this.functionName + ' (' +
       this.currentFileName + ':' +
       path.node.loc.start.line + ':' +
       path.node.loc.start.column + ')'
@@ -116,7 +121,7 @@ class Inliner {
     const self = this
     const patterns = {}
     const ast = recast.parse(sourceCode)
-    recast.visit(ast, {
+    recast.visit(ast, this.visitors({
       visitCallExpression (path) {
         this.traverse(path) // pre-travserse children
         if (self.isReplaceable(path)) {
@@ -130,7 +135,7 @@ class Inliner {
           }
         }
       }
-    })
+    }))
     return patterns
   }
 
@@ -138,18 +143,53 @@ class Inliner {
     this.functions.length = 0
     const self = this
     const ast = recast.parse(sourceCode, { sourceFileName })
-    recast.visit(ast, {
+    recast.visit(ast, this.visitors({
       visitCallExpression (path) {
         this.traverse(path) // pre-travserse children
         if (self.isReplaceable(path)) {
           self.replace(path)
         }
       }
-    })
+    }))
     ast.program.body = ast.program.body.concat(this.getFunctionsStatements())
 
     sourceMapName = sourceMapName || (sourceFileName + '.map')
     return recast.print(ast, { sourceMapName, inputSourceMap })
+  }
+
+  visitors (base) {
+    if (this.autoDetectFunctionName) {
+      const self = this
+      Object.assign(base, {
+        // simplistic function and file scope tracking
+        visitFunction (path) {
+          const functionName = self.functionName
+          this.traverse(path) // traverse children
+          self.functionName = functionName
+        },
+
+        visitProgram (path) {
+          const functionName = self.functionName
+          this.traverse(path) // traverse children
+          self.functionName = functionName
+        },
+
+        visitVariableDeclarator (path) {
+          this.traverse(path) // pre-travserse children
+          if (self.isFormatRequire(path.node.init)) {
+            self.functionName = path.node.id.name
+          }
+        },
+
+        visitImportDeclaration (path) {
+          this.traverse(path) // pre-travserse children
+          if (self.isFormatImport(path.node)) {
+            self.functionName = path.node.specifiers[0].id.name
+          }
+        }
+      })
+    }
+    return base
   }
 
   getStringValue (literal) {
@@ -162,7 +202,7 @@ class Inliner {
   isFormatCall (path) {
     const node = path.node
     return (
-      node.callee.name === this.formatName
+      node.callee.name === this.functionName
     )
   }
 
@@ -186,9 +226,33 @@ class Inliner {
     }
   }
 
+  isFormatRequire (node, depth=0) {
+    return node && (
+      node.type === CallExpression
+      && node.callee.name === 'require'
+      && this.isString(node.arguments[0])
+      && this.getStringValue(node.arguments[0]) === packageJson.name
+    ) || node && (
+      // _interopRequire or other wrapper
+      node.type === CallExpression
+      && depth <= 1 // allow at most one wrapper around require
+      && this.isFormatRequire(node.arguments[0], depth + 1)
+    )
+  }
+
+  isFormatImport (node) {
+    return node && (
+      node.source
+      && node.source.value === packageJson.name
+      && node.specifiers
+      && node.specifiers[0]
+      && node.specifiers[0].type === ImportDefaultSpecifier
+    )
+  }
+
   isReplaceable (path) {
     const node = path.node
-    return (
+    return node && (
       this.isFormatCall(path)
       // first argument is a literal string, or template literal with no expressions
       && this.isString(node.arguments[0])
@@ -207,7 +271,7 @@ class Inliner {
     const pattern = this.translate(originalPattern, locale) || originalPattern
     const patternAst = Parser.parse(pattern)
     const params = node.arguments[1]
-    const formatName = this.formatName
+    const formatName = this.functionName
     let replacement
 
     if (patternAst.length === 1 && typeof patternAst[0] === 'string') {

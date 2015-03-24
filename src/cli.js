@@ -49,6 +49,7 @@ program
   .command('lint [files...]')
   .description('find message patterns in files and verify there are no obvious problems')
   .option('-n, --function-name [name]', 'find function calls with this name [formatMessage]', 'formatMessage')
+  .option('--no-auto', 'disables auto-detecting the function name from import or require calls')
   .option('-k, --key-type [type]',
     'derived key from source pattern literal|normalized|underscored|underscored_crc32 [underscored_crc32]',
     'underscored_crc32'
@@ -87,6 +88,7 @@ program
     addStdinToFiles(files, options, () => {
       Inliner.lintFiles(files, {
         functionName: options.functionName,
+        autoDetectFunctionName: options.auto,
         translations: options.translations,
         keyType: options.keyType
       })
@@ -101,6 +103,7 @@ program
   .command('extract [files...]')
   .description('find and list all message patterns in files')
   .option('-n, --function-name [name]', 'find function calls with this name [formatMessage]', 'formatMessage')
+  .option('--no-auto', 'disables auto-detecting the function name from import or require calls')
   .option('-k, --key-type [type]',
     'derived key from source pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]',
     'underscored_crc32'
@@ -124,6 +127,7 @@ program
     addStdinToFiles(files, options, () => {
       Inliner.extractFromFiles(files, {
         functionName: options.functionName,
+        autoDetectFunctionName: options.auto,
         locale: options.locale,
         keyType: options.keyType,
         outFile: options.outFile
@@ -140,6 +144,7 @@ program
   .alias('translate')
   .description('find and replace message pattern calls in files with translations')
   .option('-n, --function-name [name]', 'find function calls with this name [formatMessage]', 'formatMessage')
+  .option('--no-auto', 'disables auto-detecting the function name from import or require calls')
   .option('-k, --key-type [type]',
     'derived key from source pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]',
     'underscored_crc32'
@@ -190,6 +195,7 @@ program
     addStdinToFiles(files, options, () => {
       Inliner.inlineFiles(files, {
         functionName: options.functionName,
+        autoDetectFunctionName: options.auto,
         locale: options.locale,
         keyType: options.keyType,
         translations: options.translations,

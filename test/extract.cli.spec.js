@@ -201,4 +201,64 @@ describe('format-message extract', () => {
       })
     })
   })
+
+  describe('autodetect function name', () => {
+    it('finds function name from require call', done => {
+      const input = 'var f=require("format-message");f("hello")'
+      exec('bin/format-message extract', (err, stdout, stderr) => {
+        stdout = stdout.toString('utf8')
+        const translations = JSON.parse(stdout)
+        expect(translations.en).to.eql({
+          hello_32e420db: 'hello'
+        })
+        expect(stderr.toString('utf8')).to.equal('')
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('handles multiple function names in function context', done => {
+      const input = `
+        function foo(){
+          var f=require("format-message");
+          f("hello")
+        }
+        function bar(){
+          formatMessage("bye")
+        }`
+      exec('bin/format-message extract', (err, stdout, stderr) => {
+        stdout = stdout.toString('utf8')
+        const translations = JSON.parse(stdout)
+        expect(translations.en).to.eql({
+          bye_374365a8: 'bye',
+          hello_32e420db: 'hello'
+        })
+        expect(stderr.toString('utf8')).to.equal('')
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('finds function name from import', done => {
+      const input = 'import __ from "format-message";__("hello")'
+      exec('bin/format-message extract', (err, stdout, stderr) => {
+        stdout = stdout.toString('utf8')
+        const translations = JSON.parse(stdout)
+        expect(translations.en).to.eql({
+          hello_32e420db: 'hello'
+        })
+        expect(stderr.toString('utf8')).to.equal('')
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('is disabled by --no-auto', done => {
+      const input = 'import __ from "format-message";__("hello")'
+      exec('bin/format-message extract --no-auto', (err, stdout, stderr) => {
+        stdout = stdout.toString('utf8')
+        const translations = JSON.parse(stdout)
+        expect(translations.en).to.eql({})
+        expect(stderr.toString('utf8')).to.equal('')
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+  })
 })
