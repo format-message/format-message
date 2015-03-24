@@ -185,6 +185,11 @@ let formatMessage(`On { date, date, short } {name} ate {
 CLI Tools
 ---------
 
+All of the command line tools will look for `require`ing or `import`ing
+format-message in your source files to determine the local name of the
+`formatMessage` function. Then they will either check for problems, extract
+the original message patterns, or replace the call as follows:
+
 ### format-message lint
 
 #### Usage: `format-message lint [options] [files...]`
@@ -195,6 +200,7 @@ find message patterns in files and verify there are no obvious problems
 
     -h, --help                  output usage information
     -n, --function-name [name]  find function calls with this name [formatMessage]
+    --no-auto                   disables auto-detecting the function name from import or require calls
     -k, --key-type [type]       derived key from source pattern literal|normalized|underscored|underscored_crc32 [underscored_crc32]
     -t, --translations [path]   location of the JSON file with message translations, if specified, translations are also checked for errors
     -f, --filename [filename]   filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]
@@ -220,6 +226,7 @@ find and list all message patterns in files
 
     -h, --help                  output usage information
     -n, --function-name [name]  find function calls with this name [formatMessage]
+    --no-auto                   disables auto-detecting the function name from import or require calls
     -k, --key-type [type]       derived key from source pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]
     -l, --locale [locale]       BCP 47 language tags specifying the source default locale [en]
     -o, --out-file [out]        write messages JSON object to this file instead of to stdout
@@ -246,6 +253,7 @@ find and replace message pattern calls in files with translations
 
     -h, --help                  output usage information
     -n, --function-name [name]  find function calls with this name [formatMessage]
+    --no-auto                   disables auto-detecting the function name from import or require calls
     -k, --key-type [type]       derived key from source pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]
     -l, --locale [locale]       BCP 47 language tags specifying the target locale [en]
     -t, --translations [path]   location of the JSON file with message translations

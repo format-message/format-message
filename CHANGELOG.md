@@ -9,69 +9,80 @@
 > - [Internal]
 > - [Polish]
 
+## 2.1.0
+
+* **New Feature**
+  * Auto detect function name based on `require` and `import`.
+* **Internal**
+  * Update dependencies.
+  * Follow [JS Standard Style](https://github.com/feross/standard).
+  * Make test timeouts more lenient because Karma is slow.
+* **Documentation**
+  * Document auto detecting function name.
+  * Update contributing guide to link to JS Standard Style.
+
 ## 2.0.0
 
 * **Breaking Change**
-	* Rename package to `format-message`
-	* Rename bin to `format-message`
-	* Rename default function-name to `formatMessage`
+  * Rename package to `format-message`.
+  * Rename bin to `format-message`.
+  * Rename default function-name to `formatMessage`.
 
 ## 1.0.4
 
 * **Bug Fix**
-	* Use caret version for glob since they delete old versions breaking npm install.
+  * Use caret version for glob since they delete old versions breaking npm install.
 * **Internal**
-	* Updated dependencies.
+  * Updated dependencies.
 
 ## 1.0.3
 
 * **Polish**
-	* Reduce duplication in replaced calls.
-	* Reduce probability of collisions when inlining multiple files.
+  * Reduce duplication in replaced calls.
+  * Reduce probability of collisions when inlining multiple files.
 
 ## 1.0.2
 
 * **Internal**
-	* Updated dependencies.
-	* Moved built files from `dist` to `lib`.
-	* Added `index.js` for platforms that don't lookup package.json main.
+  * Updated dependencies.
+  * Moved built files from `dist` to `lib`.
+  * Added `index.js` for platforms that don't lookup package.json main.
 
 ## 1.0.1
 
 * **Documentation**
-	* Removed dragons.
+  * Removed dragons.
 
 ## 1.0.0
 
 * **New Feature**
-	* Added `message-format lint` cli tool.
-	* Added `message-format extract` cli tool.
-	* Added `message-format inline` cli tool.
+  * Added `message-format lint` cli tool.
+  * Added `message-format extract` cli tool.
+  * Added `message-format inline` cli tool.
 * **Breaking Change**
-	* Removed `message-format-inline` cli tool.
-	* Removed `message-format-scrape` cli tool.
-	* Renamed `formatName` option to `functionName` in `Inliner`.
+  * Removed `message-format-inline` cli tool.
+  * Removed `message-format-scrape` cli tool.
+  * Renamed `formatName` option to `functionName` in `Inliner`.
 * **Bug Fix**
-	* Correctly load target locale plural rules when inlining.
+  * Correctly load target locale plural rules when inlining.
 * **Documentation**
-	* Added CLI documentation.
+  * Added CLI documentation.
 * **Internal**
-	* Switch from jasmine to mocha.
-	* Add test for inlined format.
+  * Switch from jasmine to mocha.
+  * Add test for inlined format.
 
 ## 0.2.0
 
 * **New Feature**
-	* Added `message-format-scrape` script.
-	* Allow `sourceMapName` option in `inline`.
+  * Added `message-format-scrape` script.
+  * Allow `sourceMapName` option in `inline`.
 
 ## 0.1.0
 
 * **New Feature**
-	* Added support for `selectordinal`.
+  * Added support for `selectordinal`.
 * **Bug Fix**
-	* Format unsupported rbnf types as `number`.
+  * Format unsupported rbnf types as `number`.
 * **Internal**
-	* Upgrade from `6to5` to `babel`.
-	* Use `eslint` and `jscs` for style checking.
-
+  * Upgrade from `6to5` to `babel`.
+  * Use `eslint` and `jscs` for style checking.
