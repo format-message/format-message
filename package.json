@@ -22,7 +22,7 @@
     "format-message": "bin/format-message"
   },
   "dependencies": {
-    "babel-runtime": "4.7.13",
+    "babel-runtime": "4.7.16",
     "chalk": "1.0.0",
     "commander": "2.7.1",
     "crc32": "0.2.2",
@@ -34,14 +34,14 @@
     "speakingurl": "1.1.0"
   },
   "devDependencies": {
-    "babel": "4.7.13",
-    "babel-core": "4.7.13",
+    "babel": "4.7.16",
+    "babel-core": "4.7.16",
     "babel-loader": "4.2.0",
     "benchmark": "1.0.0",
     "chai": "2.1.2",
     "intl": "0.1.4",
     "intl-messageformat": "1.1.0",
-    "istanbul": "0.3.8",
+    "istanbul": "0.3.10",
     "karma": "0.12.31",
     "karma-chai": "0.1.0",
     "karma-chrome-launcher": "0.1.7",
