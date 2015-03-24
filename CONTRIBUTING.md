@@ -19,13 +19,13 @@ contributing, please read the
 
 #### Code Standards
 
-follow [JavaScript Standard Style](https://github.com/feross/standard)
+* Use ES 2015 syntax, except anything that requires the babel runtime.
+* Follow [JavaScript Standard Style](https://github.com/feross/standard).
 
 ## Testing
 
-    $ npm test
+  $ npm test
 
 ## Linting
 
-    $ npm run lint
-
+  $ npm run lint

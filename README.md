@@ -5,7 +5,7 @@ Write default messages inline. Optionally transpile translations.
 [![npm Version][npm-image]][npm]
 [![Dependency Status][deps-image]][deps]
 [![Build Status][build-image]][build]
-[![js-standard-style][style-image]][style]
+[![JS Standard Style][style-image]][style]
 
 
 Quick Start
@@ -264,7 +264,7 @@ create locale-specific client bundles with source maps
     format-message inline src/**/*.js -s -l en -t translations.json -o dist/bundle.en.js
     format-message inline src/**/*.js -s -l es -t translations.json -o dist/bundle.es.js
     format-message inline src/**/*.js -s -l pt -t translations.json -o dist/bundle.pt.js
-		...
+    ...
 
 inline without translating multiple files that used `var __ = require('format-message')`
 
@@ -294,4 +294,3 @@ See the [LICENSE-MIT file][LICENSE] for license text and copyright information.
 [message-format]: https://github.com/thetalecrafter/message-format
 [recast]: https://github.com/benjamn/recast
 [LICENSE]: https://github.com/thetalecrafter/format-message/blob/master/LICENSE-MIT
-
