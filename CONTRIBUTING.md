@@ -24,8 +24,8 @@ contributing, please read the
 
 ## Testing
 
-  $ npm test
+    $ npm test
 
 ## Linting
 
-  $ npm run lint
+    $ npm run lint
