@@ -289,4 +289,50 @@ describe('format-message inline', () => {
       })
     })
   })
+
+  describe('autodetect function name', () => {
+    it('finds function name from require call', done => {
+      const input = 'var f=require("format-message");f("hello")'
+      exec('bin/format-message inline', (err, stdout, stderr) => {
+        expect(stderr.toString('utf8')).to.equal('')
+        expect(stdout.toString('utf8')).to.not.contain('f(')
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('handles multiple function names in function context', done => {
+      const input = `
+        function foo(){
+          var f=require("format-message");
+          f("hello")
+        }
+        function bar(){
+          formatMessage("bye")
+        }`
+      exec('bin/format-message inline', (err, stdout, stderr) => {
+        expect(stderr.toString('utf8')).to.equal('')
+        expect(stdout.toString('utf8')).to.not.contain('f(')
+        expect(stdout.toString('utf8')).to.not.contain('formatMessage(')
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('finds function name from import', done => {
+      const input = 'import __ from "format-message";__("hello")'
+      exec('bin/format-message inline', (err, stdout, stderr) => {
+        expect(stderr.toString('utf8')).to.equal('')
+        expect(stdout.toString('utf8')).to.not.contain('__(')
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('is disabled by --no-auto', done => {
+      const input = 'import __ from "format-message";__("hello")'
+      exec('bin/format-message inline --no-auto', (err, stdout, stderr) => {
+        expect(stderr.toString('utf8')).to.equal('')
+        expect(stdout.toString('utf8')).to.contain('__(')
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+  })
 })
