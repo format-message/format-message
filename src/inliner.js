@@ -32,9 +32,10 @@ class Inliner {
   }
 
   lint ({ sourceCode, sourceFileName }) {
-    this.currentFileName = sourceFileName
+    const ast = this.parse({ sourceCode, sourceFileName })
+    if (!ast) return
+
     const self = this
-    const ast = recast.parse(sourceCode)
     recast.visit(ast, this.visitors({
       visitCallExpression (path) {
         this.traverse(path) // pre-travserse children
@@ -117,10 +118,11 @@ class Inliner {
   }
 
   extract ({ sourceCode, sourceFileName }) {
-    this.currentFileName = sourceFileName
-    const self = this
+    const ast = this.parse({ sourceCode, sourceFileName })
+    if (!ast) return {}
+
     const patterns = {}
-    const ast = recast.parse(sourceCode)
+    const self = this
     recast.visit(ast, this.visitors({
       visitCallExpression (path) {
         this.traverse(path) // pre-travserse children
@@ -140,9 +142,11 @@ class Inliner {
   }
 
   inline ({ sourceCode, sourceFileName, sourceMapName, inputSourceMap }) {
+    const ast = this.parse({ sourceCode, sourceFileName })
+    if (!ast) return { code: sourceCode, map: inputSourceMap }
+
     this.functions.length = 0
     const self = this
-    const ast = recast.parse(sourceCode, { sourceFileName })
     recast.visit(ast, this.visitors({
       visitCallExpression (path) {
         this.traverse(path) // pre-travserse children
@@ -155,6 +159,17 @@ class Inliner {
 
     sourceMapName = sourceMapName || (sourceFileName + '.map')
     return recast.print(ast, { sourceMapName, inputSourceMap })
+  }
+
+  parse ({ sourceCode, sourceFileName }) {
+    this.currentFileName = sourceFileName
+    try {
+      return recast.parse(sourceCode, { sourceFileName })
+    } catch (error) {
+      console.error(chalk.bold.red('SyntaxError: Could not parse source code'))
+      console.error(chalk.red('    at ' + sourceFileName))
+      console.error(chalk.red('    ' + error.message))
+    }
   }
 
   visitors (base) {
