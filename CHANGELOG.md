@@ -9,6 +9,11 @@
 > - [Internal]
 > - [Polish]
 
+## 2.1.1
+
+* **Bug Fix**
+  * Parse error in source code triggers a helpful message and continues instead of dying.
+
 ## 2.1.0
 
 * **New Feature**
