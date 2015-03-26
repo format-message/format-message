@@ -1,4 +1,4 @@
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="80" height="64">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="82" height="66">
   <style>
     @-webkit-keyframes blink {
       0%, 98%, 100% {
@@ -24,7 +24,7 @@
     }
   </style>
   <path fill="#08F" d="
-    M16,64
+    M17,65
     v-16
     a16,16,0,0,1,-16,-16
     v-16
@@ -34,7 +34,7 @@
     z"
   />
   <path fill="#080" d="
-    M48,64
+    M49,65
     v-16
     h-8
     l12,-24 -12,-24
@@ -45,11 +45,11 @@
     z"
   />
   <path fill="#fff" id="e" d="
-    M20,16
+    M21,17
     a8,8,0,0,0,0,16
     a8,8,0,0,0,0,-16
     z
-    M68,16 h-8 v16 h8
+    M69,17 h-8 v16 h8
     z"
   />
 </svg>
