@@ -1,11 +1,14 @@
-# format-message
+# ![format-message][logo]
 
 Write default messages inline. Optionally transpile translations.
 
 [![npm Version][npm-image]][npm]
 [![Dependency Status][deps-image]][deps]
+[![Dev Dependency Status][dev-deps-image]][dev-deps]
 [![Build Status][build-image]][build]
+
 [![JS Standard Style][style-image]][style]
+[![MIT License][license-image]][LICENSE]
 
 
 Quick Start
@@ -286,14 +289,18 @@ This software is free to use under the MIT license.
 See the [LICENSE-MIT file][LICENSE] for license text and copyright information.
 
 
+[logo]: https://raw.githubusercontent.com/thetalecrafter/format-message/master/src/logo/format-message.svg
 [npm]: https://www.npmjs.org/package/format-message
 [npm-image]: https://img.shields.io/npm/v/format-message.svg
 [deps]: https://david-dm.org/thetalecrafter/format-message
 [deps-image]: https://img.shields.io/david/thetalecrafter/format-message.svg
+[dev-deps]: https://david-dm.org/thetalecrafter/format-message#info=devDependencies
+[dev-deps-image]: https://img.shields.io/david/dev/thetalecrafter/format-message.svg
 [build]: https://travis-ci.org/thetalecrafter/format-message
 [build-image]: https://img.shields.io/travis/thetalecrafter/format-message.svg
 [style]: https://github.com/feross/standard
 [style-image]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg
+[license-image]: https://img.shields.io/npm/l/format-message.svg
 [icu-message]: http://userguide.icu-project.org/formatparse/messages
 [icu-cpp]: http://icu-project.org/apiref/icu4c/classicu_1_1MessageFormat.html
 [icu-php]: http://php.net/manual/en/class.messageformatter.php
