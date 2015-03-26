@@ -21,7 +21,6 @@ node_modules
 
 # generated
 lib
-tmp-cldr
 coverage
 scripts/benchmark.js
 test/format-inline.spec.js

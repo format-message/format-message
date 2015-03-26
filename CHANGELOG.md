@@ -9,6 +9,11 @@
 > - [Internal]
 > - [Polish]
 
+## 2.2.0
+
+* **Spec Compliancy**
+  * Update to CLDR 27 (adds 'as' and 'ce' locales)
+
 ## 2.1.1
 
 * **Bug Fix**

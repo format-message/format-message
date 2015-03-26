@@ -1,4 +1,6 @@
 import { readFileSync, writeFileSync } from 'fs'
+import pluralsJSON from 'cldr-core/supplemental/plurals.json'
+import ordinalsJSON from 'cldr-core/supplemental/ordinals.json'
 
 const pluralVars = {
   i: 'Math.floor(Math.abs(+s))',
@@ -45,10 +47,8 @@ function parseRules (rules) {
   return data
 }
 
-const pluralFileName = __dirname + '/tmp-cldr/supplemental/plurals.json'
-const ordinalFileName = __dirname + '/tmp-cldr/supplemental/ordinals.json'
-const pluralsTypeCardinal = JSON.parse(readFileSync(pluralFileName, 'utf8')).supplemental['plurals-type-cardinal']
-const pluralsTypeOrdinal = JSON.parse(readFileSync(ordinalFileName, 'utf8')).supplemental['plurals-type-ordinal']
+const pluralsTypeCardinal = pluralsJSON.supplemental['plurals-type-cardinal']
+const pluralsTypeOrdinal = ordinalsJSON.supplemental['plurals-type-ordinal']
 let locales = {}
 
 for (let locale in pluralsTypeCardinal) {

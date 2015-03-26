@@ -21,7 +21,6 @@ node_modules
 
 # non-distribution files
 src
-tmp-cldr
 coverage
 scripts
 test
