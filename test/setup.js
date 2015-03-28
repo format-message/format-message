@@ -1,4 +1,4 @@
 require('babel/register')({
-	loose: 'all',
-	optional: [ 'runtime' ]
+  loose: 'all',
+  optional: [ 'runtime' ]
 })
