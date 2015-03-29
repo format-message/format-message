@@ -23,7 +23,7 @@
       animation: blink 10s ease infinite;
     }
   </style>
-  <path fill="#08F" d="
+  <path fill="#06f" d="
     M17,65
     v-16
     a16,16,0,0,1,-16,-16
