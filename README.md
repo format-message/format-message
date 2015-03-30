@@ -254,18 +254,20 @@ find and replace message pattern calls in files with translations
 
 #### Options:
 
-    -h, --help                  output usage information
-    -n, --function-name [name]  find function calls with this name [formatMessage]
-    --no-auto                   disables auto-detecting the function name from import or require calls
-    -k, --key-type [type]       derived key from source pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]
-    -l, --locale [locale]       BCP 47 language tags specifying the target locale [en]
-    -t, --translations [path]   location of the JSON file with message translations
-    -i, --source-maps-inline    append sourceMappingURL comment to bottom of code
-    -s, --source-maps           save source map alongside the compiled code
-    -f, --filename [filename]   filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]
-    -o, --out-file [out]        compile all input files into a single file
-    -d, --out-dir [out]         compile an input directory of modules into an output directory
-    -r, --root [path]           remove root path for source filename in output directory [cwd]
+    -h, --help                            output usage information
+    -n, --function-name [name]            find function calls with this name [formatMessage]
+    --no-auto                             disables auto-detecting the function name from import or require calls
+    -k, --key-type [type]                 derived key from source pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]
+    -l, --locale [locale]                 BCP 47 language tags specifying the target locale [en]
+    -t, --translations [path]             location of the JSON file with message translations
+    -e, --missing-translation [behavior]  behavior when --translations is specified, but a translated pattern is missing (error | warning | ignore) [error]
+    -m, --missing-replacement [pattern]   pattern to inline when a translated pattern is missing, defaults to the source pattern
+    -i, --source-maps-inline              append sourceMappingURL comment to bottom of code
+    -s, --source-maps                     save source map alongside the compiled code
+    -f, --filename [filename]             filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]
+    -o, --out-file [out]                  compile all input files into a single file
+    -d, --out-dir [out]                   compile an input directory of modules into an output directory
+    -r, --root [path]                     remove root path for source filename in output directory [cwd]
 
 #### Examples:
 

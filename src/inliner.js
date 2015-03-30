@@ -26,9 +26,41 @@ class Inliner {
     this.getKey = getGetKey(options)
     this.translate = getTranslate(options)
     this.translations = options.translations
+    this.missingTranslation = options.missingTranslation
+    this.missingReplacement = options.missingReplacement
     this.locale = options.locale || 'en'
     this.functions = []
     this.currentFileName = null
+
+    if (typeof options.emitWarning === 'function') {
+      this.emitWarning = options.emitWarning
+    }
+    if (typeof options.emitError === 'function') {
+      this.emitError = options.emitError
+    }
+    if (typeof options.emitResult === 'function') {
+      this.emitResult = options.emitResult
+    }
+    if (typeof options.emitFile === 'function') {
+      this.emitFile = options.emitFile
+    }
+  }
+
+  emitWarning (message) {
+    console.warn(message)
+  }
+
+  emitError (message) {
+    console.error(message)
+  }
+
+  emitResult (code) {
+    console.log(code)
+  }
+
+  emitFile (filename, content, sourcemap) {
+    mkdirp.sync(dirname(filename))
+    writeFileSync(filename, content, 'utf8')
   }
 
   lint ({ sourceCode, sourceFileName }) {
@@ -104,17 +136,22 @@ class Inliner {
   }
 
   reportWarning (path, message) {
-    console.warn(chalk.bold.yellow(message))
-    console.warn(chalk.yellow(this.getLocation(path)))
+    this.emitWarning(
+      chalk.bold.yellow(message) + '\n' +
+      chalk.yellow(this.getLocation(path))
+    )
   }
 
   reportError (path, message, submessage) {
-    console.error(chalk.bold.red(message))
-    console.error(chalk.red(this.getLocation(path)))
-    if (submessage) {
-      const sub = '    ' + submessage.replace(/\n/g, '\n    ')
-      console.error(chalk.red(sub))
-    }
+    this.emitError(
+      chalk.red(
+        chalk.bold(message) + '\n' +
+        this.getLocation(path) +
+        (!submessage ? '' :
+          '\n    ' + submessage.replace(/\n/g, '\n    ')
+        )
+      )
+    )
   }
 
   extract ({ sourceCode, sourceFileName }) {
@@ -166,9 +203,13 @@ class Inliner {
     try {
       return recast.parse(sourceCode, { sourceFileName })
     } catch (error) {
-      console.error(chalk.bold.red('SyntaxError: Could not parse source code'))
-      console.error(chalk.red('    at ' + sourceFileName))
-      console.error(chalk.red('    ' + error.message))
+      this.emitError(
+        chalk.red(
+          chalk.bold('SyntaxError: Could not parse source code') + '\n' +
+          '    at ' + sourceFileName + '\n' +
+          '    ' + error.message
+        )
+      )
     }
   }
 
@@ -282,11 +323,14 @@ class Inliner {
   replace (path) {
     const node = path.node
     const locale = node.arguments[2] && this.getStringValue(node.arguments[2]) || this.locale
-    const originalPattern = this.getStringValue(node.arguments[0])
-    const pattern = this.translate(originalPattern, locale) || originalPattern
-    const patternAst = Parser.parse(pattern)
     const params = node.arguments[1]
     const formatName = this.functionName
+    const originalPattern = this.getStringValue(node.arguments[0])
+    let pattern = this.translate(originalPattern, locale)
+    if (pattern == null) {
+      pattern = this.handleMissingTranslation(originalPattern, locale, path)
+    }
+    const patternAst = Parser.parse(pattern)
     let replacement
 
     if (patternAst.length === 1 && typeof patternAst[0] === 'string') {
@@ -313,6 +357,23 @@ class Inliner {
     path.replace(replacement)
   }
 
+  handleMissingTranslation (originalPattern, locale, path) {
+    const replacement = this.missingReplacement || originalPattern
+    const message = 'no ' + locale + ' translation found for key ' +
+      JSON.stringify(this.getKey(originalPattern))
+
+    if (this.missingTranslation === 'ignore') {
+      // do nothing
+    } else if (this.missingTranslation === 'warning') {
+      this.reportWarning(path, 'Warning: ' + message)
+    } else { // 'error'
+      this.reportError(path, 'Error: ' + message)
+      throw new Error(message)
+    }
+
+    return replacement
+  }
+
   getFunctionsStatements () {
     const codeString = this.functions.join('\n')
     const codeAst = recast.parse(codeString)
@@ -333,9 +394,13 @@ class Inliner {
     }
   }
 
-  sourceMapComment (map) {
-    return (
-      '\n//# sourceMappingURL=data:application/json;base64,' +
+  sourceMapComment (path) {
+    return '\n//# sourceMappingURL=' + path
+  }
+
+  sourceMapInlineComment (map) {
+    return this.sourceMapComment(
+      'data:application/json;base64,' +
       new Buffer(JSON.stringify(map)).toString('base64')
     )
   }
@@ -368,9 +433,9 @@ class Inliner {
       [inliner.locale]: translations
     }, null, '  ')
     if (options.outFile) {
-      writeFileSync(options.outFile, json, 'utf8')
+      inliner.emitFile(options.outFile, json)
     } else {
-      console.log(json)
+      inliner.emitResult(json)
     }
   }
 
@@ -389,17 +454,16 @@ class Inliner {
     inliner.forEachFile(files, source => {
       const result = inliner.inline(source)
       const outFileName = pathJoin(outDir, relative(root, source.sourceFileName))
-      mkdirp.sync(dirname(outFileName))
 
       if (options.sourceMaps === 'inline') {
-        result.code += inliner.sourceMapComment(result.map)
+        result.code += inliner.sourceMapInlineComment(result.map)
       } else if (options.sourceMaps) {
         const mapFileName = outFileName + '.map'
-        writeFileSync(mapFileName, JSON.stringify(result.map), 'utf8')
-        result.code += '\n//# sourceMappingURL=' + basename(mapFileName)
+        inliner.emitFile(mapFileName, JSON.stringify(result.map))
+        result.code += inliner.sourceMapComment(basename(mapFileName))
       }
 
-      writeFileSync(outFileName, result.code, 'utf8')
+      inliner.emitFile(outFileName, result.code, result.map)
     })
   }
 
@@ -433,19 +497,17 @@ class Inliner {
     })
 
     if (options.sourceMaps === 'inline') {
-      code += inliner.sourceMapComment(map)
+      code += inliner.sourceMapInlineComment(map)
     } else if (options.sourceMaps) {
       const mapFileName = outFileName + '.map'
-      mkdirp.sync(dirname(mapFileName))
-      writeFileSync(mapFileName, JSON.stringify(map), 'utf8')
-      code += '\n//# sourceMappingURL=' + basename(mapFileName)
+      inliner.emitFile(mapFileName, JSON.stringify(map))
+      code += inliner.sourceMapComment(basename(mapFileName))
     }
 
     if (options.outFile) {
-      mkdirp.sync(dirname(options.outFile))
-      writeFileSync(options.outFile, code, 'utf8')
+      inliner.emitFile(options.outFile, code, map)
     } else {
-      console.log(code)
+      inliner.emitResult(code)
     }
   }
 
