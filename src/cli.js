@@ -1,6 +1,8 @@
 import program from 'commander'
 import { existsSync, readFileSync } from 'fs'
 import glob from 'glob'
+import Linter from './linter'
+import Extractor from './extractor'
 import Inliner from './inliner'
 import pkg from '../package.json'
 
@@ -86,7 +88,7 @@ program
     }
 
     addStdinToFiles(files, options, () => {
-      Inliner.lintFiles(files, {
+      Linter.lintFiles(files, {
         functionName: options.functionName,
         autoDetectFunctionName: options.auto,
         translations: options.translations,
@@ -125,7 +127,7 @@ program
     }
 
     addStdinToFiles(files, options, () => {
-      Inliner.extractFromFiles(files, {
+      Extractor.extractFromFiles(files, {
         functionName: options.functionName,
         autoDetectFunctionName: options.auto,
         locale: options.locale,

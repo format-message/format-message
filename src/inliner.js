@@ -1,326 +1,37 @@
-import { readFileSync, writeFileSync } from 'fs'
-import { relative, resolve, dirname, basename, join as pathJoin } from 'path'
-import mkdirp from 'mkdirp'
+import Visitor from './visitor'
+import { relative, resolve, basename, join as pathJoin } from 'path'
 import recast from 'recast'
 import sourceMap from 'source-map'
-import chalk from 'chalk'
 import Parser from 'message-format/parser'
-import { getTranslate, getGetKey, getKeyNormalized, getKeyUnderscoredCrc32 } from './translate-util'
+import { getKeyUnderscoredCrc32 } from './translate-util'
 import Transpiler from './transpiler'
-import packageJson from '../package.json'
 const builders = recast.types.builders
-const Literal = recast.types.namedTypes.Literal.toString()
-const TemplateLiteral = recast.types.namedTypes.TemplateLiteral.toString()
-const CallExpression = recast.types.namedTypes.CallExpression.toString()
-const ImportDefaultSpecifier = recast.types.namedTypes.ImportDefaultSpecifier.toString()
 
 /**
  * Transforms source code, translating and inlining `formatMessage` calls
  **/
-class Inliner {
+export default class Inliner extends Visitor {
 
-  constructor (options={}) {
-    this.functionName = options.functionName || 'formatMessage'
-    this.autoDetectFunctionName = 'autoDetectFunctionName' in options ?
-      !!options.autoDetectFunctionName : true
-    this.getKey = getGetKey(options)
-    this.translate = getTranslate(options)
-    this.translations = options.translations
-    this.missingTranslation = options.missingTranslation
-    this.missingReplacement = options.missingReplacement
-    this.locale = options.locale || 'en'
+  constructor (options) {
+    super(options)
     this.functions = []
-    this.currentFileName = null
-
-    if (typeof options.emitWarning === 'function') {
-      this.emitWarning = options.emitWarning
-    }
-    if (typeof options.emitError === 'function') {
-      this.emitError = options.emitError
-    }
-    if (typeof options.emitResult === 'function') {
-      this.emitResult = options.emitResult
-    }
-    if (typeof options.emitFile === 'function') {
-      this.emitFile = options.emitFile
-    }
-  }
-
-  emitWarning (message) {
-    console.warn(message)
-  }
-
-  emitError (message) {
-    console.error(message)
-  }
-
-  emitResult (code) {
-    console.log(code)
-  }
-
-  emitFile (filename, content, sourcemap) {
-    mkdirp.sync(dirname(filename))
-    writeFileSync(filename, content, 'utf8')
-  }
-
-  lint ({ sourceCode, sourceFileName }) {
-    const ast = this.parse({ sourceCode, sourceFileName })
-    if (!ast) return
-
-    const self = this
-    recast.visit(ast, this.visitors({
-      visitCallExpression (path) {
-        this.traverse(path) // pre-travserse children
-        if (self.isFormatCall(path)) {
-          self.lintFormatCall(path)
-        }
-      }
-    }))
-  }
-
-  lintFormatCall (path) {
-    const node = path.node
-    let error
-    let numErrors = 0
-    if (!this.isString(node.arguments[0])) {
-      this.reportWarning(path, 'Warning: called without a literal pattern')
-      ++numErrors
-    }
-    if (node.arguments[2] && !this.isString(node.arguments[2])) {
-      this.reportWarning(path, 'Warning: called with a non-literal locale')
-      ++numErrors
-    }
-
-    if (
-      this.isString(node.arguments[0])
-      && (error = this.getPatternError(this.getStringValue(node.arguments[0])))
-    ) {
-      this.reportError(path, 'SyntaxError: pattern is invalid', error.message)
-      return ++numErrors // can't continue validating pattern
-    }
-
-    if (this.isReplaceable(path) && this.translations) {
-      const locale = node.arguments[2] ?
-        this.getStringValue(node.arguments[2]) :
-        this.locale
-      const pattern = this.getStringValue(node.arguments[0])
-      const translation = this.translate(pattern, locale)
-      if (translation == null) {
-        this.reportWarning(
-          path,
-          'Warning: no ' + locale + ' translation found for key ' +
-            JSON.stringify(this.getKey(pattern))
-        )
-        ++numErrors
-      } else if ((error = this.getPatternError(translation))) {
-        this.reportError(
-          path,
-          'SyntaxError: ' + locale + ' translated pattern is invalid for key ' +
-            JSON.stringify(this.getKey(pattern)),
-          error.message
-        )
-        ++numErrors
-      }
-    }
-
-    return numErrors
-  }
-
-  getLocation (path) {
-    return (
-      '    at ' + this.functionName + ' (' +
-      this.currentFileName + ':' +
-      path.node.loc.start.line + ':' +
-      path.node.loc.start.column + ')'
-    )
-  }
-
-  reportWarning (path, message) {
-    this.emitWarning(
-      chalk.bold.yellow(message) + '\n' +
-      chalk.yellow(this.getLocation(path))
-    )
-  }
-
-  reportError (path, message, submessage) {
-    this.emitError(
-      chalk.red(
-        chalk.bold(message) + '\n' +
-        this.getLocation(path) +
-        (!submessage ? '' :
-          '\n    ' + submessage.replace(/\n/g, '\n    ')
-        )
-      )
-    )
-  }
-
-  extract ({ sourceCode, sourceFileName }) {
-    const ast = this.parse({ sourceCode, sourceFileName })
-    if (!ast) return {}
-
-    const patterns = {}
-    const self = this
-    recast.visit(ast, this.visitors({
-      visitCallExpression (path) {
-        this.traverse(path) // pre-travserse children
-        if (self.isReplaceable(path)) {
-          const pattern = self.getStringValue(path.node.arguments[0])
-          const error = self.getPatternError(pattern)
-          if (error) {
-            self.reportError(path, 'SyntaxError: pattern is invalid', error.message)
-          } else {
-            const key = self.getKey(pattern)
-            patterns[key] = getKeyNormalized(pattern)
-          }
-        }
-      }
-    }))
-    return patterns
   }
 
   inline ({ sourceCode, sourceFileName, sourceMapName, inputSourceMap }) {
-    const ast = this.parse({ sourceCode, sourceFileName })
+    this.functions.length = 0
+    const ast = this.run({ sourceCode, sourceFileName })
     if (!ast) return { code: sourceCode, map: inputSourceMap }
 
-    this.functions.length = 0
-    const self = this
-    recast.visit(ast, this.visitors({
-      visitCallExpression (path) {
-        this.traverse(path) // pre-travserse children
-        if (self.isReplaceable(path)) {
-          self.replace(path)
-        }
-      }
-    }))
     ast.program.body = ast.program.body.concat(this.getFunctionsStatements())
 
     sourceMapName = sourceMapName || (sourceFileName + '.map')
-    return recast.print(ast, { sourceMapName, inputSourceMap })
+    return this.print({ ast, sourceMapName, inputSourceMap })
   }
 
-  parse ({ sourceCode, sourceFileName }) {
-    this.currentFileName = sourceFileName
-    try {
-      return recast.parse(sourceCode, { sourceFileName })
-    } catch (error) {
-      this.emitError(
-        chalk.red(
-          chalk.bold('SyntaxError: Could not parse source code') + '\n' +
-          '    at ' + sourceFileName + '\n' +
-          '    ' + error.message
-        )
-      )
-    }
-  }
+  visitFormatCall (path, traverser) {
+    traverser.traverse(path) // pre-travserse children
+    if (!this.isReplaceable(path)) return
 
-  visitors (base) {
-    if (this.autoDetectFunctionName) {
-      const self = this
-      Object.assign(base, {
-        // simplistic function and file scope tracking
-        visitFunction (path) {
-          const functionName = self.functionName
-          this.traverse(path) // traverse children
-          self.functionName = functionName
-        },
-
-        visitProgram (path) {
-          const functionName = self.functionName
-          this.traverse(path) // traverse children
-          self.functionName = functionName
-        },
-
-        visitVariableDeclarator (path) {
-          this.traverse(path) // pre-travserse children
-          if (self.isFormatRequire(path.node.init)) {
-            self.functionName = path.node.id.name
-          }
-        },
-
-        visitImportDeclaration (path) {
-          this.traverse(path) // pre-travserse children
-          if (self.isFormatImport(path.node)) {
-            self.functionName = path.node.specifiers[0].id.name
-          }
-        }
-      })
-    }
-    return base
-  }
-
-  getStringValue (literal) {
-    if (literal.type === TemplateLiteral) {
-      return literal.quasis[0].value.cooked
-    }
-    return literal.value
-  }
-
-  isFormatCall (path) {
-    const node = path.node
-    return (
-      node.callee.name === this.functionName
-    )
-  }
-
-  isString (node) {
-    return node && (
-      node.type === Literal
-      && typeof node.value === 'string'
-      || (
-        node.type === TemplateLiteral
-        && node.expressions.length === 0
-        && node.quasis.length === 1
-      )
-    )
-  }
-
-  getPatternError (pattern) {
-    try {
-      Parser.parse(pattern)
-    } catch (error) {
-      return error
-    }
-  }
-
-  isFormatRequire (node, depth=0) {
-    return node && (
-      node.type === CallExpression
-      && node.callee.name === 'require'
-      && this.isString(node.arguments[0])
-      && this.getStringValue(node.arguments[0]) === packageJson.name
-    ) || node && (
-      // _interopRequire or other wrapper
-      node.type === CallExpression
-      && depth <= 1 // allow at most one wrapper around require
-      && this.isFormatRequire(node.arguments[0], depth + 1)
-    )
-  }
-
-  isFormatImport (node) {
-    return node && (
-      node.source
-      && node.source.value === packageJson.name
-      && node.specifiers
-      && node.specifiers[0]
-      && node.specifiers[0].type === ImportDefaultSpecifier
-    )
-  }
-
-  isReplaceable (path) {
-    const node = path.node
-    return node && (
-      this.isFormatCall(path)
-      // first argument is a literal string, or template literal with no expressions
-      && this.isString(node.arguments[0])
-      && (
-        // no specified locale, or is a literal string
-        !node.arguments[2]
-        || this.isString(node.arguments[2])
-      )
-    )
-  }
-
-  replace (path) {
     const node = path.node
     const locale = node.arguments[2] && this.getStringValue(node.arguments[2]) || this.locale
     const params = node.arguments[1]
@@ -381,19 +92,6 @@ class Inliner {
     return codeAst.program.body
   }
 
-  forEachFile (files, fn, ctx) {
-    for (let file of files) {
-      let source = file
-      if (typeof file === 'string') {
-        source = {
-          sourceFileName: file,
-          sourceCode: readFileSync(file, 'utf8')
-        }
-      }
-      fn.call(ctx, source)
-    }
-  }
-
   sourceMapComment (path) {
     return '\n//# sourceMappingURL=' + path
   }
@@ -405,38 +103,8 @@ class Inliner {
     )
   }
 
-  static lint (source, options) {
-    return new Inliner(options).lint(source)
-  }
-
-  static extract (source, options) {
-    return new Inliner(options).extract(source)
-  }
-
   static inline (source, options) {
     return new Inliner(options).inline(source)
-  }
-
-  static lintFiles (files, options) {
-    const inliner = new Inliner(options)
-    inliner.forEachFile(files, source => inliner.lint(source))
-  }
-
-  static extractFromFiles (files, options) {
-    const inliner = new Inliner(options)
-    const translations = {}
-    inliner.forEachFile(files, source => {
-      const patterns = inliner.extract(source)
-      Object.assign(translations, patterns)
-    })
-    const json = JSON.stringify({
-      [inliner.locale]: translations
-    }, null, '  ')
-    if (options.outFile) {
-      inliner.emitFile(options.outFile, json)
-    } else {
-      inliner.emitResult(json)
-    }
   }
 
   static inlineFiles (files, options) {
@@ -512,5 +180,3 @@ class Inliner {
   }
 
 }
-
-export default Inliner
