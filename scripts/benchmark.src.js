@@ -39,13 +39,12 @@ benchmark(
 pattern = 'Simple string with { placeholder }.'
 intlMF = new IntlMF(pattern, 'en-US').format
 mf = new MessageFormat(pattern, 'en-US').format
-args = { placeholder: 'replaced value' }
 benchmark(
   'Format common one arg message', {
-    'intl-messageformat (reuse object)': () => intlMF(args),
-    'message-format (reuse object)': () => mf(args),
-    'format': () => formatMessage(pattern, args, 'en-US'),
-    'format (transpiled)': () => formatMessage('Simple string with { placeholder }.', args, 'en-US')
+    'intl-messageformat (reuse object)': () => intlMF({ placeholder: 'replaced value' }),
+    'message-format (reuse object)': () => mf({ placeholder: 'replaced value' }),
+    'format': () => formatMessage(pattern, { placeholder: 'replaced value' }, 'en-US'),
+    'format (transpiled)': () => formatMessage('Simple string with { placeholder }.', { placeholder: 'replaced value' }, 'en-US')
   }
 )
 

@@ -72,7 +72,8 @@
   "standard": {
     "ignore": [
       "lib/**",
-      "test/format-inline.spec.js"
+      "test/format-inline.spec.js",
+      "scripts/benchmark.js"
     ]
   },
   "repository": {

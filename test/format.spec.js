@@ -17,14 +17,16 @@ describe('formatMessage', () => {
     })
 
     it('accepts arguments', () => {
-      const message = formatMessage('x{ arg }z', { arg: 'y' })
+      const arg = 'y'
+      const message = formatMessage('x{ arg }z', { arg })
       expect(message).to.equal('xyz')
     })
 
     it('formats numbers, dates, and times', () => {
+      const d = new Date(0)
       const message = formatMessage(
         '{ n, number } : { d, date, short } { d, time, short }',
-        { n: 0, d: new Date(0) }
+        { n: 0, d }
       )
       expect(message).to.match(/^0 \: \d\d?\/\d\d?\/\d{2,4} \d\d?\:\d\d [AP]M$/)
     })

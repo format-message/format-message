@@ -34,7 +34,7 @@ export default class Inliner extends Visitor {
 
     const node = path.node
     const locale = node.arguments[2] && this.getStringValue(node.arguments[2]) || this.locale
-    const params = node.arguments[1] || builders.literal(null)
+    const paramsNode = node.arguments[1] || builders.literal(null)
     const functionName = this.functionName
     const originalPattern = this.getStringValue(node.arguments[0])
     let pattern = this.translate(originalPattern, locale)
@@ -42,12 +42,12 @@ export default class Inliner extends Visitor {
       pattern = this.handleMissingTranslation(originalPattern, locale, path)
     }
     const patternAst = Parser.parse(pattern)
-    const { replacement, declaration } = Transpiler.transpile(patternAst, { locale, functionName, params, originalPattern })
+    const { replacement, declaration } = Transpiler.transpile(patternAst, { locale, functionName, paramsNode, originalPattern })
     this.addDeclaration(declaration)
     // body[0] should be an ExpressionStatement, so its expresion is what we want
     const codeAst = recast.parse(replacement).program.body[0].expression
     if (codeAst.type === CallExpression) {
-      codeAst.arguments = [ params ]
+      codeAst.arguments = [ paramsNode ]
     }
     path.replace(codeAst)
   }

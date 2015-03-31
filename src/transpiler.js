@@ -34,6 +34,32 @@ class Transpiler {
     this.originalPattern = options.originalPattern
   }
 
+  checkUseArgExpressions (elements) {
+    const blacklist = [ 'plural', 'selectordinal', 'select' ]
+    const noIntermediateVars = elements.every(element => {
+      return (typeof element === 'string') ||
+        (blacklist.indexOf(element[1]) === -1)
+    })
+    const noPossibleSideEffects = this.paramsNode && (
+      this.paramsNode.type === 'ObjectExpression' &&
+      this.paramsNode.properties.every(prop => {
+        return (
+          prop.key.type === 'Identifier' && (
+            prop.value.type === 'Identifier' ||
+            prop.value.type === 'Literal'
+          )
+        )
+      })
+    )
+    this.useArgExpressions = false
+    if (noIntermediateVars && noPossibleSideEffects) {
+      this.useArgExpressions = this.paramsNode.properties.reduce((argMap, prop) => {
+        argMap[prop.key.name] = prop.value.raw || prop.value.name
+        return argMap
+      }, {})
+    }
+  }
+
   transpile (elements) {
     this.vars = {}
 
@@ -45,9 +71,15 @@ class Transpiler {
       return { replacement: JSON.stringify(elements[0]) }
     }
 
+    this.checkUseArgExpressions(elements)
+
     elements = elements.map(
       element => this.transpileElement(element, null)
     )
+
+    if (this.useArgExpressions) {
+      return { replacement: elements.join(' + ') }
+    }
 
     const vars = Object.keys(this.vars)
     const key = this.originalPattern || elements.join(' ')
@@ -108,13 +140,13 @@ class Transpiler {
       case 'select':
         return this.transpileSelect(id, style)
       default:
-        return this.transpileSimple(id)
+        return this.transpileArgument(id)
     }
   }
 
   transpileNumber (id, offset, style) {
     return this.functionName + '.number(' + JSON.stringify(this.locale) + ', ' +
-        'args[' + JSON.stringify(id) + ']' +
+        this.transpileArgument(id) +
         (offset ? '-' + offset : '') +
         (style ? ', ' + JSON.stringify(style) : '') +
       ')'
@@ -122,7 +154,7 @@ class Transpiler {
 
   transpileDateTime (id, type, style) {
     return this.functionName + '.' + type + '(' + JSON.stringify(this.locale) + ', ' +
-        'args[' + JSON.stringify(id) + ']' +
+        this.transpileArgument(id) +
         (style ? ', ' + JSON.stringify(style) : '') +
       ')'
   }
@@ -139,7 +171,7 @@ class Transpiler {
     let exact = ''
     let sub
     const vars = [
-      's=args[' + JSON.stringify(id) + ']',
+      's=' + this.transpileArgument(id),
       'n=+s'
     ]
     const pvars = []
@@ -186,7 +218,7 @@ class Transpiler {
 
   transpileSelect (id, children) {
     let other = '""'
-    let select = '(\n    (s=args[' + JSON.stringify(id) + '],'
+    let select = '(\n    (s=' + this.transpileArgument(id) + ','
     this.vars.s = true
     Object.keys(children).forEach((key, i) => {
       if (key === 'other') {
@@ -203,8 +235,10 @@ class Transpiler {
     return select
   }
 
-  transpileSimple (id) {
-    return 'args[' + JSON.stringify(id) + ']'
+  transpileArgument (id) {
+    return this.useArgExpressions ?
+      this.useArgExpressions[id] :
+      'args[' + JSON.stringify(id) + ']'
   }
 
   static transpile (elements, options) {

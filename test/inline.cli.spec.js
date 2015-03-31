@@ -249,7 +249,7 @@ describe('format-message inline', () => {
           'setup.js'
         ].sort())
         const fileContent = readFileSync(dirname + '/format.spec.js', 'utf8')
-        expect(fileContent.trim()).to.contain('"x" + args["arg"] + "z"')
+        expect(fileContent.trim()).to.contain('"x" + arg + "z"')
         done(err)
       })
     })
@@ -281,7 +281,7 @@ describe('format-message inline', () => {
         const fileContent =
           readFileSync(dirname + '/format.spec.js', 'utf8')
           .split('\/\/# sourceMappingURL=')
-        expect(fileContent[0].trim()).to.contain('"x" + args["arg"] + "z"')
+        expect(fileContent[0].trim()).to.contain('"x" + arg + "z"')
         expect((fileContent[1] || '').trim()).to.equal('format.spec.js.map')
         const sourceMap = readFileSync(dirname + '/format.spec.js.map', 'utf8')
         expect(JSON.parse(sourceMap)).to.not.be.empty
