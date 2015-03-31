@@ -1,7 +1,7 @@
 import locales from './locales.json'
 import lookupClosestLocale from 'message-format/lib/lookup-closest-locale'
-import data from 'message-format/lib/data'
-const formats = data.formats
+import { formats } from 'message-format/lib/data'
+import { getKeyUnderscoredCrc32 } from './translate-util'
 
 /**
  * Transpiler
@@ -29,27 +29,35 @@ class Transpiler {
   constructor (options={}) {
     this.vars = {}
     this.locale = options.locale || 'en'
-    this.formatName = options.formatName || 'formatMessage'
-    this.functionName = options.functionName || ''
+    this.functionName = options.functionName || 'formatMessage'
+    this.paramsNode = options.paramsNode
+    this.originalPattern = options.originalPattern
   }
 
   transpile (elements) {
     this.vars = {}
+
+    if (elements.length === 0) {
+      return { replacement: '""' }
+    }
+
+    if (elements.length === 1 && typeof elements[0] === 'string') {
+      return { replacement: JSON.stringify(elements[0]) }
+    }
+
     elements = elements.map(
       element => this.transpileElement(element, null)
     )
 
-    if (elements.length === 0) {
-      return '""'
-    }
-
     const vars = Object.keys(this.vars)
-    const init = vars.length === 0 ? '' :
-      '  var ' + vars.join(', ') + ';\n'
-    return 'function ' + this.functionName + '(args) {\n' +
-      init +
+    const key = this.originalPattern || elements.join(' ')
+    const functionName = '$$_' + getKeyUnderscoredCrc32(key)
+    const replacement = functionName + '(args)' // args needs to be swapped by consumer
+    const declaration = 'function ' + functionName + ' (args) {\n' +
+      (!vars.length ? '' : '  var ' + vars.join(', ') + ';\n') +
       '  return ' + elements.join(' + ') +
     ';\n}'
+    return { replacement, declaration }
   }
 
   transpileSub (elements, parent) {
@@ -104,22 +112,8 @@ class Transpiler {
     }
   }
 
-  transpileNumberInline (id, offset, style='medium') {
-    const opts = formats.number[style]
-    return 'new Intl.NumberFormat(' + JSON.stringify(this.locale) + ', ' +
-      JSON.stringify(opts) + ').format(args[' +
-      JSON.stringify(id) + ']' + (offset ? '-' + offset : '') + ')'
-  }
-
-  transpileDateTimeInline (id, type, style='medium') {
-    const opts = formats[type][style]
-    return 'new Intl.DateTimeFormat(' + JSON.stringify(this.locale) + ', ' +
-      JSON.stringify(opts) + ').format(args[' +
-      JSON.stringify(id) + '])'
-  }
-
   transpileNumber (id, offset, style) {
-    return this.formatName + '.number(' + JSON.stringify(this.locale) + ', ' +
+    return this.functionName + '.number(' + JSON.stringify(this.locale) + ', ' +
         'args[' + JSON.stringify(id) + ']' +
         (offset ? '-' + offset : '') +
         (style ? ', ' + JSON.stringify(style) : '') +
@@ -127,7 +121,7 @@ class Transpiler {
   }
 
   transpileDateTime (id, type, style) {
-    return this.formatName + '.' + type + '(' + JSON.stringify(this.locale) + ', ' +
+    return this.functionName + '.' + type + '(' + JSON.stringify(this.locale) + ', ' +
         'args[' + JSON.stringify(id) + ']' +
         (style ? ', ' + JSON.stringify(style) : '') +
       ')'

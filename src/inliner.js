@@ -3,9 +3,9 @@ import { relative, resolve, basename, join as pathJoin } from 'path'
 import recast from 'recast'
 import sourceMap from 'source-map'
 import Parser from 'message-format/parser'
-import { getKeyUnderscoredCrc32 } from './translate-util'
 import Transpiler from './transpiler'
 const builders = recast.types.builders
+const CallExpression = recast.types.namedTypes.CallExpression.toString()
 
 /**
  * Transforms source code, translating and inlining `formatMessage` calls
@@ -14,15 +14,15 @@ export default class Inliner extends Visitor {
 
   constructor (options) {
     super(options)
-    this.functions = []
+    this.declarations = []
   }
 
   inline ({ sourceCode, sourceFileName, sourceMapName, inputSourceMap }) {
-    this.functions.length = 0
+    this.declarations.length = 0
     const ast = this.run({ sourceCode, sourceFileName })
     if (!ast) return { code: sourceCode, map: inputSourceMap }
 
-    ast.program.body = ast.program.body.concat(this.getFunctionsStatements())
+    ast.program.body = ast.program.body.concat(this.getDeclarations())
 
     sourceMapName = sourceMapName || (sourceFileName + '.map')
     return this.print({ ast, sourceMapName, inputSourceMap })
@@ -34,38 +34,22 @@ export default class Inliner extends Visitor {
 
     const node = path.node
     const locale = node.arguments[2] && this.getStringValue(node.arguments[2]) || this.locale
-    const params = node.arguments[1]
-    const formatName = this.functionName
+    const params = node.arguments[1] || builders.literal(null)
+    const functionName = this.functionName
     const originalPattern = this.getStringValue(node.arguments[0])
     let pattern = this.translate(originalPattern, locale)
     if (pattern == null) {
       pattern = this.handleMissingTranslation(originalPattern, locale, path)
     }
     const patternAst = Parser.parse(pattern)
-    let replacement
-
-    if (patternAst.length === 1 && typeof patternAst[0] === 'string') {
-      replacement = builders.literal(patternAst[0])
-    } else if (patternAst.length === 0) {
-      replacement = builders.literal('')
-    } else {
-      const functionName = '$$_' + getKeyUnderscoredCrc32(pattern)
-      const codeString = Transpiler.transpile(patternAst, { locale, formatName, functionName })
-      const calleeExpr = builders.identifier(functionName)
-      const otherArguments = [
-        params || builders.literal(null)
-      ]
-      if (this.functions.indexOf(codeString) === -1) {
-        this.functions.push(codeString)
-      }
-
-      replacement = builders.callExpression(
-        calleeExpr, // callee
-        otherArguments // arguments
-      )
+    const { replacement, declaration } = Transpiler.transpile(patternAst, { locale, functionName, params, originalPattern })
+    this.addDeclaration(declaration)
+    // body[0] should be an ExpressionStatement, so its expresion is what we want
+    const codeAst = recast.parse(replacement).program.body[0].expression
+    if (codeAst.type === CallExpression) {
+      codeAst.arguments = [ params ]
     }
-
-    path.replace(replacement)
+    path.replace(codeAst)
   }
 
   handleMissingTranslation (originalPattern, locale, path) {
@@ -85,10 +69,16 @@ export default class Inliner extends Visitor {
     return replacement
   }
 
-  getFunctionsStatements () {
-    const codeString = this.functions.join('\n')
+  addDeclaration (decl) {
+    if (decl && this.declarations.indexOf(decl) === -1) {
+      this.declarations.push(decl)
+    }
+  }
+
+  getDeclarations () {
+    const codeString = this.declarations.join('\n')
     const codeAst = recast.parse(codeString)
-    this.functions.length = 0
+    this.declarations.length = 0
     return codeAst.program.body
   }
 
