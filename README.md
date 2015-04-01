@@ -1,6 +1,6 @@
 # ![format-message][logo]
 
-Write default messages inline. Optionally transpile translations.
+> Write i18n messages inline. Transpile translations.
 
 [![npm Version][npm-image]][npm]
 [![Dependency Status][deps-image]][deps]
@@ -14,8 +14,7 @@ Write default messages inline. Optionally transpile translations.
 Quick Start
 -----------
 
-`npm install format-message --save` adds the library to `node_modules`. You can
-then use it as follows:
+`npm install format-message --save` adds the library to `node_modules`. You can then use it as follows:
 
 ```js
 var formatMessage = require('format-message');
@@ -23,31 +22,19 @@ var formatMessage = require('format-message');
 var message = formatMessage('Hello { place }!', { place:'World' });
 ```
 
-Your source code does not need to be transpiled in order to work properly, so
-you can use `formatMessage` in server-side code, and transpile your source for better
-performance in repeated use on the client.
+You can configure your translations at runtime (typical for server-side use), or transpile your code for better performance in repeated use on the client.
 
-format-message relies on `Intl.NumberFormat` and `Intl.DateTimeFormat`
-for formatting `number`, `date`, and `time` arguments. If you are in an
-environment missing these (like node <= 0.12, IE < 11, or Safari) you'll
-need to use a [polyfill][intl].
+`format-message` relies on the ECMAScript Internationalization API 1.0 (`Intl`) for formatting `number`, `date`, and `time` arguments. If you are in an environment missing these ([like node <= 0.12, IE < 11, or Safari][caniuse-intl]) you'll want to use a [polyfill][intl]. Otherwise `format-message` falls back on `toLocaleString` methods, which are most likely just aliases for `toString`.
 
 
-Overview
---------
+Format Overview
+---------------
 
-The [ICU Message Format][icu-message] is a great format for user-visible
-strings, and includes simple placeholders, number and date placeholders, and
-selecting among submessages for gender and plural arguments. The format is
-used in apis in [C++][icu-cpp], [PHP][icu-php], and [Java][icu-java].
+The [ICU Message Format][icu-message] is a great format for user-visible strings, and includes simple placeholders, number and date placeholders, and selecting among submessages for gender and plural arguments. The format is used in apis in [C++][icu-cpp], [PHP][icu-php], and [Java][icu-java].
 
-format-message provides a way to write your default (often English)
-messages as literals in your source, and then scrape out the default patterns
-and transpile your source with fast inline code for formatting the translated
-message patterns.
+`format-message` provides a way to write your default (often English) messages as literals in your source, and then scrape out the default patterns and transpile your source with fast inline code for formatting the translated message patterns.
 
-This relies on [message-format][message-format] for parsing and formatting ICU
-messages, and [recast][recast] for transpiling the source code.
+This relies on [message-format][message-format] for parsing and formatting ICU messages, and [recast][recast] for transpiling the source code.
 
 ### Supported ICU Formats
 
@@ -55,15 +42,11 @@ See [message-format][message-format] for supported ICU formats.
 
 ### Quoting escaping rules
 
-See the [ICU site][icu-message] and [message-format][message-format] for
-details on how to escape special characters in your messages.
+See the [ICU site][icu-message] and [message-format][message-format] for details on how to escape special characters in your messages.
 
 ### Loading locale data
 
-format-message supports plurals for all CLDR languages. Locale-aware
-formatting of number, date, and time are delegated to the `Intl` objects,
-and select is the same across all locales. You don't need to load any extra
-files for particular locales for format-message.
+`format-message` supports plurals for all CLDR languages. Locale-aware formatting of number, date, and time are delegated to the `Intl` apis, and select is the same across all locales. You don't need to load any extra files for particular locales for `format-message` itself.
 
 
 API
@@ -97,8 +80,7 @@ Parameters
 formatMessage.setup(options)
 ```
 
-Configure `formatMessage` behavior for subsequent calls. This should be called before
-any code that uses `formatMessage`.
+Configure `formatMessage` behavior for subsequent calls. This should be called before any code that uses `formatMessage`.
 
 Parameters
 
@@ -111,17 +93,13 @@ Parameters
 
 ### internal apis
 
-`formatMessage.number`, `formatMessage.date`, and `formatMessage.time` are used internally and are
-not intended for external use. Because these appear in the transpiled code,
-transpiling does not remove the need to properly define `formatMessage` through
-`require` or `import`.
+`formatMessage.number`, `formatMessage.date`, and `formatMessage.time` are used internally and are not intended for external use. Because these appear in the transpiled code, transpiling does not remove the need to properly define `formatMessage` through `require` or `import`.
 
 
-Example Messages
+Transpiled Messages
 --------
 
-The examples provide sample transpiler output. This output is not meant to be
-100% exact, but to give a general idea of what the transpiler does.
+The examples provide sample transpiler output. This output is not meant to be 100% exact, but to give a general idea of what the transpiler does.
 
 ### Simple messages with no placeholders
 
@@ -135,27 +113,35 @@ formatMessage('My Collections')
 ### Simple string placeholders
 
 ```js
-formatMessage('Welcome, {name}!', { name:'Bob' });
+formatMessage('Welcome, {name}!', { name: userName });
 
-// non-trivial messages transpile to self-invoking function
-(function(locale, args) {
-  return "Bem Vindo, " +
-    args["name"] +
-    "!";
-})("pt-BR", { name:'Bob' });
+// messages with simple placeholders transpiles to concatenated strings
+"Bem Vindo, " + userName + "!" // Bem Vindo, Bob!
 ```
 
-### number, date, and time placeholders
+### Complex number, date, and time placeholders
 
 ```js
-formatMessage('You took {n,number} pictures since {d,date} {d,time}', { n:4000, d:new Date() });
-// en-US: "You took 4,000 pictures since Jan 1, 2015 9:33:04 AM"
-
 formatMessage('{ n, number, percent }', { n:0.1 });
-// en-US: "10%"
+
+// transpiles to just the number call
+formatMessage.number("en", 0.1, "percent") // "10%"
+
 
 formatMessage('{ shorty, date, short }', { shorty:new Date() });
-// en-US: "1/1/15"
+
+// transpiles to just the date call
+formatMessage.date("en", new Date(), "short") // "1/1/15"
+
+
+formatMessage('You took {n,number} pictures since {d,date} {d,time}', { n:4000, d:new Date() });
+
+// transpiles to a function call, with the function defined at the top level
+$$_you_took_n_number_pictures_123456({ n:4000, d:new Date() })
+...
+function $$_you_took_n_number_pictures_123456(args) {
+  return "You took " + formatMessage.number("en", args["n"]) + " pictures since " + formatMessage.date("en", args["d"]) + " " + formatMessage.time("en", args["d"])
+} // "You took 4,000 pictures since Jan 1, 2015 9:33:04 AM"
 ```
 
 ### Complex string with select and plural in ES6
@@ -181,17 +167,28 @@ let formatMessage(`On { date, date, short } {name} ate {
   gender: 'male',
   numBananas: 27
 })
+
+// transpiles to a function call, with the function defined at the top level
+$$_on_date_date_short_name_ate_123456({ n:4000, d:new Date() })
+...
+function $$_on_date_date_short_name_ate_123456(args) {
+  return ...
+}
 // en-US: "On 1/1/15 Curious George ate 27 bananas at his house."
 ```
+
+### Current Optimizations
+
+* Calls with no placeholders in the message become string literals.
+* Calls with no `plural`, `select`, or `selectordinal` in the message, and an object literal with variables or literals for property values become concatentated strings and variables.
+
+All other cases result in a function call, with the function declaration somewhere at the top level of the file.
 
 
 CLI Tools
 ---------
 
-All of the command line tools will look for `require`ing or `import`ing
-format-message in your source files to determine the local name of the
-`formatMessage` function. Then they will either check for problems, extract
-the original message patterns, or replace the call as follows:
+All of the command line tools will look for `require`ing or `import`ing `format-message` in your source files to determine the local name of the `formatMessage` function. Then they will either check for problems, extract the original message patterns, or replace the call as follows:
 
 ### format-message lint
 
@@ -236,8 +233,7 @@ find and list all message patterns in files
 
 #### Examples:
 
-extract patterns from src js files, dump json to `stdout`. This can be helpful
-to get familiar with how `--key-type` and `--locale` change the json output.
+extract patterns from src js files, dump json to `stdout`. This can be helpful to get familiar with how `--key-type` and `--locale` change the json output.
 
     format-message extract src/**/*.js
 
@@ -287,8 +283,7 @@ inline without translating multiple files that used `var __ = require('format-me
 License
 -------
 
-This software is free to use under the MIT license.
-See the [LICENSE-MIT file][LICENSE] for license text and copyright information.
+This software is free to use under the MIT license. See the [LICENSE-MIT file][LICENSE] for license text and copyright information.
 
 
 [logo]: https://cdn.rawgit.com/thetalecrafter/format-message/37f270b/src/logo/format-message.svg
@@ -303,6 +298,7 @@ See the [LICENSE-MIT file][LICENSE] for license text and copyright information.
 [style]: https://github.com/feross/standard
 [style-image]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg
 [license-image]: https://img.shields.io/npm/l/format-message.svg
+[caniuse-intl]: http://caniuse.com/#feat=internationalization
 [icu-message]: http://userguide.icu-project.org/formatparse/messages
 [icu-cpp]: http://icu-project.org/apiref/icu4c/classicu_1_1MessageFormat.html
 [icu-php]: http://php.net/manual/en/class.messageformatter.php
