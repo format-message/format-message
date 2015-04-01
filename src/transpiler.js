@@ -1,7 +1,7 @@
 import locales from './locales.json'
 import lookupClosestLocale from 'message-format/lib/lookup-closest-locale'
-import data from 'message-format/lib/data'
-const formats = data.formats
+import { formats } from 'message-format/lib/data'
+import { getKeyUnderscoredCrc32 } from './translate-util'
 
 /**
  * Transpiler
@@ -29,27 +29,67 @@ class Transpiler {
   constructor (options={}) {
     this.vars = {}
     this.locale = options.locale || 'en'
-    this.formatName = options.formatName || 'formatMessage'
-    this.functionName = options.functionName || ''
+    this.functionName = options.functionName || 'formatMessage'
+    this.paramsNode = options.paramsNode
+    this.originalPattern = options.originalPattern
+  }
+
+  checkUseArgExpressions (elements) {
+    const blacklist = [ 'plural', 'selectordinal', 'select' ]
+    const noIntermediateVars = elements.every(element => {
+      return (typeof element === 'string') ||
+        (blacklist.indexOf(element[1]) === -1)
+    })
+    const noPossibleSideEffects = this.paramsNode && (
+      this.paramsNode.type === 'ObjectExpression' &&
+      this.paramsNode.properties.every(prop => {
+        return (
+          prop.key.type === 'Identifier' && (
+            prop.value.type === 'Identifier' ||
+            prop.value.type === 'Literal'
+          )
+        )
+      })
+    )
+    this.useArgExpressions = false
+    if (noIntermediateVars && noPossibleSideEffects) {
+      this.useArgExpressions = this.paramsNode.properties.reduce((argMap, prop) => {
+        argMap[prop.key.name] = prop.value.raw || prop.value.name
+        return argMap
+      }, {})
+    }
   }
 
   transpile (elements) {
     this.vars = {}
+
+    if (elements.length === 0) {
+      return { replacement: '""' }
+    }
+
+    if (elements.length === 1 && typeof elements[0] === 'string') {
+      return { replacement: JSON.stringify(elements[0]) }
+    }
+
+    this.checkUseArgExpressions(elements)
+
     elements = elements.map(
       element => this.transpileElement(element, null)
     )
 
-    if (elements.length === 0) {
-      return '""'
+    if (this.useArgExpressions) {
+      return { replacement: elements.join(' + ') }
     }
 
     const vars = Object.keys(this.vars)
-    const init = vars.length === 0 ? '' :
-      '  var ' + vars.join(', ') + ';\n'
-    return 'function ' + this.functionName + '(args) {\n' +
-      init +
+    const key = this.originalPattern || elements.join(' ')
+    const functionName = '$$_' + getKeyUnderscoredCrc32(key)
+    const replacement = functionName + '(' + this.functionName + ', args)' // args needs to be swapped by consumer
+    const declaration = 'function ' + functionName + ' (' + this.functionName + ', args) {\n' +
+      (!vars.length ? '' : '  var ' + vars.join(', ') + ';\n') +
       '  return ' + elements.join(' + ') +
     ';\n}'
+    return { replacement, declaration }
   }
 
   transpileSub (elements, parent) {
@@ -100,35 +140,21 @@ class Transpiler {
       case 'select':
         return this.transpileSelect(id, style)
       default:
-        return this.transpileSimple(id)
+        return this.transpileArgument(id)
     }
   }
 
-  transpileNumberInline (id, offset, style='medium') {
-    const opts = formats.number[style]
-    return 'new Intl.NumberFormat(' + JSON.stringify(this.locale) + ', ' +
-      JSON.stringify(opts) + ').format(args[' +
-      JSON.stringify(id) + ']' + (offset ? '-' + offset : '') + ')'
-  }
-
-  transpileDateTimeInline (id, type, style='medium') {
-    const opts = formats[type][style]
-    return 'new Intl.DateTimeFormat(' + JSON.stringify(this.locale) + ', ' +
-      JSON.stringify(opts) + ').format(args[' +
-      JSON.stringify(id) + '])'
-  }
-
   transpileNumber (id, offset, style) {
-    return this.formatName + '.number(' + JSON.stringify(this.locale) + ', ' +
-        'args[' + JSON.stringify(id) + ']' +
+    return this.functionName + '.number(' + JSON.stringify(this.locale) + ', ' +
+        this.transpileArgument(id) +
         (offset ? '-' + offset : '') +
         (style ? ', ' + JSON.stringify(style) : '') +
       ')'
   }
 
   transpileDateTime (id, type, style) {
-    return this.formatName + '.' + type + '(' + JSON.stringify(this.locale) + ', ' +
-        'args[' + JSON.stringify(id) + ']' +
+    return this.functionName + '.' + type + '(' + JSON.stringify(this.locale) + ', ' +
+        this.transpileArgument(id) +
         (style ? ', ' + JSON.stringify(style) : '') +
       ')'
   }
@@ -145,7 +171,7 @@ class Transpiler {
     let exact = ''
     let sub
     const vars = [
-      's=args[' + JSON.stringify(id) + ']',
+      's=' + this.transpileArgument(id),
       'n=+s'
     ]
     const pvars = []
@@ -192,7 +218,7 @@ class Transpiler {
 
   transpileSelect (id, children) {
     let other = '""'
-    let select = '(\n    (s=args[' + JSON.stringify(id) + '],'
+    let select = '(\n    (s=' + this.transpileArgument(id) + ','
     this.vars.s = true
     Object.keys(children).forEach((key, i) => {
       if (key === 'other') {
@@ -209,8 +235,10 @@ class Transpiler {
     return select
   }
 
-  transpileSimple (id) {
-    return 'args[' + JSON.stringify(id) + ']'
+  transpileArgument (id) {
+    return this.useArgExpressions ?
+      this.useArgExpressions[id] :
+      'args[' + JSON.stringify(id) + ']'
   }
 
   static transpile (elements, options) {

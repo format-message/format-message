@@ -1,6 +1,8 @@
 import program from 'commander'
 import { existsSync, readFileSync } from 'fs'
 import glob from 'glob'
+import Linter from './linter'
+import Extractor from './extractor'
 import Inliner from './inliner'
 import pkg from '../package.json'
 
@@ -86,7 +88,7 @@ program
     }
 
     addStdinToFiles(files, options, () => {
-      Inliner.lintFiles(files, {
+      Linter.lintFiles(files, {
         functionName: options.functionName,
         autoDetectFunctionName: options.auto,
         translations: options.translations,
@@ -125,7 +127,7 @@ program
     }
 
     addStdinToFiles(files, options, () => {
-      Inliner.extractFromFiles(files, {
+      Extractor.extractFromFiles(files, {
         functionName: options.functionName,
         autoDetectFunctionName: options.auto,
         locale: options.locale,
@@ -151,6 +153,11 @@ program
   )
   .option('-l, --locale [locale]', 'BCP 47 language tags specifying the target locale [en]', 'en')
   .option('-t, --translations [path]', 'location of the JSON file with message translations')
+  .option('-e, --missing-translation [behavior]',
+    'behavior when --translations is specified, but a translated pattern is missing (error | warning | ignore) [error]',
+    'error'
+  )
+  .option('-m, --missing-replacement [pattern]', 'pattern to inline when a translated pattern is missing, defaults to the source pattern')
   .option('-i, --source-maps-inline', 'append sourceMappingURL comment to bottom of code')
   .option('-s, --source-maps', 'save source map alongside the compiled code')
   .option('-f, --filename [filename]', 'filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]', 'stdin')
@@ -187,6 +194,13 @@ program
         errors.push(err.message)
       }
     }
+    if (
+      options.missingTranslation !== 'error' &&
+      options.missingTranslation !== 'warning' &&
+      options.missingTranslation !== 'ignore'
+    ) {
+      errors.push('--missing-translation must be "error" "warning" or "ignore"')
+    }
     if (errors.length) {
       console.error(errors.join('. '))
       process.exit(2)
@@ -199,6 +213,8 @@ program
         locale: options.locale,
         keyType: options.keyType,
         translations: options.translations,
+        missingTranslation: options.missingTranslation,
+        missingReplacement: options.missingReplacement,
         sourceMaps: options.sourceMapsInline ? 'inline' : options.sourceMaps,
         outFile: options.outFile,
         outDir: options.outDir,
