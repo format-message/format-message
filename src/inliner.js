@@ -47,7 +47,7 @@ export default class Inliner extends Visitor {
     // body[0] should be an ExpressionStatement, so its expresion is what we want
     const codeAst = recast.parse(replacement).program.body[0].expression
     if (codeAst.type === CallExpression) {
-      codeAst.arguments = [ paramsNode ]
+      codeAst.arguments[1] = paramsNode
     }
     path.replace(codeAst)
   }

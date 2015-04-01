@@ -84,8 +84,8 @@ class Transpiler {
     const vars = Object.keys(this.vars)
     const key = this.originalPattern || elements.join(' ')
     const functionName = '$$_' + getKeyUnderscoredCrc32(key)
-    const replacement = functionName + '(args)' // args needs to be swapped by consumer
-    const declaration = 'function ' + functionName + ' (args) {\n' +
+    const replacement = functionName + '(' + this.functionName + ', args)' // args needs to be swapped by consumer
+    const declaration = 'function ' + functionName + ' (' + this.functionName + ', args) {\n' +
       (!vars.length ? '' : '  var ' + vars.join(', ') + ';\n') +
       '  return ' + elements.join(' + ') +
     ';\n}'
