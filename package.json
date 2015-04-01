@@ -67,7 +67,7 @@
     "test": "npm run lint && npm run test-setup && npm run test-node && npm run test-browsers",
     "test-browsers": "karma start --browsers Firefox,PhantomJS --single-run",
     "test-setup": "rm -rf test/inline && bin/format-message inline test/format.spec.js > test/format-inline.spec.js",
-    "test-node": "istanbul cover _mocha -- -cG -R dot -r ./test/setup test/**/*.spec.js"
+    "test-node": "istanbul cover _mocha -- -cG --timeout 10000 -R dot -r ./test/setup test/**/*.spec.js"
   },
   "standard": {
     "ignore": [
