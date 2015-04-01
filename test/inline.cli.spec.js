@@ -146,6 +146,70 @@ describe('format-message inline', () => {
         }).stdin.end(input, 'utf8')
       })
     })
+
+    describe('missing-translation', () => {
+      it('causes a fatal error by default', done => {
+        const input = 'formatMessage("not translated")'
+        const cmd = 'bin/format-message inline' +
+          ' -t test/translations/inline.underscored_crc32.json'
+        exec(cmd, (err, stdout, stderr) => {
+          expect(err).to.exist
+          expect(stdout.toString('utf8')).to.equal('')
+          expect(stderr.toString('utf8')).to.match(/^Error: no en translation found/)
+          done()
+        }).stdin.end(input, 'utf8')
+      })
+
+      it('can trigger a non-fatal warning instead with -e warning ', done => {
+        const input = 'formatMessage("not translated")'
+        const cmd = 'bin/format-message inline' +
+          ' -e warning' +
+          ' -t test/translations/inline.underscored_crc32.json'
+        exec(cmd, (err, stdout, stderr) => {
+          expect(stderr.toString('utf8')).to.match(/^Warning: no en translation found/)
+          expect(stdout.toString('utf8').trim()).to.equal('"not translated"')
+          done(err)
+        }).stdin.end(input, 'utf8')
+      })
+
+      it('can be ignored with --missing-translation ignore', done => {
+        const input = 'formatMessage("not translated")'
+        const cmd = 'bin/format-message inline' +
+          ' --missing-translation ignore' +
+          ' -t test/translations/inline.underscored_crc32.json'
+        exec(cmd, (err, stdout, stderr) => {
+          expect(stderr.toString('utf8')).to.equal('')
+          expect(stdout.toString('utf8').trim()).to.equal('"not translated"')
+          done(err)
+        }).stdin.end(input, 'utf8')
+      })
+
+      it('can be replaced with -m replacement', done => {
+        const input = 'formatMessage("not translated")'
+        const cmd = 'bin/format-message inline' +
+          ' -e ignore' +
+          ' -m "!!MISSING!!"' +
+          ' -t test/translations/inline.underscored_crc32.json'
+        exec(cmd, (err, stdout, stderr) => {
+          expect(stderr.toString('utf8')).to.equal('')
+          expect(stdout.toString('utf8').trim()).to.equal('"!!MISSING!!"')
+          done(err)
+        }).stdin.end(input, 'utf8')
+      })
+
+      it('can be replaced with --missing-replacement', done => {
+        const input = 'formatMessage("not translated")'
+        const cmd = 'bin/format-message inline' +
+          ' -e ignore' +
+          ' --missing-replacement "!!MISSING!!"' +
+          ' -t test/translations/inline.underscored_crc32.json'
+        exec(cmd, (err, stdout, stderr) => {
+          expect(stderr.toString('utf8')).to.equal('')
+          expect(stdout.toString('utf8').trim()).to.equal('"!!MISSING!!"')
+          done(err)
+        }).stdin.end(input, 'utf8')
+      })
+    })
   })
 
   describe('source-maps-inline', () => {
