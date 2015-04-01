@@ -1,6 +1,6 @@
 /*eslint-env mocha */
+if (typeof Intl === 'undefined') { require('intl') }
 import { expect } from 'chai'
-if (typeof Intl === 'undefined') { require('intl') } // include polyfll for Safari and PhantomJS
 import MessageFormat from 'message-format'
 import formatMessage from '../src/format-message'
 
@@ -28,7 +28,7 @@ describe('formatMessage', () => {
         '{ n, number } : { d, date, short } { d, time, short }',
         { n: 0, d }
       )
-      expect(message).to.match(/^0 \: \d\d?\/\d\d?\/\d{2,4} \d\d?\:\d\d [AP]M$/)
+      expect(message).to.match(/^0 \: \d\d?\/\d\d?\/\d{2,4} \d\d?\:\d\d/)
     })
 
     it('handles plurals', () => {

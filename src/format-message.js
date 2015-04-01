@@ -2,65 +2,58 @@
 import MessageFormat from 'message-format'
 
 const formats = MessageFormat.data.formats
-let cache = formats.cache
-let options = {
-  enableCache: true,
-  locale: 'en',
-  translate (pattern) {
-    return pattern
-  }
+const { number, date, time, cache } = formats
+
+let enableCache = true
+let currentLocale = 'en'
+let currentTranslate = pattern => pattern
+
+function cacheable (key, fn) {
+  if (!enableCache) return fn()
+  if (!(key in cache)) cache[key] = fn()
+  return cache[key]
 }
 
-function cached (key, fn) {
-  if (options.enableCache && key in cache) {
-    return cache[key]
-  } else {
-    const value = fn()
-    if (options.enableCache) {
-      cache[key] = value
-    }
-    return value
-  }
-}
-
-function formatMessage (pattern, args, locale) {
-  locale = locale || options.locale
-  const key = locale + ':format:' + pattern
-  const func = cached(key, () => {
-    const localPattern = options.translate(pattern, locale)
-    return new MessageFormat(localPattern, locale, { cache: options.enableCache }).format
-  })
-  return func(args)
+export default function formatMessage (pattern, args, locale) {
+  locale = locale || currentLocale
+  return cacheable(
+    locale + ':format:' + pattern,
+    () => new MessageFormat(
+      currentTranslate(pattern, locale),
+      locale, { cache: enableCache }
+    ).format
+  )(args)
 }
 
 formatMessage.setup = function ({ cache, locale, translate }={}) {
-  options.enableCache = typeof cache === 'boolean' ? cache : options.enableCache
-  options.locale = locale || options.locale
-  options.translate = translate || options.translate
+  if (typeof cache === 'boolean') enableCache = cache
+  if (locale) currentLocale = locale
+  if (translate) currentTranslate = translate
 }
 
-formatMessage.number = function (locale, num, style='medium') {
-  const key = locale + ':number:' + style
-  const func = cached(key,
-    () => new Intl.NumberFormat(locale, formats.number[style]).format
-  )
-  return func(num)
+formatMessage.number = function (locale, value, style='medium') {
+  return cacheable(
+    locale + ':number:' + style,
+    () => (typeof Intl !== 'undefined' && Intl.NumberFormat) ?
+      new Intl.NumberFormat(locale, number[style]).format :
+      arg => Number(arg).toLocaleString(locale, number[style])
+  )(value)
 }
 
-formatMessage.date = function (locale, date, style='medium') {
-  const key = locale + ':date:' + style
-  const func = cached(key,
-    () => new Intl.DateTimeFormat(locale, formats.date[style]).format
-  )
-  return func(date)
+formatMessage.date = function (locale, value, style='medium') {
+  return cacheable(
+    locale + ':date:' + style,
+    () => (typeof Intl !== 'undefined' && Intl.DateTimeFormat) ?
+      new Intl.DateTimeFormat(locale, date[style]).format :
+      arg => new Date(arg).toLocaleDateString(locale, date[style])
+  )(value)
 }
 
-formatMessage.time = function (locale, date, style='medium') {
-  const key = locale + ':time:' + style
-  const func = cached(key,
-    () => new Intl.DateTimeFormat(locale, formats.time[style]).format
-  )
-  return func(date)
+formatMessage.time = function (locale, value, style='medium') {
+  return cacheable(
+    locale + ':time:' + style,
+    () => (typeof Intl !== 'undefined' && Intl.DateTimeFormat) ?
+      new Intl.DateTimeFormat(locale, time[style]).format :
+      arg => new Date(arg).toLocaleTimeString(locale, time[style])
+  )(value)
 }
-
-export default formatMessage
