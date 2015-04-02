@@ -183,6 +183,26 @@ describe('format-message lint', () => {
     })
   })
 
+  describe('missing arguments', () => {
+    it('warns when required arguments object is missing', done => {
+      const input = 'formatMessage("{a}")'
+      exec('bin/format-message lint', (err, stdout, stderr) => {
+        expect(stdout.toString('utf8')).to.equal('')
+        expect(stderr.toString('utf8')).to.match(/^TypeError\: pattern requires parameters/)
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('warns when required argument is missing from literal object', done => {
+      const input = 'formatMessage("{a}", { b:1 })'
+      exec('bin/format-message lint', (err, stdout, stderr) => {
+        expect(stdout.toString('utf8')).to.equal('')
+        expect(stderr.toString('utf8')).to.match(/^TypeError\: pattern requires parameter/)
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+  })
+
   describe('autodetect function name', () => {
     it('finds function name from require call', done => {
       const input = 'var f=require("format-message");f("{")'
