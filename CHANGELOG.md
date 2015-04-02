@@ -9,6 +9,23 @@
 > - [Internal]
 > - [Polish]
 
+## 2.3.0
+
+* **New Feature**
+  * `format-message lint` reports errors when required parameters are missing.
+  * `format-meassge inline` added `--missing-translation` and `--missing-replacement`.
+* **Bug Fix**
+  * Ensure `formatMessage` is in scope inside transpiled function declarations.
+* **Polish**
+  * Lots of code cleanup, split linter and extractor out of inliner.
+  * Convert more cases to inline concat instead of a function call.
+* **Documentation**
+  * Added a logo image.
+  * Reformat long paragraphs to single line.
+  * Add more detail to transpilation results.
+* **Internal**
+  * Made test timeouts more forgiving for slow ci environments.
+
 ## 2.2.0
 
 * **Spec Compliancy**
