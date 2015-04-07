@@ -1,5 +1,14 @@
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="426" height="66">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="408" height="66">
   <style>
+    @font-face {
+      font-family: Source Sans Pro;
+      font-style: normal;
+      font-weight: 400;
+      src: local('Source Sans Pro'), local('SourceSansPro-Regular'),
+        url(https://fonts.gstatic.com/s/sourcesanspro/v9/ODelI1aHBYDBqgeIAH2zlJbPFduIYtoLzwST68uhz_Y.woff2) format('woff2'),
+        url(https://fonts.gstatic.com/s/sourcesanspro/v9/ODelI1aHBYDBqgeIAH2zlMGy-BNlMbVPJOCUtutuS8k.ttf) format('truetype');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+    }
     @-webkit-keyframes blink {
       0%, 98%, 100% {
         -webkit-transform: scaleY(1);
@@ -23,7 +32,7 @@
       animation: blink 10s ease infinite;
     }
   </style>
-  <path fill="#06f" d="
+  <path fill="#749DB5" d="
     M17,65
     v-16
     a16,16,0,0,1,-16,-16
@@ -33,7 +42,7 @@
     l12,24 -12,24
     z"
   />
-  <path fill="#080" d="
+  <path fill="#72B483" d="
     M49,65
     v-16
     h-8
@@ -52,12 +61,7 @@
     M69,17 h-8 v16 h8
     z"
   />
-  <text x="97" y="43" font-family="Helvetica, sans-serif" font-size="46">
-    <tspan fill="#080">
-      format
-    </tspan>
-    <tspan fill="#06f">
-      message
-    </tspan>
+  <text x="97" y="43" font-family="Source Sans Pro, sans-serif" font-size="46" fill="#484848">
+    format message
   </text>
 </svg>
