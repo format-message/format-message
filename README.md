@@ -286,7 +286,7 @@ License
 This software is free to use under the MIT license. See the [LICENSE-MIT file][LICENSE] for license text and copyright information.
 
 
-[logo]: https://cdn.rawgit.com/thetalecrafter/format-message/37f270b/src/logo/format-message.svg
+[logo]: https://cdn.rawgit.com/thetalecrafter/format-message/446d303/src/logo/format-message.svg
 [npm]: https://www.npmjs.org/package/format-message
 [npm-image]: https://img.shields.io/npm/v/format-message.svg
 [deps]: https://david-dm.org/thetalecrafter/format-message
