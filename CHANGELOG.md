@@ -9,6 +9,11 @@
 > - [Internal]
 > - [Polish]
 
+## 2.4.0
+
+* **New Feature**
+  * `formatMessage.translate` gets the locale-specific pattern.
+
 ## 2.3.0
 
 * **New Feature**
