@@ -143,4 +143,16 @@ describe('formatMessage', () => {
       expect(message).to.equal('test-success')
     })
   })
+
+  describe('translate', () => {
+    it('looks up the translated pattern', () => {
+      formatMessage.setup({ translate (pattern) { return 'translated' } })
+      // use variable to avoid inlining
+      const originalPattern = 'trans-test'
+      const pattern = formatMessage.translate(originalPattern)
+      formatMessage.setup({ translate (pattern) { return pattern } })
+
+      expect(pattern).to.equal('translated')
+    })
+  })
 })

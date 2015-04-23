@@ -23,6 +23,15 @@ describe('format-message inline', () => {
       }).stdin.end(input, 'utf8')
     })
 
+    it('finds and replaces translate calls', done => {
+      const input = 'formatMessage.translate("hello { name }")'
+      exec('bin/format-message inline', (err, stdout, stderr) => {
+        expect(stderr.toString('utf8')).to.equal('')
+        expect(stdout.toString('utf8').trim()).to.equal('"hello { name }"')
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
     it('can output to a -o file', done => {
       const input = 'formatMessage("hello")'
       const filename = 'test/translations/inline.js'

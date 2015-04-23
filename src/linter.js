@@ -11,10 +11,11 @@ export default class Linter extends Visitor {
     this.run({ sourceCode, sourceFileName })
   }
 
-  visitFormatCall (path, traverser) {
+  visitFormatCall (path, traverser, opts) {
     traverser.traverse(path) // pre-travserse children
 
     const node = path.node
+    const { isTranslateOnly } = opts
     let numErrors = 0
 
     const patternNode = node.arguments[0]
@@ -24,11 +25,11 @@ export default class Linter extends Visitor {
     const patternAst = pattern && !patternError && Parser.parse(pattern)
     const patternParams = patternAst && this.getPatternParams(patternAst)
 
-    const argsNode = node.arguments[1]
+    const argsNode = isTranslateOnly ? null : node.arguments[1]
     const argsIsLiteral = this.isObjectLiteral(argsNode)
     const argsPassed = argsIsLiteral && this.getObjectKeys(argsNode)
 
-    const localeNode = node.arguments[2]
+    const localeNode = isTranslateOnly ? node.arguments[1] : node.arguments[2]
     const localeIsString = this.isString(localeNode)
     const locale = localeIsString && this.getStringValue(localeNode)
 
@@ -42,7 +43,7 @@ export default class Linter extends Visitor {
       ++numErrors
     }
 
-    if (patternParams && patternParams.length > 0 && !argsNode) {
+    if (!isTranslateOnly && patternParams && patternParams.length > 0 && !argsNode) {
       this.reportError(
         path,
         'TypeError: pattern requires parameters, but called with no arguments'
@@ -50,7 +51,7 @@ export default class Linter extends Visitor {
       ++numErrors
     }
 
-    if (patternParams && patternParams.length > 0 && argsIsLiteral) {
+    if (!isTranslateOnly && patternParams && patternParams.length > 0 && argsIsLiteral) {
       const missingArgs = patternParams.filter(
         param => argsPassed.indexOf(param) === -1
       )
@@ -90,7 +91,7 @@ export default class Linter extends Visitor {
         ++numErrors
       }
 
-      if (translationParams && translationParams.length > 0 && !argsNode) {
+      if (!isTranslateOnly && translationParams && translationParams.length > 0 && !argsNode) {
         this.reportError(
           path,
           'TypeError: ' + (locale || this.locale) +
@@ -99,7 +100,7 @@ export default class Linter extends Visitor {
         ++numErrors
       }
 
-      if (translationParams && translationParams.length > 0 && argsIsLiteral) {
+      if (!isTranslateOnly && translationParams && translationParams.length > 0 && argsIsLiteral) {
         const missingArgs = translationParams.filter(
           param => argsPassed.indexOf(param) === -1
         )

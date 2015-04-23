@@ -81,8 +81,11 @@ export default class Visitor {
   }
 
   getLocation (path) {
+    const translate = this.isTranslateCall(path) ?
+      '.translate' : ''
+
     return (
-      '    at ' + this.functionName + ' (' +
+      '    at ' + this.functionName + translate + ' (' +
       this.currentFileName + ':' +
       path.node.loc.start.line + ':' +
       path.node.loc.start.column + ')'
@@ -115,8 +118,18 @@ export default class Visitor {
 
   isFormatCall (path) {
     const node = path.node
-    return (
+    return node.callee && (
       node.callee.name === this.functionName
+    )
+  }
+
+  isTranslateCall (path) {
+    const node = path.node
+    const callee = node.callee
+    return callee && (
+      // member expression
+      callee.object && callee.object.name === this.functionName
+      && callee.property && callee.property.name === 'translate'
     )
   }
 
@@ -131,6 +144,14 @@ export default class Visitor {
         !node.arguments[2]
         || this.isString(node.arguments[2])
       )
+      ||
+      this.isTranslateCall(path)
+      && this.isString(node.arguments[0])
+      && (
+        !node.arguments[1]
+        || this.isString(node.arguments[1])
+      )
+
     )
   }
 
@@ -180,8 +201,9 @@ export default class Visitor {
       const self = this
       recast.visit(ast, this.visitors({
         visitCallExpression (path) {
-          if (self.isFormatCall(path)) {
-            self.visitFormatCall(path, this)
+          const isTranslateOnly = self.isTranslateCall(path)
+          if (isTranslateOnly || self.isFormatCall(path)) {
+            self.visitFormatCall(path, this, { isTranslateOnly })
           } else {
             this.traverse(path)
           }

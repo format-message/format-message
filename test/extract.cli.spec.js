@@ -31,6 +31,19 @@ describe('format-message extract', () => {
       }).stdin.end(input, 'utf8')
     })
 
+    it('finds and extracts from translate calls', done => {
+      const input = 'formatMessage.translate("hello")'
+      exec('bin/format-message extract', (err, stdout, stderr) => {
+        stdout = stdout.toString('utf8')
+        const translations = JSON.parse(stdout)
+        expect(translations.en).to.eql({
+          hello_32e420db: 'hello'
+        })
+        expect(stderr.toString('utf8')).to.equal('')
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
     it('dedupes repeated patterns', done => {
       const input = 'formatMessage("hello");formatMessage(`hello`)'
       exec('bin/format-message extract', (err, stdout, stderr) => {
