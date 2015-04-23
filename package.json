@@ -1,6 +1,6 @@
 {
   "name": "format-message",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Write default messages inline. Optionally transpile translations.",
   "keywords": [
     "i18n",
