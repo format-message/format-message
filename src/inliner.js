@@ -28,19 +28,24 @@ export default class Inliner extends Visitor {
     return this.print({ ast, sourceMapName, inputSourceMap })
   }
 
-  visitFormatCall (path, traverser) {
+  visitFormatCall (path, traverser, opts) {
     traverser.traverse(path) // pre-travserse children
     if (!this.isReplaceable(path)) return
 
     const node = path.node
-    const locale = node.arguments[2] && this.getStringValue(node.arguments[2]) || this.locale
-    const paramsNode = node.arguments[1] || builders.literal(null)
+    const { isTranslateOnly } = opts
+    const localeArg = node.arguments[ isTranslateOnly ? 1 : 2 ]
+    const locale = localeArg && this.getStringValue(localeArg) || this.locale
     const functionName = this.functionName
     const originalPattern = this.getStringValue(node.arguments[0])
     let pattern = this.translate(originalPattern, locale)
     if (pattern == null) {
       pattern = this.handleMissingTranslation(originalPattern, locale, path)
     }
+    if (isTranslateOnly) {
+      return path.replace(builders.literal(pattern))
+    }
+    const paramsNode = node.arguments[1] || builders.literal(null)
     const patternAst = Parser.parse(pattern)
     const { replacement, declaration } = Transpiler.transpile(patternAst, { locale, functionName, paramsNode, originalPattern })
     this.addDeclaration(declaration)
@@ -49,7 +54,7 @@ export default class Inliner extends Visitor {
     if (codeAst.type === CallExpression) {
       codeAst.arguments[1] = paramsNode
     }
-    path.replace(codeAst)
+    return path.replace(codeAst)
   }
 
   handleMissingTranslation (originalPattern, locale, path) {

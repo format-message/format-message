@@ -25,6 +25,11 @@ export default function formatMessage (pattern, args, locale) {
   )(args)
 }
 
+formatMessage.translate = function (pattern, locale) {
+  locale = locale || currentLocale
+  return currentTranslate(pattern, locale)
+}
+
 formatMessage.setup = function ({ cache, locale, translate }={}) {
   if (typeof cache === 'boolean') enableCache = cache
   if (locale) currentLocale = locale

@@ -22,6 +22,15 @@ describe('format-message lint', () => {
       }).stdin.end(input, 'utf8')
     })
 
+    it('reports errors in translate calls', done => {
+      const input = 'formatMessage.translate("{")'
+      exec('bin/format-message lint', (err, stdout, stderr) => {
+        expect(stdout.toString('utf8')).to.equal('')
+        expect(stderr.toString('utf8')).to.match(/^SyntaxError\:/)
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
     it('reports filename as "stdin" by default', done => {
       const input = 'formatMessage("{")'
       exec('bin/format-message lint', (err, stdout, stderr) => {

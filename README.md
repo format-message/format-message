@@ -91,6 +91,20 @@ Parameters
         - `pattern` is the message pattern to translate.
         - `locale` is a string with a BCP 47 language tag, or an array of such strings.
 
+### `formatMessage.translate`
+
+```js
+formatMessage.translate(pattern[, locales])
+```
+
+Use the currently configured `translate` to get the locale-specific pattern. Note that this can also be linted, extracted, and inlined if the `pattern` is a literal.
+
+Parameters
+
+- `pattern` is a properly formatted ICU Message Format pattern.
+- `locales` is an optional string with a BCP 47 language tag, or an array of such strings.
+  - If not specified, the currently configured `locale` will be used.
+
 ### internal apis
 
 `formatMessage.number`, `formatMessage.date`, and `formatMessage.time` are used internally and are not intended for external use. Because these appear in the transpiled code, transpiling does not remove the need to properly define `formatMessage` through `require` or `import`.
