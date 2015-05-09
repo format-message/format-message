@@ -11,11 +11,15 @@ export default class Linter extends Visitor {
     this.run({ sourceCode, sourceFileName })
   }
 
-  visitFormatCall (path, traverser, opts) {
-    traverser.traverse(path) // pre-travserse children
+  exitFormatCall (node) {
+    this.validate(node, false)
+  }
 
-    const node = path.node
-    const { isTranslateOnly } = opts
+  exitTranslateCall (node) {
+    this.validate(node, true)
+  }
+
+  validate (node, isTranslateOnly) {
     let numErrors = 0
 
     const patternNode = node.arguments[0]
@@ -34,18 +38,18 @@ export default class Linter extends Visitor {
     const locale = localeIsString && this.getStringValue(localeNode)
 
     if (!patternIsString) {
-      this.reportWarning(path, 'Warning: called without a literal pattern')
+      this.reportWarning(node, 'Warning: called without a literal pattern')
       ++numErrors
     }
 
     if (patternError) {
-      this.reportError(path, 'SyntaxError: pattern is invalid', patternError.message)
+      this.reportError(node, 'SyntaxError: pattern is invalid', patternError.message)
       ++numErrors
     }
 
     if (!isTranslateOnly && patternParams && patternParams.length > 0 && !argsNode) {
       this.reportError(
-        path,
+        node,
         'TypeError: pattern requires parameters, but called with no arguments'
       )
       ++numErrors
@@ -57,7 +61,7 @@ export default class Linter extends Visitor {
       )
       missingArgs.forEach(arg => {
         this.reportError(
-          path,
+          node,
           'TypeError: pattern requires parameter "' + arg +
             '", but it is missing from the arguments object'
         )
@@ -65,7 +69,7 @@ export default class Linter extends Visitor {
       })
     }
 
-    if (this.isReplaceable(path) && this.translations) {
+    if (this.isReplaceable(node) && this.translations) {
       const translation = this.translate(pattern, locale || this.locale)
       const translationError = translation && this.getPatternError(translation)
       const translationAst = translation && !translationError && Parser.parse(translation)
@@ -73,7 +77,7 @@ export default class Linter extends Visitor {
 
       if (translation == null) {
         this.reportWarning(
-          path,
+          node,
           'Warning: no ' + (locale || this.locale) + ' translation found for key ' +
             JSON.stringify(this.getKey(pattern))
         )
@@ -82,7 +86,7 @@ export default class Linter extends Visitor {
 
       if (translationError) {
         this.reportError(
-          path,
+          node,
           'SyntaxError: ' + (locale || this.locale) +
             ' translated pattern is invalid for key ' +
             JSON.stringify(this.getKey(pattern)),
@@ -93,7 +97,7 @@ export default class Linter extends Visitor {
 
       if (!isTranslateOnly && translationParams && translationParams.length > 0 && !argsNode) {
         this.reportError(
-          path,
+          node,
           'TypeError: ' + (locale || this.locale) +
             ' translated pattern requires parameters, but called with no arguments'
         )
@@ -106,7 +110,7 @@ export default class Linter extends Visitor {
         )
         missingArgs.forEach(arg => {
           this.reportError(
-            path,
+            node,
             'TypeError: ' + (locale || this.locale) +
               ' translated pattern requires parameter "' + arg +
               '", but it is missing from the arguments object'
@@ -117,7 +121,7 @@ export default class Linter extends Visitor {
     }
 
     if (localeNode && !localeIsString) {
-      this.reportWarning(path, 'Warning: called with a non-literal locale')
+      this.reportWarning(node, 'Warning: called with a non-literal locale')
       ++numErrors
     }
 

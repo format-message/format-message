@@ -9,7 +9,7 @@ describe('format-message inline', () => {
       const input = 'formatMessage("hello")'
       exec('bin/format-message inline', (err, stdout, stderr) => {
         expect(stderr.toString('utf8')).to.equal('')
-        expect(stdout.toString('utf8').trim()).to.equal('"hello"')
+        expect(stdout.toString('utf8').trim()).to.match(/^"hello"/)
         done(err)
       }).stdin.end(input, 'utf8')
     })
@@ -18,7 +18,7 @@ describe('format-message inline', () => {
       const input = 'formatMessage(`hello`)'
       exec('bin/format-message inline', (err, stdout, stderr) => {
         expect(stderr.toString('utf8')).to.equal('')
-        expect(stdout.toString('utf8').trim()).to.equal('"hello"')
+        expect(stdout.toString('utf8').trim()).to.match(/^"hello"/)
         done(err)
       }).stdin.end(input, 'utf8')
     })
@@ -27,7 +27,7 @@ describe('format-message inline', () => {
       const input = 'formatMessage.translate("hello { name }")'
       exec('bin/format-message inline', (err, stdout, stderr) => {
         expect(stderr.toString('utf8')).to.equal('')
-        expect(stdout.toString('utf8').trim()).to.equal('"hello { name }"')
+        expect(stdout.toString('utf8').trim()).to.match(/^"hello { name }"/)
         done(err)
       }).stdin.end(input, 'utf8')
     })
@@ -41,7 +41,7 @@ describe('format-message inline', () => {
         expect(stdout.toString('utf8')).to.equal('')
         const fileContent = readFileSync(filename, 'utf8')
         unlinkSync(filename)
-        expect(fileContent.trim()).to.equal('"hello"')
+        expect(fileContent.trim()).to.match(/^"hello"/)
         done(err)
       }).stdin.end(input, 'utf8')
     })
@@ -55,7 +55,7 @@ describe('format-message inline', () => {
         expect(stdout.toString('utf8')).to.equal('')
         const fileContent = readFileSync(filename, 'utf8')
         unlinkSync(filename)
-        expect(fileContent.trim()).to.equal('"hello"')
+        expect(fileContent.trim()).to.match(/^"hello"/)
         done(err)
       }).stdin.end(input, 'utf8')
     })
@@ -65,7 +65,7 @@ describe('format-message inline', () => {
       const cmd = 'bin/format-message inline -n __'
       exec(cmd, (err, stdout, stderr) => {
         expect(stderr.toString('utf8')).to.equal('')
-        expect(stdout.toString('utf8').trim()).to.equal('"hello world"')
+        expect(stdout.toString('utf8').trim()).to.match(/^"hello world"/)
         done(err)
       }).stdin.end(input, 'utf8')
     })
@@ -75,7 +75,7 @@ describe('format-message inline', () => {
       const cmd = 'bin/format-message inline --function-name $'
       exec(cmd, (err, stdout, stderr) => {
         expect(stderr.toString('utf8')).to.equal('')
-        expect(stdout.toString('utf8').trim()).to.equal('"hello world"')
+        expect(stdout.toString('utf8').trim()).to.match(/^"hello world"/)
         done(err)
       }).stdin.end(input, 'utf8')
     })
@@ -88,7 +88,7 @@ describe('format-message inline', () => {
         ' -t test/translations/inline.underscored_crc32.json'
       exec(cmd, (err, stdout, stderr) => {
         expect(stderr.toString('utf8')).to.equal('')
-        expect(stdout.toString('utf8').trim()).to.equal('"hey everyone"')
+        expect(stdout.toString('utf8').trim()).to.match(/^"hey everyone"/)
         done(err)
       }).stdin.end(input, 'utf8')
     })
@@ -99,7 +99,7 @@ describe('format-message inline', () => {
         ' --translations test/translations/inline.underscored_crc32.json'
       exec(cmd, (err, stdout, stderr) => {
         expect(stderr.toString('utf8')).to.equal('')
-        expect(stdout.toString('utf8').trim()).to.equal('"hey everyone"')
+        expect(stdout.toString('utf8').trim()).to.match(/^"hey everyone"/)
         done(err)
       }).stdin.end(input, 'utf8')
     })
@@ -112,7 +112,7 @@ describe('format-message inline', () => {
           ' -t test/translations/inline.underscored_crc32.json'
         exec(cmd, (err, stdout, stderr) => {
           expect(stderr.toString('utf8')).to.equal('')
-          expect(stdout.toString('utf8').trim()).to.equal('"oi mundo"')
+          expect(stdout.toString('utf8').trim()).to.match(/^"oi mundo"/)
           done(err)
         }).stdin.end(input, 'utf8')
       })
@@ -124,7 +124,7 @@ describe('format-message inline', () => {
           ' -t test/translations/inline.underscored_crc32.json'
         exec(cmd, (err, stdout, stderr) => {
           expect(stderr.toString('utf8')).to.equal('')
-          expect(stdout.toString('utf8').trim()).to.equal('"oi mundo"')
+          expect(stdout.toString('utf8').trim()).to.match(/^"oi mundo"/)
           done(err)
         }).stdin.end(input, 'utf8')
       })
@@ -138,7 +138,7 @@ describe('format-message inline', () => {
           ' -t test/translations/inline.underscored.json'
         exec(cmd, (err, stdout, stderr) => {
           expect(stderr.toString('utf8')).to.equal('')
-          expect(stdout.toString('utf8').trim()).to.equal('"hey everyone"')
+          expect(stdout.toString('utf8').trim()).to.match(/^"hey everyone"/)
           done(err)
         }).stdin.end(input, 'utf8')
       })
@@ -150,7 +150,7 @@ describe('format-message inline', () => {
           ' -t test/translations/inline.normalized.json'
         exec(cmd, (err, stdout, stderr) => {
           expect(stderr.toString('utf8')).to.equal('')
-          expect(stdout.toString('utf8').trim()).to.equal('"hey everyone"')
+          expect(stdout.toString('utf8').trim()).to.match(/^"hey everyone"/)
           done(err)
         }).stdin.end(input, 'utf8')
       })
@@ -176,7 +176,7 @@ describe('format-message inline', () => {
           ' -t test/translations/inline.underscored_crc32.json'
         exec(cmd, (err, stdout, stderr) => {
           expect(stderr.toString('utf8')).to.match(/^Warning: no en translation found/)
-          expect(stdout.toString('utf8').trim()).to.equal('"not translated"')
+          expect(stdout.toString('utf8').trim()).to.match(/^"not translated"/)
           done(err)
         }).stdin.end(input, 'utf8')
       })
@@ -188,7 +188,7 @@ describe('format-message inline', () => {
           ' -t test/translations/inline.underscored_crc32.json'
         exec(cmd, (err, stdout, stderr) => {
           expect(stderr.toString('utf8')).to.equal('')
-          expect(stdout.toString('utf8').trim()).to.equal('"not translated"')
+          expect(stdout.toString('utf8').trim()).to.match(/^"not translated"/)
           done(err)
         }).stdin.end(input, 'utf8')
       })
@@ -201,7 +201,7 @@ describe('format-message inline', () => {
           ' -t test/translations/inline.underscored_crc32.json'
         exec(cmd, (err, stdout, stderr) => {
           expect(stderr.toString('utf8')).to.equal('')
-          expect(stdout.toString('utf8').trim()).to.equal('"!!MISSING!!"')
+          expect(stdout.toString('utf8').trim()).to.match(/^"!!MISSING!!"/)
           done(err)
         }).stdin.end(input, 'utf8')
       })
@@ -214,7 +214,7 @@ describe('format-message inline', () => {
           ' -t test/translations/inline.underscored_crc32.json'
         exec(cmd, (err, stdout, stderr) => {
           expect(stderr.toString('utf8')).to.equal('')
-          expect(stdout.toString('utf8').trim()).to.equal('"!!MISSING!!"')
+          expect(stdout.toString('utf8').trim()).to.match(/^"!!MISSING!!"/)
           done(err)
         }).stdin.end(input, 'utf8')
       })
@@ -230,7 +230,7 @@ describe('format-message inline', () => {
       exec(cmd, (err, stdout, stderr) => {
         expect(stderr.toString('utf8')).to.equal('')
         expect(stdout.toString('utf8')).to.match(
-          /^\s*"hey everyone"\s+\/\/# sourceMappingURL=data\:application\/json;base64,/
+          /^\s*"hey everyone";?\s+\/\/# sourceMappingURL=data\:application\/json;base64,/
         )
         done(err)
       }).stdin.end(input, 'utf8')
@@ -244,7 +244,7 @@ describe('format-message inline', () => {
       exec(cmd, (err, stdout, stderr) => {
         expect(stderr.toString('utf8')).to.equal('')
         expect(stdout.toString('utf8')).to.match(
-          /^\s*"hey everyone"\s+\/\/# sourceMappingURL=data\:application\/json;base64,/
+          /^\s*"hey everyone";?\s+\/\/# sourceMappingURL=data\:application\/json;base64,/
         )
         done(err)
       }).stdin.end(input, 'utf8')
@@ -264,7 +264,7 @@ describe('format-message inline', () => {
         expect(stdout.toString('utf8')).to.equal('')
         const fileContent = readFileSync(filename, 'utf8')
         unlinkSync(filename)
-        expect(fileContent.trim()).to.match(/^\s*"hey everyone"/)
+        expect(fileContent.trim()).to.match(/^\"hey everyone"/)
         const sourceMap = readFileSync(filename + '.map', 'utf8')
         unlinkSync(filename + '.map')
         expect(JSON.parse(sourceMap)).to.not.be.empty
@@ -284,7 +284,7 @@ describe('format-message inline', () => {
         expect(stdout.toString('utf8')).to.equal('')
         const fileContent = readFileSync(filename, 'utf8')
         unlinkSync(filename)
-        expect(fileContent.trim()).to.match(/^\s*"hey everyone"/)
+        expect(fileContent.trim()).to.match(/^"hey everyone"/)
         const sourceMap = readFileSync(filename + '.map', 'utf8')
         unlinkSync(filename + '.map')
         expect(JSON.parse(sourceMap)).to.not.be.empty
@@ -322,7 +322,7 @@ describe('format-message inline', () => {
           'setup.js'
         ].sort())
         const fileContent = readFileSync(dirname + '/format.spec.js', 'utf8')
-        expect(fileContent.trim()).to.contain('"x" + arg + "z"')
+        expect(fileContent.trim()).to.contain('\'x\' + arg + \'z\'')
         done(err)
       })
     })
@@ -354,7 +354,7 @@ describe('format-message inline', () => {
         const fileContent =
           readFileSync(dirname + '/format.spec.js', 'utf8')
           .split('\/\/# sourceMappingURL=')
-        expect(fileContent[0].trim()).to.contain('"x" + arg + "z"')
+        expect(fileContent[0].trim()).to.contain('\'x\' + arg + \'z\'')
         expect((fileContent[1] || '').trim()).to.equal('format.spec.js.map')
         const sourceMap = readFileSync(dirname + '/format.spec.js.map', 'utf8')
         expect(JSON.parse(sourceMap)).to.not.be.empty
