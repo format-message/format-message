@@ -34,7 +34,7 @@ The [ICU Message Format][icu-message] is a great format for user-visible strings
 
 `format-message` provides a way to write your default (often English) messages as literals in your source, and then scrape out the default patterns and transpile your source with fast inline code for formatting the translated message patterns.
 
-This relies on [message-format][message-format] for parsing and formatting ICU messages, and [recast][recast] for transpiling the source code.
+This relies on [message-format][message-format] for parsing and formatting ICU messages, and [babel][babel] for transpiling the source code.
 
 ### Supported ICU Formats
 
@@ -319,5 +319,5 @@ This software is free to use under the MIT license. See the [LICENSE-MIT file][L
 [icu-java]: http://icu-project.org/apiref/icu4j/
 [intl]: https://github.com/andyearnshaw/Intl.js
 [message-format]: https://github.com/thetalecrafter/message-format
-[recast]: https://github.com/benjamn/recast
+[babel]: https://github.com/babel/babel
 [LICENSE]: https://github.com/thetalecrafter/format-message/blob/master/LICENSE-MIT
