@@ -1,11 +1,11 @@
 import Visitor from './visitor'
 import { relative, resolve, basename, join as pathJoin } from 'path'
-import recast from 'recast'
+import * as babel from 'babel-core'
 import sourceMap from 'source-map'
 import Parser from 'message-format/parser'
 import Transpiler from './transpiler'
-const builders = recast.types.builders
-const CallExpression = recast.types.namedTypes.CallExpression.toString()
+
+const types = babel.types
 
 /**
  * Transforms source code, translating and inlining `formatMessage` calls
@@ -19,45 +19,50 @@ export default class Inliner extends Visitor {
 
   inline ({ sourceCode, sourceFileName, sourceMapName, inputSourceMap }) {
     this.declarations.length = 0
-    const ast = this.run({ sourceCode, sourceFileName })
-    if (!ast) return { code: sourceCode, map: inputSourceMap }
-
-    ast.program.body = ast.program.body.concat(this.getDeclarations())
-
-    sourceMapName = sourceMapName || (sourceFileName + '.map')
-    return this.print({ ast, sourceMapName, inputSourceMap })
+    return this.run({ sourceCode, sourceFileName, sourceMapName, inputSourceMap })
   }
 
-  visitFormatCall (path, traverser, opts) {
-    traverser.traverse(path) // pre-travserse children
-    if (!this.isReplaceable(path)) return
+  exitFormatCall (node, parent, scope, traverser) {
+    if (!this.isReplaceable(node)) return
 
-    const node = path.node
-    const { isTranslateOnly } = opts
-    const localeArg = node.arguments[ isTranslateOnly ? 1 : 2 ]
-    const locale = localeArg && this.getStringValue(localeArg) || this.locale
-    const functionName = this.functionName
     const originalPattern = this.getStringValue(node.arguments[0])
-    let pattern = this.translate(originalPattern, locale)
-    if (pattern == null) {
-      pattern = this.handleMissingTranslation(originalPattern, locale, path)
-    }
-    if (isTranslateOnly) {
-      return path.replace(builders.literal(pattern))
-    }
-    const paramsNode = node.arguments[1] || builders.literal(null)
+    const localeArg = node.arguments[2]
+    const locale = localeArg && this.getStringValue(localeArg) || this.locale
+
+    const pattern = this.getTranslation(originalPattern, locale, node)
     const patternAst = Parser.parse(pattern)
-    const { replacement, declaration } = Transpiler.transpile(patternAst, { locale, functionName, paramsNode, originalPattern })
+    const { replacement, declaration } = Transpiler.transpile(patternAst, {
+      originalPattern, locale, node, traverser
+    })
+
     this.addDeclaration(declaration)
-    // body[0] should be an ExpressionStatement, so its expresion is what we want
-    const codeAst = recast.parse(replacement).program.body[0].expression
-    if (codeAst.type === CallExpression) {
-      codeAst.arguments[1] = paramsNode
-    }
-    return path.replace(codeAst)
+    traverser.replaceWith(replacement)
   }
 
-  handleMissingTranslation (originalPattern, locale, path) {
+  exitTranslateCall (node, parent, scope, traverser) {
+    if (!this.isReplaceable(node)) return
+
+    const originalPattern = this.getStringValue(node.arguments[0])
+    const localeArg = node.arguments[1]
+    const locale = localeArg && this.getStringValue(localeArg) || this.locale
+
+    const pattern = this.getTranslation(originalPattern, locale, node)
+    return traverser.replaceWith(types.literal(pattern))
+  }
+
+  exitProgram (node) {
+    node.body = node.body.concat(this.declarations)
+    this.declarations.length = 0
+  }
+
+  shouldOutputCode () {
+    return true
+  }
+
+  getTranslation (originalPattern, locale, node) {
+    const pattern = this.translate(originalPattern, locale)
+    if (pattern != null) { return pattern }
+
     const replacement = this.missingReplacement || originalPattern
     const message = 'no ' + locale + ' translation found for key ' +
       JSON.stringify(this.getKey(originalPattern))
@@ -65,26 +70,22 @@ export default class Inliner extends Visitor {
     if (this.missingTranslation === 'ignore') {
       // do nothing
     } else if (this.missingTranslation === 'warning') {
-      this.reportWarning(path, 'Warning: ' + message)
+      this.reportWarning(node, 'Warning: ' + message)
     } else { // 'error'
-      this.reportError(path, 'Error: ' + message)
+      this.reportError(node, 'Error: ' + message)
       throw new Error(message)
     }
 
     return replacement
   }
 
-  addDeclaration (decl) {
-    if (decl && this.declarations.indexOf(decl) === -1) {
-      this.declarations.push(decl)
+  addDeclaration (declaration) {
+    if (declaration) {
+      const found = this.declarations.some(({ id }) => id === declaration.id)
+      if (!found) {
+        this.declarations.push(declaration)
+      }
     }
-  }
-
-  getDeclarations () {
-    const codeString = this.declarations.join('\n')
-    const codeAst = recast.parse(codeString)
-    this.declarations.length = 0
-    return codeAst.program.body
   }
 
   sourceMapComment (path) {
@@ -118,9 +119,9 @@ export default class Inliner extends Visitor {
       const result = inliner.inline(source)
       const outFileName = pathJoin(outDir, relative(root, source.sourceFileName))
 
-      if (options.sourceMaps === 'inline') {
+      if (options.sourceMaps === 'inline' && result.map) {
         result.code += inliner.sourceMapInlineComment(result.map)
-      } else if (options.sourceMaps) {
+      } else if (options.sourceMaps && result.map) {
         const mapFileName = outFileName + '.map'
         inliner.emitFile(mapFileName, JSON.stringify(result.map))
         result.code += inliner.sourceMapComment(basename(mapFileName))
@@ -142,18 +143,20 @@ export default class Inliner extends Visitor {
     inliner.forEachFile(files, source => {
       const result = inliner.inline(source)
       const filename = source.souceFileName
-      const consumer = new sourceMap.SourceMapConsumer(result.map)
-      map._sources.add(filename)
-      map.setSourceContent(filename, source.sourceCode)
-      consumer.eachMapping(mapping => {
-        map._mappings.add({
-          generatedLine: mapping.generatedLine + offset,
-          generatedColumn: mapping.generatedColumn,
-          originalLine: mapping.originalLine,
-          originalColumn: mapping.originalColumn,
-          source: filename
+      if (result.map) {
+        const consumer = new sourceMap.SourceMapConsumer(result.map)
+        map._sources.add(filename)
+        map.setSourceContent(filename, source.sourceCode)
+        consumer.eachMapping(mapping => {
+          map._mappings.add({
+            generatedLine: mapping.generatedLine + offset,
+            generatedColumn: mapping.generatedColumn,
+            originalLine: mapping.originalLine,
+            originalColumn: mapping.originalColumn,
+            source: filename
+          })
         })
-      })
+      }
 
       code += result.code + '\n'
       offset = code.split('\n').length

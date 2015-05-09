@@ -2,6 +2,16 @@ import locales from './locales.json'
 import lookupClosestLocale from 'message-format/lib/lookup-closest-locale'
 import { formats } from 'message-format/lib/data'
 import { getKeyUnderscoredCrc32 } from './translate-util'
+import * as babel from 'babel-core'
+
+const types = babel.types
+const pluralVars = {
+  i: babel.parse('i=' + locales.pluralVars.i).body[0].expression,
+  v: babel.parse('v=' + locales.pluralVars.v).body[0].expression,
+  w: babel.parse('w=' + locales.pluralVars.w).body[0].expression,
+  f: babel.parse('f=' + locales.pluralVars.f).body[0].expression,
+  t: babel.parse('t=' + locales.pluralVars.t).body[0].expression
+}
 
 /**
  * Transpiler
@@ -13,7 +23,7 @@ import { getKeyUnderscoredCrc32 } from './translate-util'
  *    "other": [ [ '#' ], " bananas" ]
  *  } ], " for sale." ]
  *
- * into this:
+ * into ast of this:
  *  `(function(args, locale) {
  *    return "You have " + formatMessage.plural(locale, args["numBananas"], 0, {
  *      "=0": "no bananas",
@@ -28,35 +38,64 @@ class Transpiler {
 
   constructor (options={}) {
     this.vars = {}
-    this.locale = options.locale || 'en'
-    this.functionName = options.functionName || 'formatMessage'
-    this.paramsNode = options.paramsNode
     this.originalPattern = options.originalPattern
+    this.locale = options.locale || 'en'
+    this.node = options.node
+  }
+
+  countReferences (elements) {
+    const references = {}
+
+    function count (elements) {
+      elements.forEach(element => {
+        if (!Array.isArray(element)) return
+        const name = element[0]
+        references[name] = references[name] || 0
+        ++references[name]
+      })
+    }
+
+    count(elements)
+    return references
   }
 
   checkUseArgExpressions (elements) {
+    this.useArgExpressions = false
     const blacklist = [ 'plural', 'selectordinal', 'select' ]
     const noIntermediateVars = elements.every(element => {
       return (typeof element === 'string') ||
         (blacklist.indexOf(element[1]) === -1)
     })
-    const noPossibleSideEffects = this.paramsNode && (
-      this.paramsNode.type === 'ObjectExpression' &&
-      this.paramsNode.properties.every(prop => {
+    if (!noIntermediateVars) return
+
+    const references = {}
+    elements.forEach(element => {
+      if (Array.isArray(element)) {
+        const name = element[0]
+        references[name] = references[name] || 0
+        ++references[name]
+      }
+      // plural, selectordinal, and select already disallowed no need to recurse
+    })
+
+    const paramsNode = this.node.arguments[1]
+    const noPossibleSideEffects = paramsNode && (
+      types.isObjectExpression(paramsNode) &&
+      paramsNode.properties.every(prop => {
         return (
-          prop.key.type === 'Identifier' && (
-            prop.value.type === 'Identifier' ||
-            prop.value.type === 'Literal'
+          types.isIdentifier(prop.key) && (
+            types.isIdentifier(prop.value) ||
+            types.isLiteral(prop.value) ||
+            references[prop.key.name] === 1
           )
         )
       })
     )
-    this.useArgExpressions = false
-    if (noIntermediateVars && noPossibleSideEffects) {
-      this.useArgExpressions = this.paramsNode.properties.reduce((argMap, prop) => {
-        argMap[prop.key.name] = prop.value.raw || prop.value.name
-        return argMap
-      }, {})
+    if (noPossibleSideEffects) {
+      this.useArgExpressions = {}
+      paramsNode.properties.forEach(prop => {
+        this.useArgExpressions[prop.key.name] = prop.value
+      })
     }
   }
 
@@ -64,53 +103,75 @@ class Transpiler {
     this.vars = {}
 
     if (elements.length === 0) {
-      return { replacement: '""' }
+      return { replacement: types.literal('') }
     }
 
     if (elements.length === 1 && typeof elements[0] === 'string') {
-      return { replacement: JSON.stringify(elements[0]) }
+      return { replacement: types.literal(elements[0]) }
     }
 
     this.checkUseArgExpressions(elements)
 
-    elements = elements.map(
+    const concatElements = elements.map(
       element => this.transpileElement(element, null)
-    )
+    ).reduce((left, right) => {
+      return types.binaryExpression('+', left, right)
+    })
 
     if (this.useArgExpressions) {
-      return { replacement: elements.join(' + ') }
+      return { replacement: concatElements }
     }
 
-    const vars = Object.keys(this.vars)
-    const key = this.originalPattern || elements.join(' ')
+    const key = this.originalPattern
     const functionName = '$$_' + getKeyUnderscoredCrc32(key)
-    const replacement = functionName + '(' + this.functionName + ', args)' // args needs to be swapped by consumer
-    const declaration = 'function ' + functionName + ' (' + this.functionName + ', args) {\n' +
-      (!vars.length ? '' : '  var ' + vars.join(', ') + ';\n') +
-      '  return ' + elements.join(' + ') +
-    ';\n}'
+    const replacement = types.callExpression(
+      types.identifier(functionName), // call our declared function
+      // pass in original function and arguments
+      [ this.node.callee, this.node.arguments[1] ]
+    )
+
+    const body = [ types.returnStatement(concatElements) ]
+    if (Object.keys(this.vars).length) {
+      body.unshift(types.variableDeclaration(
+        'var', // type
+        Object.keys(this.vars).map(
+          name => types.variableDeclarator(
+            types.identifier(name),
+            this.vars[name]
+          )
+        )
+      ))
+    }
+    const declaration = types.functionDeclaration(
+      types.identifier(functionName),
+      [ this.node.callee, types.identifier('args') ],
+      types.blockStatement(body),
+      false, // isGenerator
+      false // isExpression
+    )
+
     return { replacement, declaration }
   }
 
   transpileSub (elements, parent) {
     if (elements.length === 0) {
-      return '""'
+      return types.literal('')
     }
 
     if (elements.length === 1 && typeof elements[0] === 'string') {
-      return JSON.stringify(elements[0])
+      return types.literal(elements[0])
     }
 
-    elements = elements.map(
+    return elements.map(
       element => this.transpileElement(element, parent)
-    )
-
-    return '(' + elements.join(' + ') + ')'
+    ).reduce((left, right) => {
+      return types.binaryExpression('+', left, right)
+    })
   }
 
   transpileElement (element, parent) {
     if (typeof element === 'string') {
-      return JSON.stringify(element)
+      return types.literal(element)
     }
 
     let id = element[0]
@@ -145,18 +206,41 @@ class Transpiler {
   }
 
   transpileNumber (id, offset, style) {
-    return this.functionName + '.number(' + JSON.stringify(this.locale) + ', ' +
-        this.transpileArgument(id) +
-        (offset ? '-' + offset : '') +
-        (style ? ', ' + JSON.stringify(style) : '') +
-      ')'
+    let value = this.transpileArgument(id)
+    if (offset) {
+      value = types.binaryExpression('-', value, types.literal(offset))
+    }
+    const args = [
+      types.literal(this.locale),
+      value
+    ]
+    if (style) {
+      args.push(types.literal(style))
+    }
+    return types.callExpression(
+      types.memberExpression(
+        this.node.callee,
+        types.identifier('number')
+      ),
+      args
+    )
   }
 
   transpileDateTime (id, type, style) {
-    return this.functionName + '.' + type + '(' + JSON.stringify(this.locale) + ', ' +
-        this.transpileArgument(id) +
-        (style ? ', ' + JSON.stringify(style) : '') +
-      ')'
+    const args = [
+      types.literal(this.locale),
+      this.transpileArgument(id)
+    ]
+    if (style) {
+      args.push(types.literal(style))
+    }
+    return types.callExpression(
+      types.memberExpression(
+        this.node.callee,
+        types.identifier(type)
+      ),
+      args
+    )
   }
 
   transpilePlural (id, type, offset, children) {
@@ -165,14 +249,16 @@ class Transpiler {
     const conditions = locales.locales[closest].plurals[(
       type === 'selectordinal' ? 'ordinal' : 'cardinal'
     )]
-    let cond
-    let other = '""'
-    let select = ''
-    let exact = ''
-    let sub
+    const s = types.identifier('s')
+    const n = types.identifier('n')
+    let other = types.literal('')
     const vars = [
-      's=' + this.transpileArgument(id),
-      'n=+s'
+      types.assignmentExpression(
+        '=', s, this.transpileArgument(id)
+      ),
+      types.assignmentExpression(
+        '=', n, types.unaryExpression('+', s, true /* isPrefix */)
+      )
     ]
     const pvars = []
     let refsI = false
@@ -180,65 +266,100 @@ class Transpiler {
     let refsW = false
     let refsF = false
     let refsT = false
-    this.vars.s = true
-    this.vars.n = true
     if (offset) {
-      pvars.push('s=+s-' + offset)
-      pvars.push('n=s')
+      pvars.push(types.assignmentExpression(
+        '=', n, types.assignmentExpression(
+          '=', s, types.binaryExpression(
+            '-',
+            types.unaryExpression('+', s, true /* isPrefix */),
+            types.literal(offset)
+          )
+        )
+      ))
     }
 
-    Object.keys(children).forEach((key, i) => {
-      sub = '\n      ' +
-        this.transpileSub(children[key], parent).replace(/\n/g, '\n      ')
+    const exactConditions = []
+    const keyConditions = []
+    Object.keys(children).forEach(key => {
+      const expr = this.transpileSub(children[key], parent)
       if (key === 'other') {
-        other = sub
+        other = expr
       } else if (key.charAt(0) === '=') {
-        exact += '\n    ' + key.slice(1) + ' === n ?' + sub + ' :'
+        const test = types.binaryExpression('===', n, types.literal(+key.slice(1)))
+        exactConditions.push({ test, expr })
       } else if (key in conditions) {
-        cond = conditions[key]
-        if (/\bi\b/.test(cond)) { this.vars.i = refsI = true }
-        if (/\bv\b/.test(cond)) { this.vars.v = refsV = true }
-        if (/\bw\b/.test(cond)) { this.vars.w = refsW = true }
-        if (/\bf\b/.test(cond)) { this.vars.f = refsF = true }
-        if (/\bt\b/.test(cond)) { this.vars.t = refsT = true }
-        select += '\n    /*' + key + '*/(' + cond + ') ?' + sub + ' :'
+        let cond = conditions[key]
+        if (/\bi\b/.test(cond)) { refsI = !(this.vars.i = null) }
+        if (/\bv\b/.test(cond)) { refsV = !(this.vars.v = null) }
+        if (/\bw\b/.test(cond)) { refsW = !(this.vars.w = null) }
+        if (/\bf\b/.test(cond)) { refsF = !(this.vars.f = null) }
+        if (/\bt\b/.test(cond)) { refsT = !(this.vars.t = null) }
+        const test = babel.parse(cond).body[0].expression
+        keyConditions.push({ test, expr })
       }
     })
-    if (refsI) { pvars.push('i=' + locales.pluralVars.i) }
-    if (refsV) { pvars.push('v=' + locales.pluralVars.v) }
-    if (refsW) { pvars.push('w=' + locales.pluralVars.w) }
-    if (refsF) { pvars.push('f=' + locales.pluralVars.f) }
-    if (refsT) { pvars.push('t=' + locales.pluralVars.t) }
-    return '(\n    (' + vars.join(', ') + ',' + exact +
-      (pvars.length ?
-        ('\n\n    (' + pvars.join(', ') + ',' + select + other + ')\n    ))') :
-        (select + other + ')\n    )')
+    if (refsI) { pvars.push(pluralVars.i) }
+    if (refsV) { pvars.push(pluralVars.v) }
+    if (refsW) { pvars.push(pluralVars.w) }
+    if (refsF) { pvars.push(pluralVars.f) }
+    if (refsT) { pvars.push(pluralVars.t) }
+
+    if (!exactConditions.length && !keyConditions.length) {
+      return other
+    }
+
+    this.vars.s = null
+    this.vars.n = null
+    return types.sequenceExpression(vars.concat([
+      exactConditions.reduceRight(
+        (alt, { test, expr }) => {
+          return types.conditionalExpression(test, expr, alt)
+        },
+        types.sequenceExpression(pvars.concat([
+          keyConditions.reduceRight((alt, { test, expr }) => {
+            return types.conditionalExpression(test, expr, alt)
+          }, other)
+        ]))
       )
+    ]))
   }
 
   transpileSelect (id, children) {
-    let other = '""'
-    let select = '(\n    (s=' + this.transpileArgument(id) + ','
-    this.vars.s = true
-    Object.keys(children).forEach((key, i) => {
+    const s = types.identifier('s')
+    let other = types.literal('')
+    const conditions = []
+    Object.keys(children).forEach(key => {
       if (key === 'other') {
-        other = '\n      ' +
-          this.transpileSub(children[key]).replace(/\n/g, '\n      ')
+        other = this.transpileSub(children[key])
         return
       }
-      select += '\n    ' +
-        JSON.stringify(key) + ' === s ?\n      ' +
-        this.transpileSub(children[key]).replace(/\n/g, '\n      ') +
-        ' :'
+      conditions.push({
+        test: types.binaryExpression('===', s, types.literal(key)),
+        expr: this.transpileSub(children[key])
+      })
     })
-    select += other + ')\n    )'
-    return select
+
+    if (!conditions.length) { return other }
+
+    this.vars.s = null
+    return types.sequenceExpression([
+      types.assignmentExpression(
+        '=', s, this.transpileArgument(id)
+      ),
+      conditions.reduceRight((alt, { test, expr }) => {
+        return types.conditionalExpression(test, expr, alt)
+      }, other)
+    ])
   }
 
   transpileArgument (id) {
     return this.useArgExpressions ?
       this.useArgExpressions[id] :
-      'args[' + JSON.stringify(id) + ']'
+      types.memberExpression(
+        types.identifier('args'),
+        types.literal(id),
+        true
+      )
   }
 
   static transpile (elements, options) {

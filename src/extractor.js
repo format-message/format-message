@@ -17,14 +17,21 @@ export default class Extractor extends Visitor {
     return this.patterns
   }
 
-  visitFormatCall (path, traverser) {
-    traverser.traverse(path) // pre-travserse children
-    if (!this.isReplaceable(path)) return
+  exitFormatCall (node) {
+    this.savePattern(node)
+  }
 
-    const pattern = this.getStringValue(path.node.arguments[0])
+  exitTranslateCall (node) {
+    this.savePattern(node)
+  }
+
+  savePattern (node) {
+    if (!this.isReplaceable(node)) return
+
+    const pattern = this.getStringValue(node.arguments[0])
     const error = this.getPatternError(pattern)
     if (error) {
-      this.reportError(path, 'SyntaxError: pattern is invalid', error.message)
+      this.reportError(node, 'SyntaxError: pattern is invalid', error.message)
     } else {
       const key = this.getKey(pattern)
       this.patterns[key] = getKeyNormalized(pattern)
