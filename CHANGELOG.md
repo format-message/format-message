@@ -9,6 +9,13 @@
 > - [Internal]
 > - [Polish]
 
+## 2.4.1
+
+* **Bug Fix**
+  * Babel seems to resolve some source map issues. `¯\_(ツ)_/¯`
+* **Internal**
+  * Use babel instead of recast for parsing and traversing.
+
 ## 2.4.0
 
 * **New Feature**
