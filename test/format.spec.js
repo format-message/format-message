@@ -154,5 +154,36 @@ describe('formatMessage', () => {
 
       expect(pattern).to.equal('translated')
     })
+
+    describe('missing', () => {
+      it('throws an error by default', () => {
+        formatMessage.setup({ translate (pattern) {} })
+        // use variable to avoid inlining
+        const originalPattern = 'missing'
+        expect(() => formatMessage.translate(originalPattern)).to.throw('no en translation found for "missing"')
+        formatMessage.setup({ translate (pattern) { return pattern } })
+      })
+
+      it('can warn and return original', () => {
+        formatMessage.setup({ translate (pattern) {}, missingTranslation: 'warning' })
+        const warn = console.warn
+        let warning
+        console.warn = msg => warning = msg
+        const originalPattern = 'missing'
+        const message = formatMessage.translate(originalPattern)
+        expect(message).to.equal('missing')
+        expect(warning).to.equal('Warning: no en translation found for "missing"')
+        console.warn = warn
+        formatMessage.setup({ translate (pattern) { return pattern }, missingTranslation: 'error' })
+      })
+
+      it('can ignore and return a specific pattern', () => {
+        formatMessage.setup({ translate (pattern) {}, missingTranslation: 'ignore', missingReplacement: 'replaced' })
+        const originalPattern = 'missing'
+        const message = formatMessage.translate(originalPattern)
+        expect(message).to.equal('replaced')
+        formatMessage.setup({ translate (pattern) { return pattern }, missingTranslation: 'error', missingReplacement: null })
+      })
+    })
   })
 })

@@ -1,6 +1,5 @@
 import locales from './locales.json'
 import lookupClosestLocale from 'message-format/lib/lookup-closest-locale'
-import { formats } from 'message-format/lib/data'
 import { getKeyUnderscoredCrc32 } from './translate-util'
 import * as babel from 'babel-core'
 

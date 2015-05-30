@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from 'fs'
+import { writeFileSync } from 'fs'
 import pluralsJSON from 'cldr-core/supplemental/plurals.json'
 import ordinalsJSON from 'cldr-core/supplemental/ordinals.json'
 

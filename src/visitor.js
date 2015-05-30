@@ -1,12 +1,10 @@
 import { readFileSync, writeFileSync } from 'fs'
-import { relative, resolve, dirname, basename, join as pathJoin } from 'path'
+import { dirname } from 'path'
 import mkdirp from 'mkdirp'
 import * as babel from 'babel-core'
-import sourceMap from 'source-map'
 import chalk from 'chalk'
 import Parser from 'message-format/parser'
 import { getTranslate, getGetKey } from './translate-util'
-import Transpiler from './transpiler'
 import packageJson from '../package.json'
 
 const types = babel.types
@@ -91,66 +89,62 @@ export default class Visitor {
 
   isFormatImport (node) {
     return node && (
-      types.isImportDeclaration(node)
-      && types.isLiteral(node.source, { value: packageJson.name })
-      && node.specifiers.length === 1
-      && types.isImportDefaultSpecifier(node.specifiers[0])
+      types.isImportDeclaration(node) &&
+      types.isLiteral(node.source, { value: packageJson.name }) &&
+      node.specifiers.length === 1 &&
+      types.isImportDefaultSpecifier(node.specifiers[0])
     )
   }
 
   isFormatRequire (node) {
     return node && (
-      types.isCallExpression(node)
-      && types.isIdentifier(node.callee, { name: 'require' })
-      && this.isString(node.arguments[0])
-      && this.getStringValue(node.arguments[0]) === packageJson.name
+      types.isCallExpression(node) &&
+      types.isIdentifier(node.callee, { name: 'require' }) &&
+      this.isString(node.arguments[0]) &&
+      this.getStringValue(node.arguments[0]) === packageJson.name
     )
   }
 
   isFormatCall (node) {
     return node && (
-      types.isCallExpression(node)
-      && types.isIdentifier(node.callee, { name: this.functionName })
+      types.isCallExpression(node) &&
+      types.isIdentifier(node.callee, { name: this.functionName })
     )
   }
 
   isTranslateCall (node) {
     const callee = node && node.callee
     return callee && (
-      types.isMemberExpression(callee)
-      && types.isIdentifier(callee.object, { name: this.functionName })
-      && types.isIdentifier(callee.property, { name: 'translate' })
+      types.isMemberExpression(callee) &&
+      types.isIdentifier(callee.object, { name: this.functionName }) &&
+      types.isIdentifier(callee.property, { name: 'translate' })
     )
   }
 
   isReplaceable (node) {
     return node && (
-      this.isFormatCall(node)
+      this.isFormatCall(node) &&
       // first argument is a literal string, or template literal with no expressions
-      && this.isString(node.arguments[0])
-      && (
+      this.isString(node.arguments[0]) && (
         // no specified locale, or is a literal string
-        !node.arguments[2]
-        || this.isString(node.arguments[2])
-      )
-      ||
-      this.isTranslateCall(node)
-      && this.isString(node.arguments[0])
-      && (
-        !node.arguments[1]
-        || this.isString(node.arguments[1])
+        !node.arguments[2] ||
+        this.isString(node.arguments[2])
+      ) ||
+      this.isTranslateCall(node) &&
+      this.isString(node.arguments[0]) && (
+        !node.arguments[1] ||
+        this.isString(node.arguments[1])
       )
     )
   }
 
   isString (node) {
     return node && (
-      types.isLiteral(node)
-      && typeof node.value === 'string'
-      || (
-        types.isTemplateLiteral(node)
-        && node.expressions.length === 0
-        && node.quasis.length === 1
+      types.isLiteral(node) &&
+      typeof node.value === 'string' || (
+        types.isTemplateLiteral(node) &&
+        node.expressions.length === 0 &&
+        node.quasis.length === 1
       )
     )
   }
