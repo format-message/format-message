@@ -9,6 +9,15 @@
 > - [Internal]
 > - [Polish]
 
+## 2.5.0
+
+* **New Feature**
+  * Added instructions for translators to extracted json.
+  * Sort keys lexically in extracted json.
+  * Added support for missing translation options in runtime.
+* **Internal**
+  * Updated dependencies.
+
 ## 2.4.1
 
 * **Bug Fix**
