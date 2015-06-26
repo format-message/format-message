@@ -5,6 +5,17 @@ import { readFileSync, unlinkSync } from 'fs'
 
 describe('format-message extract', () => {
   describe('input from stdin', () => {
+    it('outputs instructions for translators', done => {
+      const input = 'formatMessage("hello")'
+      exec('bin/format-message extract', (err, stdout, stderr) => {
+        stdout = stdout.toString('utf8')
+        const translations = JSON.parse(stdout)
+        expect(translations['Instructions for translators']).to.exist
+        expect(stderr.toString('utf8')).to.equal('')
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
     it('finds and extracts simple strings', done => {
       const input = 'formatMessage("hello")'
       exec('bin/format-message extract', (err, stdout, stderr) => {
