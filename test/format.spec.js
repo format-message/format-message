@@ -1,4 +1,4 @@
-/*eslint-env mocha */
+/* eslint-env mocha */
 if (typeof Intl === 'undefined') { require('intl') }
 import { expect } from 'chai'
 import MessageFormat from 'message-format'

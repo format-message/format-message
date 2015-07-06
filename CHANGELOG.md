@@ -9,6 +9,12 @@
 > - [Internal]
 > - [Polish]
 
+## 2.5.1
+
+* **Internal**
+  * Update metadata for new github org
+  * Update dependencies
+
 ## 2.5.0
 
 * **New Feature**

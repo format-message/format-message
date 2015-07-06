@@ -2,7 +2,7 @@
 
 Contributions are always welcome, no matter how large or small. Before
 contributing, please read the
-[code of conduct](https://github.com/thetalecrafter/format-message/blob/master/CODE_OF_CONDUCT.md).
+[code of conduct](https://github.com/format-message/format-message/blob/master/CODE_OF_CONDUCT.md).
 
 ## Developing
 

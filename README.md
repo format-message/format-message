@@ -300,15 +300,15 @@ License
 This software is free to use under the MIT license. See the [LICENSE-MIT file][LICENSE] for license text and copyright information.
 
 
-[logo]: https://cdn.rawgit.com/thetalecrafter/format-message/446d303/src/logo/format-message.svg
+[logo]: https://cdn.rawgit.com/format-message/format-message/446d303/src/logo/format-message.svg
 [npm]: https://www.npmjs.org/package/format-message
 [npm-image]: https://img.shields.io/npm/v/format-message.svg
-[deps]: https://david-dm.org/thetalecrafter/format-message
-[deps-image]: https://img.shields.io/david/thetalecrafter/format-message.svg
-[dev-deps]: https://david-dm.org/thetalecrafter/format-message#info=devDependencies
-[dev-deps-image]: https://img.shields.io/david/dev/thetalecrafter/format-message.svg
-[build]: https://travis-ci.org/thetalecrafter/format-message
-[build-image]: https://img.shields.io/travis/thetalecrafter/format-message.svg
+[deps]: https://david-dm.org/format-message/format-message
+[deps-image]: https://img.shields.io/david/format-message/format-message.svg
+[dev-deps]: https://david-dm.org/format-message/format-message#info=devDependencies
+[dev-deps-image]: https://img.shields.io/david/dev/format-message/format-message.svg
+[build]: https://travis-ci.org/format-message/format-message
+[build-image]: https://img.shields.io/travis/format-message/format-message.svg
 [style]: https://github.com/feross/standard
 [style-image]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg
 [license-image]: https://img.shields.io/npm/l/format-message.svg
@@ -318,6 +318,6 @@ This software is free to use under the MIT license. See the [LICENSE-MIT file][L
 [icu-php]: http://php.net/manual/en/class.messageformatter.php
 [icu-java]: http://icu-project.org/apiref/icu4j/
 [intl]: https://github.com/andyearnshaw/Intl.js
-[message-format]: https://github.com/thetalecrafter/message-format
+[message-format]: https://github.com/format-message/message-format
 [babel]: https://github.com/babel/babel
-[LICENSE]: https://github.com/thetalecrafter/format-message/blob/master/LICENSE-MIT
+[LICENSE]: https://github.com/format-message/format-message/blob/master/LICENSE-MIT

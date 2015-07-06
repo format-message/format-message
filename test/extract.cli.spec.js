@@ -1,4 +1,4 @@
-/*eslint-env mocha */
+/* eslint-env mocha */
 import { expect } from 'chai'
 import { exec } from 'child_process'
 import { readFileSync, unlinkSync } from 'fs'
