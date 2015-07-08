@@ -2,7 +2,7 @@ const webpack = require('webpack')
 
 module.exports = {
   cache: true,
-  context: __dirname + '/src',
+  context: __dirname + '/lib',
   devtool: 'source-map',
   entry: {
     browser: [
@@ -10,17 +10,11 @@ module.exports = {
     ]
   },
   module: {
-    loaders: [
-      {
-        test: /\.jsx?$/i,
-        exclude: /node_modules/,
-        loader: 'babel?loose=all'
-      }
-    ]
+    loaders: []
   },
   output: {
     filename: '[name].js',
-    path: __dirname + '/lib',
+    path: __dirname + '/',
     publicPath: '/'
   },
   plugins: [

@@ -1,26 +1,31 @@
 if (typeof Intl === 'undefined') { require('intl') }
-import IntlMF from 'intl-messageformat'
-import MessageFormat from 'message-format'
-import formatMessage from '../src/format-message'
-import Benchmark from 'benchmark'
-let pattern, intlMF, mf, args
+var IntlMF = require('intl-messageformat')
+var MessageFormat = require('message-format')
+var formatMessage = require('../lib/format-message')
+var Benchmark = require('benchmark')
+var pattern
+var intlMF
+var mf
+var args
 
 function benchmark (name, cases) {
-  let suiteOptions = {
-    onStart () {
+  var suiteOptions = {
+    onStart: function () {
       console.log(this.name)
     },
-    onCycle (event) {
+    onCycle: function (event) {
       console.log(' ', String(event.target))
     },
-    onComplete () {
+    onComplete: function () {
       console.log('Fastest is ' + this.filter('fastest').pluck('name').join(' or '))
       console.log()
     }
   }
 
-  let suite = new Benchmark.Suite(name, suiteOptions)
-  Object.keys(cases).forEach(name => suite.add(name, cases[name]))
+  var suite = new Benchmark.Suite(name, suiteOptions)
+  Object.keys(cases).forEach(function (name) {
+    suite.add(name, cases[name])
+  })
   suite.run()
 }
 
@@ -29,10 +34,10 @@ intlMF = new IntlMF(pattern, 'en-US').format
 mf = new MessageFormat(pattern, 'en-US').format
 benchmark(
   'Format simple message', {
-      'intl-messageformat (reuse object)': () => intlMF(args),
-      'message-format (reuse object)': () => mf(args),
-      'format': () => formatMessage(pattern, args, 'en-US'),
-      'format (transpiled)': () => formatMessage('Simple string with nothing special', args, 'en-US')
+      'intl-messageformat (reuse object)': function () { intlMF(args) },
+      'message-format (reuse object)': function () { mf(args) },
+      'format': function () { formatMessage(pattern, args, 'en-US') },
+      'format (transpiled)': function () { formatMessage('Simple string with nothing special', args, 'en-US') }
   }
 )
 
@@ -41,10 +46,10 @@ intlMF = new IntlMF(pattern, 'en-US').format
 mf = new MessageFormat(pattern, 'en-US').format
 benchmark(
   'Format common one arg message', {
-    'intl-messageformat (reuse object)': () => intlMF({ placeholder: 'replaced value' }),
-    'message-format (reuse object)': () => mf({ placeholder: 'replaced value' }),
-    'format': () => formatMessage(pattern, { placeholder: 'replaced value' }, 'en-US'),
-    'format (transpiled)': () => formatMessage('Simple string with { placeholder }.', { placeholder: 'replaced value' }, 'en-US')
+    'intl-messageformat (reuse object)': function () { intlMF({ placeholder: 'replaced value' }) },
+    'message-format (reuse object)': function () { mf({ placeholder: 'replaced value' }) },
+    'format': function () { formatMessage(pattern, { placeholder: 'replaced value' }, 'en-US') },
+    'format (transpiled)': function () { formatMessage('Simple string with { placeholder }.', { placeholder: 'replaced value' }, 'en-US') }
   }
 )
 
@@ -76,10 +81,10 @@ args = {
   }
 benchmark(
   'Format complex message (no numbers or dates)', {
-//    'intl-messageformat (reuse object)': () => intlMF(args),
-    'message-format (reuse object)': () => mf(args),
-    'format': () => formatMessage(pattern, args),
-    'format (transpiled)': () => {
+//    'intl-messageformat (reuse object)': function () { intlMF(args) },
+    'message-format (reuse object)': function () { mf(args) },
+    'format': function () { formatMessage(pattern, args) },
+    'format (transpiled)': function () {
       formatMessage(`{name} had {
         gender, select,
           male {his}
@@ -122,10 +127,10 @@ args = {
   }
 benchmark(
   'Format complex message', {
-    'intl-messageformat (reuse object)': () => intlMF(args),
-    'message-format (reuse object)': () => mf(args),
-    'format': () => formatMessage(pattern, args),
-    'format (transpiled)': () => {
+    'intl-messageformat (reuse object)': function () { intlMF(args) },
+    'message-format (reuse object)': function () { mf(args) },
+    'format': function () { formatMessage(pattern, args) },
+    'format (transpiled)': function () {
       formatMessage(`On { date, date, short } {name} had {
           numBananas, plural,
                =0 {no bananas}

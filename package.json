@@ -1,6 +1,6 @@
 {
   "name": "format-message",
-  "version": "2.5.1",
+  "version": "3.0.0",
   "description": "Write default messages inline. Optionally transpile translations.",
   "keywords": [
     "i18n",
@@ -22,23 +22,14 @@
     "format-message": "bin/format-message"
   },
   "dependencies": {
-    "babel-core": "^5.6.11",
-    "babel-runtime": "^5.6.11",
-    "chalk": "^1.0.0",
     "commander": "^2.8.1",
-    "crc32": "^0.2.2",
+    "format-message-core": "^3.0.0",
     "glob": "^5.0.2",
-    "message-format": "^1.2.0",
-    "mkdirp": "^0.5.1",
-    "source-map": "^0.4.2",
-    "speakingurl": "^5.0.0"
+    "message-format": "^1.2.0"
   },
   "devDependencies": {
-    "babel": "^5.6.11",
-    "babel-loader": "^5.2.2",
     "benchmark": "^1.0.0",
     "chai": "^3.0.0",
-    "cldr-core": "^27.0.3",
     "intl": "^0.1.4",
     "intl-messageformat": "1.1.0",
     "istanbul": "^0.3.16",
@@ -57,20 +48,17 @@
     "webpack": "^1.9.10"
   },
   "scripts": {
-    "benchmark": "npm run benchmark-compile && babel-node --loose=all --optional=runtime scripts/benchmark.js",
+    "benchmark": "npm run benchmark-compile && node scripts/benchmark.js",
     "benchmark-compile": "bin/format-message inline scripts/benchmark.src.js > scripts/benchmark.js",
-    "cldr": "babel-node --loose=all scripts/cldr.js",
-    "jshint": "jshint src/*.js",
     "lint": "standard",
-    "prepublish": "mkdir -p lib && cp src/*.json lib/ && babel --loose=all --optional=runtime src --out-dir lib && webpack -p",
+    "prepublish": "webpack -p",
     "test": "npm run lint && npm run test-setup && npm run test-node && npm run test-browsers",
     "test-browsers": "karma start --browsers Firefox,PhantomJS --single-run",
     "test-setup": "rm -rf test/inline && bin/format-message inline test/format.spec.js > test/format-inline.spec.js",
-    "test-node": "istanbul cover _mocha -- -cG --timeout 10000 -R dot -r ./test/setup test/**/*.spec.js"
+    "test-node": "istanbul cover _mocha -- -cG --timeout 10000 -R dot test/**/*.spec.js"
   },
   "standard": {
     "ignore": [
-      "lib/**",
       "test/format-inline.spec.js",
       "scripts/benchmark.js"
     ]

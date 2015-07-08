@@ -20,7 +20,8 @@ Session.vim
 node_modules
 
 # generated
-lib
+browser.js
+browser.js.map
 coverage
 scripts/benchmark.js
 test/format-inline.spec.js

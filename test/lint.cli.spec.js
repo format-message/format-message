@@ -1,48 +1,48 @@
 /* eslint-env mocha */
-import { expect } from 'chai'
-import { exec } from 'child_process'
+var expect = require('chai').expect
+var exec = require('child_process').exec
 
-describe('format-message lint', () => {
-  describe('input from stdin', () => {
-    it('outputs nothing when no errors found', done => {
-      const input = 'formatMessage("hello")'
-      exec('bin/format-message lint', (err, stdout, stderr) => {
+describe('format-message lint', function () {
+  describe('input from stdin', function () {
+    it('outputs nothing when no errors found', function (done) {
+      var input = 'formatMessage("hello")'
+      exec('bin/format-message lint', function (err, stdout, stderr) {
         expect(stdout.toString('utf8')).to.equal('')
         expect(stderr.toString('utf8')).to.equal('')
         done(err)
       }).stdin.end(input, 'utf8')
     })
 
-    it('reports errors from stdin input to stderr', done => {
-      const input = 'formatMessage("{")'
-      exec('bin/format-message lint', (err, stdout, stderr) => {
+    it('reports errors from stdin input to stderr', function (done) {
+      var input = 'formatMessage("{")'
+      exec('bin/format-message lint', function (err, stdout, stderr) {
         expect(stdout.toString('utf8')).to.equal('')
         expect(stderr.toString('utf8')).to.match(/^SyntaxError\:/)
         done(err)
       }).stdin.end(input, 'utf8')
     })
 
-    it('reports errors in translate calls', done => {
-      const input = 'formatMessage.translate("{")'
-      exec('bin/format-message lint', (err, stdout, stderr) => {
+    it('reports errors in translate calls', function (done) {
+      var input = 'formatMessage.translate("{")'
+      exec('bin/format-message lint', function (err, stdout, stderr) {
         expect(stdout.toString('utf8')).to.equal('')
         expect(stderr.toString('utf8')).to.match(/^SyntaxError\:/)
         done(err)
       }).stdin.end(input, 'utf8')
     })
 
-    it('reports filename as "stdin" by default', done => {
-      const input = 'formatMessage("{")'
-      exec('bin/format-message lint', (err, stdout, stderr) => {
+    it('reports filename as "stdin" by default', function (done) {
+      var input = 'formatMessage("{")'
+      exec('bin/format-message lint', function (err, stdout, stderr) {
         expect(stdout.toString('utf8')).to.equal('')
         expect(stderr.toString('utf8')).to.contain('at formatMessage (stdin:1:0)')
         done(err)
       }).stdin.end(input, 'utf8')
     })
 
-    it('reports passed -f filename in errors', done => {
-      const input = 'formatMessage("{")'
-      exec('bin/format-message lint -f a-file-name.js', (err, stdout, stderr) => {
+    it('reports passed -f filename in errors', function (done) {
+      var input = 'formatMessage("{")'
+      exec('bin/format-message lint -f a-file-name.js', function (err, stdout, stderr) {
         expect(stdout.toString('utf8')).to.equal('')
         expect(stderr.toString('utf8'))
           .to.contain('at formatMessage (a-file-name.js:1:0)')
@@ -50,9 +50,9 @@ describe('format-message lint', () => {
       }).stdin.end(input, 'utf8')
     })
 
-    it('reports passed --filename filename in errors', done => {
-      const input = 'formatMessage("{")'
-      exec('bin/format-message lint --filename b-file-name.js', (err, stdout, stderr) => {
+    it('reports passed --filename filename in errors', function (done) {
+      var input = 'formatMessage("{")'
+      exec('bin/format-message lint --filename b-file-name.js', function (err, stdout, stderr) {
         expect(stdout.toString('utf8')).to.equal('')
         expect(stderr.toString('utf8'))
           .to.contain('at formatMessage (b-file-name.js:1:0)')
@@ -61,19 +61,19 @@ describe('format-message lint', () => {
     })
   })
 
-  describe('colors', () => {
-    it('outputs in color when specified', done => {
-      const input = 'formatMessage(top);formatMessage("{")'
-      exec('bin/format-message lint --color', (err, stdout, stderr) => {
+  describe('colors', function () {
+    it('outputs in color when specified', function (done) {
+      var input = 'formatMessage(top);formatMessage("{")'
+      exec('bin/format-message lint --color', function (err, stdout, stderr) {
         expect(stdout.toString('utf8')).to.equal('')
         expect(stderr.toString('utf8')).to.contain('\x1b[')
         done(err)
       }).stdin.end(input, 'utf8')
     })
 
-    it('outputs without color when specified', done => {
-      const input = 'formatMessage(top);formatMessage("{")'
-      exec('bin/format-message lint --no-color', (err, stdout, stderr) => {
+    it('outputs without color when specified', function (done) {
+      var input = 'formatMessage(top);formatMessage("{")'
+      exec('bin/format-message lint --no-color', function (err, stdout, stderr) {
         expect(stdout.toString('utf8')).to.equal('')
         expect(stderr.toString('utf8')).to.not.contain('\x1b[')
         done(err)
@@ -81,10 +81,10 @@ describe('format-message lint', () => {
     })
   })
 
-  describe('function name', () => {
-    it('finds functions with specified -n name', done => {
-      const input = '__(top)'
-      exec('bin/format-message lint -n __', (err, stdout, stderr) => {
+  describe('function name', function () {
+    it('finds functions with specified -n name', function (done) {
+      var input = '__(top)'
+      exec('bin/format-message lint -n __', function (err, stdout, stderr) {
         expect(stdout.toString('utf8')).to.equal('')
         expect(stderr.toString('utf8')).to.equal(
           'Warning: called without a literal pattern\n    at __ (stdin:1:0)\n'
@@ -93,9 +93,9 @@ describe('format-message lint', () => {
       }).stdin.end(input, 'utf8')
     })
 
-    it('finds functions with specified --function-name name', done => {
-      const input = '__(top)'
-      exec('bin/format-message lint --function-name __', (err, stdout, stderr) => {
+    it('finds functions with specified --function-name name', function (done) {
+      var input = '__(top)'
+      exec('bin/format-message lint --function-name __', function (err, stdout, stderr) {
         expect(stdout.toString('utf8')).to.equal('')
         expect(stderr.toString('utf8')).to.equal(
           'Warning: called without a literal pattern\n    at __ (stdin:1:0)\n'
@@ -104,18 +104,18 @@ describe('format-message lint', () => {
       }).stdin.end(input, 'utf8')
     })
 
-    it('doesn\'t find method calls with the specified name (__)', done => {
-      const input = 'top.__(top)'
-      exec('bin/format-message lint -n __', (err, stdout, stderr) => {
+    it('doesn\'t find method calls with the specified name (__)', function (done) {
+      var input = 'top.__(top)'
+      exec('bin/format-message lint -n __', function (err, stdout, stderr) {
         expect(stdout.toString('utf8')).to.equal('')
         expect(stderr.toString('utf8')).to.equal('')
         done(err)
       }).stdin.end(input, 'utf8')
     })
 
-    it('doesn\'t find method calls with the specified name (format)', done => {
-      const input = 'top.formatMessage("{")'
-      exec('bin/format-message lint', (err, stdout, stderr) => {
+    it('doesn\'t find method calls with the specified name (format)', function (done) {
+      var input = 'top.formatMessage("{")'
+      exec('bin/format-message lint', function (err, stdout, stderr) {
         expect(stdout.toString('utf8')).to.equal('')
         expect(stderr.toString('utf8')).to.equal('')
         done(err)
@@ -123,13 +123,13 @@ describe('format-message lint', () => {
     })
   })
 
-  describe('translations and file input', done => {
-    it('-k literal', done => {
-      const cmd = 'bin/format-message lint' +
+  describe('translations and file input', function (done) {
+    it('-k literal', function (done) {
+      var cmd = 'bin/format-message lint' +
         ' -k literal' +
         ' -t test/translations/lint.literal.json' +
         ' test/format.spec.js'
-      exec(cmd, (err, stdout, stderr) => {
+      exec(cmd, function (err, stdout, stderr) {
         expect(stdout.toString('utf8')).to.equal('')
         stderr = stderr.toString('utf8')
         expect(stderr).to.contain(
@@ -141,12 +141,12 @@ describe('format-message lint', () => {
       })
     })
 
-    it('--key-type normalized', done => {
-      const cmd = 'bin/format-message lint' +
+    it('--key-type normalized', function (done) {
+      var cmd = 'bin/format-message lint' +
         ' --key-type normalized' +
         ' -t test/translations/lint.normalized.json' +
         ' test/format.spec.js'
-      exec(cmd, (err, stdout, stderr) => {
+      exec(cmd, function (err, stdout, stderr) {
         expect(stdout.toString('utf8')).to.equal('')
         stderr = stderr.toString('utf8')
         expect(stderr).to.contain(
@@ -158,12 +158,12 @@ describe('format-message lint', () => {
       })
     })
 
-    it('--key-type underscored', done => {
-      const cmd = 'bin/format-message lint' +
+    it('--key-type underscored', function (done) {
+      var cmd = 'bin/format-message lint' +
         ' --key-type underscored' +
         ' -t test/translations/lint.underscored.json' +
         ' test/format.spec.js'
-      exec(cmd, (err, stdout, stderr) => {
+      exec(cmd, function (err, stdout, stderr) {
         expect(stdout.toString('utf8')).to.equal('')
         stderr = stderr.toString('utf8')
         expect(stderr).to.contain(
@@ -175,11 +175,11 @@ describe('format-message lint', () => {
       })
     })
 
-    it('default underscored_crc32', done => {
-      const cmd = 'bin/format-message lint' +
+    it('default underscored_crc32', function (done) {
+      var cmd = 'bin/format-message lint' +
         ' -t test/translations/lint.underscored_crc32.json' +
         ' test/format.spec.js'
-      exec(cmd, (err, stdout, stderr) => {
+      exec(cmd, function (err, stdout, stderr) {
         expect(stdout.toString('utf8')).to.equal('')
         stderr = stderr.toString('utf8')
         expect(stderr).to.contain(
@@ -192,19 +192,19 @@ describe('format-message lint', () => {
     })
   })
 
-  describe('missing arguments', () => {
-    it('warns when required arguments object is missing', done => {
-      const input = 'formatMessage("{a}")'
-      exec('bin/format-message lint', (err, stdout, stderr) => {
+  describe('missing arguments', function () {
+    it('warns when required arguments object is missing', function (done) {
+      var input = 'formatMessage("{a}")'
+      exec('bin/format-message lint', function (err, stdout, stderr) {
         expect(stdout.toString('utf8')).to.equal('')
         expect(stderr.toString('utf8')).to.match(/^TypeError\: pattern requires parameters/)
         done(err)
       }).stdin.end(input, 'utf8')
     })
 
-    it('warns when required argument is missing from literal object', done => {
-      const input = 'formatMessage("{a}", { b:1 })'
-      exec('bin/format-message lint', (err, stdout, stderr) => {
+    it('warns when required argument is missing from literal object', function (done) {
+      var input = 'formatMessage("{a}", { b:1 })'
+      exec('bin/format-message lint', function (err, stdout, stderr) {
         expect(stdout.toString('utf8')).to.equal('')
         expect(stderr.toString('utf8')).to.match(/^TypeError\: pattern requires parameter/)
         done(err)
@@ -212,26 +212,20 @@ describe('format-message lint', () => {
     })
   })
 
-  describe('autodetect function name', () => {
-    it('finds function name from require call', done => {
-      const input = 'var f=require("format-message");f("{")'
-      exec('bin/format-message lint', (err, stdout, stderr) => {
+  describe('autodetect function name', function () {
+    it('finds function name from require call', function (done) {
+      var input = 'var f=require("format-message");f("{")'
+      exec('bin/format-message lint', function (err, stdout, stderr) {
         expect(stdout.toString('utf8')).to.equal('')
         expect(stderr.toString('utf8')).to.match(/^SyntaxError\:/)
         done(err)
       }).stdin.end(input, 'utf8')
     })
 
-    it('handles multiple function names in function context', done => {
-      const input = `
-        function foo(){
-          var f=require("format-message");
-          f("{")
-        }
-        function bar(){
-          formatMessage(foo)
-        }`
-      exec('bin/format-message lint', (err, stdout, stderr) => {
+    it('handles multiple function names in function context', function (done) {
+      var input = 'function foo(){var f=require("format-message");f("{")}' +
+        'function bar(){formatMessage(foo)}'
+      exec('bin/format-message lint', function (err, stdout, stderr) {
         expect(stdout.toString('utf8')).to.equal('')
         expect(stderr.toString('utf8')).to.contain('SyntaxError')
         expect(stderr.toString('utf8')).to.contain('Warning')
@@ -239,18 +233,18 @@ describe('format-message lint', () => {
       }).stdin.end(input, 'utf8')
     })
 
-    it('finds function name from import', done => {
-      const input = 'import __ from "format-message";__("{")'
-      exec('bin/format-message lint', (err, stdout, stderr) => {
+    it('finds function name from import', function (done) {
+      var input = 'import __ from "format-message";__("{")'
+      exec('bin/format-message lint', function (err, stdout, stderr) {
         expect(stdout.toString('utf8')).to.equal('')
         expect(stderr.toString('utf8')).to.match(/^SyntaxError\:/)
         done(err)
       }).stdin.end(input, 'utf8')
     })
 
-    it('is disabled by --no-auto', done => {
-      const input = 'import __ from "format-message";__("{")'
-      exec('bin/format-message lint --no-auto', (err, stdout, stderr) => {
+    it('is disabled by --no-auto', function (done) {
+      var input = 'import __ from "format-message";__("{")'
+      exec('bin/format-message lint --no-auto', function (err, stdout, stderr) {
         expect(stdout.toString('utf8')).to.equal('')
         expect(stderr.toString('utf8')).to.equal('')
         done(err)
