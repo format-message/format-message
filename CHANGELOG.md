@@ -9,6 +9,17 @@
 > - [Internal]
 > - [Polish]
 
+## 3.0.1
+
+* **Bug Fix**
+  * Remove some lingering ES6 breaking ES5 environments
+
+## 3.0.0
+
+* **Internal**
+  * Moved core functionality to new repo for better sharing
+  * Move source to ES5 instead of transpiling ES6 source
+
 ## 2.5.1
 
 * **Internal**
