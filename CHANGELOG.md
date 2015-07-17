@@ -9,6 +9,14 @@
 > - [Internal]
 > - [Polish]
 
+## 3.1.0
+
+* **New Feature**
+  * Added `--no-instructions` option to suppress instructions in extract output
+  * Added `--yml` option to output extract result as YAML instead of JSON
+* **Bug Fix**
+  * Made `lint` and `extract` tools work with ES6/7 files
+
 ## 3.0.1
 
 * **Bug Fix**

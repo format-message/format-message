@@ -18,6 +18,17 @@ describe('format-message extract', function () {
       }).stdin.end(input, 'utf8')
     })
 
+    it('outputs instructions for translators unless disabled with --no-instructions', function (done) {
+      var input = 'formatMessage("hello")'
+      exec('bin/format-message extract --no-instructions', function (err, stdout, stderr) {
+        stdout = stdout.toString('utf8')
+        var translations = JSON.parse(stdout)
+        expect(translations['Instructions for translators']).to.not.exist
+        expect(stderr.toString('utf8')).to.equal('')
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
     it('finds and extracts simple strings', function (done) {
       var input = 'formatMessage("hello")'
       exec('bin/format-message extract', function (err, stdout, stderr) {
@@ -98,6 +109,17 @@ describe('format-message extract', function () {
         expect(translations.en).to.eql({
           hello_32e420db: 'hello'
         })
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('can output in yaml format', function (done) {
+      var input = 'formatMessage("hello")'
+      exec('bin/format-message extract --yml --no-instructions', function (err, stdout, stderr) {
+        stdout = stdout.toString('utf8')
+        var translations = stdout
+        expect(translations).to.eql('en:\n  hello_32e420db: hello\n\n')
+        expect(stderr.toString('utf8')).to.equal('')
         done(err)
       }).stdin.end(input, 'utf8')
     })
