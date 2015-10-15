@@ -110,6 +110,15 @@ describe('formatMessage', function () {
 
       expect(message).to.equal('test-success')
     })
+
+    it('consumes custom formats', function () {
+      var customFormats = { number: { 'extended-usd': { style: 'currency', currency: 'usd', minimumFractionDigits: 2 } } }
+      formatMessage.setup({ customFormats: customFormats })
+
+      var message = formatMessage.number('en', 5600, 'extended-usd')
+
+      expect(message).to.equal('$5,600.00')
+    })
   })
 
   describe('translate', function () {

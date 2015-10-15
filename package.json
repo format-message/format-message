@@ -25,6 +25,7 @@
     "commander": "^2.8.1",
     "format-message-core": "^3.1.0",
     "glob": "^5.0.2",
+    "lodash": "^3.10.1",
     "message-format": "^1.2.0"
   },
   "devDependencies": {
