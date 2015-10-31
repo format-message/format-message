@@ -9,6 +9,15 @@
 > - [Internal]
 > - [Polish]
 
+## 3.2.0
+
+* **New Feature**
+  * Added `formats` option to `setup()`
+* **Bug Fix**
+  * Default `missingTranslation` to `"warning"`
+* **Documentation**
+  * Add `missingTranslation` and `missingReplacement` to README
+
 ## 3.1.0
 
 * **New Feature**

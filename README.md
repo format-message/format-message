@@ -90,6 +90,12 @@ Parameters
     - `translate(pattern, locales)` is a function to translate messages. It should return the pattern translated for the specified locale.
         - `pattern` is the message pattern to translate.
         - `locale` is a string with a BCP 47 language tag, or an array of such strings.
+    - `missingReplacement` is a string that will be used when a message translation isn't found. By default the source message is used.
+    - `missingTranslation` is one of `"ignore"`, `"warning"`, `"error"`. By default it is `"warning"`, and missing translations cause a console warning. If `"error"`, an error is thrown.
+    - `formats` is an object containing objects that define placeholder styles `{ name, type, style }`:
+      - `number` is an object containing number format styles to add. Each property name can be used afterwards as a style name for a number placeholder. The value of each property is an object that will be passed to an [`Intl.NumberFormat`][mdn-intl-numberformat] constructor as the seconds argument.
+      - `date` is an object containing date format styles to add. Each property name can be used afterwards as a style name for a date placeholder. The value of each property is an object that will be passed to an [`Intl.DateTimeFormat`][mdn-intl-datetimeformat] constructor as the seconds argument.
+      - `time` is an object containing time format styles to add. Each property name can be used afterwards as a style name for a time placeholder. The value of each property is an object that will be passed to an [`Intl.DateTimeFormat`][mdn-intl-datetimeformat] constructor as the seconds argument.
 
 ### `formatMessage.translate`
 
@@ -320,4 +326,6 @@ This software is free to use under the MIT license. See the [LICENSE-MIT file][L
 [intl]: https://github.com/andyearnshaw/Intl.js
 [message-format]: https://github.com/format-message/message-format
 [babel]: https://github.com/babel/babel
+[mdn-intl-datetimeformat]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
+[mdn-intl-numberformat]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat
 [LICENSE]: https://github.com/format-message/format-message/blob/master/LICENSE-MIT
