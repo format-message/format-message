@@ -1,4 +1,7 @@
-if (typeof Intl === 'undefined') { require('intl') }
+if (typeof Intl === 'undefined') {
+  require('intl')
+  require('intl/locale-data/jsonp/en')
+}
 var IntlMF = require('intl-messageformat')
 var MessageFormat = require('message-format')
 var formatMessage = require('../lib/format-message')
@@ -34,10 +37,10 @@ intlMF = new IntlMF(pattern, 'en-US').format
 mf = new MessageFormat(pattern, 'en-US').format
 benchmark(
   'Format simple message', {
-      'intl-messageformat (reuse object)': function () { intlMF(args) },
-      'message-format (reuse object)': function () { mf(args) },
-      'format': function () { formatMessage(pattern, args, 'en-US') },
-      'format (transpiled)': function () { formatMessage('Simple string with nothing special', args, 'en-US') }
+    'intl-messageformat (reuse object)': function () { intlMF(args) },
+    'message-format (reuse object)': function () { mf(args) },
+    'format': function () { formatMessage(pattern, args, 'en-US') },
+    'format (transpiled)': function () { formatMessage('Simple string with nothing special', args, 'en-US') }
   }
 )
 
@@ -73,12 +76,12 @@ pattern = `{name} had {
 // intlMF = new IntlMF(pattern, 'en-US').format // doesn't support selectordinal
 mf = new MessageFormat(pattern, 'en-US').format
 args = {
-    date: new Date(),
-    name: 'Curious George',
-    gender: 'male',
-    numBananas: 300,
-    nth: 3
-  }
+  date: new Date(),
+  name: 'Curious George',
+  gender: 'male',
+  numBananas: 300,
+  nth: 3
+}
 benchmark(
   'Format complex message (no numbers or dates)', {
 //    'intl-messageformat (reuse object)': function () { intlMF(args) },
@@ -120,11 +123,11 @@ pattern = `On { date, date, short } {name} had {
 intlMF = new IntlMF(pattern, 'en-US').format
 mf = new MessageFormat(pattern, 'en-US').format
 args = {
-    date: new Date(),
-    name: 'Curious George',
-    gender: 'male',
-    numBananas: 300
-  }
+  date: new Date(),
+  name: 'Curious George',
+  gender: 'male',
+  numBananas: 300
+}
 benchmark(
   'Format complex message', {
     'intl-messageformat (reuse object)': function () { intlMF(args) },

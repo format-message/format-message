@@ -30,10 +30,10 @@
   "devDependencies": {
     "benchmark": "^1.0.0",
     "chai": "^3.0.0",
-    "intl": "^0.1.4",
-    "intl-messageformat": "1.1.0",
-    "istanbul": "^0.3.16",
-    "karma": "^0.12.35",
+    "intl": "^1.0.0",
+    "intl-messageformat": "1.2.0",
+    "istanbul": "^0.4.0",
+    "karma": "^0.13.0",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^0.2.0",
     "karma-cli": "^0.1.0",
@@ -44,7 +44,8 @@
     "karma-sourcemap-loader": "^0.3.4",
     "karma-webpack": "^1.5.1",
     "mocha": "^2.2.5",
-    "standard": "^4.0.0",
+    "phantomjs": "^1.9.18",
+    "standard": "^5.0.0",
     "webpack": "^1.9.10"
   },
   "scripts": {

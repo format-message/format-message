@@ -1,5 +1,8 @@
 /* eslint-env mocha */
-if (typeof Intl === 'undefined') { require('intl') }
+if (typeof Intl === 'undefined') {
+  require('intl')
+  require('intl/locale-data/jsonp/en')
+}
 var expect = require('chai').expect
 var MessageFormat = require('message-format')
 var formatMessage = require('../lib/format-message')
