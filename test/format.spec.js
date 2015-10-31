@@ -113,6 +113,27 @@ describe('formatMessage', function () {
 
       expect(message).to.equal('test-success')
     })
+
+    it('adds custom formats', function () {
+      formatMessage.setup({ formats: {
+        number: { perc: {
+          style: 'percent',
+          maximumSignificantDigits: 1
+        } },
+        date: { day: {
+          day: '2-digit'
+        } },
+        time: { minute: {
+          minute: 'numeric'
+        } }
+      } })
+      var message = formatMessage('{ n, number, perc }', { n: 0.3672 })
+      expect(message).to.equal('40%')
+      message = formatMessage('{ d, date, day }', { d: new Date('2015/10/19') })
+      expect(message).to.equal('19')
+      message = formatMessage('{ t, time, minute }', { t: new Date('2015/10/19 5:06') })
+      expect(message).to.equal('6')
+    })
   })
 
   describe('translate', function () {

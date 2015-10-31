@@ -25,7 +25,8 @@
     "commander": "^2.8.1",
     "format-message-core": "^3.1.0",
     "glob": "^5.0.2",
-    "message-format": "^1.2.0"
+    "message-format": "^1.2.0",
+    "object-assign": "^4.0.1"
   },
   "devDependencies": {
     "benchmark": "^1.0.0",
@@ -39,12 +40,10 @@
     "karma-cli": "^0.1.0",
     "karma-firefox-launcher": "^0.1.4",
     "karma-mocha": "^0.2.0",
-    "karma-phantomjs-launcher": "^0.2.0",
     "karma-safari-launcher": "^0.1.1",
     "karma-sourcemap-loader": "^0.3.4",
     "karma-webpack": "^1.5.1",
     "mocha": "^2.2.5",
-    "phantomjs": "^1.9.18",
     "standard": "^5.0.0",
     "webpack": "^1.9.10"
   },
@@ -54,7 +53,7 @@
     "lint": "standard",
     "prepublish": "webpack -p",
     "test": "npm run lint && npm run test-setup && npm run test-node && npm run test-browsers",
-    "test-browsers": "karma start --browsers Firefox,PhantomJS --single-run",
+    "test-browsers": "karma start --browsers Firefox --single-run",
     "test-setup": "rm -rf test/inline && bin/format-message inline test/format.spec.js > test/format-inline.spec.js",
     "test-node": "istanbul cover _mocha -- -cG --timeout 10000 -R dot test/**/*.spec.js"
   },
