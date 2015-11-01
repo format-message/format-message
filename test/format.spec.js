@@ -148,18 +148,9 @@ describe('formatMessage', function () {
     })
 
     describe('missing', function () {
-      it('throws an error by default', function () {
-        formatMessage.setup({ translate: function (pattern) {} })
-        // use variable to avoid inlining
-        var originalPattern = 'missing'
-        expect(function () { formatMessage.translate(originalPattern) }).to.throw('no en translation found for "missing"')
-        formatMessage.setup({ translate: function (pattern) { return pattern } })
-      })
-
-      it('can warn and return original', function () {
+      it('warns and returns original by default', function () {
         formatMessage.setup({
-          translate: function (pattern) {},
-          missingTranslation: 'warning'
+          translate: function (pattern) {}
         })
         var warn = console.warn
         var warning
@@ -170,8 +161,21 @@ describe('formatMessage', function () {
         expect(warning).to.equal('Warning: no en translation found for "missing"')
         console.warn = warn
         formatMessage.setup({
-          translate: function (pattern) { return pattern },
+          translate: function (pattern) { return pattern }
+        })
+      })
+
+      it('can throw an error', function () {
+        formatMessage.setup({
+          translate: function (pattern) {},
           missingTranslation: 'error'
+        })
+        // use variable to avoid inlining
+        var originalPattern = 'missing'
+        expect(function () { formatMessage.translate(originalPattern) }).to.throw('no en translation found for "missing"')
+        formatMessage.setup({
+          translate: function (pattern) { return pattern },
+          missingTranslation: 'warning'
         })
       })
 
@@ -186,7 +190,7 @@ describe('formatMessage', function () {
         expect(message).to.equal('replaced')
         formatMessage.setup({
           translate: function (pattern) { return pattern },
-          missingTranslation: 'error',
+          missingTranslation: 'warning',
           missingReplacement: null
         })
       })
