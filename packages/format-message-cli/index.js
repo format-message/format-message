@@ -6,7 +6,7 @@ var glob = require('glob')
 var Linter = require('format-message-core/lib/linter')
 var Extractor = require('format-message-core/lib/extractor')
 var Inliner = require('format-message-core/lib/inliner')
-var pkg = require('../package.json')
+var pkg = require('./package.json')
 
 var existsSync = fsUtil.existsSync
 var readFileSync = fsUtil.readFileSync

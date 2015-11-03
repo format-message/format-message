@@ -5,7 +5,7 @@ if (typeof Intl === 'undefined') {
 }
 var expect = require('chai').expect
 var MessageFormat = require('message-format')
-var formatMessage = require('../lib/format-message')
+var formatMessage = require('../packages/format-message')
 
 describe('formatMessage', function () {
   describe('formatMessage', function () {

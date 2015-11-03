@@ -9,7 +9,7 @@ describe('format-message extract', function () {
   describe('input from stdin', function () {
     it('outputs instructions for translators', function (done) {
       var input = 'formatMessage("hello")'
-      exec('bin/format-message extract', function (err, stdout, stderr) {
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
         expect(translations['Instructions for translators']).to.exist
@@ -20,7 +20,7 @@ describe('format-message extract', function () {
 
     it('outputs instructions for translators unless disabled with --no-instructions', function (done) {
       var input = 'formatMessage("hello")'
-      exec('bin/format-message extract --no-instructions', function (err, stdout, stderr) {
+      exec('packages/format-message-cli/format-message extract --no-instructions', function (err, stdout, stderr) {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
         expect(translations['Instructions for translators']).to.not.exist
@@ -31,7 +31,7 @@ describe('format-message extract', function () {
 
     it('finds and extracts simple strings', function (done) {
       var input = 'formatMessage("hello")'
-      exec('bin/format-message extract', function (err, stdout, stderr) {
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
         expect(translations.en).to.eql({
@@ -44,7 +44,7 @@ describe('format-message extract', function () {
 
     it('finds and extracts template strings', function (done) {
       var input = 'formatMessage(`hello`)'
-      exec('bin/format-message extract', function (err, stdout, stderr) {
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
         expect(translations.en).to.eql({
@@ -57,7 +57,7 @@ describe('format-message extract', function () {
 
     it('finds and extracts from translate calls', function (done) {
       var input = 'formatMessage.translate("hello")'
-      exec('bin/format-message extract', function (err, stdout, stderr) {
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
         expect(translations.en).to.eql({
@@ -70,7 +70,7 @@ describe('format-message extract', function () {
 
     it('dedupes repeated patterns', function (done) {
       var input = 'formatMessage("hello");formatMessage(`hello`)'
-      exec('bin/format-message extract', function (err, stdout, stderr) {
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
         expect(translations.en).to.eql({
@@ -84,7 +84,7 @@ describe('format-message extract', function () {
     it('can output to a -o file', function (done) {
       var input = 'formatMessage("hello");formatMessage(`hello`)'
       var filename = 'test/translations/extract.underscored_crc32.json'
-      var cmd = 'bin/format-message extract -o ' + filename
+      var cmd = 'packages/format-message-cli/format-message extract -o ' + filename
       exec(cmd, function (err, stdout, stderr) {
         expect(stdout.toString('utf8')).to.equal('')
         expect(stderr.toString('utf8')).to.equal('')
@@ -100,7 +100,7 @@ describe('format-message extract', function () {
     it('can output to a --out-file file', function (done) {
       var input = 'formatMessage("hello");formatMessage(`hello`)'
       var filename = 'test/translations/extract.underscored_crc32.json'
-      var cmd = 'bin/format-message extract --out-file ' + filename
+      var cmd = 'packages/format-message-cli/format-message extract --out-file ' + filename
       exec(cmd, function (err, stdout, stderr) {
         expect(stdout.toString('utf8')).to.equal('')
         expect(stderr.toString('utf8')).to.equal('')
@@ -115,7 +115,7 @@ describe('format-message extract', function () {
 
     it('can output in yaml format', function (done) {
       var input = 'formatMessage("hello")'
-      exec('bin/format-message extract --yml --no-instructions', function (err, stdout, stderr) {
+      exec('packages/format-message-cli/format-message extract --yml --no-instructions', function (err, stdout, stderr) {
         stdout = stdout.toString('utf8')
         var translations = stdout
         expect(translations).to.eql('en:\n  hello_32e420db: hello\n\n')
@@ -126,7 +126,7 @@ describe('format-message extract', function () {
 
     it('uses specified -k key type', function (done) {
       var input = 'formatMessage("hello world");formatMessage(`hello world`)'
-      var cmd = 'bin/format-message extract -k underscored'
+      var cmd = 'packages/format-message-cli/format-message extract -k underscored'
       exec(cmd, function (err, stdout, stderr) {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
@@ -140,7 +140,7 @@ describe('format-message extract', function () {
 
     it('uses specified --key-type key type', function (done) {
       var input = 'formatMessage("hello world");formatMessage(`hello world`)'
-      var cmd = 'bin/format-message extract --key-type underscored'
+      var cmd = 'packages/format-message-cli/format-message extract --key-type underscored'
       exec(cmd, function (err, stdout, stderr) {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
@@ -154,7 +154,7 @@ describe('format-message extract', function () {
 
     it('finds -n named functions', function (done) {
       var input = '__("hello world");__(`hello world`)'
-      var cmd = 'bin/format-message extract -n __'
+      var cmd = 'packages/format-message-cli/format-message extract -n __'
       exec(cmd, function (err, stdout, stderr) {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
@@ -168,7 +168,7 @@ describe('format-message extract', function () {
 
     it('finds --function-name named functions', function (done) {
       var input = '$("hello world");$(`hello world`)'
-      var cmd = 'bin/format-message extract --function-name $'
+      var cmd = 'packages/format-message-cli/format-message extract --function-name $'
       exec(cmd, function (err, stdout, stderr) {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
@@ -182,7 +182,7 @@ describe('format-message extract', function () {
 
     it('writes to -l locale object', function (done) {
       var input = 'formatMessage("hello world")'
-      var cmd = 'bin/format-message extract -l pt'
+      var cmd = 'packages/format-message-cli/format-message extract -l pt'
       exec(cmd, function (err, stdout, stderr) {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
@@ -196,7 +196,7 @@ describe('format-message extract', function () {
 
     it('writes to --locale locale object', function (done) {
       var input = 'formatMessage("hello world")'
-      var cmd = 'bin/format-message extract --locale en-US'
+      var cmd = 'packages/format-message-cli/format-message extract --locale en-US'
       exec(cmd, function (err, stdout, stderr) {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
@@ -212,7 +212,7 @@ describe('format-message extract', function () {
   describe('reading from files', function () {
     it('can read from a single file', function (done) {
       var filename = 'test/format.spec.js'
-      var cmd = 'bin/format-message extract ' + filename
+      var cmd = 'packages/format-message-cli/format-message extract ' + filename
       exec(cmd, function (err, stdout, stderr) {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
@@ -225,7 +225,7 @@ describe('format-message extract', function () {
 
     it('can read from multiple files', function (done) {
       var filename = 'test/setup.js test/format.spec.js'
-      var cmd = 'bin/format-message extract ' + filename
+      var cmd = 'packages/format-message-cli/format-message extract ' + filename
       exec(cmd, function (err, stdout, stderr) {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
@@ -238,7 +238,7 @@ describe('format-message extract', function () {
 
     it('can read from a glob pattern of multiple files', function (done) {
       var filename = 'test/**/*.spec.js'
-      var cmd = 'bin/format-message extract ' + filename
+      var cmd = 'packages/format-message-cli/format-message extract ' + filename
       exec(cmd, function (err, stdout, stderr) {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
@@ -253,7 +253,7 @@ describe('format-message extract', function () {
   describe('autodetect function name', function () {
     it('finds function name from require call', function (done) {
       var input = 'var f=require("format-message");f("hello")'
-      exec('bin/format-message extract', function (err, stdout, stderr) {
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
         expect(translations.en).to.eql({
@@ -267,7 +267,7 @@ describe('format-message extract', function () {
     it('handles multiple function names in function context', function (done) {
       var input = 'function foo(){var f=require("format-message");f("hello")}' +
         'function bar(){formatMessage("bye")}'
-      exec('bin/format-message extract', function (err, stdout, stderr) {
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
         expect(translations.en).to.eql({
@@ -281,7 +281,7 @@ describe('format-message extract', function () {
 
     it('finds function name from import', function (done) {
       var input = 'import __ from "format-message";__("hello")'
-      exec('bin/format-message extract', function (err, stdout, stderr) {
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
         expect(translations.en).to.eql({
@@ -294,7 +294,7 @@ describe('format-message extract', function () {
 
     it('is disabled by --no-auto', function (done) {
       var input = 'import __ from "format-message";__("hello")'
-      exec('bin/format-message extract --no-auto', function (err, stdout, stderr) {
+      exec('packages/format-message-cli/format-message extract --no-auto', function (err, stdout, stderr) {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
         expect(translations.en).to.eql({})
