@@ -7,8 +7,6 @@
 [![JS Standard Style][style-image]][style]
 [![MIT License][license-image]][LICENSE]
 
-[![Dependency Status][deps-image]][deps]
-
 
 Quick Examples
 --------------
@@ -195,8 +193,6 @@ This software is free to use under the MIT license. See the [LICENSE-MIT file][L
 [logo]: https://cdn.rawgit.com/format-message/format-message/5ecbfe3/logo.svg
 [npm]: https://www.npmjs.org/package/format-message
 [npm-image]: https://img.shields.io/npm/v/format-message.svg
-[deps]: https://david-dm.org/format-message/format-message
-[deps-image]: https://img.shields.io/david/format-message/format-message.svg
 [build]: https://travis-ci.org/format-message/format-message
 [build-image]: https://img.shields.io/travis/format-message/format-message.svg
 [style]: https://github.com/feross/standard

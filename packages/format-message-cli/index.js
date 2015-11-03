@@ -1,3 +1,5 @@
+'use strict'
+
 var program = require('commander')
 var fsUtil = require('fs')
 var glob = require('glob')
@@ -41,7 +43,7 @@ function addStdinToFiles (files, options, next) {
 /**
  * version
  **/
-program
+module.exports = program
   .version(pkg.version)
   .option('--color', 'use colors in errors and warnings')
   .option('--no-color', 'do not use colors in errors and warnings')
@@ -229,10 +231,3 @@ program
       })
     })
   })
-
-program
-  .parse(process.argv)
-
-if (process.argv.length < 3) {
-  program.help()
-}

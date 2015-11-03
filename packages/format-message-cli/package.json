@@ -1,9 +1,9 @@
 {
-  "name": "format-message",
+  "name": "format-message-cli",
   "version": "4.0.0",
-  "description": "Internationalize text, numbers, and dates using ICU Message Format",
+  "description": "Command-line tools to lint, extract, and inline format-message translations",
   "author": "Andy VanWagoner <thetalecrafter@gmail.com> (https://thetalecrafter.com/)",
-  "homepage": "https://github.com/format-message/format-message",
+  "homepage": "https://github.com/format-message/format-message/tree/master/packages/format-message-cli",
   "license": "MIT",
   "repository": "format-message/format-message",
   "bugs": "https://github.com/format-message/format-message/issues",
@@ -16,12 +16,20 @@
     "messageformat",
     "pluralformat",
     "selectformat",
+    "inline",
+    "lint",
+    "extract",
     "plural",
     "gender",
     "icu"
   ],
+  "bin": {
+    "format-message": "format-message"
+  },
   "dependencies": {
-    "message-format": "^1.2.0",
-    "object-assign": "^4.0.1"
+    "commander": "^2.8.1",
+    "format-message-core": "^3.1.0",
+    "glob": "^5.0.2",
+    "message-format": "^1.2.0"
   }
 }
