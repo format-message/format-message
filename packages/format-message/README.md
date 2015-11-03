@@ -31,7 +31,7 @@ let message = formatMessage({
   id: 'welcome_name', // optional, can be generated from `default`
   default: 'Welcome, {name}!',
   // optional description gives translators more context
-  description: 'Greeting at the top of the home page, showing the current user's preferred name'
+  description: 'Greeting at the top of the home page, showing the current user’s preferred name'
 }, {
   name: user.preferredName
 })
