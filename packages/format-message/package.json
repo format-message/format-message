@@ -1,0 +1,29 @@
+{
+  "name": "format-message",
+  "version": "4.0.0",
+  "description": "Internationalize text, numbers, and dates using ICU Message Format",
+  "author": "Andy VanWagoner <thetalecrafter@gmail.com> (https://thetalecrafter.com/)",
+  "homepage": "https://github.com/format-message/format-message",
+  "license": "MIT",
+  "repository": "format-message/format-message",
+  "bugs": "https://github.com/format-message/format-message/issues",
+  "keywords": [
+    "i18n",
+    "intl",
+    "internationalization",
+    "localization",
+    "globalization",
+    "messageformat",
+    "pluralformat",
+    "selectformat",
+    "inline",
+    "transpile",
+    "plural",
+    "gender",
+    "icu"
+  ],
+  "dependencies": {
+    "message-format": "^1.2.0",
+    "object-assign": "^4.0.1"
+  }
+}
