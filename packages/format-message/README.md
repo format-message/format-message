@@ -63,11 +63,11 @@ Formatting `number`, `date`, and `time` arguments relies on the ECMAScript Inter
 Format Overview
 ---------------
 
-The [ICU Message Format][icu-message] is a great format for user-visible strings, and includes simple placeholders, number and date placeholders, and selecting among submessages for gender and plural arguments. The format is used in apis in [C++][icu-cpp], [PHP][icu-php], and [Java][icu-java]. There is a [guide for translators][icu-for-translators]
+The [ICU Message Format][icu-message] is a great format for user-visible strings, and includes simple placeholders, number and date placeholders, and selecting among submessages for gender and plural arguments. The format is used in apis in [C++][icu-cpp], [PHP][icu-php], and [Java][icu-java]. There is a [guide for translators][icu-for-translators] you can send to your translators, and it's a nice primer for developers as well.
 
-`format-message` provides a way to write your default (often English) messages as literals in your source, and then scrape out the default patterns and transpile your source with fast inline code for formatting the translated message patterns.
+`format-message` provides a way to write your default (often English) message patterns as literals in your source, and then lookup translations at runtime. There are also tools to lint, extract, and inline translations.
 
-This relies on [message-format][message-format] for parsing and formatting ICU messages, and [babel][babel] for transpiling the source code.
+This relies on [message-format][message-format] for parsing and formatting ICU messages.
 
 ### Supported ICU Formats
 
@@ -211,7 +211,6 @@ This software is free to use under the MIT license. See the [LICENSE-MIT file][L
 [icu-for-translators]: http://format-message.github.io/icu-message-format-for-translators/
 [format-message-generate-id]: https://github.com/format-message/format-message/tree/master/packages/format-message-generate-id
 [message-format]: https://github.com/format-message/message-format
-[babel]: https://github.com/babel/babel
 [mdn-intl-datetimeformat]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
 [mdn-intl-numberformat]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat
 [LICENSE]: https://github.com/format-message/format-message/blob/master/LICENSE-MIT
