@@ -4,7 +4,7 @@ if (typeof Intl === 'undefined') {
 }
 var IntlMF = require('intl-messageformat')
 var MessageFormat = require('message-format')
-var formatMessage = require('../lib/format-message')
+var formatMessage = require('../packages/format-message')
 var Benchmark = require('benchmark')
 var pattern
 var intlMF
@@ -39,8 +39,8 @@ benchmark(
   'Format simple message', {
     'intl-messageformat (reuse object)': function () { intlMF(args) },
     'message-format (reuse object)': function () { mf(args) },
-    'format': function () { formatMessage(pattern, args, 'en-US') },
-    'format (transpiled)': function () { formatMessage('Simple string with nothing special', args, 'en-US') }
+    'format-message': function () { formatMessage(pattern, args, 'en-US') },
+    'format-message (inlined)': function () { formatMessage('Simple string with nothing special', args, 'en-US') }
   }
 )
 
@@ -51,8 +51,8 @@ benchmark(
   'Format common one arg message', {
     'intl-messageformat (reuse object)': function () { intlMF({ placeholder: 'replaced value' }) },
     'message-format (reuse object)': function () { mf({ placeholder: 'replaced value' }) },
-    'format': function () { formatMessage(pattern, { placeholder: 'replaced value' }, 'en-US') },
-    'format (transpiled)': function () { formatMessage('Simple string with { placeholder }.', { placeholder: 'replaced value' }, 'en-US') }
+    'format-message': function () { formatMessage(pattern, { placeholder: 'replaced value' }, 'en-US') },
+    'format-message (inlined)': function () { formatMessage('Simple string with { placeholder }.', { placeholder: 'replaced value' }, 'en-US') }
   }
 )
 
@@ -73,7 +73,7 @@ pattern = `{name} had {
          =1 {a banana}
       other {lots of bananas}
     } total.`
-// intlMF = new IntlMF(pattern, 'en-US').format // doesn't support selectordinal
+intlMF = new IntlMF(pattern, 'en-US').format
 mf = new MessageFormat(pattern, 'en-US').format
 args = {
   date: new Date(),
@@ -84,10 +84,10 @@ args = {
 }
 benchmark(
   'Format complex message (no numbers or dates)', {
-//    'intl-messageformat (reuse object)': function () { intlMF(args) },
+    'intl-messageformat (reuse object)': function () { intlMF(args) },
     'message-format (reuse object)': function () { mf(args) },
-    'format': function () { formatMessage(pattern, args) },
-    'format (transpiled)': function () {
+    'format-message': function () { formatMessage(pattern, args) },
+    'format-message (inlined)': function () {
       formatMessage(`{name} had {
         gender, select,
           male {his}
@@ -132,8 +132,8 @@ benchmark(
   'Format complex message', {
     'intl-messageformat (reuse object)': function () { intlMF(args) },
     'message-format (reuse object)': function () { mf(args) },
-    'format': function () { formatMessage(pattern, args) },
-    'format (transpiled)': function () {
+    'format-message': function () { formatMessage(pattern, args) },
+    'format-message (inlined)': function () {
       formatMessage(`On { date, date, short } {name} had {
           numBananas, plural,
                =0 {no bananas}

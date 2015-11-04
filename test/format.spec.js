@@ -7,8 +7,6 @@ var expect = require('chai').expect
 var MessageFormat = require('message-format')
 var formatMessage = require('../packages/format-message')
 
-formatMessage.setup({ missingTranslation: 'ignore' })
-
 describe('formatMessage', function () {
   describe('formatMessage', function () {
     it('formats a simple message', function () {
@@ -98,6 +96,7 @@ describe('formatMessage', function () {
       formatMessage.setup({
         locale: 'en',
         translations: { en: { 'trans-test': 'test-success' } },
+        missingTranslation: 'ignore',
         generateId: function (pattern) { return pattern }
       })
       // use variable to avoid inlining

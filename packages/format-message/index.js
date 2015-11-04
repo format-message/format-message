@@ -19,10 +19,9 @@ var missingTranslation = 'warning'
 
 module.exports = formatMessage
 function formatMessage (msg, args, locale) {
-  msg = typeof msg === 'string' ? { default: msg } : msg
   locale = locale || currentLocale
-  var pattern = msg.default
-  var id = msg.id || generateId(pattern)
+  var pattern = typeof msg === 'string' ? msg : msg.default
+  var id = typeof msg === 'object' && msg.id || generateId(pattern)
   var key = 'format:' + id + ':' + locale
   var format = cache[key] ||
     (cache[key] = new MessageFormat(translate(id, pattern, locale), locale).format)
@@ -30,13 +29,12 @@ function formatMessage (msg, args, locale) {
 }
 
 function translate (id, pattern, locale) {
-  var translated
-  if (translations) {
-    locale = lookupClosestLocale(locale, translations)
-    translated = translations[locale] && translations[locale][id]
-    if (translated && translated.message) translated = translated.message
-    if (translated != null) return translated
-  }
+  if (!translations) return pattern
+
+  locale = lookupClosestLocale(locale, translations)
+  var translated = translations[locale] && translations[locale][id]
+  if (translated && translated.message) translated = translated.message
+  if (translated != null) return translated
 
   var replacement = missingReplacement || pattern
   var message = 'no ' + locale + ' translation found for ' + id
