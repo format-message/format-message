@@ -19,27 +19,27 @@ var missingTranslation = 'warning'
 
 module.exports = formatMessage
 function formatMessage (msg, args, locale) {
-  locale = locale || currentLocale
   msg = typeof msg === 'string' ? { default: msg } : msg
-  var id = msg.id || generateId(msg.default)
+  locale = locale || currentLocale
+  var pattern = msg.default
+  var id = msg.id || generateId(pattern)
   var key = 'format:' + id + ':' + locale
   var format = cache[key] ||
-    (cache[key] = new MessageFormat(translate(msg, locale), locale).format)
+    (cache[key] = new MessageFormat(translate(id, pattern, locale), locale).format)
   return format(args)
 }
 
-function translate (msg, locale) {
+function translate (id, pattern, locale) {
   var translated
   if (translations) {
     locale = lookupClosestLocale(locale, translations)
-    translated = translations[locale] && translations[locale][msg.id]
+    translated = translations[locale] && translations[locale][id]
     if (translated && translated.message) translated = translated.message
     if (translated != null) return translated
   }
 
-  var replacement = missingReplacement || msg.default
-  var message = 'no ' + locale + ' translation found for ' +
-    JSON.stringify(msg.default)
+  var replacement = missingReplacement || pattern
+  var message = 'no ' + locale + ' translation found for ' + id
 
   if (missingTranslation === 'ignore') {
     // do nothing
@@ -66,8 +66,9 @@ formatMessage.setup = function setup (opt) {
   }
 }
 
+var numberDefault = {}
 formatMessage.number = function (locale, value, style) {
-  var options = number[style] || number.medium
+  var options = number[style] || numberDefault
   if (typeof Intl === 'undefined') {
     return Number(value).toLocaleString(locale, options)
   }

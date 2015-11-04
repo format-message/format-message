@@ -7,6 +7,8 @@ var expect = require('chai').expect
 var MessageFormat = require('message-format')
 var formatMessage = require('../packages/format-message')
 
+formatMessage.setup({ missingTranslation: 'ignore' })
+
 describe('formatMessage', function () {
   describe('formatMessage', function () {
     it('formats a simple message', function () {
@@ -83,18 +85,6 @@ describe('formatMessage', function () {
 
   describe('setup', function () {
     // uses variables to avoid inlining since the tests are about runtime config
-    it('changes the caching', function () {
-      var pattern = 'cache-test'
-      delete MessageFormat.data.formats.cache['en:format:cache-test']
-      formatMessage.setup({ cache: false })
-      formatMessage(pattern)
-      formatMessage.setup({ cache: true })
-
-      expect(MessageFormat.data.formats.cache['en:format:cache-test']).to.not.exist
-      formatMessage(pattern)
-      expect(MessageFormat.data.formats.cache['en:format:cache-test']).to.exist
-    })
-
     it('changes the default locale', function () {
       formatMessage.setup({ locale: 'ar' })
       var pattern = '{n,plural,few{few}other{other}}'
@@ -105,11 +95,14 @@ describe('formatMessage', function () {
     })
 
     it('changes the translation', function () {
-      formatMessage.setup({ translate: function () { return 'test-success' } })
+      formatMessage.setup({
+        locale: 'en',
+        translations: { en: { 'trans-test': 'test-success' } },
+        generateId: function (pattern) { return pattern }
+      })
       // use variable to avoid inlining
       var pattern = 'trans-test'
       var message = formatMessage(pattern)
-      formatMessage.setup({ translate: function (pattern) { return pattern } })
 
       expect(message).to.equal('test-success')
     })
@@ -133,67 +126,6 @@ describe('formatMessage', function () {
       expect(message).to.equal('19')
       message = formatMessage('{ t, time, minute }', { t: new Date('2015/10/19 5:06') })
       expect(message).to.equal('6')
-    })
-  })
-
-  describe('translate', function () {
-    it('looks up the translated pattern', function () {
-      formatMessage.setup({ translate: function (pattern) { return 'translated' } })
-      // use variable to avoid inlining
-      var originalPattern = 'trans-test'
-      var pattern = formatMessage.translate(originalPattern)
-      formatMessage.setup({ translate: function (pattern) { return pattern } })
-
-      expect(pattern).to.equal('translated')
-    })
-
-    describe('missing', function () {
-      it('warns and returns original by default', function () {
-        formatMessage.setup({
-          translate: function (pattern) {}
-        })
-        var warn = console.warn
-        var warning
-        console.warn = function (msg) { warning = msg }
-        var originalPattern = 'missing'
-        var message = formatMessage.translate(originalPattern)
-        expect(message).to.equal('missing')
-        expect(warning).to.equal('Warning: no en translation found for "missing"')
-        console.warn = warn
-        formatMessage.setup({
-          translate: function (pattern) { return pattern }
-        })
-      })
-
-      it('can throw an error', function () {
-        formatMessage.setup({
-          translate: function (pattern) {},
-          missingTranslation: 'error'
-        })
-        // use variable to avoid inlining
-        var originalPattern = 'missing'
-        expect(function () { formatMessage.translate(originalPattern) }).to.throw('no en translation found for "missing"')
-        formatMessage.setup({
-          translate: function (pattern) { return pattern },
-          missingTranslation: 'warning'
-        })
-      })
-
-      it('can ignore and return a specific pattern', function () {
-        formatMessage.setup({
-          translate: function (pattern) {},
-          missingTranslation: 'ignore',
-          missingReplacement: 'replaced'
-        })
-        var originalPattern = 'missing'
-        var message = formatMessage.translate(originalPattern)
-        expect(message).to.equal('replaced')
-        formatMessage.setup({
-          translate: function (pattern) { return pattern },
-          missingTranslation: 'warning',
-          missingReplacement: null
-        })
-      })
     })
   })
 })
