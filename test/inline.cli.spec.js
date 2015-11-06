@@ -322,7 +322,8 @@ describe('format-message inline', function () {
           'format-inline.spec.js',
           'format.spec.js',
           'inline.cli.spec.js',
-          'lint.cli.spec.js'
+          'lint.cli.spec.js',
+          'parse.spec.js'
         ].sort())
         var fileContent = readFileSync(dirname + '/format.spec.js', 'utf8')
         expect(fileContent.trim()).to.contain('\'x\' + arg + \'z\'')
@@ -350,7 +351,9 @@ describe('format-message inline', function () {
           'inline.cli.spec.js',
           'inline.cli.spec.js.map',
           'lint.cli.spec.js',
-          'lint.cli.spec.js.map'
+          'lint.cli.spec.js.map',
+          'parse.spec.js',
+          'parse.spec.js.map'
         ].sort())
         var fileContent =
           readFileSync(dirname + '/format.spec.js', 'utf8')

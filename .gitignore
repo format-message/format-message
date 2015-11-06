@@ -20,6 +20,7 @@ Session.vim
 node_modules
 
 # generated
+.nyc_output
 coverage
 scripts/benchmark.js
 test/format-inline.spec.js

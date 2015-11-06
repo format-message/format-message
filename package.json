@@ -2,14 +2,14 @@
   "name": "format-message",
   "private": true,
   "scripts": {
-    "install": "scripts/subinstall.sh",
+    "install": "node scripts/bootstrap.js",
     "benchmark": "npm run benchmark-compile && node scripts/benchmark.js",
     "benchmark-compile": "packages/format-message-cli/format-message inline scripts/benchmark.src.js > scripts/benchmark.js",
     "lint": "standard",
     "test": "npm run lint && npm run test-setup && npm run test-node && npm run test-browsers",
     "test-browsers": "karma start --browsers Firefox --single-run",
     "test-setup": "rm -rf test/inline && packages/format-message-cli/format-message inline test/format.spec.js > test/format-inline.spec.js",
-    "test-node": "istanbul cover _mocha -- -cG --timeout 10000 -R dot test/**/*.spec.js"
+    "test-node": "nyc --reporter=lcov --reporter=text mocha -cG --timeout 10000 -R dot test/**/*.spec.js"
   },
   "standard": {
     "ignore": [
@@ -18,11 +18,11 @@
     ]
   },
   "devDependencies": {
+    "async": "^1.5.0",
     "benchmark": "^1.0.0",
     "chai": "^3.4.0",
     "intl": "^1.0.1",
     "intl-messageformat": "^1.2.0",
-    "istanbul": "^0.4.0",
     "karma": "^0.13.15",
     "karma-chai": "^0.1.0",
     "karma-cli": "^0.1.1",
@@ -31,7 +31,10 @@
     "karma-sourcemap-loader": "^0.3.6",
     "karma-webpack": "^1.7.0",
     "message-format": "^1.2.1",
+    "mkdirp": "^0.5.1",
     "mocha": "^2.3.3",
+    "nyc": "^3.2.2",
+    "rimraf": "^2.4.3",
     "standard": "^5.3.1",
     "webpack": "^1.12.2"
   }
