@@ -21,6 +21,7 @@
     "async": "^1.5.0",
     "benchmark": "^1.0.0",
     "chai": "^3.4.0",
+    "cldr-core": "^28.0.0",
     "intl": "^1.0.1",
     "intl-messageformat": "^1.2.0",
     "karma": "^0.13.15",

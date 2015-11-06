@@ -1,7 +1,7 @@
 {
-  "name": "format-message-generate-id",
+  "name": "format-message-helper",
   "version": "4.0.0",
-  "description": "Generate a message id from the default message pattern",
+  "description": "Helper functions used by format-message",
   "author": "Andy VanWagoner <thetalecrafter@gmail.com> (https://thetalecrafter.com/)",
   "homepage": "https://github.com/format-message/format-message",
   "license": "MIT",
@@ -9,11 +9,5 @@
   "bugs": "https://github.com/format-message/format-message/issues",
   "keywords": [
     "format-message"
-  ],
-  "main": "underscored_crc32",
-  "dependencies": {
-    "format-message-parse": "^4.0.0",
-    "format-message-print": "^4.0.0",
-    "crc32": "^0.2.2"
-  }
+  ]
 }
