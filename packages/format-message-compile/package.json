@@ -1,7 +1,7 @@
 {
-  "name": "format-message-helper",
+  "name": "format-message-compile",
   "version": "4.0.0",
-  "description": "Helper functions used by format-message",
+  "description": "Convert parsed format-message ast to JavaScript string",
   "author": "Andy VanWagoner <thetalecrafter@gmail.com> (https://thetalecrafter.com/)",
   "homepage": "https://github.com/format-message/format-message",
   "license": "MIT",

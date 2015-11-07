@@ -2,10 +2,11 @@
 'use strict'
 
 var assign = require('object-assign')
-var MessageFormat = require('message-format')
-var lookupClosestLocale = require('message-format/lib/lookup-closest-locale')
+var parse = require('format-message-parse')
+var interpret = require('format-message-interpret')
+var lookupClosestLocale = require('lookup-closest-locale')
+var formats = require('format-message-formats')
 
-var formats = MessageFormat.data.formats
 var number = formats.number
 var date = formats.date
 var time = formats.time
@@ -22,13 +23,20 @@ function formatMessage (msg, args, locale) {
   locale = locale || currentLocale
   var pattern = typeof msg === 'string' ? msg : msg.default
   var id = typeof msg === 'object' && msg.id || generateId(pattern)
-  var key = 'format:' + id + ':' + locale
+  var key = locale + ':' + id
   var format = cache[key] ||
-    (cache[key] = new MessageFormat(translate(id, pattern, locale), locale).format)
+    (cache[key] = generateFormat(locale, pattern, id))
+  if (typeof format === 'string') return format
   return format(args)
 }
 
-function translate (id, pattern, locale) {
+function generateFormat (locale, pattern, id) {
+  pattern = translate(locale, pattern, id)
+  var ast = parse(pattern)
+  return interpret(locale, ast)
+}
+
+function translate (locale, pattern, id) {
   if (!translations) return pattern
 
   locale = lookupClosestLocale(locale, translations)
@@ -64,9 +72,8 @@ formatMessage.setup = function setup (opt) {
   }
 }
 
-var numberDefault = {}
 formatMessage.number = function (locale, value, style) {
-  var options = number[style] || numberDefault
+  var options = number[style] || number.decimal
   if (typeof Intl === 'undefined') {
     return Number(value).toLocaleString(locale, options)
   }

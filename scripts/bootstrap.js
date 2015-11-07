@@ -60,14 +60,18 @@ async.parallelLimit(packages.map(function (pack) {
 
     var tasks = []
 
-    tasks.push(function (done) {
-      mkdirp(NODE_MODULES_PATH, done)
-    })
-
     if (toLink.length) {
       tasks.push(function (done) {
+        mkdirp(NODE_MODULES_PATH, done)
+      })
+
+      tasks.push(function (done) {
         async.each(toLink, function (link, done) {
-          console.log('Linking', link.src, 'to', link.dest)
+          console.log(
+            'Linking',
+            path.relative(PACKAGES_PATH, link.src),
+            'to', path.relative(PACKAGES_PATH, link.dest)
+          )
 
           rimraf(link.dest, function (err) {
             if (err) return done(err)

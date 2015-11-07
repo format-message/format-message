@@ -21,7 +21,10 @@
     "icu"
   ],
   "dependencies": {
-    "message-format": "^1.2.0",
+    "format-message-formats": "^4.0.0",
+    "format-message-interpret": "^4.0.0",
+    "format-message-parse": "^4.0.0",
+    "lookup-closest-locale": "^4.0.0",
     "object-assign": "^4.0.1"
   }
 }

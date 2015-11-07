@@ -9,12 +9,15 @@
     "test": "npm run lint && npm run test-setup && npm run test-node && npm run test-browsers",
     "test-browsers": "karma start --browsers Firefox --single-run",
     "test-setup": "rm -rf test/inline && packages/format-message-cli/format-message inline test/format.spec.js > test/format-inline.spec.js",
-    "test-node": "nyc --reporter=lcov --reporter=text mocha -cG --timeout 10000 -R dot test/**/*.spec.js"
+    "test-node": "nyc --reporter=lcov --reporter=text mocha -cG --timeout 10000 -R dot test/**/*.spec.js",
+    "cldr": "node scripts/cldr.js"
   },
   "standard": {
     "ignore": [
-      "test/format-inline.spec.js",
-      "scripts/benchmark.js"
+      "packages/format-message-interpret/plurals.js",
+      "scripts/benchmark.js",
+      "scripts/cldr.js",
+      "test/format-inline.spec.js"
     ]
   },
   "devDependencies": {

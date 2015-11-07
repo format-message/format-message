@@ -33,7 +33,7 @@ function parseRules (rules) {
     return null
   }
 
-  var fn = '  return '
+  var fn = '    return '
   var refs = { i: false, v: false, w: false, f: false, t: false, n: false }
 
   for (var c = 0, cc = clauses.length; c < cc; ++c) {
@@ -55,7 +55,7 @@ function parseRules (rules) {
       .replace(/^\(([^()]*)\)$/, '$1')
     data[keyword] = condition
 
-    fn += condition + ' ? \'' + keyword + '\'\n    : '
+    fn += condition + ' ? \'' + keyword + '\'\n      : '
 
     Object.keys(refs).forEach(function (key) {
       refs[key] = refs[key] || condition.indexOf(key) >= 0
@@ -67,9 +67,9 @@ function parseRules (rules) {
     .map(function (key) {
       return refs[key] && key + ' = ' + pluralVars[key]
     })
-  if (vars.length) fn = '  var ' + vars.join(',\n    ') + '\n' + fn
+  if (vars.length) fn = '    var ' + vars.join('\n    var ') + '\n' + fn
 
-  fn = 'function (s) {\n' + fn + '\'other\'\n}'
+  fn = '  function (s) {\n' + fn + '\'other\'\n  }'
   var index = pluralFunctions.indexOf(fn)
   if (index < 0) {
     index = pluralFunctions.length
@@ -119,6 +119,6 @@ var interpretFileData = '\'use strict\'\n' +
         ': { ' + funcs[locale] + ' }'
       )
     }).join(',\n  ') +
-  '\n}'
-writeFileSync(__dirname + '/../packages/format-message-interpret/cldr.js', interpretFileData, 'utf8')
-console.log('Wrote data to packages/format-message-interpret/cldr.js')
+  '\n}\n'
+writeFileSync(__dirname + '/../packages/format-message-interpret/plurals.js', interpretFileData, 'utf8')
+console.log('Wrote data to packages/format-message-interpret/plurals.js')
