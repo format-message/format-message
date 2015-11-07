@@ -299,6 +299,10 @@ describe('format-message inline', function () {
 
   describe('out-dir', function () {
     var dirname = 'test/inline'
+    var ofiles = readdirSync('test', 'utf8')
+      .filter(function (file) {
+        return file.slice(-3) === '.js'
+      })
 
     afterEach(function () {
       var files = readdirSync(dirname, 'utf8')
@@ -317,14 +321,7 @@ describe('format-message inline', function () {
         expect(stderr.toString('utf8')).to.equal('')
         expect(stdout.toString('utf8')).to.equal('')
         var files = readdirSync(dirname, 'utf8').sort()
-        expect(files).to.be.eql([
-          'extract.cli.spec.js',
-          'format-inline.spec.js',
-          'format.spec.js',
-          'inline.cli.spec.js',
-          'lint.cli.spec.js',
-          'parse.spec.js'
-        ].sort())
+        expect(files).to.be.eql(ofiles.sort())
         var fileContent = readFileSync(dirname + '/format.spec.js', 'utf8')
         expect(fileContent.trim()).to.contain('\'x\' + arg + \'z\'')
         done(err)
@@ -341,20 +338,11 @@ describe('format-message inline', function () {
         expect(stderr.toString('utf8')).to.equal('')
         expect(stdout.toString('utf8')).to.equal('')
         var files = readdirSync(dirname, 'utf8').sort()
-        expect(files).to.be.eql([
-          'extract.cli.spec.js',
-          'extract.cli.spec.js.map',
-          'format-inline.spec.js',
-          'format-inline.spec.js.map',
-          'format.spec.js',
-          'format.spec.js.map',
-          'inline.cli.spec.js',
-          'inline.cli.spec.js.map',
-          'lint.cli.spec.js',
-          'lint.cli.spec.js.map',
-          'parse.spec.js',
-          'parse.spec.js.map'
-        ].sort())
+        expect(files).to.be.eql(
+          ofiles.concat(ofiles.map(function (file) {
+            return file + '.map'
+          })).sort()
+        )
         var fileContent =
           readFileSync(dirname + '/format.spec.js', 'utf8')
           .split('\/\/# sourceMappingURL=')

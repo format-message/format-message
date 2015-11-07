@@ -23,6 +23,11 @@ module.exports = function interpret (locale, ast) {
   return interpretSubs(locale, ast)
 }
 
+// useful for detecting what the resolved locale will be
+module.exports.closestSupportedLocale = function (locale) {
+  return lookupClosestLocale(locale, plurals)
+}
+
 function interpretSubs (locale, elements, parent) {
   elements = elements.map(function (element) {
     return interpretElement(locale, element, parent)
@@ -88,15 +93,15 @@ function interpretNumber (locale, id, offset, style) {
   var styles = formats.number
   var opts = styles[style] || styles.decimal
   if (typeof Intl === 'undefined') {
-    return function (args) {
+    return function format (args) {
       return Number(+args[id] - offset).toLocaleString(locale, opts)
     }
   }
   var cache = opts.cache || (opts.cache = {})
-  var format = cache[locale] ||
+  var frmt = cache[locale] ||
     (cache[locale] = new Intl.NumberFormat(locale, opts).format)
-  return function (args) {
-    return format(+args[id] - offset)
+  return function format (args) {
+    return frmt(+args[id] - offset)
   }
 }
 
@@ -107,15 +112,15 @@ function interpretDateTime (locale, id, type, style) {
     var toLocaleString = type === 'time'
       ? 'toLocaleTimeString'
       : 'toLocaleDateString'
-    return function (args) {
+    return function format (args) {
       return new Date(args[id])[toLocaleString](locale, opts)
     }
   }
   var cache = opts.cache || (opts.cache = {})
-  var format = cache[locale] ||
+  var frmt = cache[locale] ||
     (cache[locale] = new Intl.DateTimeFormat(locale, opts).format)
-  return function (args) {
-    return format(args[id])
+  return function format (args) {
+    return frmt(args[id])
   }
 }
 

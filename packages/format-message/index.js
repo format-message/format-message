@@ -32,8 +32,7 @@ function formatMessage (msg, args, locale) {
 
 function generateFormat (locale, pattern, id) {
   pattern = translate(locale, pattern, id)
-  var ast = parse(pattern)
-  return interpret(locale, ast)
+  return interpret(locale, parse(pattern))
 }
 
 function translate (locale, pattern, id) {

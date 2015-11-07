@@ -4,7 +4,7 @@ if (typeof Intl === 'undefined') {
   require('intl/locale-data/jsonp/en')
 }
 var expect = require('chai').expect
-var MessageFormat = require('message-format')
+var plurals = require('../packages/format-message-interpret/plurals')
 var formatMessage = require('../packages/format-message')
 
 describe('formatMessage', function () {
@@ -72,7 +72,16 @@ describe('formatMessage', function () {
   describe('locales', function () {
     it('doesn\'t throw for any locale\'s plural function', function () {
       var pattern = '{n, plural, zero {zero} one {one} two {two} few {few} many {many} other {other}}'
-      MessageFormat.supportedLocalesOf().forEach(function (locale) {
+      Object.keys(plurals).forEach(function (locale) {
+        for (var n = 0; n <= 200; ++n) {
+          var result = formatMessage(pattern, { n: n }, locale)
+          expect(result).to.match(/^(zero|one|two|few|many|other)$/)
+        }
+      })
+    })
+    it('doesn\'t throw for any locale\'s selectordinal function', function () {
+      var pattern = '{n, selectordinal, zero {zero} one {one} two {two} few {few} many {many} other {other}}'
+      Object.keys(plurals).forEach(function (locale) {
         for (var n = 0; n <= 200; ++n) {
           var result = formatMessage(pattern, { n: n }, locale)
           expect(result).to.match(/^(zero|one|two|few|many|other)$/)
