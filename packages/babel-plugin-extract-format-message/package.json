@@ -1,5 +1,5 @@
 {
-  "name": "format-message-generate-id",
+  "name": "babel-plugin-format-message-extract",
   "version": "4.0.0",
   "description": "Generate a message id from the default message pattern",
   "author": "Andy VanWagoner <thetalecrafter@gmail.com> (https://thetalecrafter.com/)",
@@ -11,8 +11,9 @@
     "format-message"
   ],
   "dependencies": {
+    "format-message-babel-util": "^4.0.0",
+    "format-message-generate-id": "^4.0.0",
     "format-message-parse": "^4.0.0",
-    "format-message-print": "^4.0.0",
-    "crc32": "^0.2.2"
+    "format-message-print": "^4.0.0"
   }
 }
