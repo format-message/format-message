@@ -31,6 +31,15 @@ var packages = fs.readdirSync(PACKAGES_PATH)
   })
   .filter(function (o) { return !!o })
 
+// link dev dependencies to root
+console.log('Linking format-message')
+rimraf.sync(path.resolve(__dirname + '/../node_modules/format-message'))
+mkdirp.sync(path.resolve(__dirname + '/../node_modules/format-message'))
+fs.writeFileSync(
+  path.resolve(__dirname + '/../node_modules/format-message/index.js'),
+  'module.exports = require(' + JSON.stringify(PACKAGES_PATH + '/format-message') + ')'
+)
+
 async.parallelLimit(packages.map(function (pack) {
   return function (done) {
     var NODE_MODULES_PATH = pack.path + '/node_modules'

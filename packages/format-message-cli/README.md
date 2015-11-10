@@ -48,12 +48,12 @@ formatMessage.date("en", new Date(), "short") // "1/1/15"
 
 formatMessage('You took {n,number} pictures since {d,date} {d,time}', { n:4000, d:new Date() });
 
-// transforms to a function call, with the function defined at the top level
-$$_you_took_n_number_pictures_123456({ n:4000, d:new Date() })
-...
-function $$_you_took_n_number_pictures_123456(args) {
-  return "You took " + formatMessage.number("en", args["n"]) + " pictures since " + formatMessage.date("en", args["d"]) + " " + formatMessage.time("en", args["d"])
-} // "You took 4,000 pictures since Jan 1, 2015 9:33:04 AM"
+// transforms to a sequence expression
+(_params = { n:4000, d:new Date() },
+  "You took " + formatMessage.number("en", _params.n) +
+  " pictures since " + formatMessage.date("en", args["d"]) +
+  " " + formatMessage.time("en", args["d"])
+) // "You took 4,000 pictures since Jan 1, 2015 9:33:04 AM"
 ```
 
 ### Complex string with select and plural in ES6
@@ -80,21 +80,30 @@ let formatMessage(`On { date, date, short } {name} ate {
   numBananas: 27
 })
 
-// transforms to a function call, with the function defined at the top level
-$$_on_date_date_short_name_ate_123456({ n:4000, d:new Date() })
-...
-function $$_on_date_date_short_name_ate_123456(args) {
-  return ...
-}
+// transforms to an expression
+('On ' + formatMessage.date('en', new Date(), 'short') + ' ' +
+'Curious George' + ' ate ' + (
+  _s3 = 27, _n2 = +_s3,
+    _n2 === 0 ? 'no bananas'
+    : _n2 === 1 ? 'a banana'
+    : _n2 === 2 ? 'a pair of bananas'
+    : (formatMessage.number('en', 27) + ' bananas')
+) + ' ' + (
+  _s3 = 'male',
+  _s3 === 'male' ? 'at his house.'
+  : _s3 === 'female' ? 'at her house.'
+  : 'at their house.'
+))
 // en-US: "On 1/1/15 Curious George ate 27 bananas at his house."
 ```
 
 ### Current Optimizations
 
 * Calls with no placeholders in the message become string literals.
-* Calls with no `plural`, `select`, or `selectordinal` in the message, and an object literal with variables or literals for property values become concatentated strings and variables.
+* Calls with placeholders become an expression, and needed variables are added to the scope.
+* Calls with an object literal for parameters inline the properties to where they are used, avoiding the object creation.
 
-All other cases result in a function call, with the function declaration somewhere at the top level of the file.
+Note that if you have a complex or costly operation as one of the object property expressions, and that value has many placeholders in the message, you may perform the operation each time. To avoid this for costly operations, save the value in a variable beforehand and pass the variable into the parameters object instead.
 
 
 CLI Tools

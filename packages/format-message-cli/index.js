@@ -5,7 +5,7 @@ var fsUtil = require('fs')
 var glob = require('glob')
 var Linter = require('format-message-core/lib/linter')
 var Extractor = require('format-message-core/lib/extractor')
-var Inliner = require('format-message-core/lib/inliner')
+var inlineFiles = require('./inline-files')
 var pkg = require('./package.json')
 
 var existsSync = fsUtil.existsSync
@@ -147,19 +147,17 @@ program
   })
 
 /**
- * format-message inline src/*.js
- *  find and replace message pattern calls in files with translations
+ * format-message transform src/*.js
+ *  transform formatMessage calls either adding generated ids or inlining and optimizing a translation
  **/
 program
-  .command('inline [files...]')
-  .alias('translate')
-  .description('find and replace message pattern calls in files with translations')
-  .option('-n, --function-name [name]', 'find function calls with this name [formatMessage]', 'formatMessage')
-  .option('--no-auto', 'disables auto-detecting the function name from import or require calls')
-  .option('-k, --key-type [type]',
-    'derived key from source pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]',
+  .command('transform [files...]')
+  .description('transform formatMessage calls either adding generated ids or inlining and optimizing a translation')
+  .option('-g, --generate-id [type]',
+    'generate missing ids from default message pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]',
     'underscored_crc32'
   )
+  .option('-i, --inline', 'inline the translation for the specified locale')
   .option('-l, --locale [locale]', 'BCP 47 language tags specifying the target locale [en]', 'en')
   .option('-t, --translations [path]', 'location of the JSON file with message translations')
   .option('-e, --missing-translation [behavior]',
@@ -167,7 +165,7 @@ program
     'error'
   )
   .option('-m, --missing-replacement [pattern]', 'pattern to inline when a translated pattern is missing, defaults to the source pattern')
-  .option('-i, --source-maps-inline', 'append sourceMappingURL comment to bottom of code')
+  .option('--source-maps-inline', 'append sourceMappingURL comment to bottom of code')
   .option('-s, --source-maps', 'save source map alongside the compiled code')
   .option('-f, --filename [filename]', 'filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]', 'stdin')
   .option('-o, --out-file [out]', 'compile all input files into a single file')
@@ -216,11 +214,10 @@ program
     }
 
     addStdinToFiles(files, options, function () {
-      Inliner.inlineFiles(files, {
-        functionName: options.functionName,
-        autoDetectFunctionName: options.auto,
+      inlineFiles(files, {
+        generateId: options.generateId,
+        inline: options.inline,
         locale: options.locale,
-        keyType: options.keyType,
         translations: options.translations,
         missingTranslation: options.missingTranslation,
         missingReplacement: options.missingReplacement,

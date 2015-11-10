@@ -1,6 +1,5 @@
 'use strict'
 
-var fs = require('fs')
 var path = require('path')
 var util = require('format-message-babel-util')
 var generate = require('format-message-generate-id')
@@ -74,13 +73,14 @@ module.exports = function (bbl) {
           ? translate(locale, id, translations)
           : message.default
         if (pattern == null && missingTranslation !== 'ignore') {
-          var message = 'No ' + locale + ' translation found for ' + id
+          var errMessage = 'No ' + locale + ' translation found for ' + id
           if (missingTranslation === 'warning') {
-            console.warn(message)
+            console.warn(errMessage)
           } else { // 'error'
-            throw new ReferenceError(message)
+            throw path.buildCodeFrameError(errMessage, ReferenceError)
           }
-        } else if (pattern == null) {
+        }
+        if (pattern == null) {
           pattern = missingReplacement || message.default
         }
 

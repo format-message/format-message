@@ -8,7 +8,7 @@
     "lint": "standard",
     "test": "npm run lint && npm run test-setup && npm run test-node && npm run test-browsers",
     "test-browsers": "karma start --browsers Firefox --single-run",
-    "test-setup": "rm -rf test/inline && packages/format-message-cli/format-message inline test/format.spec.js > test/format-inline.spec.js",
+    "test-setup": "rm -rf test/inline && packages/format-message-cli/format-message transform -i test/format.spec.js > test/format-inline.spec.js",
     "test-node": "nyc --reporter=lcov --reporter=text mocha -cG --timeout 10000 -R dot test/**/*.spec.js",
     "cldr": "node scripts/cldr.js"
   },
@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "async": "^1.5.0",
+    "babel": "^6.0.15",
     "benchmark": "^1.0.0",
     "chai": "^3.4.0",
     "cldr-core": "^28.0.0",

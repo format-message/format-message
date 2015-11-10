@@ -27,9 +27,25 @@
     "format-message": "format-message"
   },
   "dependencies": {
+    "babel-core": "^6.0.0",
+    "babel-plugin-transform-format-message": "^4.0.0",
+    "babel-plugin-syntax-async-functions": "^6.0.14",
+    "babel-plugin-syntax-async-generators": "^6.0.15",
+    "babel-plugin-syntax-class-constructor-call": "^6.0.15",
+    "babel-plugin-syntax-class-properties": "^6.0.14",
+    "babel-plugin-syntax-decorators": "^6.0.14",
+    "babel-plugin-syntax-do-expressions": "^6.0.14",
+    "babel-plugin-syntax-exponentiation-operator": "^6.0.14",
+    "babel-plugin-syntax-export-extensions": "^6.0.14",
+    "babel-plugin-syntax-flow": "^6.0.14",
+    "babel-plugin-syntax-function-bind": "^6.0.14",
+    "babel-plugin-syntax-jsx": "^6.0.14",
+    "babel-plugin-syntax-object-rest-spread": "^6.0.14",
+    "babel-plugin-syntax-trailing-function-commas": "^6.0.14",
     "commander": "^2.8.1",
     "format-message-core": "^3.1.0",
     "glob": "^5.0.2",
-    "message-format": "^1.2.0"
+    "message-format": "^1.2.0",
+    "mkdirp": "^0.5.1"
   }
 }

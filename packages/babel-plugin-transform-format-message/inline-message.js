@@ -1,7 +1,6 @@
 'use strict'
 
 var babylon = require('babylon')
-var util = require('format-message-babel-util')
 var lookupClosestLocale = require('lookup-closest-locale')
 var cldr = require('./cldr')
 
@@ -44,7 +43,7 @@ var pluralVars = Object.keys(cldr.pluralVars).reduce(function (vars, key) {
  *    }) + " for sale.";
  *  })(args, "en")`
  **/
-module.exports = function inlineMessage(locale, elements, callPath, t) {
+module.exports = function inlineMessage (locale, elements, callPath, t) {
   var state = { t: t, locale: locale, callPath: callPath }
 
   if (elements.length === 1 && typeof elements[0] === 'string') {
@@ -189,11 +188,10 @@ function transformDateTime (state, id, type, style) {
 function transformPlural (state, id, type, offset, children) {
   var t = state.t
   var scope = state.callPath.scope
-  var parent = [ id, type, offset/*, children*/ ]
+  var parent = [ id, type, offset ]
   var closest = lookupClosestLocale(state.locale, cldr.locales)
-  var conditions = cldr.locales[closest].plurals[(
-    type === 'selectordinal' ? 'ordinal' : 'cardinal'
-  )]
+  var ptype = type === 'selectordinal' ? 'ordinal' : 'cardinal'
+  var conditions = cldr.locales[closest].plurals[ptype]
   var s = state.sId ||
     (state.sId = scope.generateDeclaredUidIdentifier('s'))
   var n = state.nId ||
@@ -253,6 +251,12 @@ function transformPlural (state, id, type, offset, children) {
         refs.t = pluralVars.t(state)
         cond = cond.replace(/\bt\b/g, state.tId.name)
       }
+      if (/\bn\b/.test(cond)) {
+        cond = cond.replace(/\bn\b/g, state.nId.name)
+      }
+      if (/\bs\b/.test(cond)) {
+        cond = cond.replace(/\bs\b/g, state.sId.name)
+      }
       test = babylon.parse(cond).program.body[0].expression
       keyConditions.push({ test: test, expr: expr })
     }
@@ -268,14 +272,12 @@ function transformPlural (state, id, type, offset, children) {
 
   return t.sequenceExpression(vars.concat([
     exactConditions.reduceRight(function (alt, o) {
+      return t.conditionalExpression(o.test, o.expr, alt)
+    }, t.sequenceExpression(pvars.concat([
+      keyConditions.reduceRight(function (alt, o) {
         return t.conditionalExpression(o.test, o.expr, alt)
-      },
-      t.sequenceExpression(pvars.concat([
-        keyConditions.reduceRight(function (alt, o) {
-          return t.conditionalExpression(o.test, o.expr, alt)
-        }, other)
-      ]))
-    )
+      }, other)
+    ])))
   ]))
 }
 
@@ -314,9 +316,10 @@ function transformArgument (state, id) {
     return state.inlineParams[id] ||
       t.unaryExpression('void', t.numericLiteral(0), true)
   }
+  var validId = /^[a-z_$][a-z0-9_$]*$/.test(id)
   return t.memberExpression(
     state.paramsVarId,
-    t.stringLiteral(id),
-    true
+    validId ? t.identifier(id) : t.stringLiteral(id),
+    !validId
   )
 }

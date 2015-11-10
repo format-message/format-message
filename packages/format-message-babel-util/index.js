@@ -93,8 +93,8 @@ function getLiteralsFromObjectExpression (path) {
 exports.getMessageDetails = getMessageDetails
 function getMessageDetails (args) {
   var message = args[0]
-  if (message && message.isStringLiteral()) {
-    return { default: message.node.value }
+  if (message && isLiteralish(message)) {
+    return { default: getLiteralValue(message) }
   }
   if (message && message.isObjectExpression()) {
     return getLiteralsFromObjectExpression(message)

@@ -11,10 +11,12 @@
     "format-message"
   ],
   "dependencies": {
+    "babel-core": "^6.1.2",
     "babylon": "^6.0.0",
     "format-message-babel-util": "^4.0.0",
     "format-message-generate-id": "^4.0.0",
     "format-message-parse": "^4.0.0",
-    "lookup-closest-locale": "^4.0.0"
+    "lookup-closest-locale": "^4.0.0",
+    "source-map": "^0.5.3"
   }
 }
