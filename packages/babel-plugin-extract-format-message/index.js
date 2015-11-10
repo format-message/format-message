@@ -67,7 +67,7 @@ module.exports = function () {
         if (!message || !message.default) return
 
         var pattern = print(parse(message.default)) // pretty format
-        var id = message.id || generateId(state.opts.generateId, pattern)
+        var id = message.id || generateId(state.opts.generateId, message.default)
         var description = message.description
 
         if (!messages[id]) {

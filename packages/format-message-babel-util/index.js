@@ -76,10 +76,11 @@ exports.getLiteralsFromObjectExpression = getLiteralsFromObjectExpression
 function getLiteralsFromObjectExpression (path) {
   return path.get('properties').reduce(function (props, prop) {
     var canGetValue = (
-      prop.isObjectProperty({ computed: false }) && (
-        prop.isLiteral() ||
-        isLiteralish(prop.get('value'))
-      )
+      (
+        prop.isObjectProperty({ computed: false }) ||
+        prop.get('key').isStringLiteral()
+      ) &&
+      isLiteralish(prop.get('value'))
     )
     if (canGetValue) {
       var key = prop.node.key.name || prop.node.key.value

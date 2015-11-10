@@ -107,8 +107,8 @@ for (var locale in pluralsTypeOrdinal) {
   }
 }
 var fileData = JSON.stringify({ pluralVars: pluralVars, locales: locales }, null, '  ')
-writeFileSync(__dirname + '/../packages/format-message-compile/cldr.json', fileData, 'utf8')
-console.log('Wrote data to packages/format-message-compile/cldr.json')
+writeFileSync(__dirname + '/../packages/babel-plugin-transform-format-message/cldr.json', fileData, 'utf8')
+console.log('Wrote data to packages/babel-plugin-transform-format-message/cldr.json')
 
 var interpretFileData = '\'use strict\'\n' +
   'var f = [\n' + pluralFunctions.join(',\n') + '\n]\n\n' +
