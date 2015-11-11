@@ -4,8 +4,8 @@ var program = require('commander')
 var fsUtil = require('fs')
 var glob = require('glob')
 var Linter = require('format-message-core/lib/linter')
-var Extractor = require('format-message-core/lib/extractor')
-var inlineFiles = require('./inline-files')
+var extractFromFiles = require('./extract-files')
+var transformFiles = require('./transform-files')
 var pkg = require('./package.json')
 
 var existsSync = fsUtil.existsSync
@@ -109,16 +109,16 @@ program
 program
   .command('extract [files...]')
   .description('find and list all message patterns in files')
-  .option('-n, --function-name [name]', 'find function calls with this name [formatMessage]', 'formatMessage')
-  .option('--no-auto', 'disables auto-detecting the function name from import or require calls')
-  .option('-k, --key-type [type]',
-    'derived key from source pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]',
+  .option('-g, --generate-id [type]',
+    'generate missing ids from default message pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]',
     'underscored_crc32'
   )
   .option('-l, --locale [locale]', 'BCP 47 language tags specifying the source default locale [en]', 'en')
-  .option('--no-instructions', 'disables adding the default instructions to the output')
+  .option('-f, --filename [filename]', 'filename to use when reading from stdin - this will be used in errors', 'stdin')
   .option('-o, --out-file [out]', 'write messages to this file instead of to stdout')
-  .option('--yml', 'output messages in YAML instead of JSON format')
+  .option('--format [format]',
+    'use the specified format instead of detecting from the --out-file extension (yaml | es6 | commonjs | json)'
+  )
   .action(function (files, options) {
     files = flattenFiles(files)
 
@@ -134,14 +134,11 @@ program
     }
 
     addStdinToFiles(files, options, function () {
-      Extractor.extractFromFiles(files, {
-        functionName: options.functionName,
-        autoDetectFunctionName: options.auto,
+      extractFromFiles(files, {
+        generateId: options.generateId,
         locale: options.locale,
-        instructions: options.instructions,
-        keyType: options.keyType,
         outFile: options.outFile,
-        yml: options.yml
+        format: options.format
       })
     })
   })
@@ -214,7 +211,7 @@ program
     }
 
     addStdinToFiles(files, options, function () {
-      inlineFiles(files, {
+      transformFiles(files, {
         generateId: options.generateId,
         inline: options.inline,
         locale: options.locale,

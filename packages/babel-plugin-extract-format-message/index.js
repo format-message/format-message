@@ -15,13 +15,15 @@ module.exports = function () {
   }
 
   var messages = {}
-  var outFile = 'messages.json'
+  var outFile
   var format
   var locale = 'en'
   var timer
 
   function getFileContent () {
-    if (!format) format = outFile.slice(outFile.indexOf('.') + 1)
+    if (!format) {
+      format = outFile ? outFile.slice(outFile.indexOf('.') + 1) : 'json'
+    }
     switch (format.toLowerCase()) {
       case 'yaml':
       case 'yml':
@@ -41,7 +43,11 @@ module.exports = function () {
   }
 
   function writeFile () {
-    fs.writeFileSync(outFile, getFileContent(), 'utf8')
+    if (outFile) {
+      fs.writeFileSync(outFile, getFileContent(), 'utf8')
+    } else {
+      process.stdout.write(getFileContent())
+    }
   }
 
   return {

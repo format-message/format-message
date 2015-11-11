@@ -24,5 +24,5 @@ module.exports = function (locale, messages) {
       }
 
       return yml
-    }).join('')
+    }).join('') + '\n'
 }

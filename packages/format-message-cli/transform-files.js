@@ -100,7 +100,7 @@ function transformManyToOne (files, options) {
   if (options.outFile) {
     fs.writeFileSync(options.outFile, code, 'utf8')
   } else {
-    console.log(code)
+    process.stdout.write(code)
   }
 }
 
