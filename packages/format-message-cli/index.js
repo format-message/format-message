@@ -2,8 +2,10 @@
 
 var program = require('commander')
 var fsUtil = require('fs')
+var pathUtil = require('path')
 var glob = require('glob')
-var Linter = require('format-message-core/lib/linter')
+var yaml = require('js-yaml')
+var lintFiles = require('./lint-files')
 var extractFromFiles = require('./extract-files')
 var transformFiles = require('./transform-files')
 var pkg = require('./package.json')
@@ -40,13 +42,21 @@ function addStdinToFiles (files, options, next) {
   }
 }
 
+function loadTranslations (file) {
+  file = pathUtil.resolve(file)
+  try {
+    return require(file)
+  } catch (err) {
+    var data = readFileSync(file, 'utf8')
+    return yaml.safeLoad(data)
+  }
+}
+
 /**
  * version
  **/
 module.exports = program
   .version(pkg.version)
-  .option('--color', 'use colors in errors and warnings')
-  .option('--no-color', 'do not use colors in errors and warnings')
 
 /**
  * format-message lint src/*.js
@@ -55,17 +65,20 @@ module.exports = program
 program
   .command('lint [files...]')
   .description('find message patterns in files and verify there are no obvious problems')
-  .option('-n, --function-name [name]', 'find function calls with this name [formatMessage]', 'formatMessage')
-  .option('--no-auto', 'disables auto-detecting the function name from import or require calls')
-  .option('-k, --key-type [type]',
-    'derived key from source pattern literal|normalized|underscored|underscored_crc32 [underscored_crc32]',
+  .option('-g, --generate-id [type]',
+    'generate missing ids from default message pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]',
     'underscored_crc32'
   )
+  .option('-l, --locale [locale]', 'BCP 47 language tags specifying the source default locale [en]', 'en')
   .option('-t, --translations [path]',
     'location of the JSON file with message translations,' +
       ' if specified, translations are also checked for errors'
   )
-  .option('-f, --filename [filename]', 'filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]', 'stdin')
+  .option('-f, --filename [filename]', 'filename to use when reading from stdin - this will be used in errors [stdin]', 'stdin')
+  .option('-s, --style [style]',
+    'error output format (stylish | checkstyle | compact | html | jslint-xml | json | junit | tap | unix) [stylish]',
+    'stylish'
+  )
   .action(function (files, options) {
     files = flattenFiles(files)
 
@@ -80,9 +93,7 @@ program
         errors.push(options.translations + ' doesn\'t exist')
       }
       try {
-        options.translations = JSON.parse(
-          readFileSync(options.translations, 'utf8')
-        )
+        options.translations = loadTranslations(options.translations)
       } catch (err) {
         errors.push(err.message)
       }
@@ -93,11 +104,11 @@ program
     }
 
     addStdinToFiles(files, options, function () {
-      Linter.lintFiles(files, {
-        functionName: options.functionName,
-        autoDetectFunctionName: options.auto,
-        translations: options.translations,
-        keyType: options.keyType
+      lintFiles(files, {
+        style: options.style,
+        locale: options.locale,
+        generateId: options.generateId,
+        translations: options.translations
       })
     })
   })
@@ -191,9 +202,7 @@ program
         errors.push(options.translations + ' doesn\'t exist')
       }
       try {
-        options.translations = JSON.parse(
-          readFileSync(options.translations, 'utf8')
-        )
+        options.translations = loadTranslations(options.translations)
       } catch (err) {
         errors.push(err.message)
       }

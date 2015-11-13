@@ -1,0 +1,32 @@
+{
+  "name": "eslint-plugin-format-message",
+  "version": "4.0.0",
+  "description": "format-message i18n specific rules for ESLint",
+  "author": "Andy VanWagoner <thetalecrafter@gmail.com> (https://thetalecrafter.com/)",
+  "homepage": "https://github.com/format-message/format-message",
+  "license": "MIT",
+  "repository": "format-message/format-message",
+  "bugs": "https://github.com/format-message/format-message/issues",
+  "keywords": [
+    "eslintplugin",
+    "eslint",
+    "i18n",
+    "intl",
+    "internationalization",
+    "localization",
+    "globalization",
+    "messageformat",
+    "pluralformat",
+    "selectformat",
+    "plural",
+    "gender",
+    "icu"
+  ],
+  "dependencies": {
+    "format-message-generate-id": "^4.0.0",
+    "format-message-parse": "^4.0.0"
+  },
+  "peerDependencies": {
+    "eslint": ">=0.8.0"
+  }
+}

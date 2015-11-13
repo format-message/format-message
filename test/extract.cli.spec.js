@@ -168,7 +168,7 @@ describe('format-message extract', function () {
     })
 
     it('can read from a glob pattern of multiple files', function (done) {
-      var filename = 'test/**/*.spec.js'
+      var filename = '"test/**/*.spec.js"'
       var cmd = 'packages/format-message-cli/format-message extract ' + filename
       exec(cmd, function (err, stdout, stderr) {
         stdout = stdout.toString('utf8')
