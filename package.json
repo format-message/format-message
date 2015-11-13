@@ -5,20 +5,12 @@
     "install": "node scripts/bootstrap.js",
     "benchmark": "npm run benchmark-compile && node scripts/benchmark.js",
     "benchmark-compile": "packages/format-message-cli/format-message inline scripts/benchmark.src.js > scripts/benchmark.js",
-    "lint": "standard",
+    "lint": "eslint .",
     "test": "npm run lint && npm run test-setup && npm run test-node && npm run test-browsers",
     "test-browsers": "karma start --browsers Firefox --single-run",
     "test-setup": "rm -rf test/inline && packages/format-message-cli/format-message transform -i test/format.spec.js > test/format-inline.spec.js",
     "test-node": "nyc --reporter=lcov --reporter=text mocha -cG --timeout 10000 -R dot 'test/**/*.spec.js'",
     "cldr": "node scripts/cldr.js"
-  },
-  "standard": {
-    "ignore": [
-      "packages/format-message-interpret/plurals.js",
-      "scripts/benchmark.js",
-      "scripts/cldr.js",
-      "test/format-inline.spec.js"
-    ]
   },
   "devDependencies": {
     "async": "^1.5.0",
@@ -27,6 +19,8 @@
     "chai": "^3.4.0",
     "cldr-core": "^28.0.0",
     "eslint": "^1.9.0",
+    "eslint-config-standard": "^4.4.0",
+    "eslint-plugin-standard": "^1.3.1",
     "intl": "^1.0.1",
     "intl-messageformat": "^1.2.0",
     "karma": "^0.13.15",
@@ -41,7 +35,6 @@
     "mocha": "^2.3.3",
     "nyc": "^3.2.2",
     "rimraf": "^2.4.3",
-    "standard": "^5.3.1",
     "webpack": "^1.12.2"
   }
 }

@@ -69,6 +69,22 @@ async.parallelLimit(packages.map(function (pack) {
 
     var tasks = []
 
+    if (toInstall.length) {
+      tasks.push(function (done) {
+        child.exec('npm install ' + toInstall.join(' '), {
+          cwd: pack.path
+        }, function (err, stdout, stderr) {
+          if (err != null) {
+            done(stderr)
+          } else {
+            stdout = stdout.trim()
+            if (stdout) console.log(stdout)
+            done()
+          }
+        })
+      })
+    }
+
     if (toLink.length) {
       tasks.push(function (done) {
         mkdirp(NODE_MODULES_PATH, done)
@@ -96,22 +112,6 @@ async.parallelLimit(packages.map(function (pack) {
             })
           })
         }, done)
-      })
-    }
-
-    if (toInstall.length) {
-      tasks.push(function (done) {
-        child.exec('npm install ' + toInstall.join(' '), {
-          cwd: pack.path
-        }, function (err, stdout, stderr) {
-          if (err != null) {
-            done(stderr)
-          } else {
-            stdout = stdout.trim()
-            if (stdout) console.log(stdout)
-            done()
-          }
-        })
       })
     }
 
