@@ -1,8 +1,12 @@
 language: node_js
 node_js:
-  - "0.12"
-  - "4.1"
-  - "stable"
+- '0.12'
+- '4.1'
+- stable
 before_script:
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
+env:
+  global:
+  - secure: ZuEp7yRP0aoC5sBuG076Q+KxPF5Ud3Gd+/I02pibqBWhPSaUfZSxPmYyrgS4TPGDrt0vAuX3PhzEfrNgX1AhzolWGEWE+NbBsBCpd1vzKVA77SWUKCiLMSKdcbzd79mFVhnTXA3vTsDOC1y9zc5gpIuCBGXh47A2qwIuuE6yjzE=
+  - secure: TjauOliwMOCnQeNTuTHUozjphaGWkBwWZvWL3/4wVo5ndjNsBY8GlcFDjgCyWjiWrU7Yb1fx9Jdnu/ls3lzKzwEqli/ohg3YuoFuWc+oW9JAmXBhg3TWXJnddWZdXVMdAIvV2HD4+iYx0gyEnzLQD/oWeaF4dqItO23shQbTg0I=
