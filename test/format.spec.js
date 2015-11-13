@@ -30,7 +30,7 @@ describe('formatMessage', function () {
       var message = formatMessage(
         '{ n, number } : { d, date, short } { d, time, short }',
         { n: 0, d: d }
-      )
+      ).replace(/[^\x00-\x7F]/g, '') // IE adds ltr marks
       expect(message).to.match(/^0 \: \d\d?\/\d\d?\/\d{2,4} \d\d?\:\d\d/)
     })
 
@@ -38,7 +38,7 @@ describe('formatMessage', function () {
       var message = formatMessage(
         'On {takenDate, date, short} {name} {numPeople, plural, offset:1 =0 {didn\'t carpool.} =1 {drove himself.} other {drove # people.}}',
         { takenDate: new Date(), name: 'Bob', numPeople: 5 }
-      )
+      ).replace(/[^\x00-\x7F]/g, '') // IE adds ltr marks
       expect(message).to.match(/^On \d\d?\/\d\d?\/\d{2,4} Bob drove 4 people.$/)
     })
 
@@ -125,17 +125,19 @@ describe('formatMessage', function () {
           day: '2-digit'
         } },
         time: { minute: {
+          hour: 'numeric',
           minute: 'numeric'
         } }
       } })
       var message = formatMessage('{ n, number, perc }', { n: 0.3672 })
+        .replace(/\s+/g, '') // IE adds space
       expect(message).to.equal('40%')
       message = formatMessage('{ d, date, day }', { d: new Date('2015/10/19') })
+        .replace(/[^\x00-\x7F]/g, '') // IE adds ltr marks
       expect(message).to.equal('19')
-      if (typeof IntlPolyfill === 'undefined') { // the polyfill doesn't work right in this case
-        message = formatMessage('{ t, time, minute }', { t: new Date('2015/10/19 5:06') })
-        expect(message).to.equal('6')
-      }
+      message = formatMessage('{ t, time, minute }', { t: new Date('2015/10/19 5:06') })
+        .replace(/[^\x00-\x7F]/g, '') // IE adds ltr marks
+      expect(message).to.match(/^5:06/)
     })
   })
 })

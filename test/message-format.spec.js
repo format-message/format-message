@@ -64,6 +64,7 @@ describe('MessageFormat', function () {
     it('formats numbers, dates, and times', function () {
       var pattern = '{ n, number } : { d, date, short } { d, time, short }'
       var message = new MessageFormat('en', pattern).format({ n: 0, d: new Date(0) })
+        .replace(/[^\x00-\x7F]/g, '') // IE adds ltr marks
 
       expect(message).to.match(/^0 \: \d\d?\/\d\d?\/\d{2,4} \d\d?\:\d\d [AP]M$/)
     })
@@ -76,6 +77,7 @@ describe('MessageFormat', function () {
         ' other {drove # people.}}'
       var message = new MessageFormat('en', pattern)
           .format({ takenDate: new Date(), name: 'Bob', numPeople: 5 })
+          .replace(/[^\x00-\x7F]/g, '') // IE adds ltr marks
 
       expect(message).to.match(/^On \d\d?\/\d\d?\/\d{2,4} Bob drove 4 people.$/)
     })
