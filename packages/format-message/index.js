@@ -44,12 +44,12 @@ function translate (locale, pattern, id) {
   if (translated != null) return translated
 
   var replacement = missingReplacement || pattern
-  var message = 'no ' + locale + ' translation found for ' + id
+  var message = 'Translation for "' + id + '" in "' + locale + '" is missing'
 
   if (missingTranslation === 'ignore') {
     // do nothing
   } else if (missingTranslation === 'warning') {
-    if (typeof console !== 'undefined') console.warn('Warning: ' + message)
+    if (typeof console !== 'undefined') console.warn(message)
   } else { // 'error'
     throw new Error(message)
   }
@@ -60,7 +60,7 @@ function translate (locale, pattern, id) {
 formatMessage.setup = function setup (opt) {
   opt = opt || {}
   if (opt.locale) currentLocale = opt.locale
-  if (opt.translations) translations = opt.translations
+  if ('translations' in opt) translations = opt.translations
   if (opt.generateId) generateId = opt.generateId
   if ('missingReplacement' in opt) missingReplacement = opt.missingReplacement
   if (opt.missingTranslation) missingTranslation = opt.missingTranslation

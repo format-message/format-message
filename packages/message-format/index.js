@@ -59,7 +59,7 @@ Object.defineProperties(MessageFormat, {
     value: function supportedLocalesOf (requestedLocales) {
       // if the closest match is a prefix of the requested,
       // and it isn't a duplicate, then it is supported
-      return [].concat(requestedLocales)
+      return [].concat(requestedLocales || [])
         .filter(function (locale, i, array) {
           var closest = closestSupportedLocale(locale)
           return (

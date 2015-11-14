@@ -39,6 +39,66 @@ describe('MessageFormat', function () {
     })
   })
 
+  describe('prototype', function () {
+    it('has a format getter', function () {
+      var descr = Object.getOwnPropertyDescriptor(MessageFormat.prototype, 'format')
+      expect(descr.enumerable).to.equal(false)
+      expect(descr.configurable).to.equal(true)
+      expect(descr.get).to.exist
+      expect(descr.set).to.not.exist
+    })
+
+    it('.format returns a sane default', function () {
+      var message = MessageFormat.prototype.format()
+      expect(message).to.be.a('string')
+    })
+
+    it('has a resolvedOptions value', function () {
+      var descr = Object.getOwnPropertyDescriptor(MessageFormat.prototype, 'resolvedOptions')
+      expect(descr.enumerable).to.equal(false)
+      expect(descr.configurable).to.equal(true)
+      expect(descr.writable).to.equal(true)
+      expect(descr.value).to.exist
+    })
+
+    it('.resolvedOptions returns a default locale', function () {
+      var options = MessageFormat.prototype.resolvedOptions()
+      expect(options).to.be.an('object')
+      expect(options.locale).to.be.a('string')
+      expect(options.locale.length).to.be.above(0)
+    })
+  })
+
+  describe('supportedLocalesOf', function () {
+    it('returns empty when called with nothing', function () {
+      expect(MessageFormat.supportedLocalesOf()).to.eql([])
+    })
+
+    it('accepts a single string', function () {
+      expect(MessageFormat.supportedLocalesOf('en')).to.eql([ 'en' ])
+    })
+
+    it('accepts an array', function () {
+      expect(MessageFormat.supportedLocalesOf([ 'en' ])).to.eql([ 'en' ])
+    })
+
+    it('removes duplicates', function () {
+      expect(MessageFormat.supportedLocalesOf([ 'en', 'en' ])).to.eql([ 'en' ])
+    })
+
+    it('removes unsupported locales', function () {
+      expect(MessageFormat.supportedLocalesOf([ 'en', 'mi' ])).to.eql([ 'en' ])
+    })
+
+    it('supports multiple locales', function () {
+      expect(MessageFormat.supportedLocalesOf([ 'en', 'es', 'de', 'ar' ])).to.eql([ 'en', 'es', 'de', 'ar' ])
+    })
+
+    it('ignores and preserves extensions', function () {
+      expect(MessageFormat.supportedLocalesOf('en-US-u-nu-latn')).to.eql([ 'en-US-u-nu-latn' ])
+    })
+  })
+
   describe('format', function () {
     it('formats a simple message', function () {
       var pattern = 'Simple string with nothing special'
@@ -134,6 +194,10 @@ describe('MessageFormat', function () {
   })
 
   describe('locales', function () {
+    var ns = [
+      -0.1, 0, 1, 1.01, 1.11, 1.13, 1.4, 1.7, 2, 3, 4, 6,
+      10, 11, 12, 13, 14, 15, 20, 27, 83, 93, 113, 1000000
+    ]
     it('doesn\'t throw for any locale\'s plural function', function () {
       var pattern =
         '{n, plural,' +
@@ -146,10 +210,29 @@ describe('MessageFormat', function () {
       Object.keys(plurals).forEach(function (locale) {
         var message = new MessageFormat(locale, pattern)
         expect(message.resolvedOptions().locale).to.equal(locale)
-        for (var n = 0; n <= 200; ++n) {
+        ns.forEach(function (n) {
           var result = message.format({ n: n })
           expect(result).to.match(/^(zero|one|two|few|many|other)$/)
-        }
+        })
+      })
+    })
+
+    it('doesn\'t throw for any locale\'s selectordinal function', function () {
+      var pattern =
+        '{n, selectordinal,' +
+        '  zero {zero}' +
+        '   one {one}' +
+        '   two {two}' +
+        '   few {few}' +
+        '  many {many}' +
+        ' other {other}}'
+      Object.keys(plurals).forEach(function (locale) {
+        var message = new MessageFormat(locale, pattern)
+        expect(message.resolvedOptions().locale).to.equal(locale)
+        ns.forEach(function (n) {
+          var result = message.format({ n: n })
+          expect(result).to.match(/^(zero|one|two|few|many|other)$/)
+        })
       })
     })
   })

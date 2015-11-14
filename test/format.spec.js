@@ -19,6 +19,11 @@ describe('formatMessage', function () {
       expect(message).to.equal('This isn\'t a {\'simple\'} \'string\'')
     })
 
+    it('handles object with id, default, and description', function () {
+      var message = formatMessage({ id: 'foo_bar', default: 'foo bar', description: 'stuff' })
+      expect(message).to.equal('foo bar')
+    })
+
     it('accepts arguments', function () {
       var arg = 'y'
       var message = formatMessage('x{ arg }z', { arg: arg })
@@ -91,6 +96,10 @@ describe('formatMessage', function () {
   })
 
   describe('setup', function () {
+    it('does nothing if you pass nothing', function () {
+      expect(function () { formatMessage.setup() }).to.not.throw()
+    })
+
     // uses variables to avoid inlining since the tests are about runtime config
     it('changes the default locale', function () {
       formatMessage.setup({ locale: 'ar' })
@@ -104,15 +113,59 @@ describe('formatMessage', function () {
     it('changes the translation', function () {
       formatMessage.setup({
         locale: 'en',
-        translations: { en: { 'trans-test': 'test-success' } },
+        translations: { en: {
+          'trans-test': { message: 'test-success' },
+          'trans-test2': 'test-success2'
+        } },
         missingTranslation: 'ignore',
         generateId: function (pattern) { return pattern }
       })
       // use variable to avoid inlining
       var pattern = 'trans-test'
       var message = formatMessage(pattern)
+      var pattern2 = 'trans-test2'
+      var message2 = formatMessage(pattern2)
 
       expect(message).to.equal('test-success')
+      expect(message2).to.equal('test-success2')
+    })
+
+    it('changes the missing translation behavior', function () {
+      formatMessage.setup({
+        locale: 'en',
+        translations: { en: {} },
+        missingTranslation: 'warning',
+        missingReplacement: '!!!'
+      })
+      var error
+      var warn = console.warn
+      console.warn = function (e) { error = e }
+
+      var id = 'test'
+      var pattern = 'trans-test'
+      var message = formatMessage({ id: id, default: pattern })
+      console.warn = warn
+      formatMessage.setup({ missingReplacement: null, translations: null })
+
+      expect(error).to.equal('Translation for "test" in "en" is missing')
+      expect(message).to.equal('!!!')
+    })
+
+    it('can throw on missing', function () {
+      formatMessage.setup({
+        translations: { en: {} },
+        missingTranslation: 'error'
+      })
+
+      expect(function () {
+        var pattern = 'error-test'
+        formatMessage(pattern)
+      }).to.throw()
+
+      formatMessage.setup({
+        missingTranslation: 'warning',
+        translations: null
+      })
     })
 
     it('adds custom formats', function () {
@@ -127,7 +180,8 @@ describe('formatMessage', function () {
         time: { minute: {
           hour: 'numeric',
           minute: 'numeric'
-        } }
+        } },
+        missingTranslation: 'warning'
       } })
       var message = formatMessage('{ n, number, perc }', { n: 0.3672 })
         .replace(/\s+/g, '') // IE adds space

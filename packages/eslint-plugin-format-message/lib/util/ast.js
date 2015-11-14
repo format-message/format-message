@@ -98,7 +98,7 @@ function getLiteralsFromObjectExpression (node) {
       isLiteralish(prop.value)
     )
     if (canGetValue) {
-      var key = prop.node.key.name || prop.node.key.value
+      var key = prop.key.name || prop.key.value
       props[key] = getLiteralValue(prop.value)
     }
     return props
