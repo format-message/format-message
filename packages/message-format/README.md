@@ -15,7 +15,7 @@ then use it as follows:
 ```js
 var MessageFormat = require('message-format');
 
-var message = new MessageFormat('Hello { place }!', 'en-US');
+var message = new MessageFormat('en-US', 'Hello { place }!');
 var formatted = message.format({ place:'World' });
 ```
 
@@ -68,21 +68,6 @@ undesireably large. For now, if you need these kinds of formats, you can pass
 them into the message pre-formatted, and refence them in the message pattern
 with a simple string placeholder (`{ arg }`).
 
-### Comparison to intl-messageformat
-
-intl-messageformat is in many ways the inspiration for message-format. However,
-intl-messageformat deviates from the ICU standard in the way you escape special
-characters in the message pattern, and its pegjs generated parser is fairly
-large and not particularly speedy. message-format's primary goals are
-simplicity, compliance, and performance (both in size and speed).
-
-If you prefer backslash escaping over the standard quote, you can enable it in
-the options:
-
-```js
-new MessageFormat('message with \\{braces\\}', 'en-US', { escape:'\\' })
-```
-
 
 API
 ---
@@ -94,18 +79,15 @@ var MessageFormat = require('message-format')
 // or
 import MessageFormat from 'message-format'
 
-new MessageFormat(pattern, [locales[, options]])
+new MessageFormat(locales, pattern)
 ```
 
 Construct a message format object
 
 Parameters
 
+- `locales` is a string with a BCP 47 language tag, or an array of such strings.
 - `pattern` is a properly formatted ICU Message Format pattern. A poorly formatted pattern will cause an `Error` to be thrown.
-- `locales` is an optional string with a BCP 47 language tag, or an array of such strings.
-- `options` is an optional object containing options that change the behavior of `MessageFormat`.
-    - `cache` default `true`, if `true` cache the result of preparing the `format` function. The cache is shared across all instances of `MessageFormat`.
-    - `escape` default `'`, if any other character, escape the single character following each escape character.
 
 ### `MessageFormat` instances
 
@@ -119,26 +101,6 @@ Parameters
 
 - `args` is an object containing the values to replace placeholders with. Required if the pattern contains placeholders.
 
-### `Parser`
-
-```js
-var Parser = require('message-format/parser')
-
-var ast = Parser.parse(pattern, [options])
-```
-
-Parse a message pattern to a compact tokenization
-
-### `Printer`
-
-```js
-var Printer = require('message-format/printer')
-
-var pattern = Printer.print(ast, [options])
-```
-
-Pretty print the parser's output to a message pattern
-
 
 Examples
 --------
@@ -146,7 +108,7 @@ Examples
 ### Simple string placeholders
 
 ```js
-var message = new MessageFormat('Welcome back, {name}!');
+var message = new MessageFormat('en', 'Welcome back, {name}!');
 message.format({ name:'Bob' }); // "Welcome back, Bob!"
 message.format({ name:'Bill' }); // "Welcome back, Bill!"
 ```
@@ -164,36 +126,36 @@ for escaping syntax characters, and use the pretty single quote (`’` U+2019)
 for actual apostrophes and single quotes in a message pattern.
 
 ```js
-var message = new MessageFormat('This isn\'\'t a \'{simple}\' \'string\'');
+var message = new MessageFormat('en', 'This isn\'\'t a \'{simple}\' \'string\'');
 message.format(); // "This isn't a {simple} 'string'"
 
 // double quotes or backticks (ES6) make it a little easier to read
-message = new MessageFormat("This isn''t a '{simple}' 'string'");
+message = new MessageFormat("en", "This isn''t a '{simple}' 'string'");
 message.format(); // "This isn't a {simple} 'string'"
 ```
 
 ### number, date, and time placeholders
 
 ```js
-var message = new MessageFormat('You took {n,number} pictures since {d,date} {d,time}');
+var message = new MessageFormat('en', 'You took {n,number} pictures since {d,date} {d,time}');
 message.format({ n:4000, d:new Date() }); // "You took 4,000 pictures since Jan 1, 2015 9:33:04 AM"
 
-message = new MessageFormat('{ n, number, percent }');
+message = new MessageFormat('en', '{ n, number, percent }');
 message.format({ n:0.1 }); // "10%"
 
-message = new MessageFormat('{ shorty, date, short }');
+message = new MessageFormat('en', '{ shorty, date, short }');
 message.format({ shorty:new Date() }); // "1/1/15"
 ```
 
 ### selectordinal
 
 ```js
-var message = new MessageFormat('{ n, selectordinal,\
+var message = new MessageFormat('en', '{ n, selectordinal,\
   one {#st}\
   two {#nd}\
   few {#rd}\
   other {#th}\
-} place', 'en')
+} place')
 message.format({ n:102 }) // "102nd place"
 ```
 
@@ -203,7 +165,7 @@ message.format({ n:102 }) // "102nd place"
 import MessageFormat from 'message-format'
 
 // using a template string for multiline, no interpolation
-let message = new MessageFormat(`On { date, date, short } {name} ate {
+let message = new MessageFormat('en', `On { date, date, short } {name} ate {
   numBananas, plural,
        =0 {no bananas}
        =1 {a banana}

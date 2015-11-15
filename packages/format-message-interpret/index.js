@@ -5,20 +5,6 @@ var formats = require('format-message-formats')
 var lookupClosestLocale = require('lookup-closest-locale')
 var plurals = require('./plurals')
 
-/**
- * Interpretr
- *
- * Turns this:
- *  [ "You have ", [ "numBananas", "plural", 0, {
- *       "=0": [ "no bananas" ],
- *      "one": [ "a banana" ],
- *    "other": [ [ '#' ], " bananas" ]
- *  } ], " for sale." ]
- *
- * into this:
- *  format({ numBananas:0 })
- *  "You have no bananas for sale."
- **/
 module.exports = function interpret (locale, ast) {
   return interpretSubs(locale, ast)
 }

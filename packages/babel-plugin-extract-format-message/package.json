@@ -15,5 +15,8 @@
     "format-message-generate-id": "^4.0.0",
     "format-message-parse": "^4.0.0",
     "format-message-print": "^4.0.0"
+  },
+  "peerDependencies": {
+    "babel-core": "^6.0.0"
   }
 }

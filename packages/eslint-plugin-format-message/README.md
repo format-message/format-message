@@ -3,10 +3,6 @@
 > [format-message][format-message] i18n specific rules for ESLint
 
 [![npm Version][npm-image]][npm]
-[![Dependency Status][deps-image]][deps]
-[![Dev Dependency Status][dev-deps-image]][dev-deps]
-[![Build Status][build-image]][build]
-
 [![JS Standard Style][style-image]][style]
 [![MIT License][license-image]][LICENSE]
 
@@ -67,8 +63,8 @@ Here is another example configuration.
   },
   "settings": {
     "format-message": {
+      "generateId": "normalized",
       "sourceLocale": "en-GB",
-      "keyType": "normalized",
       "translations": "./locales"
     }
   }
@@ -138,11 +134,12 @@ You can configure settings for this plugin in a `"format-message"` object in the
 As in the example above, the following settings can be provided:
 
 * `sourceLocale` specifies what locale the default patterns use in the source code.
-* `keyType` is one of `literal`, `normalized`, `underscored`, or `underscored_crc32`. This determines how to translate a default pattern to the key to lookup the translation.
+* `generateId` is one of `literal`, `normalized`, `underscored`, or `underscored_crc32`. This determines how to translate a default pattern to the key to lookup the translation.
 * `translations` is an object containing a property per locale. Each locale property is a object mapping keys to translations.
   * `translations` may also string path, relative to the current working directory, indicating a module to require that matches the above description.
     * example: `"translations": "./locales"`
     * locales.json contains: `{ "en-US": { "course_8a63b4a3": "Course" }, "pt-BR": { "course_8a63b4a3": "Curso" } }`
+    * each message entry can also be of the form: `"course_8a63b4a3": { "message": "Course", "description": "An educational course." }`
   * each locale property in `translations` may also be a string path to a module that matches the above description.
     * example: `"translations": { "en-US": "./en.json", "pt-BR": "./pt-BR.json" }`
     * en.json contains: `{ "en-US": { "course_8a63b4a3": "Course", "quiz_e0dcce8f": "Quiz" } }`
@@ -157,12 +154,6 @@ This software is free to use under the MIT license. See the [LICENSE-MIT file][L
 
 [npm]: https://www.npmjs.org/package/eslint-plugin-format-message
 [npm-image]: https://img.shields.io/npm/v/eslint-plugin-format-message.svg
-[deps]: https://david-dm.org/format-message/eslint-plugin-format-message
-[deps-image]: https://img.shields.io/david/format-message/eslint-plugin-format-message.svg
-[dev-deps]: https://david-dm.org/format-message/eslint-plugin-format-message#info=devDependencies
-[dev-deps-image]: https://img.shields.io/david/dev/format-message/eslint-plugin-format-message.svg
-[build]: https://travis-ci.org/format-message/eslint-plugin-format-message
-[build-image]: https://img.shields.io/travis/format-message/eslint-plugin-format-message.svg
 [style]: https://github.com/feross/standard
 [style-image]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg
 [license-image]: https://img.shields.io/npm/l/eslint-plugin-format-message.svg

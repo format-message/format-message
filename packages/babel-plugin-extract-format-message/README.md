@@ -62,6 +62,8 @@ require("babel-core").transform("code", {
 
 The structure of the file matches the conventions of Chrome's i18n tools. This is also the default format used if an unrecognized format is specified.
 
+Note that format-message apis expecting all of the translations requires a higher level object with locale keys. The value for each locale matches this format.
+
 ```json
 {
   "hello_67b127a": {
@@ -104,6 +106,8 @@ export default {
 Aliases: `yml`, `rails`
 
 Follows the Ruby on Rails i18n conventions for internationalization messages. Descriptions are added as a comment above the messages they describe.
+
+Note that unlike the other formats, `yaml` requires the `locale` to be at the top level.
 
 ```yaml
 en:

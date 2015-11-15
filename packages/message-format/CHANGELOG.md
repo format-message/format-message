@@ -1,13 +1,17 @@
 # Changelog
 
-> **Tags:**
-> - [New Feature]
-> - [Bug Fix]
-> - [Spec Compliancy]
-> - [Breaking Change]
-> - [Documentation]
-> - [Internal]
-> - [Polish]
+## 2.0.0
+
+* **Spec Compliancy**
+  * `supportedLocalesOf` now matches the behavior of Intl.* apis
+  * `format` is defined as a getter for a function, just like other Intl.* apis
+  * Update to CLDR 28
+  * Removed `escape` option allowing for backslash escaping
+* **Breaking Change**
+  * Can no longer get the full list of supported locales via supportedLocalesOf
+  * Parameter order has been reversed, so `locales` is first, just like Intl.* apis
+  * Removed `cache` option
+  * Removed parser and printer apis, refer instead to `format-message-parse` and `format-message-print`
 
 ## 1.2.1
 
@@ -57,4 +61,3 @@
 * **Internal**
   * Upgrade from `6to5` to `babel`.
   * Use `eslint` and `jscs` for style checking.
-

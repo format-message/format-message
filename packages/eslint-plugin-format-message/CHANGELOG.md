@@ -1,13 +1,11 @@
 # Changelog
 
-> **Tags:**
-> - [New Feature]
-> - [Bug Fix]
-> - [Spec Compliancy]
-> - [Breaking Change]
-> - [Documentation]
-> - [Internal]
-> - [Polish]
+## 4.0.0
+
+* **Breaking Change**
+  * `keyType` was renamed `generateId` to match new format-message
+* **New Feature**
+  * supports messages as an object with `id`, `default`, and `description`
 
 ## 0.3.0
 

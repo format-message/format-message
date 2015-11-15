@@ -22,6 +22,7 @@ module.exports = function visitEachTranslation (context, visitor) {
     var locales = locale ? [ locale ] : Object.keys(translations)
     locales.forEach(function (locale) {
       var translation = translations[locale] && translations[locale][id]
+      if (translation && translation.message) translation = translation.message
       visitor({
         id: id,
         node: node,

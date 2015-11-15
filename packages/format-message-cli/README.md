@@ -3,7 +3,6 @@
 > Command-line tools to lint, extract, and inline format-message translations
 
 [![npm Version][npm-image]][npm]
-[![Build Status][build-image]][build]
 [![JS Standard Style][style-image]][style]
 [![MIT License][license-image]][LICENSE]
 
@@ -11,7 +10,7 @@
 Inlined Messages
 ----------------
 
-The examples provide sample inliner output. This output is not meant to be 100% exact, but to give a general idea of what the transform does.
+The examples provide sample transform output. This output is not meant to be 100% exact, but to give a general idea of what the transform does.
 
 ### Simple messages with no placeholders
 
@@ -120,17 +119,13 @@ find message patterns in files and verify there are no obvious problems
 #### Options:
 
     -h, --help                  output usage information
-    -n, --function-name [name]  find function calls with this name [formatMessage]
-    --no-auto                   disables auto-detecting the function name from import or require calls
-    -k, --key-type [type]       derived key from source pattern literal|normalized|underscored|underscored_crc32 [underscored_crc32]
+    -g, --generate-id [type]    generate missing ids from default message pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]
+    -l, --locale [locale]       BCP 47 language tags specifying the source default locale [en]
     -t, --translations [path]   location of the JSON file with message translations, if specified, translations are also checked for errors
     -f, --filename [filename]   filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]
+    -s, --style [style]         error output format (stylish | checkstyle | compact | html | jslint-xml | json | junit | tap | unix) [stylish]
 
 #### Examples:
-
-lint the src js files, with `__` as the function name used instead of `formatMessage`
-
-    format-message lint -n __ src/**/*.js
 
 lint the src js files and translations
 
@@ -146,40 +141,43 @@ find and list all message patterns in files
 #### Options:
 
     -h, --help                  output usage information
-    -n, --function-name [name]  find function calls with this name [formatMessage]
-    --no-auto                   disables auto-detecting the function name from import or require calls
-    -k, --key-type [type]       derived key from source pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]
+    -g, --generate-id [type]    generate missing ids from default message pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]
     -l, --locale [locale]       BCP 47 language tags specifying the source default locale [en]
+    -f, --filename [filename]   filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]
+    --format [format]           use the specified format instead of detecting from the --out-file extension (yaml | es6 | commonjs | json)
     -o, --out-file [out]        write messages JSON object to this file instead of to stdout
 
 #### Examples:
 
-extract patterns from src js files, dump json to `stdout`. This can be helpful to get familiar with how `--key-type` and `--locale` change the json output.
+extract patterns from src js files, dump json to `stdout`. This can be helpful to get familiar with how `--generate-id`, `--format` and `--locale` change the json output.
 
     format-message extract src/**/*.js
 
 extract patterns from `stdin`, dump to file.
 
-    someTranspiler src/*.js | format-message extract -o locales/en.json
+    someTranspiler src | format-message extract -o locales/en.json
 
 
-### format-message inline
+### format-message transform
 
-#### Usage: `format-message inline [options] [files...]`
+#### Usage: `format-message transform [options] [files...]`
 
 find and replace message pattern calls in files with translations
+
+By default this transform generates ids for messages that do not have an explicit id, and the result still relies on translations being properly configured with `formatMessage.setup()`.
+
+The `--inline` flag changes the behavior to inline one particular translation, and optimize the expression (often to a simple string literal). This requires passing `--translations` for any language other than the default.
 
 #### Options:
 
     -h, --help                            output usage information
-    -n, --function-name [name]            find function calls with this name [formatMessage]
-    --no-auto                             disables auto-detecting the function name from import or require calls
-    -k, --key-type [type]                 derived key from source pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]
+    -g, --generate-id [type]    generate missing ids from default message pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]
     -l, --locale [locale]                 BCP 47 language tags specifying the target locale [en]
     -t, --translations [path]             location of the JSON file with message translations
     -e, --missing-translation [behavior]  behavior when --translations is specified, but a translated pattern is missing (error | warning | ignore) [error]
     -m, --missing-replacement [pattern]   pattern to inline when a translated pattern is missing, defaults to the source pattern
-    -i, --source-maps-inline              append sourceMappingURL comment to bottom of code
+    -i, --inline                          inline the translation for the specified locale
+    --source-maps-inline                  append sourceMappingURL comment to bottom of code
     -s, --source-maps                     save source map alongside the compiled code
     -f, --filename [filename]             filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]
     -o, --out-file [out]                  compile all input files into a single file
@@ -190,15 +188,15 @@ find and replace message pattern calls in files with translations
 
 create locale-specific client bundles with source maps
 
-    format-message inline src/**/*.js -s -l de -t translations.json -o dist/bundle.de.js
-    format-message inline src/**/*.js -s -l en -t translations.json -o dist/bundle.en.js
-    format-message inline src/**/*.js -s -l es -t translations.json -o dist/bundle.es.js
-    format-message inline src/**/*.js -s -l pt -t translations.json -o dist/bundle.pt.js
+    format-message transform -i src/**/*.js -s -l de -t translations.json -o dist/bundle.de.js
+    format-message transform -i src/**/*.js -s -l en -t translations.json -o dist/bundle.en.js
+    format-message transform -i src/**/*.js -s -l es -t translations.json -o dist/bundle.es.js
+    format-message transform -i src/**/*.js -s -l pt -t translations.json -o dist/bundle.pt.js
     ...
 
-inline without translating multiple files that used `var __ = require('format-message')`
+generate ids from default messages
 
-    format-message inline -d dist -r src -n __ src/*.js lib/*.js component/**/*.js
+    format-message transform -d dist -r src src/*.js lib/*.js component/**/*.js
 
 
 License
@@ -210,8 +208,6 @@ This software is free to use under the MIT license. See the [LICENSE-MIT file][L
 [logo]: https://cdn.rawgit.com/format-message/format-message/5ecbfe3/logo.svg
 [npm]: https://www.npmjs.org/package/format-message-cli
 [npm-image]: https://img.shields.io/npm/v/format-message-cli.svg
-[build]: https://travis-ci.org/format-message/format-message
-[build-image]: https://img.shields.io/travis/format-message/format-message.svg
 [style]: https://github.com/feross/standard
 [style-image]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg
 [license-image]: https://img.shields.io/npm/l/format-message.svg

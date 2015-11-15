@@ -18,5 +18,8 @@
     "format-message-parse": "^4.0.0",
     "lookup-closest-locale": "^4.0.0",
     "source-map": "^0.5.3"
+  },
+  "peerDependencies": {
+    "babel-core": "^6.0.0"
   }
 }
