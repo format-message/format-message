@@ -7,79 +7,50 @@ var unlinkSync = fsUtil.unlinkSync
 var readdirSync = fsUtil.readdirSync
 var rmdirSync = fsUtil.rmdirSync
 
-describe('format-message inline', function () {
+describe('format-message transform -i', function () {
   describe('stdin', function () {
     it('finds and replaces simple strings', function (done) {
-      var input = 'formatMessage("hello")'
-      exec('bin/format-message inline', function (err, stdout, stderr) {
+      var input = 'import formatMessage from "format-message"\nformatMessage("hello")'
+      exec('packages/format-message-cli/format-message transform -i', function (err, stdout, stderr) {
         expect(stderr.toString('utf8')).to.equal('')
-        expect(stdout.toString('utf8').trim()).to.match(/^"hello"/)
+        expect(stdout.toString('utf8').trim()).to.match(/^import formatMessage from "format-message";?\n"hello"/)
         done(err)
       }).stdin.end(input, 'utf8')
     })
 
     it('finds and replaces template strings', function (done) {
-      var input = 'formatMessage(`hello`)'
-      exec('bin/format-message inline', function (err, stdout, stderr) {
+      var input = 'import formatMessage from "format-message"\nformatMessage(`hello`)'
+      exec('packages/format-message-cli/format-message transform -i', function (err, stdout, stderr) {
         expect(stderr.toString('utf8')).to.equal('')
-        expect(stdout.toString('utf8').trim()).to.match(/^"hello"/)
-        done(err)
-      }).stdin.end(input, 'utf8')
-    })
-
-    it('finds and replaces translate calls', function (done) {
-      var input = 'formatMessage.translate("hello { name }")'
-      exec('bin/format-message inline', function (err, stdout, stderr) {
-        expect(stderr.toString('utf8')).to.equal('')
-        expect(stdout.toString('utf8').trim()).to.match(/^"hello { name }"/)
+        expect(stdout.toString('utf8').trim()).to.match(/^import formatMessage from "format-message";?\n"hello"/)
         done(err)
       }).stdin.end(input, 'utf8')
     })
 
     it('can output to a -o file', function (done) {
-      var input = 'formatMessage("hello")'
+      var input = 'import formatMessage from "format-message"\nformatMessage("hello")'
       var filename = 'test/translations/inline.js'
-      var cmd = 'bin/format-message inline -o ' + filename
+      var cmd = 'packages/format-message-cli/format-message transform -i -o ' + filename
       exec(cmd, function (err, stdout, stderr) {
         expect(stderr.toString('utf8')).to.equal('')
         expect(stdout.toString('utf8')).to.equal('')
         var fileContent = readFileSync(filename, 'utf8')
         unlinkSync(filename)
-        expect(fileContent.trim()).to.match(/^"hello"/)
+        expect(fileContent.trim()).to.match(/^import formatMessage from "format-message";?\n"hello"/)
         done(err)
       }).stdin.end(input, 'utf8')
     })
 
     it('can output to a --out-file file', function (done) {
-      var input = 'formatMessage("hello")'
+      var input = 'import formatMessage from "format-message"\nformatMessage("hello")'
       var filename = 'test/translations/inline.js'
-      var cmd = 'bin/format-message inline --out-file ' + filename
+      var cmd = 'packages/format-message-cli/format-message transform -i --out-file ' + filename
       exec(cmd, function (err, stdout, stderr) {
         expect(stderr.toString('utf8')).to.equal('')
         expect(stdout.toString('utf8')).to.equal('')
         var fileContent = readFileSync(filename, 'utf8')
         unlinkSync(filename)
-        expect(fileContent.trim()).to.match(/^"hello"/)
-        done(err)
-      }).stdin.end(input, 'utf8')
-    })
-
-    it('finds -n named functions', function (done) {
-      var input = '__("hello world")'
-      var cmd = 'bin/format-message inline -n __'
-      exec(cmd, function (err, stdout, stderr) {
-        expect(stderr.toString('utf8')).to.equal('')
-        expect(stdout.toString('utf8').trim()).to.match(/^"hello world"/)
-        done(err)
-      }).stdin.end(input, 'utf8')
-    })
-
-    it('finds --function-name named functions', function (done) {
-      var input = '$("hello world")'
-      var cmd = 'bin/format-message inline --function-name $'
-      exec(cmd, function (err, stdout, stderr) {
-        expect(stderr.toString('utf8')).to.equal('')
-        expect(stdout.toString('utf8').trim()).to.match(/^"hello world"/)
+        expect(fileContent.trim()).to.match(/^import formatMessage from "format-message";?\n"hello"/)
         done(err)
       }).stdin.end(input, 'utf8')
     })
@@ -87,74 +58,74 @@ describe('format-message inline', function () {
 
   describe('translations', function () {
     it('uses -t translations', function (done) {
-      var input = 'formatMessage("hello world")'
-      var cmd = 'bin/format-message inline' +
+      var input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
+      var cmd = 'packages/format-message-cli/format-message transform -i' +
         ' -t test/translations/inline.underscored_crc32.json'
       exec(cmd, function (err, stdout, stderr) {
         expect(stderr.toString('utf8')).to.equal('')
-        expect(stdout.toString('utf8').trim()).to.match(/^"hey everyone"/)
+        expect(stdout.toString('utf8').trim()).to.match(/^import formatMessage from "format-message";?\n"hey everyone"/)
         done(err)
       }).stdin.end(input, 'utf8')
     })
 
     it('uses --translations translations', function (done) {
-      var input = 'formatMessage("hello world")'
-      var cmd = 'bin/format-message inline' +
+      var input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
+      var cmd = 'packages/format-message-cli/format-message transform -i' +
         ' --translations test/translations/inline.underscored_crc32.json'
       exec(cmd, function (err, stdout, stderr) {
         expect(stderr.toString('utf8')).to.equal('')
-        expect(stdout.toString('utf8').trim()).to.match(/^"hey everyone"/)
+        expect(stdout.toString('utf8').trim()).to.match(/^import formatMessage from "format-message";?\n"hey everyone"/)
         done(err)
       }).stdin.end(input, 'utf8')
     })
 
     describe('locale', function () {
       it('uses -l locale', function (done) {
-        var input = 'formatMessage("hello world")'
-        var cmd = 'bin/format-message inline' +
+        var input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
+        var cmd = 'packages/format-message-cli/format-message transform -i' +
           ' -l pt' +
           ' -t test/translations/inline.underscored_crc32.json'
         exec(cmd, function (err, stdout, stderr) {
           expect(stderr.toString('utf8')).to.equal('')
-          expect(stdout.toString('utf8').trim()).to.match(/^"oi mundo"/)
+          expect(stdout.toString('utf8').trim()).to.match(/^import formatMessage from "format-message";?\n"oi mundo"/)
           done(err)
         }).stdin.end(input, 'utf8')
       })
 
       it('uses --locale locale', function (done) {
-        var input = 'formatMessage("hello world")'
-        var cmd = 'bin/format-message inline' +
+        var input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
+        var cmd = 'packages/format-message-cli/format-message transform -i' +
           ' --locale pt' +
           ' -t test/translations/inline.underscored_crc32.json'
         exec(cmd, function (err, stdout, stderr) {
           expect(stderr.toString('utf8')).to.equal('')
-          expect(stdout.toString('utf8').trim()).to.match(/^"oi mundo"/)
+          expect(stdout.toString('utf8').trim()).to.match(/^import formatMessage from "format-message";?\n"oi mundo"/)
           done(err)
         }).stdin.end(input, 'utf8')
       })
     })
 
-    describe('key-type', function () {
-      it('uses -k key', function (done) {
-        var input = 'formatMessage("hello world")'
-        var cmd = 'bin/format-message inline' +
-          ' -k underscored' +
+    describe('generate-id', function () {
+      it('uses -g type', function (done) {
+        var input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
+        var cmd = 'packages/format-message-cli/format-message transform -i' +
+          ' -g underscored' +
           ' -t test/translations/inline.underscored.json'
         exec(cmd, function (err, stdout, stderr) {
           expect(stderr.toString('utf8')).to.equal('')
-          expect(stdout.toString('utf8').trim()).to.match(/^"hey everyone"/)
+          expect(stdout.toString('utf8').trim()).to.match(/^import formatMessage from "format-message";?\n"hey everyone"/)
           done(err)
         }).stdin.end(input, 'utf8')
       })
 
-      it('uses --key-type key', function (done) {
-        var input = 'formatMessage("hello world")'
-        var cmd = 'bin/format-message inline' +
-          ' --key-type normalized' +
+      it('uses --generate-id type', function (done) {
+        var input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
+        var cmd = 'packages/format-message-cli/format-message transform -i' +
+          ' --generate-id normalized' +
           ' -t test/translations/inline.normalized.json'
         exec(cmd, function (err, stdout, stderr) {
           expect(stderr.toString('utf8')).to.equal('')
-          expect(stdout.toString('utf8').trim()).to.match(/^"hey everyone"/)
+          expect(stdout.toString('utf8').trim()).to.match(/^import formatMessage from "format-message";?\n"hey everyone"/)
           done(err)
         }).stdin.end(input, 'utf8')
       })
@@ -162,63 +133,63 @@ describe('format-message inline', function () {
 
     describe('missing-translation', function () {
       it('causes a fatal error by default', function (done) {
-        var input = 'formatMessage("not translated")'
-        var cmd = 'bin/format-message inline' +
+        var input = 'import formatMessage from "format-message"\nformatMessage("not translated")'
+        var cmd = 'packages/format-message-cli/format-message transform -i' +
           ' -t test/translations/inline.underscored_crc32.json'
         exec(cmd, function (err, stdout, stderr) {
           expect(err).to.exist
           expect(stdout.toString('utf8')).to.equal('')
-          expect(stderr.toString('utf8')).to.match(/^Error: no en translation found/)
+          expect(stderr.toString('utf8')).to.match(/No en translation found/)
           done()
         }).stdin.end(input, 'utf8')
       })
 
       it('can trigger a non-fatal warning instead with -e warning ', function (done) {
-        var input = 'formatMessage("not translated")'
-        var cmd = 'bin/format-message inline' +
+        var input = 'import formatMessage from "format-message"\nformatMessage("not translated")'
+        var cmd = 'packages/format-message-cli/format-message transform -i' +
           ' -e warning' +
           ' -t test/translations/inline.underscored_crc32.json'
         exec(cmd, function (err, stdout, stderr) {
-          expect(stderr.toString('utf8')).to.match(/^Warning: no en translation found/)
-          expect(stdout.toString('utf8').trim()).to.match(/^"not translated"/)
+          expect(stderr.toString('utf8')).to.match(/No en translation found/)
+          expect(stdout.toString('utf8').trim()).to.match(/^import formatMessage from "format-message";?\n"not translated"/)
           done(err)
         }).stdin.end(input, 'utf8')
       })
 
       it('can be ignored with --missing-translation ignore', function (done) {
-        var input = 'formatMessage("not translated")'
-        var cmd = 'bin/format-message inline' +
+        var input = 'import formatMessage from "format-message"\nformatMessage("not translated")'
+        var cmd = 'packages/format-message-cli/format-message transform -i' +
           ' --missing-translation ignore' +
           ' -t test/translations/inline.underscored_crc32.json'
         exec(cmd, function (err, stdout, stderr) {
           expect(stderr.toString('utf8')).to.equal('')
-          expect(stdout.toString('utf8').trim()).to.match(/^"not translated"/)
+          expect(stdout.toString('utf8').trim()).to.match(/^import formatMessage from "format-message";?\n"not translated"/)
           done(err)
         }).stdin.end(input, 'utf8')
       })
 
       it('can be replaced with -m replacement', function (done) {
-        var input = 'formatMessage("not translated")'
-        var cmd = 'bin/format-message inline' +
+        var input = 'import formatMessage from "format-message"\nformatMessage("not translated")'
+        var cmd = 'packages/format-message-cli/format-message transform -i' +
           ' -e ignore' +
           ' -m "!!MISSING!!"' +
           ' -t test/translations/inline.underscored_crc32.json'
         exec(cmd, function (err, stdout, stderr) {
           expect(stderr.toString('utf8')).to.equal('')
-          expect(stdout.toString('utf8').trim()).to.match(/^"!!MISSING!!"/)
+          expect(stdout.toString('utf8').trim()).to.match(/^import formatMessage from "format-message";?\n"!!MISSING!!"/)
           done(err)
         }).stdin.end(input, 'utf8')
       })
 
       it('can be replaced with --missing-replacement', function (done) {
-        var input = 'formatMessage("not translated")'
-        var cmd = 'bin/format-message inline' +
+        var input = 'import formatMessage from "format-message"\nformatMessage("not translated")'
+        var cmd = 'packages/format-message-cli/format-message transform -i' +
           ' -e ignore' +
           ' --missing-replacement "!!MISSING!!"' +
           ' -t test/translations/inline.underscored_crc32.json'
         exec(cmd, function (err, stdout, stderr) {
           expect(stderr.toString('utf8')).to.equal('')
-          expect(stdout.toString('utf8').trim()).to.match(/^"!!MISSING!!"/)
+          expect(stdout.toString('utf8').trim()).to.match(/^import formatMessage from "format-message";?\n"!!MISSING!!"/)
           done(err)
         }).stdin.end(input, 'utf8')
       })
@@ -226,29 +197,15 @@ describe('format-message inline', function () {
   })
 
   describe('source-maps-inline', function () {
-    it('uses -i', function (done) {
-      var input = 'formatMessage("hello world")'
-      var cmd = 'bin/format-message inline' +
-        ' -i' +
-        ' -t test/translations/inline.underscored_crc32.json'
-      exec(cmd, function (err, stdout, stderr) {
-        expect(stderr.toString('utf8')).to.equal('')
-        expect(stdout.toString('utf8')).to.match(
-          /^\s*"hey everyone";?\s+\/\/# sourceMappingURL=data\:application\/json;base64,/
-        )
-        done(err)
-      }).stdin.end(input, 'utf8')
-    })
-
     it('uses --source-maps-inline', function (done) {
-      var input = 'formatMessage("hello world")'
-      var cmd = 'bin/format-message inline' +
+      var input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
+      var cmd = 'packages/format-message-cli/format-message transform -i' +
         ' --source-maps-inline' +
         ' -t test/translations/inline.underscored_crc32.json'
       exec(cmd, function (err, stdout, stderr) {
         expect(stderr.toString('utf8')).to.equal('')
         expect(stdout.toString('utf8')).to.match(
-          /^\s*"hey everyone";?\s+\/\/# sourceMappingURL=data\:application\/json;base64,/
+          /^import formatMessage from "format-message";?\s*"hey everyone";?\s+\/\/# sourceMappingURL=data\:application\/json;base64,/
         )
         done(err)
       }).stdin.end(input, 'utf8')
@@ -257,9 +214,9 @@ describe('format-message inline', function () {
 
   describe('source-maps', function () {
     it('uses -s', function (done) {
-      var input = 'formatMessage("hello world")'
+      var input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
       var filename = 'test/translations/inline.js'
-      var cmd = 'bin/format-message inline' +
+      var cmd = 'packages/format-message-cli/format-message transform -i' +
         ' -s' +
         ' -t test/translations/inline.underscored_crc32.json' +
         ' --out-file ' + filename
@@ -268,7 +225,7 @@ describe('format-message inline', function () {
         expect(stdout.toString('utf8')).to.equal('')
         var fileContent = readFileSync(filename, 'utf8')
         unlinkSync(filename)
-        expect(fileContent.trim()).to.match(/^\"hey everyone"/)
+        expect(fileContent.trim()).to.match(/^import formatMessage from "format-message";?\n"hey everyone"/)
         var sourceMap = readFileSync(filename + '.map', 'utf8')
         unlinkSync(filename + '.map')
         expect(JSON.parse(sourceMap)).to.not.be.empty
@@ -277,9 +234,9 @@ describe('format-message inline', function () {
     })
 
     it('uses --source-maps', function (done) {
-      var input = 'formatMessage("hello world")'
+      var input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
       var filename = 'test/translations/inline.js'
-      var cmd = 'bin/format-message inline' +
+      var cmd = 'packages/format-message-cli/format-message transform -i' +
         ' --source-maps' +
         ' -t test/translations/inline.underscored_crc32.json' +
         ' --out-file ' + filename
@@ -288,7 +245,7 @@ describe('format-message inline', function () {
         expect(stdout.toString('utf8')).to.equal('')
         var fileContent = readFileSync(filename, 'utf8')
         unlinkSync(filename)
-        expect(fileContent.trim()).to.match(/^"hey everyone"/)
+        expect(fileContent.trim()).to.match(/^import formatMessage from "format-message";?\n"hey everyone"/)
         var sourceMap = readFileSync(filename + '.map', 'utf8')
         unlinkSync(filename + '.map')
         expect(JSON.parse(sourceMap)).to.not.be.empty
@@ -299,6 +256,10 @@ describe('format-message inline', function () {
 
   describe('out-dir', function () {
     var dirname = 'test/inline'
+    var ofiles = readdirSync('test', 'utf8')
+      .filter(function (file) {
+        return file.slice(-3) === '.js'
+      })
 
     afterEach(function () {
       var files = readdirSync(dirname, 'utf8')
@@ -309,7 +270,7 @@ describe('format-message inline', function () {
     })
 
     it('outputs files to the directory relative to root', function (done) {
-      var cmd = 'bin/format-message inline' +
+      var cmd = 'packages/format-message-cli/format-message transform -i' +
         ' -d ' + dirname +
         ' -r test' +
         ' test/*.js'
@@ -317,13 +278,7 @@ describe('format-message inline', function () {
         expect(stderr.toString('utf8')).to.equal('')
         expect(stdout.toString('utf8')).to.equal('')
         var files = readdirSync(dirname, 'utf8').sort()
-        expect(files).to.be.eql([
-          'extract.cli.spec.js',
-          'format-inline.spec.js',
-          'format.spec.js',
-          'inline.cli.spec.js',
-          'lint.cli.spec.js'
-        ].sort())
+        expect(files).to.be.eql(ofiles.sort())
         var fileContent = readFileSync(dirname + '/format.spec.js', 'utf8')
         expect(fileContent.trim()).to.contain('\'x\' + arg + \'z\'')
         done(err)
@@ -331,7 +286,7 @@ describe('format-message inline', function () {
     })
 
     it('uses -s source-maps', function (done) {
-      var cmd = 'bin/format-message inline' +
+      var cmd = 'packages/format-message-cli/format-message transform -i' +
         ' -s' +
         ' -d ' + dirname +
         ' --root test' +
@@ -340,18 +295,11 @@ describe('format-message inline', function () {
         expect(stderr.toString('utf8')).to.equal('')
         expect(stdout.toString('utf8')).to.equal('')
         var files = readdirSync(dirname, 'utf8').sort()
-        expect(files).to.be.eql([
-          'extract.cli.spec.js',
-          'extract.cli.spec.js.map',
-          'format-inline.spec.js',
-          'format-inline.spec.js.map',
-          'format.spec.js',
-          'format.spec.js.map',
-          'inline.cli.spec.js',
-          'inline.cli.spec.js.map',
-          'lint.cli.spec.js',
-          'lint.cli.spec.js.map'
-        ].sort())
+        expect(files).to.be.eql(
+          ofiles.concat(ofiles.map(function (file) {
+            return file + '.map'
+          })).sort()
+        )
         var fileContent =
           readFileSync(dirname + '/format.spec.js', 'utf8')
           .split('\/\/# sourceMappingURL=')
@@ -367,7 +315,7 @@ describe('format-message inline', function () {
   describe('autodetect function name', function () {
     it('finds function name from require call', function (done) {
       var input = 'var f=require("format-message");f("hello")'
-      exec('bin/format-message inline', function (err, stdout, stderr) {
+      exec('packages/format-message-cli/format-message transform -i', function (err, stdout, stderr) {
         expect(stderr.toString('utf8')).to.equal('')
         expect(stdout.toString('utf8')).to.not.contain('f(')
         done(err)
@@ -375,9 +323,10 @@ describe('format-message inline', function () {
     })
 
     it('handles multiple function names in function context', function (done) {
-      var input = 'function foo(){var f=require("format-message");f("hello")}' +
+      var input = 'import formatMessage from "format-message"\n' +
+        'function foo(){var f=require("format-message");f("hello")}\n' +
         'function bar(){formatMessage("bye")}'
-      exec('bin/format-message inline', function (err, stdout, stderr) {
+      exec('packages/format-message-cli/format-message transform -i', function (err, stdout, stderr) {
         expect(stderr.toString('utf8')).to.equal('')
         expect(stdout.toString('utf8')).to.not.contain('f(')
         expect(stdout.toString('utf8')).to.not.contain('formatMessage(')
@@ -387,18 +336,9 @@ describe('format-message inline', function () {
 
     it('finds function name from import', function (done) {
       var input = 'import __ from "format-message";__("hello")'
-      exec('bin/format-message inline', function (err, stdout, stderr) {
+      exec('packages/format-message-cli/format-message transform -i', function (err, stdout, stderr) {
         expect(stderr.toString('utf8')).to.equal('')
         expect(stdout.toString('utf8')).to.not.contain('__(')
-        done(err)
-      }).stdin.end(input, 'utf8')
-    })
-
-    it('is disabled by --no-auto', function (done) {
-      var input = 'import __ from "format-message";__("hello")'
-      exec('bin/format-message inline --no-auto', function (err, stdout, stderr) {
-        expect(stderr.toString('utf8')).to.equal('')
-        expect(stdout.toString('utf8')).to.contain('__(')
         done(err)
       }).stdin.end(input, 'utf8')
     })

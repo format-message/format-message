@@ -1,79 +1,43 @@
 {
   "name": "format-message",
-  "version": "3.2.0",
-  "description": "Write default messages inline. Optionally transpile translations.",
-  "keywords": [
-    "i18n",
-    "intl",
-    "internationalization",
-    "localization",
-    "globalization",
-    "messageformat",
-    "pluralformat",
-    "selectformat",
-    "inline",
-    "transpile",
-    "plural",
-    "gender",
-    "icu"
-  ],
-  "main": "lib/format-message.js",
-  "bin": {
-    "format-message": "bin/format-message"
-  },
-  "dependencies": {
-    "commander": "^2.8.1",
-    "format-message-core": "^3.1.0",
-    "glob": "^5.0.2",
-    "message-format": "^1.2.0",
-    "object-assign": "^4.0.1"
+  "private": true,
+  "scripts": {
+    "install": "node scripts/bootstrap.js",
+    "benchmark": "npm run benchmark-compile && node scripts/benchmark.js",
+    "benchmark-compile": "packages/format-message-cli/format-message inline scripts/benchmark.src.js > scripts/benchmark.js",
+    "lint": "eslint .",
+    "test": "npm run lint && npm run test-setup && npm run test-node && npm run test-browsers",
+    "test-browsers": "karma start",
+    "test-setup": "rm -rf test/inline && packages/format-message-cli/format-message transform -i test/format.spec.js > test/format-inline.spec.js",
+    "test-node": "nyc --reporter=lcov --reporter=text mocha -cG --timeout 10000 -R dot 'test/**/*.spec.js'",
+    "cldr": "node scripts/cldr.js"
   },
   "devDependencies": {
+    "async": "^1.5.0",
+    "babel": "^6.0.15",
     "benchmark": "^1.0.0",
-    "chai": "^3.0.0",
-    "intl": "^1.0.0",
-    "intl-messageformat": "1.2.0",
-    "istanbul": "^0.4.0",
-    "karma": "^0.13.0",
+    "chai": "^3.4.0",
+    "cldr-core": "^28.0.0",
+    "eslint": "^1.9.0",
+    "eslint-config-standard": "^4.4.0",
+    "eslint-plugin-standard": "^1.3.1",
+    "intl": "^1.0.1",
+    "intl-messageformat": "^1.2.0",
+    "karma": "^0.13.15",
     "karma-chai": "^0.1.0",
-    "karma-chrome-launcher": "^0.2.0",
-    "karma-cli": "^0.1.0",
-    "karma-firefox-launcher": "^0.1.4",
+    "karma-chrome-launcher": "^0.2.1",
+    "karma-cli": "^0.1.1",
+    "karma-firefox-launcher": "^0.1.6",
     "karma-mocha": "^0.2.0",
     "karma-safari-launcher": "^0.1.1",
-    "karma-sourcemap-loader": "^0.3.4",
-    "karma-webpack": "^1.5.1",
-    "mocha": "^2.2.5",
-    "standard": "^5.0.0",
-    "webpack": "^1.9.10"
-  },
-  "scripts": {
-    "benchmark": "npm run benchmark-compile && node scripts/benchmark.js",
-    "benchmark-compile": "bin/format-message inline scripts/benchmark.src.js > scripts/benchmark.js",
-    "lint": "standard",
-    "prepublish": "webpack -p",
-    "test": "npm run lint && npm run test-setup && npm run test-node && npm run test-browsers",
-    "test-browsers": "karma start --browsers Firefox --single-run",
-    "test-setup": "rm -rf test/inline && bin/format-message inline test/format.spec.js > test/format-inline.spec.js",
-    "test-node": "istanbul cover _mocha -- -cG --timeout 10000 -R dot test/**/*.spec.js"
-  },
-  "standard": {
-    "ignore": [
-      "test/format-inline.spec.js",
-      "scripts/benchmark.js"
-    ]
-  },
-  "repository": {
-    "type": "git",
-    "url": "http://github.com/format-message/format-message.git"
-  },
-  "author": {
-    "name": "Andy VanWagoner",
-    "email": "thetalecrafter@gmail.com"
-  },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/format-message/format-message/issues"
-  },
-  "homepage": "https://github.com/format-message/format-message"
+    "karma-sauce-launcher": "^0.3.0",
+    "karma-sourcemap-loader": "^0.3.6",
+    "karma-webpack": "^1.7.0",
+    "message-format": "^1.2.1",
+    "mkdirp": "^0.5.1",
+    "mocha": "^2.3.3",
+    "nyc": "^3.2.2",
+    "rimraf": "^2.4.3",
+    "webpack": "^1.12.2"
+  }
 }

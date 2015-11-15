@@ -1,0 +1,18 @@
+{
+  "name": "format-message-generate-id",
+  "version": "4.0.0",
+  "description": "Generate a message id from the default message pattern",
+  "author": "Andy VanWagoner <thetalecrafter@gmail.com> (https://thetalecrafter.com/)",
+  "homepage": "https://github.com/format-message/format-message",
+  "license": "MIT",
+  "repository": "format-message/format-message",
+  "bugs": "https://github.com/format-message/format-message/issues",
+  "keywords": [
+    "format-message"
+  ],
+  "dependencies": {
+    "format-message-parse": "^4.0.0",
+    "format-message-print": "^4.0.0",
+    "crc32": "^0.2.2"
+  }
+}

@@ -4,12 +4,12 @@ if (typeof Intl === 'undefined') {
 }
 var IntlMF = require('intl-messageformat')
 var MessageFormat = require('message-format')
-var formatMessage = require('../lib/format-message')
+var formatMessage = require('../packages/format-message')
 var Benchmark = require('benchmark')
 var pattern
+var args
 var intlMF
 var mf
-var args
 
 function benchmark (name, cases) {
   var suiteOptions = {
@@ -33,48 +33,49 @@ function benchmark (name, cases) {
 }
 
 pattern = 'Simple string with nothing special'
-intlMF = new IntlMF(pattern, 'en-US').format
-mf = new MessageFormat(pattern, 'en-US').format
+formatMessage(pattern, args, 'en') // prime cache
+intlMF = new IntlMF(pattern, 'en').format
+mf = new MessageFormat(pattern, 'en').format
 benchmark(
   'Format simple message', {
     'intl-messageformat (reuse object)': function () { intlMF(args) },
     'message-format (reuse object)': function () { mf(args) },
-    'format': function () { formatMessage(pattern, args, 'en-US') },
-    'format (transpiled)': function () { formatMessage('Simple string with nothing special', args, 'en-US') }
+    'format-message': function () { formatMessage(pattern, args, 'en') },
+    'format-message (inlined)': function () { formatMessage('Simple string with nothing special', args, 'en') }
   }
 )
 
 pattern = 'Simple string with { placeholder }.'
-intlMF = new IntlMF(pattern, 'en-US').format
-mf = new MessageFormat(pattern, 'en-US').format
+args = { placeholder: 'replaced value' }
+formatMessage(pattern, args, 'en') // prime cache
+intlMF = new IntlMF(pattern, 'en').format
+mf = new MessageFormat(pattern, 'en').format
 benchmark(
   'Format common one arg message', {
-    'intl-messageformat (reuse object)': function () { intlMF({ placeholder: 'replaced value' }) },
-    'message-format (reuse object)': function () { mf({ placeholder: 'replaced value' }) },
-    'format': function () { formatMessage(pattern, { placeholder: 'replaced value' }, 'en-US') },
-    'format (transpiled)': function () { formatMessage('Simple string with { placeholder }.', { placeholder: 'replaced value' }, 'en-US') }
+    'intl-messageformat (reuse object)': function () { intlMF(args) },
+    'message-format (reuse object)': function () { mf(args) },
+    'format-message': function () { formatMessage(pattern, args, 'en') },
+    'format-message (inlined)': function () { formatMessage('Simple string with { placeholder }.', { placeholder: 'replaced value' }, 'en') }
   }
 )
 
 pattern = `{name} had {
-    gender, select,
-      male {his}
-      female {her}
-      other {their}
-    } {
-    nth, selectordinal,
-      one {#st}
-      two {#nd}
-      few {#rd}
-      other {#th}
-    } banana today, which makes {
-    numBananas, plural,
-         =0 {no bananas}
-         =1 {a banana}
-      other {lots of bananas}
-    } total.`
-// intlMF = new IntlMF(pattern, 'en-US').format // doesn't support selectordinal
-mf = new MessageFormat(pattern, 'en-US').format
+  gender, select,
+    male {his}
+    female {her}
+    other {their}
+  } {
+  nth, selectordinal,
+    one {#st}
+    two {#nd}
+    few {#rd}
+    other {#th}
+  } banana today, which makes {
+  numBananas, plural,
+       =0 {no bananas}
+       =1 {a banana}
+    other {lots of bananas}
+  } total.`
 args = {
   date: new Date(),
   name: 'Curious George',
@@ -82,12 +83,15 @@ args = {
   numBananas: 300,
   nth: 3
 }
+formatMessage(pattern, args, 'en') // prime cache
+intlMF = new IntlMF(pattern, 'en').format
+mf = new MessageFormat(pattern, 'en').format
 benchmark(
   'Format complex message (no numbers or dates)', {
-//    'intl-messageformat (reuse object)': function () { intlMF(args) },
+    'intl-messageformat (reuse object)': function () { intlMF(args) },
     'message-format (reuse object)': function () { mf(args) },
-    'format': function () { formatMessage(pattern, args) },
-    'format (transpiled)': function () {
+    'format-message': function () { formatMessage(pattern, args) },
+    'format-message (inlined)': function () {
       formatMessage(`{name} had {
         gender, select,
           male {his}
@@ -104,36 +108,37 @@ benchmark(
              =0 {no bananas}
              =1 {a banana}
           other {lots of bananas}
-        } total.`, args, 'en-US')
+        } total.`, args, 'en')
     }
   }
 )
 
 pattern = `On { date, date, short } {name} had {
-    numBananas, plural,
-         =0 {no bananas}
-         =1 {a banana}
-      other {# bananas}
-    } {
-    gender, select,
-      male {in his room.}
-      female {in her room.}
-      other {in their room.}
-    }`
-intlMF = new IntlMF(pattern, 'en-US').format
-mf = new MessageFormat(pattern, 'en-US').format
+  numBananas, plural,
+       =0 {no bananas}
+       =1 {a banana}
+    other {# bananas}
+  } {
+  gender, select,
+    male {in his room.}
+    female {in her room.}
+    other {in their room.}
+  }`
 args = {
   date: new Date(),
   name: 'Curious George',
   gender: 'male',
   numBananas: 300
 }
+formatMessage(pattern, args, 'en') // prime cache
+intlMF = new IntlMF(pattern, 'en').format
+mf = new MessageFormat(pattern, 'en').format
 benchmark(
   'Format complex message', {
     'intl-messageformat (reuse object)': function () { intlMF(args) },
     'message-format (reuse object)': function () { mf(args) },
-    'format': function () { formatMessage(pattern, args) },
-    'format (transpiled)': function () {
+    'format-message': function () { formatMessage(pattern, args) },
+    'format-message (inlined)': function () {
       formatMessage(`On { date, date, short } {name} had {
           numBananas, plural,
                =0 {no bananas}
@@ -144,7 +149,7 @@ benchmark(
             male {in his room.}
             female {in her room.}
             other {in their room.}
-          }`, args, 'en-US')
+          }`, args, 'en')
     }
   }
 )

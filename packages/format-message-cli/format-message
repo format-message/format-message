@@ -1,0 +1,7 @@
+#!/usr/bin/env node
+var program = module.exports = require('./index')
+
+program.parse(process.argv)
+if (process.argv.length < 3) {
+  program.help()
+}

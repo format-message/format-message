@@ -1,0 +1,28 @@
+{
+  "name": "message-format",
+  "version": "2.0.0",
+  "description": "Intl.MessageFormat prollyfill supporting ICU message format",
+  "author": "Andy VanWagoner <thetalecrafter@gmail.com> (https://thetalecrafter.com/)",
+  "homepage": "https://github.com/format-message/format-message",
+  "license": "MIT",
+  "repository": "format-message/format-message",
+  "bugs": "https://github.com/format-message/format-message/issues",
+  "keywords": [
+    "i18n",
+    "intl",
+    "internationalization",
+    "localization",
+    "globalization",
+    "messageformat",
+    "pluralformat",
+    "selectformat",
+    "parser",
+    "plural",
+    "gender",
+    "icu"
+  ],
+  "dependencies": {
+    "format-message-interpret": "^4.0.0",
+    "format-message-parse": "^4.0.0"
+  }
+}

@@ -4,8 +4,8 @@ if (typeof Intl === 'undefined') {
   require('intl/locale-data/jsonp/en')
 }
 var expect = require('chai').expect
-var MessageFormat = require('message-format')
-var formatMessage = require('../lib/format-message')
+var plurals = require('../packages/format-message-interpret/plurals')
+var formatMessage = require('format-message')
 
 describe('formatMessage', function () {
   describe('formatMessage', function () {
@@ -19,6 +19,11 @@ describe('formatMessage', function () {
       expect(message).to.equal('This isn\'t a {\'simple\'} \'string\'')
     })
 
+    it('handles object with id, default, and description', function () {
+      var message = formatMessage({ id: 'foo_bar', default: 'foo bar', description: 'stuff' })
+      expect(message).to.equal('foo bar')
+    })
+
     it('accepts arguments', function () {
       var arg = 'y'
       var message = formatMessage('x{ arg }z', { arg: arg })
@@ -30,7 +35,7 @@ describe('formatMessage', function () {
       var message = formatMessage(
         '{ n, number } : { d, date, short } { d, time, short }',
         { n: 0, d: d }
-      )
+      ).replace(/[^\x00-\x7F]/g, '') // IE adds ltr marks
       expect(message).to.match(/^0 \: \d\d?\/\d\d?\/\d{2,4} \d\d?\:\d\d/)
     })
 
@@ -38,7 +43,7 @@ describe('formatMessage', function () {
       var message = formatMessage(
         'On {takenDate, date, short} {name} {numPeople, plural, offset:1 =0 {didn\'t carpool.} =1 {drove himself.} other {drove # people.}}',
         { takenDate: new Date(), name: 'Bob', numPeople: 5 }
-      )
+      ).replace(/[^\x00-\x7F]/g, '') // IE adds ltr marks
       expect(message).to.match(/^On \d\d?\/\d\d?\/\d{2,4} Bob drove 4 people.$/)
     })
 
@@ -72,7 +77,16 @@ describe('formatMessage', function () {
   describe('locales', function () {
     it('doesn\'t throw for any locale\'s plural function', function () {
       var pattern = '{n, plural, zero {zero} one {one} two {two} few {few} many {many} other {other}}'
-      MessageFormat.supportedLocalesOf().forEach(function (locale) {
+      Object.keys(plurals).forEach(function (locale) {
+        for (var n = 0; n <= 200; ++n) {
+          var result = formatMessage(pattern, { n: n }, locale)
+          expect(result).to.match(/^(zero|one|two|few|many|other)$/)
+        }
+      })
+    })
+    it('doesn\'t throw for any locale\'s selectordinal function', function () {
+      var pattern = '{n, selectordinal, zero {zero} one {one} two {two} few {few} many {many} other {other}}'
+      Object.keys(plurals).forEach(function (locale) {
         for (var n = 0; n <= 200; ++n) {
           var result = formatMessage(pattern, { n: n }, locale)
           expect(result).to.match(/^(zero|one|two|few|many|other)$/)
@@ -82,19 +96,11 @@ describe('formatMessage', function () {
   })
 
   describe('setup', function () {
-    // uses variables to avoid inlining since the tests are about runtime config
-    it('changes the caching', function () {
-      var pattern = 'cache-test'
-      delete MessageFormat.data.formats.cache['en:format:cache-test']
-      formatMessage.setup({ cache: false })
-      formatMessage(pattern)
-      formatMessage.setup({ cache: true })
-
-      expect(MessageFormat.data.formats.cache['en:format:cache-test']).to.not.exist
-      formatMessage(pattern)
-      expect(MessageFormat.data.formats.cache['en:format:cache-test']).to.exist
+    it('does nothing if you pass nothing', function () {
+      expect(function () { formatMessage.setup() }).to.not.throw()
     })
 
+    // uses variables to avoid inlining since the tests are about runtime config
     it('changes the default locale', function () {
       formatMessage.setup({ locale: 'ar' })
       var pattern = '{n,plural,few{few}other{other}}'
@@ -105,13 +111,60 @@ describe('formatMessage', function () {
     })
 
     it('changes the translation', function () {
-      formatMessage.setup({ translate: function () { return 'test-success' } })
+      formatMessage.setup({
+        locale: 'en',
+        translations: { en: {
+          'trans-test': { message: 'test-success' },
+          'trans-test2': 'test-success2'
+        } },
+        missingTranslation: 'ignore',
+        generateId: function (pattern) { return pattern }
+      })
       // use variable to avoid inlining
       var pattern = 'trans-test'
       var message = formatMessage(pattern)
-      formatMessage.setup({ translate: function (pattern) { return pattern } })
+      var pattern2 = 'trans-test2'
+      var message2 = formatMessage(pattern2)
 
       expect(message).to.equal('test-success')
+      expect(message2).to.equal('test-success2')
+    })
+
+    it('changes the missing translation behavior', function () {
+      formatMessage.setup({
+        locale: 'en',
+        translations: { en: {} },
+        missingTranslation: 'warning',
+        missingReplacement: '!!!'
+      })
+      var warn = console.warn
+      // capturing error message is fickle in node
+      console.warn = function () {}
+
+      var id = 'test'
+      var pattern = 'translation-test'
+      var message = formatMessage({ id: id, default: pattern })
+      console.warn = warn
+      formatMessage.setup({ missingReplacement: null, translations: null })
+
+      expect(message).to.equal('!!!')
+    })
+
+    it('can throw on missing', function () {
+      formatMessage.setup({
+        translations: { en: {} },
+        missingTranslation: 'error'
+      })
+
+      expect(function () {
+        var pattern = 'error-test'
+        formatMessage(pattern)
+      }).to.throw()
+
+      formatMessage.setup({
+        missingTranslation: 'warning',
+        translations: null
+      })
     })
 
     it('adds custom formats', function () {
@@ -124,76 +177,20 @@ describe('formatMessage', function () {
           day: '2-digit'
         } },
         time: { minute: {
+          hour: 'numeric',
           minute: 'numeric'
-        } }
+        } },
+        missingTranslation: 'warning'
       } })
       var message = formatMessage('{ n, number, perc }', { n: 0.3672 })
+        .replace(/\s+/g, '') // IE adds space
       expect(message).to.equal('40%')
       message = formatMessage('{ d, date, day }', { d: new Date('2015/10/19') })
+        .replace(/[^\x00-\x7F]/g, '') // IE adds ltr marks
       expect(message).to.equal('19')
       message = formatMessage('{ t, time, minute }', { t: new Date('2015/10/19 5:06') })
-      expect(message).to.equal('6')
-    })
-  })
-
-  describe('translate', function () {
-    it('looks up the translated pattern', function () {
-      formatMessage.setup({ translate: function (pattern) { return 'translated' } })
-      // use variable to avoid inlining
-      var originalPattern = 'trans-test'
-      var pattern = formatMessage.translate(originalPattern)
-      formatMessage.setup({ translate: function (pattern) { return pattern } })
-
-      expect(pattern).to.equal('translated')
-    })
-
-    describe('missing', function () {
-      it('warns and returns original by default', function () {
-        formatMessage.setup({
-          translate: function (pattern) {}
-        })
-        var warn = console.warn
-        var warning
-        console.warn = function (msg) { warning = msg }
-        var originalPattern = 'missing'
-        var message = formatMessage.translate(originalPattern)
-        expect(message).to.equal('missing')
-        expect(warning).to.equal('Warning: no en translation found for "missing"')
-        console.warn = warn
-        formatMessage.setup({
-          translate: function (pattern) { return pattern }
-        })
-      })
-
-      it('can throw an error', function () {
-        formatMessage.setup({
-          translate: function (pattern) {},
-          missingTranslation: 'error'
-        })
-        // use variable to avoid inlining
-        var originalPattern = 'missing'
-        expect(function () { formatMessage.translate(originalPattern) }).to.throw('no en translation found for "missing"')
-        formatMessage.setup({
-          translate: function (pattern) { return pattern },
-          missingTranslation: 'warning'
-        })
-      })
-
-      it('can ignore and return a specific pattern', function () {
-        formatMessage.setup({
-          translate: function (pattern) {},
-          missingTranslation: 'ignore',
-          missingReplacement: 'replaced'
-        })
-        var originalPattern = 'missing'
-        var message = formatMessage.translate(originalPattern)
-        expect(message).to.equal('replaced')
-        formatMessage.setup({
-          translate: function (pattern) { return pattern },
-          missingTranslation: 'warning',
-          missingReplacement: null
-        })
-      })
+        .replace(/[^\x00-\x7F]/g, '') // IE adds ltr marks
+      expect(message).to.match(/^5:06/)
     })
   })
 })

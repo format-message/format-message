@@ -20,8 +20,7 @@ Session.vim
 node_modules
 
 # generated
-browser.js
-browser.js.map
+.nyc_output
 coverage
 scripts/benchmark.js
 test/format-inline.spec.js

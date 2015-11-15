@@ -1,10 +1,14 @@
+'use strict'
+
 var program = require('commander')
 var fsUtil = require('fs')
+var pathUtil = require('path')
 var glob = require('glob')
-var Linter = require('format-message-core/lib/linter')
-var Extractor = require('format-message-core/lib/extractor')
-var Inliner = require('format-message-core/lib/inliner')
-var pkg = require('../package.json')
+var yaml = require('js-yaml')
+var lintFiles = require('./lint-files')
+var extractFromFiles = require('./extract-files')
+var transformFiles = require('./transform-files')
+var pkg = require('./package.json')
 
 var existsSync = fsUtil.existsSync
 var readFileSync = fsUtil.readFileSync
@@ -38,13 +42,21 @@ function addStdinToFiles (files, options, next) {
   }
 }
 
+function loadTranslations (file) {
+  file = pathUtil.resolve(file)
+  try {
+    return require(file)
+  } catch (err) {
+    var data = readFileSync(file, 'utf8')
+    return yaml.safeLoad(data)
+  }
+}
+
 /**
  * version
  **/
-program
+module.exports = program
   .version(pkg.version)
-  .option('--color', 'use colors in errors and warnings')
-  .option('--no-color', 'do not use colors in errors and warnings')
 
 /**
  * format-message lint src/*.js
@@ -53,17 +65,20 @@ program
 program
   .command('lint [files...]')
   .description('find message patterns in files and verify there are no obvious problems')
-  .option('-n, --function-name [name]', 'find function calls with this name [formatMessage]', 'formatMessage')
-  .option('--no-auto', 'disables auto-detecting the function name from import or require calls')
-  .option('-k, --key-type [type]',
-    'derived key from source pattern literal|normalized|underscored|underscored_crc32 [underscored_crc32]',
+  .option('-g, --generate-id [type]',
+    'generate missing ids from default message pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]',
     'underscored_crc32'
   )
+  .option('-l, --locale [locale]', 'BCP 47 language tags specifying the source default locale [en]', 'en')
   .option('-t, --translations [path]',
     'location of the JSON file with message translations,' +
       ' if specified, translations are also checked for errors'
   )
-  .option('-f, --filename [filename]', 'filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]', 'stdin')
+  .option('-f, --filename [filename]', 'filename to use when reading from stdin - this will be used in errors [stdin]', 'stdin')
+  .option('-s, --style [style]',
+    'error output format (stylish | checkstyle | compact | html | jslint-xml | json | junit | tap | unix) [stylish]',
+    'stylish'
+  )
   .action(function (files, options) {
     files = flattenFiles(files)
 
@@ -78,9 +93,7 @@ program
         errors.push(options.translations + ' doesn\'t exist')
       }
       try {
-        options.translations = JSON.parse(
-          readFileSync(options.translations, 'utf8')
-        )
+        options.translations = loadTranslations(options.translations)
       } catch (err) {
         errors.push(err.message)
       }
@@ -91,11 +104,11 @@ program
     }
 
     addStdinToFiles(files, options, function () {
-      Linter.lintFiles(files, {
-        functionName: options.functionName,
-        autoDetectFunctionName: options.auto,
-        translations: options.translations,
-        keyType: options.keyType
+      lintFiles(files, {
+        style: options.style,
+        locale: options.locale,
+        generateId: options.generateId,
+        translations: options.translations
       })
     })
   })
@@ -107,16 +120,16 @@ program
 program
   .command('extract [files...]')
   .description('find and list all message patterns in files')
-  .option('-n, --function-name [name]', 'find function calls with this name [formatMessage]', 'formatMessage')
-  .option('--no-auto', 'disables auto-detecting the function name from import or require calls')
-  .option('-k, --key-type [type]',
-    'derived key from source pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]',
+  .option('-g, --generate-id [type]',
+    'generate missing ids from default message pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]',
     'underscored_crc32'
   )
   .option('-l, --locale [locale]', 'BCP 47 language tags specifying the source default locale [en]', 'en')
-  .option('--no-instructions', 'disables adding the default instructions to the output')
+  .option('-f, --filename [filename]', 'filename to use when reading from stdin - this will be used in errors', 'stdin')
   .option('-o, --out-file [out]', 'write messages to this file instead of to stdout')
-  .option('--yml', 'output messages in YAML instead of JSON format')
+  .option('--format [format]',
+    'use the specified format instead of detecting from the --out-file extension (yaml | es6 | commonjs | json)'
+  )
   .action(function (files, options) {
     files = flattenFiles(files)
 
@@ -132,32 +145,27 @@ program
     }
 
     addStdinToFiles(files, options, function () {
-      Extractor.extractFromFiles(files, {
-        functionName: options.functionName,
-        autoDetectFunctionName: options.auto,
+      extractFromFiles(files, {
+        generateId: options.generateId,
         locale: options.locale,
-        instructions: options.instructions,
-        keyType: options.keyType,
         outFile: options.outFile,
-        yml: options.yml
+        format: options.format
       })
     })
   })
 
 /**
- * format-message inline src/*.js
- *  find and replace message pattern calls in files with translations
+ * format-message transform src/*.js
+ *  transform formatMessage calls either adding generated ids or inlining and optimizing a translation
  **/
 program
-  .command('inline [files...]')
-  .alias('translate')
-  .description('find and replace message pattern calls in files with translations')
-  .option('-n, --function-name [name]', 'find function calls with this name [formatMessage]', 'formatMessage')
-  .option('--no-auto', 'disables auto-detecting the function name from import or require calls')
-  .option('-k, --key-type [type]',
-    'derived key from source pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]',
+  .command('transform [files...]')
+  .description('transform formatMessage calls either adding generated ids or inlining and optimizing a translation')
+  .option('-g, --generate-id [type]',
+    'generate missing ids from default message pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]',
     'underscored_crc32'
   )
+  .option('-i, --inline', 'inline the translation for the specified locale')
   .option('-l, --locale [locale]', 'BCP 47 language tags specifying the target locale [en]', 'en')
   .option('-t, --translations [path]', 'location of the JSON file with message translations')
   .option('-e, --missing-translation [behavior]',
@@ -165,7 +173,7 @@ program
     'error'
   )
   .option('-m, --missing-replacement [pattern]', 'pattern to inline when a translated pattern is missing, defaults to the source pattern')
-  .option('-i, --source-maps-inline', 'append sourceMappingURL comment to bottom of code')
+  .option('--source-maps-inline', 'append sourceMappingURL comment to bottom of code')
   .option('-s, --source-maps', 'save source map alongside the compiled code')
   .option('-f, --filename [filename]', 'filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]', 'stdin')
   .option('-o, --out-file [out]', 'compile all input files into a single file')
@@ -194,9 +202,7 @@ program
         errors.push(options.translations + ' doesn\'t exist')
       }
       try {
-        options.translations = JSON.parse(
-          readFileSync(options.translations, 'utf8')
-        )
+        options.translations = loadTranslations(options.translations)
       } catch (err) {
         errors.push(err.message)
       }
@@ -214,11 +220,10 @@ program
     }
 
     addStdinToFiles(files, options, function () {
-      Inliner.inlineFiles(files, {
-        functionName: options.functionName,
-        autoDetectFunctionName: options.auto,
+      transformFiles(files, {
+        generateId: options.generateId,
+        inline: options.inline,
         locale: options.locale,
-        keyType: options.keyType,
         translations: options.translations,
         missingTranslation: options.missingTranslation,
         missingReplacement: options.missingReplacement,
@@ -229,10 +234,3 @@ program
       })
     })
   })
-
-program
-  .parse(process.argv)
-
-if (process.argv.length < 3) {
-  program.help()
-}
