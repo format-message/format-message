@@ -5,14 +5,14 @@
     <title>format-message by format-message</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
   <body>
     <section class="page-header">
       <h1 class="project-name">format-message</h1>
-      <h2 class="project-tagline">Write default messages inline. Transform to translation at build time.</h2>
+      <h2 class="project-tagline">Internationalization made easy</h2>
       <a href="https://github.com/format-message/format-message" class="btn">View on GitHub</a>
       <a href="https://github.com/format-message/format-message/zipball/master" class="btn">Download .zip</a>
       <a href="https://github.com/format-message/format-message/tarball/master" class="btn">Download .tar.gz</a>
@@ -24,355 +24,92 @@
 </h1>
 
 <blockquote>
-<p>Write i18n messages inline. Transpile translations.</p>
+<p>Internationalize text, numbers, and dates using ICU Message Format.</p>
 </blockquote>
 
 <p><a href="https://www.npmjs.org/package/format-message"><img src="https://img.shields.io/npm/v/format-message.svg" alt="npm Version"></a>
-<a href="https://david-dm.org/format-message/format-message"><img src="https://img.shields.io/david/format-message/format-message.svg" alt="Dependency Status"></a>
-<a href="https://david-dm.org/format-message/format-message#info=devDependencies"><img src="https://img.shields.io/david/dev/format-message/format-message.svg" alt="Dev Dependency Status"></a>
 <a href="https://travis-ci.org/format-message/format-message"><img src="https://img.shields.io/travis/format-message/format-message.svg" alt="Build Status"></a></p>
 
 <p><a href="https://github.com/feross/standard"><img src="https://img.shields.io/badge/code%20style-standard-brightgreen.svg" alt="JS Standard Style"></a>
 <a href="https://github.com/format-message/format-message/blob/master/LICENSE-MIT"><img src="https://img.shields.io/npm/l/format-message.svg" alt="MIT License"></a></p>
 
 <h2>
-<a id="quick-start" class="anchor" href="#quick-start" aria-hidden="true"><span class="octicon octicon-link"></span></a>Quick Start</h2>
+<a id="internationalization-made-easy" class="anchor" href="#internationalization-made-easy" aria-hidden="true"><span class="octicon octicon-link"></span></a>Internationalization Made Easy</h2>
 
-<p><code>npm install format-message --save</code> adds the library to <code>node_modules</code>. You can then use it as follows:</p>
+<p>Start simple. Wrap any user-facing with <code>formatMessage()</code>. Don't forget to import/require format-message.</p>
 
-<div class="highlight highlight-js"><pre><span class="pl-k">var</span> formatMessage <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>format-message<span class="pl-pds">'</span></span>);
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> formatMessage <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>format-message<span class="pl-pds">'</span></span>);
+<span class="pl-c">// ...</span>
+formatMessage(<span class="pl-s"><span class="pl-pds">'</span>My Account Preferences<span class="pl-pds">'</span></span>)</pre></div>
 
-<span class="pl-k">var</span> message <span class="pl-k">=</span> formatMessage(<span class="pl-s"><span class="pl-pds">'</span>Hello { place }!<span class="pl-pds">'</span></span>, { place<span class="pl-k">:</span><span class="pl-s"><span class="pl-pds">'</span>World<span class="pl-pds">'</span></span> });</pre></div>
+<p>Don't concatenate message pieces, use placeholders instead.</p>
 
-<p>You can configure your translations at runtime (typical for server-side use), or transpile your code for better performance in repeated use on the client.</p>
+<div class="highlight highlight-source-js"><pre>formatMessage(<span class="pl-s"><span class="pl-pds">'</span>Hello, { name }!<span class="pl-pds">'</span></span>, { name<span class="pl-k">:</span> user.<span class="pl-c1">name</span> })</pre></div>
 
-<p><code>format-message</code> relies on the ECMAScript Internationalization API 1.0 (<code>Intl</code>) for formatting <code>number</code>, <code>date</code>, and <code>time</code> arguments. If you are in an environment missing these (<a href="http://caniuse.com/#feat=internationalization">like node &lt;= 0.12, IE &lt; 11, or Safari</a>) you'll want to use a <a href="https://github.com/andyearnshaw/Intl.js">polyfill</a>. Otherwise <code>format-message</code> falls back on <code>toLocaleString</code> methods, which are most likely just aliases for <code>toString</code>.</p>
+<p>You can even pick plural and gender forms with placeholders.</p>
 
-<h2>
-<a id="format-overview" class="anchor" href="#format-overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>Format Overview</h2>
-
-<p>The <a href="http://userguide.icu-project.org/formatparse/messages">ICU Message Format</a> is a great format for user-visible strings, and includes simple placeholders, number and date placeholders, and selecting among submessages for gender and plural arguments. The format is used in apis in <a href="http://icu-project.org/apiref/icu4c/classicu_1_1MessageFormat.html">C++</a>, <a href="http://php.net/manual/en/class.messageformatter.php">PHP</a>, and <a href="http://icu-project.org/apiref/icu4j/">Java</a>.</p>
-
-<p><code>format-message</code> provides a way to write your default (often English) messages as literals in your source, and then scrape out the default patterns and transpile your source with fast inline code for formatting the translated message patterns.</p>
-
-<p>This relies on <a href="https://github.com/format-message/message-format">message-format</a> for parsing and formatting ICU messages, and <a href="https://github.com/babel/babel">babel</a> for transpiling the source code.</p>
-
-<h3>
-<a id="supported-icu-formats" class="anchor" href="#supported-icu-formats" aria-hidden="true"><span class="octicon octicon-link"></span></a>Supported ICU Formats</h3>
-
-<p>See <a href="https://github.com/format-message/message-format">message-format</a> for supported ICU formats.</p>
-
-<h3>
-<a id="quoting-escaping-rules" class="anchor" href="#quoting-escaping-rules" aria-hidden="true"><span class="octicon octicon-link"></span></a>Quoting escaping rules</h3>
-
-<p>See the <a href="http://userguide.icu-project.org/formatparse/messages">ICU site</a> and <a href="https://github.com/format-message/message-format">message-format</a> for details on how to escape special characters in your messages.</p>
-
-<h3>
-<a id="loading-locale-data" class="anchor" href="#loading-locale-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>Loading locale data</h3>
-
-<p><code>format-message</code> supports plurals for all CLDR languages. Locale-aware formatting of number, date, and time are delegated to the <code>Intl</code> apis, and select is the same across all locales. You don't need to load any extra files for particular locales for <code>format-message</code> itself.</p>
-
-<h2>
-<a id="api" class="anchor" href="#api" aria-hidden="true"><span class="octicon octicon-link"></span></a>API</h2>
-
-<h3>
-<a id="formatmessage" class="anchor" href="#formatmessage" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>formatMessage</code>
-</h3>
-
-<div class="highlight highlight-js"><pre><span class="pl-k">var</span> formatMessage <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>format-message<span class="pl-pds">'</span></span>)
-<span class="pl-c">// or</span>
-<span class="pl-k">import</span> formatMessage <span class="pl-k">from</span> <span class="pl-s"><span class="pl-pds">'</span>format-message<span class="pl-pds">'</span></span>
-
-formatMessage(pattern[, args[, locales]])</pre></div>
-
-<p>Translate and format the message with the given pattern and arguments.</p>
-
-<p>Parameters</p>
-
-<ul>
-<li>
-<code>pattern</code> is a properly formatted ICU Message Format pattern. A poorly formatted pattern will cause an <code>Error</code> to be thrown.
-
-<ul>
-<li>The pattern is used as a key into the <code>translate</code> function you provide in configuration, and is also used as the fallback if no translation is returned, or <code>translate</code> has not been configured</li>
-<li>If <code>pattern</code> is not a string literal, the function cannot be transpiled at build time.</li>
-</ul>
-</li>
-<li>
-<code>args</code> is an object containing the values to replace placeholders with. Required if the pattern contains placeholders.</li>
-<li>
-<code>locales</code> is an optional string with a BCP 47 language tag, or an array of such strings.
-
-<ul>
-<li>The locales are also passed into the <code>translate</code> function and indicate the desired destination language.</li>
-<li>If <code>locales</code> is not a string literal, the function cannot be transpiled at build time.</li>
-</ul>
-</li>
-</ul>
-
-<h3>
-<a id="formatmessagesetup" class="anchor" href="#formatmessagesetup" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>formatMessage.setup</code>
-</h3>
-
-<div class="highlight highlight-js"><pre>formatMessage.setup(options)</pre></div>
-
-<p>Configure <code>formatMessage</code> behavior for subsequent calls. This should be called before any code that uses <code>formatMessage</code>.</p>
-
-<p>Parameters</p>
-
-<ul>
-<li>
-<code>options</code> is an object containing the following config values:
-
-<ul>
-<li>
-<code>cache</code> is whether message, number, and date formatters are cached. Defaults to <code>true</code>
-</li>
-<li>
-<code>locale</code> is the default locale to use when no locale is passed to <code>formatMessage</code>. Defaults to <code>"en"</code>.</li>
-<li>
-<code>translate(pattern, locales)</code> is a function to translate messages. It should return the pattern translated for the specified locale.
-
-<ul>
-<li>
-<code>pattern</code> is the message pattern to translate.</li>
-<li>
-<code>locale</code> is a string with a BCP 47 language tag, or an array of such strings.</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-<h3>
-<a id="formatmessagetranslate" class="anchor" href="#formatmessagetranslate" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>formatMessage.translate</code>
-</h3>
-
-<div class="highlight highlight-js"><pre>formatMessage.translate(pattern[, locales])</pre></div>
-
-<p>Use the currently configured <code>translate</code> to get the locale-specific pattern. Note that this can also be linted, extracted, and inlined if the <code>pattern</code> is a literal.</p>
-
-<p>Parameters</p>
-
-<ul>
-<li>
-<code>pattern</code> is a properly formatted ICU Message Format pattern.</li>
-<li>
-<code>locales</code> is an optional string with a BCP 47 language tag, or an array of such strings.
-
-<ul>
-<li>If not specified, the currently configured <code>locale</code> will be used.</li>
-</ul>
-</li>
-</ul>
-
-<h3>
-<a id="internal-apis" class="anchor" href="#internal-apis" aria-hidden="true"><span class="octicon octicon-link"></span></a>internal apis</h3>
-
-<p><code>formatMessage.number</code>, <code>formatMessage.date</code>, and <code>formatMessage.time</code> are used internally and are not intended for external use. Because these appear in the transpiled code, transpiling does not remove the need to properly define <code>formatMessage</code> through <code>require</code> or <code>import</code>.</p>
-
-<h2>
-<a id="transpiled-messages" class="anchor" href="#transpiled-messages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Transpiled Messages</h2>
-
-<p>The examples provide sample transpiler output. This output is not meant to be 100% exact, but to give a general idea of what the transpiler does.</p>
-
-<h3>
-<a id="simple-messages-with-no-placeholders" class="anchor" href="#simple-messages-with-no-placeholders" aria-hidden="true"><span class="octicon octicon-link"></span></a>Simple messages with no placeholders</h3>
-
-<div class="highlight highlight-js"><pre>formatMessage(<span class="pl-s"><span class="pl-pds">'</span>My Collections<span class="pl-pds">'</span></span>)
-
-<span class="pl-c">// transpiles to translated literal</span>
-<span class="pl-s"><span class="pl-pds">"</span>Minhas Coleções<span class="pl-pds">"</span></span></pre></div>
-
-<h3>
-<a id="simple-string-placeholders" class="anchor" href="#simple-string-placeholders" aria-hidden="true"><span class="octicon octicon-link"></span></a>Simple string placeholders</h3>
-
-<div class="highlight highlight-js"><pre>formatMessage(<span class="pl-s"><span class="pl-pds">'</span>Welcome, {name}!<span class="pl-pds">'</span></span>, { name<span class="pl-k">:</span> userName });
-
-<span class="pl-c">// messages with simple placeholders transpiles to concatenated strings</span>
-<span class="pl-s"><span class="pl-pds">"</span>Bem Vindo, <span class="pl-pds">"</span></span> <span class="pl-k">+</span> userName <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">"</span>!<span class="pl-pds">"</span></span> <span class="pl-c">// Bem Vindo, Bob!</span></pre></div>
-
-<h3>
-<a id="complex-number-date-and-time-placeholders" class="anchor" href="#complex-number-date-and-time-placeholders" aria-hidden="true"><span class="octicon octicon-link"></span></a>Complex number, date, and time placeholders</h3>
-
-<div class="highlight highlight-js"><pre>formatMessage(<span class="pl-s"><span class="pl-pds">'</span>{ n, number, percent }<span class="pl-pds">'</span></span>, { n<span class="pl-k">:</span><span class="pl-c1">0.1</span> });
-
-<span class="pl-c">// transpiles to just the number call</span>
-formatMessage.number(<span class="pl-s"><span class="pl-pds">"</span>en<span class="pl-pds">"</span></span>, <span class="pl-c1">0.1</span>, <span class="pl-s"><span class="pl-pds">"</span>percent<span class="pl-pds">"</span></span>) <span class="pl-c">// "10%"</span>
-
-
-formatMessage(<span class="pl-s"><span class="pl-pds">'</span>{ shorty, date, short }<span class="pl-pds">'</span></span>, { shorty<span class="pl-k">:</span><span class="pl-k">new</span> <span class="pl-en">Date</span>() });
-
-<span class="pl-c">// transpiles to just the date call</span>
-formatMessage.date(<span class="pl-s"><span class="pl-pds">"</span>en<span class="pl-pds">"</span></span>, <span class="pl-k">new</span> <span class="pl-en">Date</span>(), <span class="pl-s"><span class="pl-pds">"</span>short<span class="pl-pds">"</span></span>) <span class="pl-c">// "1/1/15"</span>
-
-
-formatMessage(<span class="pl-s"><span class="pl-pds">'</span>You took {n,number} pictures since {d,date} {d,time}<span class="pl-pds">'</span></span>, { n<span class="pl-k">:</span><span class="pl-c1">4000</span>, d<span class="pl-k">:</span><span class="pl-k">new</span> <span class="pl-en">Date</span>() });
-
-<span class="pl-c">// transpiles to a function call, with the function defined at the top level</span>
-$$_you_took_n_number_pictures_123456({ n<span class="pl-k">:</span><span class="pl-c1">4000</span>, d<span class="pl-k">:</span><span class="pl-k">new</span> <span class="pl-en">Date</span>() })
-...
-<span class="pl-k">function</span> $$<span class="pl-en">_you_took_n_number_pictures_123456</span>(<span class="pl-smi">args</span>) {
-  <span class="pl-k">return</span> <span class="pl-s"><span class="pl-pds">"</span>You took <span class="pl-pds">"</span></span> <span class="pl-k">+</span> formatMessage.number(<span class="pl-s"><span class="pl-pds">"</span>en<span class="pl-pds">"</span></span>, args[<span class="pl-s"><span class="pl-pds">"</span>n<span class="pl-pds">"</span></span>]) <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">"</span> pictures since <span class="pl-pds">"</span></span> <span class="pl-k">+</span> formatMessage.date(<span class="pl-s"><span class="pl-pds">"</span>en<span class="pl-pds">"</span></span>, args[<span class="pl-s"><span class="pl-pds">"</span>d<span class="pl-pds">"</span></span>]) <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">"</span> <span class="pl-pds">"</span></span> <span class="pl-k">+</span> formatMessage<span class="pl-c1">.time</span>(<span class="pl-s"><span class="pl-pds">"</span>en<span class="pl-pds">"</span></span>, args[<span class="pl-s"><span class="pl-pds">"</span>d<span class="pl-pds">"</span></span>])
-} <span class="pl-c">// "You took 4,000 pictures since Jan 1, 2015 9:33:04 AM"</span></pre></div>
-
-<h3>
-<a id="complex-string-with-select-and-plural-in-es6" class="anchor" href="#complex-string-with-select-and-plural-in-es6" aria-hidden="true"><span class="octicon octicon-link"></span></a>Complex string with select and plural in ES6</h3>
-
-<div class="highlight highlight-js"><pre><span class="pl-k">import</span> formatMessage <span class="pl-k">from</span> <span class="pl-s"><span class="pl-pds">'</span>format-message<span class="pl-pds">'</span></span>
-
-<span class="pl-c">// using a template string for multiline, no interpolation</span>
-<span class="pl-k">let</span> formatMessage(<span class="pl-s"><span class="pl-pds">`</span>On { date, date, short } {name} ate {</span>
-<span class="pl-s">  numBananas, plural,</span>
-<span class="pl-s">       =0 {no bananas}</span>
-<span class="pl-s">       =1 {a banana}</span>
-<span class="pl-s">       =2 {a pair of bananas}</span>
-<span class="pl-s">    other {# bananas}</span>
-<span class="pl-s">  } {</span>
+<div class="highlight highlight-source-js"><pre>formatMessage(<span class="pl-s"><span class="pl-pds">`</span>{</span>
 <span class="pl-s">  gender, select,</span>
-<span class="pl-s">      male {at his house.}</span>
-<span class="pl-s">    female {at her house.}</span>
-<span class="pl-s">     other {at their house.}</span>
-<span class="pl-s">  }<span class="pl-pds">`</span></span>, {
-  date<span class="pl-k">:</span> <span class="pl-k">new</span> <span class="pl-en">Date</span>(),
-  name<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>Curious George<span class="pl-pds">'</span></span>,
-  gender<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>male<span class="pl-pds">'</span></span>,
-  numBananas<span class="pl-k">:</span> <span class="pl-c1">27</span>
-})
+<span class="pl-s">    male {His inbox}</span>
+<span class="pl-s">  female {Her inbox}</span>
+<span class="pl-s">   other {Their inbox}</span>
+<span class="pl-s"> }<span class="pl-pds">`</span></span>, { gender<span class="pl-k">:</span> user.gender })
 
-<span class="pl-c">// transpiles to a function call, with the function defined at the top level</span>
-$$_on_date_date_short_name_ate_123456({ n<span class="pl-k">:</span><span class="pl-c1">4000</span>, d<span class="pl-k">:</span><span class="pl-k">new</span> <span class="pl-en">Date</span>() })
-...
-<span class="pl-k">function</span> $$<span class="pl-en">_on_date_date_short_name_ate_123456</span>(<span class="pl-smi">args</span>) {
-  <span class="pl-k">return</span> ...
-}
-<span class="pl-c">// en-US: "On 1/1/15 Curious George ate 27 bananas at his house."</span></pre></div>
+ formatMessage(<span class="pl-s"><span class="pl-pds">`</span>{</span>
+<span class="pl-s">   count, plural,</span>
+<span class="pl-s">      =0 {No unread messages}</span>
+<span class="pl-s">     one {# unread message}</span>
+<span class="pl-s">   other {# unread messages}</span>
+<span class="pl-s"> }<span class="pl-pds">`</span></span>, { count<span class="pl-k">:</span> messages.unreadCount })</pre></div>
+
+<p>Need to provide extra information to translators? Add a message description.
+Need 2 translations to the same English message? Add a message id.</p>
+
+<div class="highlight highlight-source-js"><pre>formatMessage({
+  id<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>update_action_button<span class="pl-pds">'</span></span>,
+  <span class="pl-k">default</span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>Update<span class="pl-pds">'</span></span>,
+  description<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>Text displayed on the update resource button to trigger the update process<span class="pl-pds">'</span></span>
+})
+formatMessage({
+  id<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>update_label<span class="pl-pds">'</span></span>,
+  <span class="pl-k">default</span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>Update<span class="pl-pds">'</span></span>,
+  description<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>Label on each item that is an update to another item<span class="pl-pds">'</span></span>
+})</pre></div>
+
+<p>Extract all of the messages you've used in your source code.</p>
+
+<div class="highlight highlight-source-shell"><pre>$ npm i format-message-cli
+$ format-message extract <span class="pl-s"><span class="pl-pds">"</span>src/**/*.js<span class="pl-pds">"</span></span> <span class="pl-k">&gt;</span> ./locales/en/messages.json</pre></div>
+
+<p>Check that the translators preserved placeholders and proper message formatting.</p>
+
+<div class="highlight highlight-source-shell"><pre>$ format-message lint -t ./locales/index.js <span class="pl-s"><span class="pl-pds">"</span>src/**/*.js<span class="pl-pds">"</span></span></pre></div>
+
+<p>Use the translations at runtime.</p>
+
+<div class="highlight highlight-source-js"><pre>formatMessage.setup({
+  generateId<span class="pl-k">:</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>format-message-generate-id/underscored_crc32<span class="pl-pds">'</span></span>),
+  translations<span class="pl-k">:</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>./locales<span class="pl-pds">'</span></span>),
+  locale<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>pt<span class="pl-pds">'</span></span>
+})</pre></div>
+
+<p>Make a locale-specific build.</p>
+
+<div class="highlight highlight-source-shell"><pre>$ format-message transform --inline --locale pt <span class="pl-s"><span class="pl-pds">"</span>src/**/*.js<span class="pl-pds">"</span></span> <span class="pl-k">&gt;</span> bundle.pt.js</pre></div>
 
 <h3>
-<a id="current-optimizations" class="anchor" href="#current-optimizations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Current Optimizations</h3>
+<a id="need-more-details" class="anchor" href="#need-more-details" aria-hidden="true"><span class="octicon octicon-link"></span></a>Need more details?</h3>
+
+<p>Check out the many ways you can use format-message in your project:</p>
 
 <ul>
-<li>Calls with no placeholders in the message become string literals.</li>
-<li>Calls with no <code>plural</code>, <code>select</code>, or <code>selectordinal</code> in the message, and an object literal with variables or literals for property values become concatentated strings and variables.</li>
+<li><a href="https://github.com/format-message/format-message/tree/master/packages/message-format">message-format</a></li>
+<li><a href="https://github.com/format-message/format-message/tree/master/packages/format-message">format-message</a></li>
+<li><a href="https://github.com/format-message/format-message/tree/master/packages/format-message-cli">format-message-cli</a></li>
+<li><a href="https://github.com/format-message/format-message/tree/master/packages/eslint-plugin-format-message">eslint-plugin-format-message</a></li>
+<li><a href="https://github.com/format-message/format-message/tree/master/packages/babel-plugin-extract-format-message">babel-plugin-extract-format-message</a></li>
+<li><a href="https://github.com/format-message/format-message/tree/master/packages/babel-plugin-transform-format-message">babel-plugin-transform-format-message</a></li>
 </ul>
-
-<p>All other cases result in a function call, with the function declaration somewhere at the top level of the file.</p>
-
-<h2>
-<a id="cli-tools" class="anchor" href="#cli-tools" aria-hidden="true"><span class="octicon octicon-link"></span></a>CLI Tools</h2>
-
-<p>All of the command line tools will look for <code>require</code>ing or <code>import</code>ing <code>format-message</code> in your source files to determine the local name of the <code>formatMessage</code> function. Then they will either check for problems, extract the original message patterns, or replace the call as follows:</p>
-
-<h3>
-<a id="format-message-lint" class="anchor" href="#format-message-lint" aria-hidden="true"><span class="octicon octicon-link"></span></a>format-message lint</h3>
-
-<h4>
-<a id="usage-format-message-lint-options-files" class="anchor" href="#usage-format-message-lint-options-files" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage: <code>format-message lint [options] [files...]</code>
-</h4>
-
-<p>find message patterns in files and verify there are no obvious problems</p>
-
-<h4>
-<a id="options" class="anchor" href="#options" aria-hidden="true"><span class="octicon octicon-link"></span></a>Options:</h4>
-
-<pre><code>-h, --help                  output usage information
--n, --function-name [name]  find function calls with this name [formatMessage]
---no-auto                   disables auto-detecting the function name from import or require calls
--k, --key-type [type]       derived key from source pattern literal|normalized|underscored|underscored_crc32 [underscored_crc32]
--t, --translations [path]   location of the JSON file with message translations, if specified, translations are also checked for errors
--f, --filename [filename]   filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]
-</code></pre>
-
-<h4>
-<a id="examples" class="anchor" href="#examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examples:</h4>
-
-<p>lint the src js files, with <code>__</code> as the function name used instead of <code>formatMessage</code></p>
-
-<pre><code>format-message lint -n __ src/**/*.js
-</code></pre>
-
-<p>lint the src js files and translations</p>
-
-<pre><code>format-message lint -t i18n/pt-BR.json src/**/*.js
-</code></pre>
-
-<h3>
-<a id="format-message-extract" class="anchor" href="#format-message-extract" aria-hidden="true"><span class="octicon octicon-link"></span></a>format-message extract</h3>
-
-<h4>
-<a id="usage-format-message-extract-options-files" class="anchor" href="#usage-format-message-extract-options-files" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage: <code>format-message extract [options] [files...]</code>
-</h4>
-
-<p>find and list all message patterns in files</p>
-
-<h4>
-<a id="options-1" class="anchor" href="#options-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Options:</h4>
-
-<pre><code>-h, --help                  output usage information
--n, --function-name [name]  find function calls with this name [formatMessage]
---no-auto                   disables auto-detecting the function name from import or require calls
--k, --key-type [type]       derived key from source pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]
--l, --locale [locale]       BCP 47 language tags specifying the source default locale [en]
--o, --out-file [out]        write messages JSON object to this file instead of to stdout
-</code></pre>
-
-<h4>
-<a id="examples-1" class="anchor" href="#examples-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examples:</h4>
-
-<p>extract patterns from src js files, dump json to <code>stdout</code>. This can be helpful to get familiar with how <code>--key-type</code> and <code>--locale</code> change the json output.</p>
-
-<pre><code>format-message extract src/**/*.js
-</code></pre>
-
-<p>extract patterns from <code>stdin</code>, dump to file.</p>
-
-<pre><code>someTranspiler src/*.js | format-message extract -o locales/en.json
-</code></pre>
-
-<h3>
-<a id="format-message-inline" class="anchor" href="#format-message-inline" aria-hidden="true"><span class="octicon octicon-link"></span></a>format-message inline</h3>
-
-<h4>
-<a id="usage-format-message-inline-options-files" class="anchor" href="#usage-format-message-inline-options-files" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage: <code>format-message inline [options] [files...]</code>
-</h4>
-
-<p>find and replace message pattern calls in files with translations</p>
-
-<h4>
-<a id="options-2" class="anchor" href="#options-2" aria-hidden="true"><span class="octicon octicon-link"></span></a>Options:</h4>
-
-<pre><code>-h, --help                            output usage information
--n, --function-name [name]            find function calls with this name [formatMessage]
---no-auto                             disables auto-detecting the function name from import or require calls
--k, --key-type [type]                 derived key from source pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]
--l, --locale [locale]                 BCP 47 language tags specifying the target locale [en]
--t, --translations [path]             location of the JSON file with message translations
--e, --missing-translation [behavior]  behavior when --translations is specified, but a translated pattern is missing (error | warning | ignore) [error]
--m, --missing-replacement [pattern]   pattern to inline when a translated pattern is missing, defaults to the source pattern
--i, --source-maps-inline              append sourceMappingURL comment to bottom of code
--s, --source-maps                     save source map alongside the compiled code
--f, --filename [filename]             filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]
--o, --out-file [out]                  compile all input files into a single file
--d, --out-dir [out]                   compile an input directory of modules into an output directory
--r, --root [path]                     remove root path for source filename in output directory [cwd]
-</code></pre>
-
-<h4>
-<a id="examples-2" class="anchor" href="#examples-2" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examples:</h4>
-
-<p>create locale-specific client bundles with source maps</p>
-
-<pre><code>format-message inline src/**/*.js -s -l de -t translations.json -o dist/bundle.de.js
-format-message inline src/**/*.js -s -l en -t translations.json -o dist/bundle.en.js
-format-message inline src/**/*.js -s -l es -t translations.json -o dist/bundle.es.js
-format-message inline src/**/*.js -s -l pt -t translations.json -o dist/bundle.pt.js
-...
-</code></pre>
-
-<p>inline without translating multiple files that used <code>var __ = require('format-message')</code></p>
-
-<pre><code>format-message inline -d dist -r src -n __ src/*.js lib/*.js component/**/*.js
-</code></pre>
 
 <h2>
 <a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
@@ -390,4 +127,3 @@ format-message inline src/**/*.js -s -l pt -t translations.json -o dist/bundle.p
   
   </body>
 </html>
-
