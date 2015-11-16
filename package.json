@@ -33,6 +33,7 @@
     "karma-sauce-launcher": "^0.3.0",
     "karma-sourcemap-loader": "^0.3.6",
     "karma-webpack": "^1.7.0",
+    "messageformat": "^0.2.2",
     "mkdirp": "^0.5.1",
     "mocha": "^2.3.3",
     "nyc": "^3.2.2",

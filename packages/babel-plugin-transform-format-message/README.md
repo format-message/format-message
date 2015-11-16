@@ -1,6 +1,6 @@
 # babel-plugin-transform-format-message
 
-> Extract messages from formatMessage calls
+> Pre-generate ids from default messages or inline a single language translation
 
 [![npm Version][npm-image]][npm]
 [![JS Standard Style][style-image]][style]
