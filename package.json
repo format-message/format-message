@@ -4,7 +4,7 @@
   "scripts": {
     "install": "node scripts/bootstrap.js",
     "benchmark": "npm run benchmark-compile && node scripts/benchmark.js",
-    "benchmark-compile": "packages/format-message-cli/format-message inline scripts/benchmark.src.js > scripts/benchmark.js",
+    "benchmark-compile": "packages/format-message-cli/format-message transform -i scripts/benchmark.src.js > scripts/benchmark.js",
     "lint": "eslint .",
     "test": "npm run lint && npm run test-setup && npm run test-node && npm run test-browsers",
     "test-browsers": "karma start",
@@ -33,7 +33,6 @@
     "karma-sauce-launcher": "^0.3.0",
     "karma-sourcemap-loader": "^0.3.6",
     "karma-webpack": "^1.7.0",
-    "message-format": "^1.2.1",
     "mkdirp": "^0.5.1",
     "mocha": "^2.3.3",
     "nyc": "^3.2.2",
