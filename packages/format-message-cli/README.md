@@ -7,10 +7,104 @@
 [![MIT License][license-image]][LICENSE]
 
 
+API
+---------
+
+All of the command line tools will look for `require`ing or `import`ing `format-message` in your source files to determine the local name of the `formatMessage` function. Then they will either check for problems, extract the original message patterns, or replace the call as follows:
+
+### format-message lint
+
+#### Usage: `format-message lint [options] [files...]`
+
+find message patterns in files and verify there are no obvious problems
+
+#### Options:
+
+    -h, --help                  output usage information
+    -g, --generate-id [type]    generate missing ids from default message pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]
+    -l, --locale [locale]       BCP 47 language tags specifying the source default locale [en]
+    -t, --translations [path]   location of the JSON file with message translations, if specified, translations are also checked for errors
+    -f, --filename [filename]   filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]
+    -s, --style [style]         error output format (stylish | checkstyle | compact | html | jslint-xml | json | junit | tap | unix) [stylish]
+
+#### Examples:
+
+lint the src js files and translations
+
+    format-message lint -t i18n/pt-BR.json src/**/*.js
+
+
+### format-message extract
+
+#### Usage: `format-message extract [options] [files...]`
+
+find and list all message patterns in files
+
+#### Options:
+
+    -h, --help                  output usage information
+    -g, --generate-id [type]    generate missing ids from default message pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]
+    -l, --locale [locale]       BCP 47 language tags specifying the source default locale [en]
+    -f, --filename [filename]   filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]
+    --format [format]           use the specified format instead of detecting from the --out-file extension (yaml | es6 | commonjs | json)
+    -o, --out-file [out]        write messages JSON object to this file instead of to stdout
+
+#### Examples:
+
+extract patterns from src js files, dump json to `stdout`. This can be helpful to get familiar with how `--generate-id`, `--format` and `--locale` change the json output.
+
+    format-message extract src/**/*.js
+
+extract patterns from `stdin`, dump to file.
+
+    someTranspiler src | format-message extract -o locales/en.json
+
+
+### format-message transform
+
+#### Usage: `format-message transform [options] [files...]`
+
+find and replace message pattern calls in files with translations
+
+By default this transform generates ids for messages that do not have an explicit id, and the result still relies on translations being properly configured with `formatMessage.setup()`.
+
+The `--inline` flag changes the behavior to inline one particular translation, and optimize the expression (often to a simple string literal). This requires passing `--translations` for any language other than the default.
+
+#### Options:
+
+    -h, --help                            output usage information
+    -g, --generate-id [type]    generate missing ids from default message pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]
+    -l, --locale [locale]                 BCP 47 language tags specifying the target locale [en]
+    -t, --translations [path]             location of the JSON file with message translations
+    -e, --missing-translation [behavior]  behavior when --translations is specified, but a translated pattern is missing (error | warning | ignore) [error]
+    -m, --missing-replacement [pattern]   pattern to inline when a translated pattern is missing, defaults to the source pattern
+    -i, --inline                          inline the translation for the specified locale
+    --source-maps-inline                  append sourceMappingURL comment to bottom of code
+    -s, --source-maps                     save source map alongside the compiled code
+    -f, --filename [filename]             filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]
+    -o, --out-file [out]                  compile all input files into a single file
+    -d, --out-dir [out]                   compile an input directory of modules into an output directory
+    -r, --root [path]                     remove root path for source filename in output directory [cwd]
+
+#### Examples:
+
+create locale-specific client bundles with source maps
+
+    format-message transform -i src/**/*.js -s -l de -t translations.json -o dist/bundle.de.js
+    format-message transform -i src/**/*.js -s -l en -t translations.json -o dist/bundle.en.js
+    format-message transform -i src/**/*.js -s -l es -t translations.json -o dist/bundle.es.js
+    format-message transform -i src/**/*.js -s -l pt -t translations.json -o dist/bundle.pt.js
+    ...
+
+generate ids from default messages
+
+    format-message transform -d dist -r src src/*.js lib/*.js component/**/*.js
+
+
 Inlined Messages
 ----------------
 
-The examples provide sample transform output. This output is not meant to be 100% exact, but to give a general idea of what the transform does.
+The examples provide sample `transform --inline` output. This output is not meant to be 100% exact, but to give a general idea of what the transform does.
 
 ### Simple messages with no placeholders
 
@@ -103,100 +197,6 @@ let formatMessage(`On { date, date, short } {name} ate {
 * Calls with an object literal for parameters inline the properties to where they are used, avoiding the object creation.
 
 Note that if you have a complex or costly operation as one of the object property expressions, and that value has many placeholders in the message, you may perform the operation each time. To avoid this for costly operations, save the value in a variable beforehand and pass the variable into the parameters object instead.
-
-
-CLI Tools
----------
-
-All of the command line tools will look for `require`ing or `import`ing `format-message` in your source files to determine the local name of the `formatMessage` function. Then they will either check for problems, extract the original message patterns, or replace the call as follows:
-
-### format-message lint
-
-#### Usage: `format-message lint [options] [files...]`
-
-find message patterns in files and verify there are no obvious problems
-
-#### Options:
-
-    -h, --help                  output usage information
-    -g, --generate-id [type]    generate missing ids from default message pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]
-    -l, --locale [locale]       BCP 47 language tags specifying the source default locale [en]
-    -t, --translations [path]   location of the JSON file with message translations, if specified, translations are also checked for errors
-    -f, --filename [filename]   filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]
-    -s, --style [style]         error output format (stylish | checkstyle | compact | html | jslint-xml | json | junit | tap | unix) [stylish]
-
-#### Examples:
-
-lint the src js files and translations
-
-    format-message lint -t i18n/pt-BR.json src/**/*.js
-
-
-### format-message extract
-
-#### Usage: `format-message extract [options] [files...]`
-
-find and list all message patterns in files
-
-#### Options:
-
-    -h, --help                  output usage information
-    -g, --generate-id [type]    generate missing ids from default message pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]
-    -l, --locale [locale]       BCP 47 language tags specifying the source default locale [en]
-    -f, --filename [filename]   filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]
-    --format [format]           use the specified format instead of detecting from the --out-file extension (yaml | es6 | commonjs | json)
-    -o, --out-file [out]        write messages JSON object to this file instead of to stdout
-
-#### Examples:
-
-extract patterns from src js files, dump json to `stdout`. This can be helpful to get familiar with how `--generate-id`, `--format` and `--locale` change the json output.
-
-    format-message extract src/**/*.js
-
-extract patterns from `stdin`, dump to file.
-
-    someTranspiler src | format-message extract -o locales/en.json
-
-
-### format-message transform
-
-#### Usage: `format-message transform [options] [files...]`
-
-find and replace message pattern calls in files with translations
-
-By default this transform generates ids for messages that do not have an explicit id, and the result still relies on translations being properly configured with `formatMessage.setup()`.
-
-The `--inline` flag changes the behavior to inline one particular translation, and optimize the expression (often to a simple string literal). This requires passing `--translations` for any language other than the default.
-
-#### Options:
-
-    -h, --help                            output usage information
-    -g, --generate-id [type]    generate missing ids from default message pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]
-    -l, --locale [locale]                 BCP 47 language tags specifying the target locale [en]
-    -t, --translations [path]             location of the JSON file with message translations
-    -e, --missing-translation [behavior]  behavior when --translations is specified, but a translated pattern is missing (error | warning | ignore) [error]
-    -m, --missing-replacement [pattern]   pattern to inline when a translated pattern is missing, defaults to the source pattern
-    -i, --inline                          inline the translation for the specified locale
-    --source-maps-inline                  append sourceMappingURL comment to bottom of code
-    -s, --source-maps                     save source map alongside the compiled code
-    -f, --filename [filename]             filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]
-    -o, --out-file [out]                  compile all input files into a single file
-    -d, --out-dir [out]                   compile an input directory of modules into an output directory
-    -r, --root [path]                     remove root path for source filename in output directory [cwd]
-
-#### Examples:
-
-create locale-specific client bundles with source maps
-
-    format-message transform -i src/**/*.js -s -l de -t translations.json -o dist/bundle.de.js
-    format-message transform -i src/**/*.js -s -l en -t translations.json -o dist/bundle.en.js
-    format-message transform -i src/**/*.js -s -l es -t translations.json -o dist/bundle.es.js
-    format-message transform -i src/**/*.js -s -l pt -t translations.json -o dist/bundle.pt.js
-    ...
-
-generate ids from default messages
-
-    format-message transform -d dist -r src src/*.js lib/*.js component/**/*.js
 
 
 License
