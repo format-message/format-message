@@ -6,7 +6,6 @@ var CLIEngine = require('eslint').CLIEngine
 module.exports = function extractFiles (files, options) {
   var cli = new CLIEngine({
     useEslintrc: false,
-    parser: 'babel-eslint',
     envs: [ 'es6', 'browser', 'node' ],
     baseConfig: {
       ecmaFeatures: {

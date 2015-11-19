@@ -1,13 +1,12 @@
 # Changelog
 
-> **Tags:**
-> - [New Feature]
-> - [Bug Fix]
-> - [Spec Compliancy]
-> - [Breaking Change]
-> - [Documentation]
-> - [Internal]
-> - [Polish]
+## 4.0.0
+
+* **New Feature**
+  * Added id and description by passing an object instead of a string
+* **Breaking Change**
+  * Reworked cli and moved it to format-message-cli
+  * Removed cache option
 
 ## 3.2.0
 
