@@ -14,6 +14,7 @@ function isRequireFormatMessage (node) {
   var arg
   return (
     node.type === 'VariableDeclarator' &&
+    node.init &&
     node.init.type === 'CallExpression' &&
     node.init.callee.type === 'Identifier' &&
     node.init.callee.name === 'require' &&
