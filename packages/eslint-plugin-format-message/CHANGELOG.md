@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.0.1
+
+* **Bug Fix**
+  * fixed compatibility with ESLint 1.10
+  * fixed variables declared without initializer, later called as functions causing error
+
 ## 4.0.0
 
 * **Breaking Change**
