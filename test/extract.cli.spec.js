@@ -138,6 +138,21 @@ describe('format-message extract', function () {
         done(err)
       }).stdin.end(input, 'utf8')
     })
+
+    it('lexically sorts keys', function (done) {
+      var input = 'import f from "format-message";f("b");f("a");f("c")'
+      var cmd = 'packages/format-message-cli/format-message extract -g literal'
+      exec(cmd, function (err, stdout, stderr) {
+        var translations = stdout.toString('utf8')
+        expect(translations).to.eql('{\n' +
+          '  "a": {\n    "message": "a"\n  },\n' +
+          '  "b": {\n    "message": "b"\n  },\n' +
+          '  "c": {\n    "message": "c"\n  }\n' +
+        '}')
+        expect(stderr.toString('utf8')).to.equal('')
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
   })
 
   describe('reading from files', function () {

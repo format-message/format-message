@@ -21,6 +21,11 @@ module.exports = function () {
   var timer
 
   function getFileContent () {
+    var sortedMessages = Object.keys(messages).sort().reduce(function (sorted, key) {
+      sorted[key] = messages[key]
+      return sorted
+    }, {})
+
     if (!format) {
       format = outFile ? outFile.slice(outFile.indexOf('.') + 1) : 'json'
     }
@@ -28,17 +33,17 @@ module.exports = function () {
       case 'yaml':
       case 'yml':
       case 'rails':
-        return simpleYml(locale, messages)
+        return simpleYml(locale, sortedMessages)
       case 'js':
       case 'javascript':
       case 'commonjs':
       case 'node':
-        return 'module.exports = ' + JSON.stringify(messages, null, 2) + '\n'
+        return 'module.exports = ' + JSON.stringify(sortedMessages, null, 2) + '\n'
       case 'es6':
-        return 'export default ' + JSON.stringify(messages, null, 2) + '\n'
+        return 'export default ' + JSON.stringify(sortedMessages, null, 2) + '\n'
       case 'json':
       default:
-        return JSON.stringify(messages, null, 2)
+        return JSON.stringify(sortedMessages, null, 2)
     }
   }
 
