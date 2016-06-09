@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.0.2
+
+Updated internal eslint to v2. The cli assumes your source code is an ES6
+module, so import and export are allowed.
+
 ## 4.0.1
 
 Don't use babel-eslint for the lint command, as it causes more issues than it solves.

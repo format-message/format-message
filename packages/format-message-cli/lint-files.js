@@ -13,6 +13,10 @@ module.exports = function extractFiles (files, options) {
         experimentalObjectRestSpread: true,
         jsx: true
       },
+      parserOptions: {
+        ecmaVersion: 6,
+        sourceType: 'module'
+      },
       plugins: [ 'format-message' ],
       rules: {
         'format-message/literal-locale': 1,

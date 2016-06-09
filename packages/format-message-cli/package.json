@@ -1,6 +1,6 @@
 {
   "name": "format-message-cli",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Command-line tools to lint, extract, and inline format-message translations",
   "author": "Andy VanWagoner <thetalecrafter@gmail.com> (https://thetalecrafter.com/)",
   "homepage": "https://github.com/format-message/format-message/tree/master/packages/format-message-cli",
@@ -44,7 +44,7 @@
     "babel-plugin-syntax-trailing-function-commas": "^6.0.14",
     "babel-plugin-transform-format-message": "^4.0.0",
     "commander": "^2.8.1",
-    "eslint": "^1.9.0",
+    "eslint": "^2.8.0",
     "eslint-plugin-format-message": "^4.0.0",
     "glob": "^5.0.2",
     "js-yaml": "^3.4.3",
