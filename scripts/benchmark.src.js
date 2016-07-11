@@ -26,7 +26,7 @@ function benchmark (name, cases) {
       console.log(' ', String(event.target))
     },
     onComplete: function () {
-      console.log('Fastest is ' + this.filter('fastest').pluck('name').join(' or '))
+      console.log('Fastest is ' + this.filter('fastest').map('name').join(' or '))
       console.log()
     }
   }

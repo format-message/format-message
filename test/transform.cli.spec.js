@@ -205,7 +205,7 @@ describe('format-message transform -i', function () {
       exec(cmd, function (err, stdout, stderr) {
         expect(stderr.toString('utf8')).to.equal('')
         expect(stdout.toString('utf8')).to.match(
-          /^import formatMessage from "format-message";?\s*"hey everyone";?\s+\/\/# sourceMappingURL=data\:application\/json;base64,/
+          /^import formatMessage from "format-message";?\s*"hey everyone";?\s+\/\/# sourceMappingURL=data:application\/json;base64,/
         )
         done(err)
       }).stdin.end(input, 'utf8')
@@ -302,7 +302,7 @@ describe('format-message transform -i', function () {
         )
         var fileContent =
           readFileSync(dirname + '/format.spec.js', 'utf8')
-          .split('\/\/# sourceMappingURL=')
+          .split('//# sourceMappingURL=')
         expect(fileContent[0].trim()).to.contain('\'x\' + arg + \'z\'')
         expect((fileContent[1] || '').trim()).to.equal('format.spec.js.map')
         var sourceMap = readFileSync(dirname + '/format.spec.js.map', 'utf8')

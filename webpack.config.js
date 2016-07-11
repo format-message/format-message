@@ -1,8 +1,9 @@
 const webpack = require('webpack')
+const path = require('path')
 
 module.exports = {
   cache: true,
-  context: __dirname + '/lib',
+  context: path.resolve(__dirname, 'lib'),
   devtool: 'source-map',
   entry: {
     browser: [
@@ -14,7 +15,7 @@ module.exports = {
   },
   output: {
     filename: '[name].js',
-    path: __dirname + '/',
+    path: __dirname,
     publicPath: '/'
   },
   plugins: [

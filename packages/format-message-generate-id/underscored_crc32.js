@@ -4,7 +4,7 @@ var crc32 = require('crc32')
 var normalized = require('./normalized')
 var underscore = require('./underscored').underscore
 
-module.exports = function underscored_crc32 (pattern) {
+module.exports = function underscoredCrc32 (pattern) {
   pattern = normalized(pattern)
   var underscored = underscore(pattern)
   var crc = crc32(pattern.length + ':' + pattern).toString(16)

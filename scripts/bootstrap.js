@@ -12,12 +12,12 @@ var fs = require('fs')
 
 // get packages
 var packageMap = {}
-var PACKAGES_PATH = path.resolve(__dirname + '/../packages')
+var PACKAGES_PATH = path.resolve(__dirname, '../packages')
 var packages = fs.readdirSync(PACKAGES_PATH)
   .map(function (name) {
     if (name[0] === '.') return
 
-    var pkgJson = PACKAGES_PATH + '/' + name + '/package.json'
+    var pkgJson = path.join(PACKAGES_PATH, name, 'package.json')
     if (!fs.existsSync(pkgJson)) return
     pkgJson = require(pkgJson)
 
@@ -33,16 +33,16 @@ var packages = fs.readdirSync(PACKAGES_PATH)
 
 // link dev dependencies to root
 console.log('Linking format-message')
-rimraf.sync(path.resolve(__dirname + '/../node_modules/format-message'))
-mkdirp.sync(path.resolve(__dirname + '/../node_modules/format-message'))
+rimraf.sync(path.resolve(__dirname, '../node_modules/format-message'))
+mkdirp.sync(path.resolve(__dirname, '../node_modules/format-message'))
 fs.writeFileSync(
-  path.resolve(__dirname + '/../node_modules/format-message/index.js'),
+  path.resolve(__dirname, '../node_modules/format-message/index.js'),
   'module.exports = require(' + JSON.stringify(PACKAGES_PATH + '/format-message') + ')'
 )
 
 async.parallelLimit(packages.map(function (pack) {
   return function (done) {
-    var NODE_MODULES_PATH = pack.path + '/node_modules'
+    var NODE_MODULES_PATH = path.join(pack.path, 'node_modules')
 
     var toLink = []
     var toInstall = []
@@ -105,7 +105,7 @@ async.parallelLimit(packages.map(function (pack) {
               if (err) return done(err)
 
               fs.writeFile(
-                link.dest + '/index.js',
+                path.join(link.dest, 'index.js'),
                 'module.exports = require(' + JSON.stringify(link.src) + ')',
                 done
               )
