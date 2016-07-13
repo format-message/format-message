@@ -13,7 +13,7 @@
     "cldr": "node scripts/cldr.js"
   },
   "devDependencies": {
-    "async": "^1.5.0",
+    "async": "^2.0.0",
     "babel": "^6.0.15",
     "benchmark": "^2.1.0",
     "chai": "^3.4.0",
