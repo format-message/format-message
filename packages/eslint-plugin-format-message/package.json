@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-format-message",
-  "version": "4.0.1",
+  "version": "4.1.0",
   "description": "format-message i18n specific rules for ESLint",
   "author": "Andy VanWagoner <thetalecrafter@gmail.com> (https://thetalecrafter.com/)",
   "homepage": "https://github.com/format-message/format-message",
@@ -27,6 +27,6 @@
     "format-message-parse": "^4.0.0"
   },
   "peerDependencies": {
-    "eslint": ">=0.8.0"
+    "eslint": ">=2.0.0"
   }
 }

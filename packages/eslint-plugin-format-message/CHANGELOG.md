@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.1.0
+
+* **Bug Fix**
+  * fixed compatibility with ESLint 3.0
+
 ## 4.0.1
 
 * **Bug Fix**
