@@ -38,16 +38,13 @@ function isDigit (char) {
 }
 
 function isWhitespace (char) {
+  var code = char && char.charCodeAt(0)
   return (
-    char === ' ' ||
-    char === '\t' ||
-    char === '\n' ||
-    char === '\r' ||
-    char === '\f' ||
-    char === '\v' ||
-    char === '\u00A0' ||
-    char === '\u2028' ||
-    char === '\u2029'
+    (code >= 0x09 && code <= 0x0D) ||
+    code === 0x20 || code === 0x85 || code === 0xA0 || code === 0x180E ||
+    (code >= 0x2000 && code <= 0x200D) ||
+    code === 0x2028 || code === 0x2029 || code === 0x202F || code === 0x205F ||
+    code === 0x2060 || code === 0x3000 || code === 0xFEFF
   )
 }
 
