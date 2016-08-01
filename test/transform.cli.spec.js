@@ -302,7 +302,7 @@ describe('format-message transform -i', function () {
         )
         var fileContent =
           readFileSync(dirname + '/format.spec.js', 'utf8')
-          .split('//# sourceMappingURL=')
+            .split('//# sourceMappingURL=')
         expect(fileContent[0].trim()).to.contain('\'x\' + arg + \'z\'')
         expect((fileContent[1] || '').trim()).to.equal('format.spec.js.map')
         var sourceMap = readFileSync(dirname + '/format.spec.js.map', 'utf8')

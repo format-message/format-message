@@ -185,7 +185,7 @@ describe('MessageFormat', function () {
         ' female {it\'s her turn}' +
         '  other {it\'s their turn}}'
       var message = new MessageFormat('en', pattern)
-          .format({ gender: 'female' })
+        .format({ gender: 'female' })
 
       expect(message).to.equal('it\'s her turn')
     })
