@@ -54,7 +54,7 @@ License
 This software is free to use under the MIT license. See the [LICENSE-MIT file][LICENSE] for license text and copyright information.
 
 
-[logo]: https://cdn.rawgit.com/format-message/format-message/5ecbfe3/logo.svg
+[logo]: https://cdn.rawgit.com/format-message/format-message/2febdd8/logo.svg
 [npm]: https://www.npmjs.org/package/format-message-print
 [npm-image]: https://img.shields.io/npm/v/format-message-print.svg
 [style]: https://github.com/feross/standard
