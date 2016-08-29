@@ -11,7 +11,7 @@
 
 ## Internationalization Made Easy
 
-Start simple. Wrap any user-facing with `formatMessage()`. Don't forget to import/require format-message.
+Start simple. Wrap any user-facing message with `formatMessage()`. Don't forget to import/require format-message.
 
 ```js
 var formatMessage = require('format-message');
