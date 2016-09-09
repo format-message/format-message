@@ -3,8 +3,11 @@
 exports.isImportFormatMessage = isImportFormatMessage
 function isImportFormatMessage (path) {
   return (
-    path.isImportDefaultSpecifier() &&
-    path.parentPath.get('source')
+    (
+      path.isImportDefaultSpecifier() ||
+      path.isImportSpecifier() &&
+      path.get('imported').isIdentifier({ name: 'default' })
+    ) && path.parentPath.get('source')
       .isStringLiteral({ value: 'format-message' })
   )
 }
