@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.1.0
+
+**New Feature**
+  * `import {default as __} from 'format-message'` works as expected
+
 ## 4.0.2
 
 Updated internal eslint to v2. The cli assumes your source code is an ES6

@@ -342,5 +342,14 @@ describe('format-message transform -i', function () {
         done(err)
       }).stdin.end(input, 'utf8')
     })
+
+    it('finds function name from default import', function (done) {
+      var input = 'import {default as __} from "format-message";__("hello")'
+      exec('packages/format-message-cli/format-message transform -i', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        expect(stdout.toString('utf8')).to.not.contain('__(')
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
   })
 })

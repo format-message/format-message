@@ -3,9 +3,13 @@
 exports.isImportFormatMessage = isImportFormatMessage
 function isImportFormatMessage (node) {
   return (
-    node.type === 'ImportDefaultSpecifier' &&
+    node.parent && node.parent.source &&
     node.parent.source.type === 'Literal' &&
-    node.parent.source.value === 'format-message'
+    node.parent.source.value === 'format-message' && (
+      node.type === 'ImportDefaultSpecifier' ||
+      node.type === 'ImportSpecifier' &&
+      node.imported && node.imported.name === 'default'
+    )
   )
 }
 

@@ -173,5 +173,15 @@ describe('format-message lint', function () {
         done()
       }).stdin.end(input, 'utf8')
     })
+
+    it('finds function name from default import', function (done) {
+      var input = 'import {default as __} from "format-message";__("{")'
+      exec('packages/format-message-cli/format-message lint', function (err, stdout, stderr) {
+        expect(err).to.exist
+        expect(stdout.toString('utf8')).to.equal('')
+        expect(stderr.toString('utf8')).to.contain('Pattern is invalid')
+        done()
+      }).stdin.end(input, 'utf8')
+    })
   })
 })

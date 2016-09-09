@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.2.0
+
+**Bug Fix**
+  * fixed intermittent error with imports using babel-parser
+**New Feature**
+  * `import {default as __} from 'format-message'` works as expected
+
 ## 4.1.0
 
 * **Bug Fix**
