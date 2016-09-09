@@ -15,7 +15,13 @@ tester.run('literal-pattern', rule, {
     { code: 'var f=require("format-message");f("b")' },
     { code: 'import f from "foo";formatMessage("f")', parserOptions: { ecmaVersion: 6, sourceType: 'module' } },
     { code: 'import f from "format-message";formatMessage(foo)', parserOptions: { ecmaVersion: 6, sourceType: 'module' } },
-    { code: 'import f from "format-message";f("b")', parserOptions: { ecmaVersion: 6, sourceType: 'module' } }
+    { code: 'import f from "format-message";f("b")', parserOptions: { ecmaVersion: 6, sourceType: 'module' } },
+    { code: 'import {default as f} from "format-message";f("b")', parserOptions: { ecmaVersion: 6, sourceType: 'module' } },
+    {
+      code: 'import f from "format-message";f("f")',
+      parser: 'babel-eslint',
+      parserOptions: { ecmaVersion: 6, sourceType: 'module' }
+    }
   ],
   invalid: [
     {
@@ -45,6 +51,17 @@ tester.run('literal-pattern', rule, {
     },
     {
       code: 'import f from "format-message";f(b)',
+      parserOptions: { ecmaVersion: 6, sourceType: 'module' },
+      errors: [ { message: 'Pattern is not a string literal' } ]
+    },
+    {
+      code: 'import {default as f} from "format-message";f(b)',
+      parserOptions: { ecmaVersion: 6, sourceType: 'module' },
+      errors: [ { message: 'Pattern is not a string literal' } ]
+    },
+    {
+      code: 'import {default as f} from "format-message";f(b)',
+      parser: 'babel-eslint',
       parserOptions: { ecmaVersion: 6, sourceType: 'module' },
       errors: [ { message: 'Pattern is not a string literal' } ]
     }
