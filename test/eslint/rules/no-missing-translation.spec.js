@@ -22,11 +22,13 @@ tester.run('no-missing-translation', rule, {
   ],
   invalid: [
     {
-      code: 'var f=require("format-message");f("d")', settings: settings,
+      code: 'var f=require("format-message");f("d")',
+      settings: settings,
       errors: [ { message: 'Translation for "d" in "pt" is missing' } ]
     },
     {
-      code: 'var f=require("format-message");f("e")', settings: settings,
+      code: 'var f=require("format-message");f("e")',
+      settings: settings,
       errors: [
         { message: 'Translation for "e" in "en" is missing' },
         { message: 'Translation for "e" in "pt" is missing' }

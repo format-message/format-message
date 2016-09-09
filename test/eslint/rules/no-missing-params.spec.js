@@ -18,7 +18,8 @@ tester.run('no-missing-params', rule, {
       errors: [ { message: 'Pattern requires missing parameters' } ]
     },
     {
-      code: 'var f=require("format-message");f("{foo}", bar)', options: [ { allowNonLiteral: false } ],
+      code: 'var f=require("format-message");f("{foo}", bar)',
+      options: [ { allowNonLiteral: false } ],
       errors: [ { message: 'Parameters is not an object literal' } ]
     },
     {

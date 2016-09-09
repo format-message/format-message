@@ -20,7 +20,8 @@ tester.run('no-identical-translation', rule, {
   ],
   invalid: [
     {
-      code: 'var f=require("format-message");f("same")', settings: settings,
+      code: 'var f=require("format-message");f("same")',
+      settings: settings,
       errors: [ { message: 'Translation for "same" in "pt" is identical to original' } ]
     }
   ]

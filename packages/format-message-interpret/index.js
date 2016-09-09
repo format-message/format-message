@@ -1,4 +1,4 @@
-/*globals Intl*/
+/* globals Intl */
 'use strict'
 
 var formats = require('format-message-formats')

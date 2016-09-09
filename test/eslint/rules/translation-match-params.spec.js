@@ -20,15 +20,18 @@ tester.run('translation-match-params', rule, {
   ],
   invalid: [
     {
-      code: 'var f=require("format-message");f("c", { c:"!" })', settings: settings,
+      code: 'var f=require("format-message");f("c", { c:"!" })',
+      settings: settings,
       errors: [ { message: 'Translation for "c" in "en" has extra "c" placeholder' } ]
     },
     {
-      code: 'var f=require("format-message");f("bad2", foo)', settings: settings,
+      code: 'var f=require("format-message");f("bad2", foo)',
+      settings: settings,
       errors: [ { message: 'Translation for "bad2" in "pt" has extra "z" placeholder' } ]
     },
     {
-      code: 'var f=require("format-message");f("{k}", { k:"k" })', settings: settings,
+      code: 'var f=require("format-message");f("{k}", { k:"k" })',
+      settings: settings,
       errors: [
         { message: 'Translation for "{k}" in "pt" is missing "k" placeholder' },
         { message: 'Translation for "{k}" in "pt" has extra "y" placeholder' }

@@ -44,7 +44,8 @@ tester.run('literal-pattern', rule, {
       ]
     },
     {
-      code: 'import f from "format-message";f(b)', parserOptions: { ecmaVersion: 6, sourceType: 'module' },
+      code: 'import f from "format-message";f(b)',
+      parserOptions: { ecmaVersion: 6, sourceType: 'module' },
       errors: [ { message: 'Pattern is not a string literal' } ]
     }
   ]

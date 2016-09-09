@@ -23,7 +23,8 @@ tester.run('no-invalid-translation', rule, {
   ],
   invalid: [
     {
-      code: 'var f=require("format-message");f("bad1")', settings: settings,
+      code: 'var f=require("format-message");f("bad1")',
+      settings: settings,
       errors: [ { message: 'Translation for "bad1" in "pt" is invalid: Expected argument id but end of input found in {' } ]
     }
   ]
