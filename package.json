@@ -14,7 +14,6 @@
   },
   "devDependencies": {
     "async": "^2.0.0",
-    "babel": "^6.0.15",
     "babel-eslint": "^6.1.2",
     "benchmark": "^2.1.0",
     "chai": "^3.4.0",
@@ -32,7 +31,6 @@
     "karma-firefox-launcher": "^1.0.0",
     "karma-mocha": "^1.1.1",
     "karma-safari-launcher": "^1.0.0",
-    "karma-sauce-launcher": "^1.0.0",
     "karma-sourcemap-loader": "^0.3.6",
     "karma-webpack": "^1.7.0",
     "messageformat": "^1.0.0",

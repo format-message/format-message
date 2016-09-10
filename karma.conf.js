@@ -1,38 +1,5 @@
 // Karma configuration
-// Generated on Wed Jan 28 2015 19:14:37 GMT-0700 (MST)
-
-const webpackConfig = require('./webpack.config')
-
 module.exports = function (config) {
-  var customLaunchers = {
-    sl_safari: {
-      base: 'SauceLabs',
-      browserName: 'safari'
-    },
-    sl_chrome: {
-      base: 'SauceLabs',
-      browserName: 'chrome'
-    },
-    sl_firefox: {
-      base: 'SauceLabs',
-      browserName: 'firefox'
-    },
-    sl_ie_10: {
-      base: 'SauceLabs',
-      browserName: 'internet explorer',
-      version: '10'
-    },
-    sl_ie_11: {
-      base: 'SauceLabs',
-      browserName: 'internet explorer',
-      version: '11'
-    },
-    sl_edge: {
-      base: 'SauceLabs',
-      browserName: 'microsoftedge'
-    }
-  }
-
   config.set({
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -63,7 +30,7 @@ module.exports = function (config) {
       cache: true,
       devtool: '#inline-source-map',
       module: {
-        loaders: webpackConfig.module.loaders
+        loaders: []
       }
     },
 
@@ -98,14 +65,9 @@ module.exports = function (config) {
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
     browsers: process.env.CONTINUOUS_INTEGRATION
-      ? process.env.TRAVIS_NODE_VERSION === 'stable'
-        ? Object.keys(customLaunchers) : [ 'Firefox' ]
+      ? [ 'Chrome', 'Firefox' ]
       : [ 'Chrome', 'Firefox', 'Safari' ],
 
-    customLaunchers: customLaunchers,
-    sauceLabs: {
-      testName: 'format-message'
-    },
     captureTimeout: 120000,
     browserNoActivityTimeout: 60000,
 
