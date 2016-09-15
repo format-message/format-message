@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0.0
+
+Support extracting, linting, and transforming format-message v5 use.
+
 ## 4.1.0
 
 **New Feature**

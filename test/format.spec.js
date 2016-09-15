@@ -104,16 +104,17 @@ describe('formatMessage', function () {
 
     // uses variables to avoid inlining since the tests are about runtime config
     it('changes the default locale', function () {
-      formatMessage.setup({ locale: 'ar' })
+      var options = formatMessage.setup({ locale: 'ar' })
       var pattern = '{n,plural,few{few}other{other}}'
       var message = formatMessage(pattern, { n: 3 })
       formatMessage.setup({ locale: 'en' })
 
+      expect(options.locale).to.equal('ar')
       expect(message).to.equal('few')
     })
 
     it('changes the translation', function () {
-      formatMessage.setup({
+      var options = formatMessage.setup({
         locale: 'en',
         translations: { en: {
           'trans-test': { message: 'test-success' },
@@ -128,12 +129,13 @@ describe('formatMessage', function () {
       var pattern2 = 'trans-test2'
       var message2 = formatMessage(pattern2)
 
+      expect(options.missingTranslation).to.equal('ignore')
       expect(message).to.equal('test-success')
       expect(message2).to.equal('test-success2')
     })
 
     it('changes the missing translation behavior', function () {
-      formatMessage.setup({
+      var options = formatMessage.setup({
         locale: 'en',
         translations: { en: {} },
         missingTranslation: 'warning',
@@ -149,7 +151,34 @@ describe('formatMessage', function () {
       console.warn = warn
       formatMessage.setup({ missingReplacement: null, translations: null })
 
+      expect(options.missingTranslation).to.equal('warning')
+      expect(options.missingReplacement).to.equal('!!!')
       expect(message).to.equal('!!!')
+    })
+
+    it('accepts a function for missingReplacement', function () {
+      var args
+      var options = formatMessage.setup({
+        locale: 'en',
+        translations: { en: {} },
+        missingTranslation: 'ignore',
+        missingReplacement: function (pattern, id, locale) {
+          args = [ pattern, id, locale ]
+          return 'func'
+        }
+      })
+
+      var id = 'test-' + Date.now() // cache bust
+      var pattern = 'translation-test'
+      var message = formatMessage({ id: id, default: pattern })
+      formatMessage.setup({ missingReplacement: null, translations: null })
+
+      expect(args).to.deep.equal([
+        'translation-test', id, 'en'
+      ])
+      expect(options.missingTranslation).to.equal('ignore')
+      expect(options.missingReplacement).to.be.a('function')
+      expect(message).to.equal('func')
     })
 
     it('can throw on missing', function () {
@@ -195,6 +224,124 @@ describe('formatMessage', function () {
         .replace(/[^\x00-\x7F]/g, '') // eslint-disable-line no-control-regex
       // IE adds ltr marks
       expect(message).to.match(/^5:06/)
+    })
+  })
+
+  describe('number', function () {
+    it('localizes a number', function () {
+      expect(formatMessage.number(12345.67)).to.equal('12,345.67')
+    })
+
+    it('uses the style parameter', function () {
+      expect(formatMessage.number(12.345, 'integer')).to.equal('12')
+    })
+
+    it.skip('uses the locale parameter', function () { // requires full icu data
+      expect(formatMessage.number(12.345, '', 'ar')).to.equal('١٢')
+    })
+  })
+
+  describe('date', function () {
+    it('localizes a date', function () {
+      var result = formatMessage.date(new Date(2015, 11, 31))
+      expect(result).to.equal('Dec 31, 2015')
+    })
+
+    it('uses the style parameter', function () {
+      var result = formatMessage.date(new Date(2015, 11, 31), 'short')
+      expect(result).to.match(/12\/31\/(20)?15/)
+    })
+
+    it.skip('uses the locale parameter', function () { // requires full icu data
+      var result = formatMessage.date(new Date(2015, 11, 31), '', 'de')
+      expect(result).to.equal('31.12.2015')
+    })
+  })
+
+  describe('time', function () {
+    it('localizes a date', function () {
+      var result = formatMessage.time(new Date(2015, 11, 31, 5, 16))
+      expect(result).to.equal('5:16:00 AM')
+    })
+
+    it('uses the style parameter', function () {
+      var result = formatMessage.time(new Date(2015, 11, 31, 5, 16), 'short')
+      expect(result).to.equal('5:16 AM')
+    })
+
+    it.skip('uses the locale parameter', function () { // requires full icu data
+      var result = formatMessage.time(new Date(2015, 11, 31, 5, 16), '', 'de')
+      expect(result).to.equal('05:16:00')
+    })
+  })
+
+  describe('select', function () {
+    it('returns the matching value', function () {
+      var result = formatMessage.select('match', { match: 'one', other: 'other' })
+      expect(result).to.equal('one')
+    })
+
+    it('returns other when there is no match', function () {
+      var result = formatMessage.select('bogus', { other: 1 })
+      expect(result).to.equal(1)
+    })
+  })
+
+  describe('plural', function () {
+    it('returns the matching value', function () {
+      var result = formatMessage.plural(1, { one: 'one1' })
+      expect(result).to.equal('one1')
+    })
+
+    it('considers offset for keyword matches', function () {
+      var result = formatMessage.plural(2, 1, { one: 'one2' })
+      expect(result).to.equal('one2')
+    })
+
+    it('ignores offset for exact matches', function () {
+      var result = formatMessage.plural(2, 1, { '=2': 'two2' })
+      expect(result).to.equal('two2')
+    })
+
+    it('considers locale for keyword matches', function () {
+      var result = formatMessage.plural(2, { two: 2 }, 'ar')
+      expect(result).to.equal(2)
+    })
+
+    it('returns other when there is no match', function () {
+      var result = formatMessage.select(3, { other: 1 })
+      expect(result).to.equal(1)
+    })
+  })
+
+  describe('selectordinal', function () {
+    it('returns the matching value', function () {
+      var result = formatMessage.selectordinal(3, { few: 'one1' })
+      expect(result).to.equal('one1')
+    })
+
+    it('considers offset for keyword matches', function () {
+      var result = formatMessage.selectordinal(3, 1, { two: 'one2' })
+      expect(result).to.equal('one2')
+    })
+
+    it('ignores offset for exact matches', function () {
+      var result = formatMessage.selectordinal(2, 1, { '=2': 'two2' })
+      expect(result).to.equal('two2')
+    })
+
+    it('considers locale for keyword matches', function () {
+      var result = formatMessage.selectordinal(1, { one: 2 }, 'hy')
+      expect(result).to.equal(2)
+      result = formatMessage.selectordinal(2, { two: 1, other: 'o' }, 'en')
+      expect(result).to.equal(1)
+      result = formatMessage.selectordinal(2, { two: 1, other: 'o' }, 'hy')
+      expect(result).to.equal('o')
+    })
+
+    it('returns other when there is no match', function () {
+      var result = formatMessage.selectordinal(3, { other: 1 })
+      expect(result).to.equal(1)
     })
   })
 })

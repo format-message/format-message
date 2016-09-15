@@ -1,5 +1,18 @@
 # Changelog
 
+## 5.0.0
+
+* **New Feature**
+  * `setup()` returns the current settings
+  * Added localization helpers to public api
+    * `number (value [, style [, locale ]])`
+    * `date (value [, style [, locale ]])`
+    * `time (value [, style [, locale ]])`
+    * `select (value, options)`
+    * `plural (value [, offset ], options [, locale ])`
+    * `selectordinal (value [, offset ], options [, locale ])`
+  * Allow `missingReplacement` to be a function
+
 ## 4.0.0
 
 * **New Feature**

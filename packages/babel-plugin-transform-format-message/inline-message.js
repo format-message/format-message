@@ -152,12 +152,10 @@ function transformNumber (state, id, offset, style) {
     value = t.binaryExpression('-', value, t.numericLiteral(offset))
   }
   var args = [
-    t.stringLiteral(state.locale),
-    value
+    value,
+    t.stringLiteral(style || ''),
+    t.stringLiteral(state.locale)
   ]
-  if (style) {
-    args.push(t.stringLiteral(style))
-  }
   return t.callExpression(
     t.memberExpression(
       state.callPath.node.callee,
@@ -170,12 +168,10 @@ function transformNumber (state, id, offset, style) {
 function transformDateTime (state, id, type, style) {
   var t = state.t
   var args = [
-    t.stringLiteral(state.locale),
-    transformArgument(state, id)
+    transformArgument(state, id),
+    t.stringLiteral(style || ''),
+    t.stringLiteral(state.locale)
   ]
-  if (style) {
-    args.push(t.stringLiteral(style))
-  }
   return t.callExpression(
     t.memberExpression(
       state.callPath.node.callee,
