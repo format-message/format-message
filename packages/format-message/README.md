@@ -179,6 +179,64 @@ Parameters
 - `offset` is an optional number subtracted from value before matching keyword plural rules. The offset is not applied when matching exact number options.
 - `options` is an object whose keys are candidates for matching `value`. The value of the property with the matching key is returned, or the `other` property's value. The object should always have an `other` property. Keys should be either plural keywords (zero, one, two, few, many, other), or exact number matches (=13, =4, etc). Note that not all languages use all rules. For example English doesn't have a `zero` rule (0 falls under the `other` rule), but can still match `=0`.
 
+### format-message/react
+
+This module includes utilities for working specifically with react when composing messages with embedded components.
+
+### `formatChildren(message, elements)`
+
+Applies a message to a map of React elements to produce a list of child nodes.
+
+Parameters
+
+- `message` is a pre-formatted string containing tokens marking the beginning and ending of nodes.
+- `elements` is an object with keys matching tokens in the message, and values of React elements to put message parts in.
+
+Example
+
+```jsx
+import formatMessage from 'format-message'
+import {formatChildren} from 'format-message/react'
+
+export default ({ extensions }) =>
+  <div title={formatMessage('Choose a file')}>
+    {formatChildren(
+      formatMessage('Drag & Drop {extensions} files here _or_ __Browse__', {
+        extensions
+      }),
+      {
+        _: <span className="or" />,
+        __: <span className="browse" />
+      }
+    )}
+  </div>
+```
+
+produces the same tree as
+
+```jsx
+<div title="something">
+  Drag & Drop {extensions} files here
+  <span className="or">or</span>
+  <span className="browse">
+    Browse
+  </span>
+</div>
+```
+
+### format-message/inferno
+
+This module includes utilities for working specifically with Inferno when composing messages with embedded components. The API is identical to format-message/react, only it works with Inferno vdom nodes instead of React elements.
+
+### `formatChildren(message, elements)`
+
+Applies a message to a map of vdom nodes to produce a list of child nodes.
+
+Parameters
+
+- `message` is a pre-formatted string containing tokens marking the beginning and ending of nodes.
+- `elements` is an object with keys matching tokens in the message, and values of vdom elements to put message parts in.
+
 
 Example Messages
 ----------------

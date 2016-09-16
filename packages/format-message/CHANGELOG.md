@@ -12,6 +12,7 @@
     * `plural (value [, offset ], options [, locale ])`
     * `selectordinal (value [, offset ], options [, locale ])`
   * Allow `missingReplacement` to be a function
+  * Added format-message/react module
 
 ## 4.0.0
 
