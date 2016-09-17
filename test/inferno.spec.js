@@ -59,6 +59,22 @@ describe('inferno formatChildren', function () {
     )
   })
 
+  it('ignores leading and trailing space inside wrapper', function () {
+    var results = formatChildren('hello _ * big * __world__ _', {
+      '_': Inferno.createVNode().setTag('div'),
+      '__': Inferno.createVNode().setTag('em'),
+      '*': Inferno.createVNode().setTag('strong')
+    })
+    expect(results).to.deep.equal([
+      'hello ',
+      Inferno.createVNode().setTag('div').setChildren([
+        Inferno.createVNode().setTag('strong').setChildren('big'),
+        ' ',
+        Inferno.createVNode().setTag('em').setChildren('world')
+      ])
+    ])
+  })
+
   it('throws when wrapper tokens aren\'t nested properly', function () {
     expect(function () {
       formatChildren('__**_*deep**_*__', {

@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "babel-core": "^6.0.0",
-    "babel-plugin-extract-format-message": "^4.1.0",
+    "babel-plugin-extract-format-message": "^5.0.0",
     "babel-plugin-syntax-async-functions": "^6.0.14",
     "babel-plugin-syntax-async-generators": "^6.0.15",
     "babel-plugin-syntax-class-constructor-call": "^6.0.15",

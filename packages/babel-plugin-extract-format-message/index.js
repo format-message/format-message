@@ -2,6 +2,7 @@
 
 var fs = require('fs')
 var util = require('format-message-babel-util')
+var jsxUtil = require('format-message-babel-util/jsx')
 var generate = require('format-message-generate-id')
 var parse = require('format-message-parse')
 var print = require('format-message-print')
@@ -55,6 +56,26 @@ module.exports = function () {
     }
   }
 
+  function addMessage (path, state, message) {
+    var pattern = print(parse(message.default)) // pretty format
+    var id = message.id || generateId(state.opts.generateId, message.default)
+    var description = message.description
+
+    if (!messages[id]) {
+      messages[id] = { message: pattern }
+    } else if (messages[id].message !== pattern) {
+      throw path.buildCodeFrameError(
+        'Duplicate message id ' + JSON.stringify(id) +
+        ', previously defined as ' + JSON.stringify(messages[id].message),
+        RangeError
+      )
+    }
+
+    if (description && !messages[id].description) {
+      messages[id].description = description
+    }
+  }
+
   return {
     pre: function () {
       clearTimeout(timer)
@@ -76,24 +97,14 @@ module.exports = function () {
         if (!util.isFormatMessage(path.get('callee'))) return
         var message = util.getMessageDetails(path.get('arguments'))
         if (!message || !message.default) return
+        addMessage(path, state, message)
+      },
 
-        var pattern = print(parse(message.default)) // pretty format
-        var id = message.id || generateId(state.opts.generateId, message.default)
-        var description = message.description
-
-        if (!messages[id]) {
-          messages[id] = { message: pattern }
-        } else if (messages[id].message !== pattern) {
-          throw path.buildCodeFrameError(
-            'Duplicate message id ' + JSON.stringify(id) +
-            ', previously defined as ' + JSON.stringify(messages[id].message),
-            RangeError
-          )
-        }
-
-        if (description && !messages[id].description) {
-          messages[id].description = description
-        }
+      JSXElement: function (path, state) {
+        if (!jsxUtil.isTranslatableElement(path)) return
+        var message = jsxUtil.getElementMessageDetails(path)
+        if (!message || !message.default) return
+        addMessage(path, state, message)
       }
     }
   }

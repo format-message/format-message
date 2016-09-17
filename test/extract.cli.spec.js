@@ -251,4 +251,244 @@ describe('format-message extract', function () {
       }).stdin.end(input, 'utf8')
     })
   })
+
+  describe('translate="yes"', function () {
+    it('extracts messages from JSX', function (done) {
+      var input = '<div translate="yes">hello</div>'
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        stdout = stdout.toString('utf8')
+        var translations = JSON.parse(stdout)
+        expect(translations).to.eql({
+          hello_32e420db: { message: 'hello' }
+        })
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('ignores empty element', function (done) {
+      var input = '<div translate="yes"></div>'
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        stdout = stdout.toString('utf8')
+        var translations = JSON.parse(stdout)
+        expect(translations).to.eql({})
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('ignores element with no children', function (done) {
+      var input = '<div translate="yes" />'
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        stdout = stdout.toString('utf8')
+        var translations = JSON.parse(stdout)
+        expect(translations).to.eql({})
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('ignores elements without translate="yes"', function (done) {
+      var input = '<div>Untranslated</div>'
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        stdout = stdout.toString('utf8')
+        var translations = JSON.parse(stdout)
+        expect(translations).to.eql({})
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('treats child with translate="no" as opaque', function (done) {
+      var input = '<div translate="yes">hello <Place translate="no">Untranslated</Place></div>'
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        stdout = stdout.toString('utf8')
+        var translations = JSON.parse(stdout)
+        expect(translations).to.eql({
+          hello_place_e3c168ce: { message: 'hello { place }' }
+        })
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('treats child with translate="yes" as opaque', function (done) {
+      var input = '<div translate="yes">hello <Place translate="yes">world</Place></div>'
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        stdout = stdout.toString('utf8')
+        var translations = JSON.parse(stdout)
+        expect(translations).to.eql({
+          hello_place_e3c168ce: { message: 'hello { place }' },
+          world_3e83971e: { message: 'world' }
+        })
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('adds placeholders for expressions', function (done) {
+      var input = '<div translate="yes">hello {place}</div>'
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        stdout = stdout.toString('utf8')
+        var translations = JSON.parse(stdout)
+        expect(translations).to.eql({
+          hello_place_e3c168ce: { message: 'hello { place }' }
+        })
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('generates placeholder names for complex expressions', function (done) {
+      var input = '<div translate="yes">hello {place+time}</div>'
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        stdout = stdout.toString('utf8')
+        var translations = JSON.parse(stdout)
+        expect(translations).to.eql({
+          hello_place_time_23aa07ee: { message: 'hello { place_time }' }
+        })
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('generates placeholder for opaque child element', function (done) {
+      var input = '<div translate="yes">hello <span/></div>'
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        stdout = stdout.toString('utf8')
+        var translations = JSON.parse(stdout)
+        expect(translations).to.eql({
+          hello_span_b0e93035: { message: 'hello { span }' }
+        })
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('uses key for placeholder name', function (done) {
+      var input = '<div translate="yes">hello <span key="k" id="i" className="c" /></div>'
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        stdout = stdout.toString('utf8')
+        var translations = JSON.parse(stdout)
+        expect(translations).to.eql({
+          hello_k_888903ff: { message: 'hello { k }' }
+        })
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('uses id for placeholder name', function (done) {
+      var input = '<div translate="yes">hello <span id="i" className="c" /></div>'
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        stdout = stdout.toString('utf8')
+        var translations = JSON.parse(stdout)
+        expect(translations).to.eql({
+          hello_i_8b0dd791: { message: 'hello { i }' }
+        })
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('uses className for placeholder name', function (done) {
+      var input = '<div translate="yes">hello <span className="c" /></div>'
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        stdout = stdout.toString('utf8')
+        var translations = JSON.parse(stdout)
+        expect(translations).to.eql({
+          hello_c_869a5247: { message: 'hello { c }' }
+        })
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('uses tag name for placeholder name', function (done) {
+      var input = '<div translate="yes">hello <Dotted.Name /></div>'
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        stdout = stdout.toString('utf8')
+        var translations = JSON.parse(stdout)
+        expect(translations).to.eql({
+          hello_dotted_name_48bf3a2d: { message: 'hello { dotted_name }' }
+        })
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('generates wrapper token for child element with text', function (done) {
+      var input = '<div translate="yes">hello <b>world</b></div>'
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        stdout = stdout.toString('utf8')
+        var translations = JSON.parse(stdout)
+        expect(translations).to.eql({
+          hello_world_ba2ee887: { message: 'hello _world_' }
+        })
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('handles nested elements', function (done) {
+      var input = '<div translate="yes">hello <b><i>big</i> <em>world</em></b></div>'
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        stdout = stdout.toString('utf8')
+        var translations = JSON.parse(stdout)
+        expect(translations).to.eql({
+          hello_big_world_2e3facf2: { message: 'hello _*big* __world__ _' }
+        })
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('handles number, date, and time helpers', function (done) {
+      var input = 'import { number, date, time } from "format-message"\n' +
+        'export default <div translate="yes">Caught {number(count)} on {date(d, "short")} at {time(t)}</div>'
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        stdout = stdout.toString('utf8')
+        var translations = JSON.parse(stdout)
+        expect(translations).to.eql({
+          caught_count_number_on_d_date_short_at_t_time_4c96b100: {
+            message: 'Caught { count, number } on { d, date, short } at { t, time }'
+          }
+        })
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('handles select helpers', function (done) {
+      var input = 'const sel = require("format-message").select\n' +
+        'export default <div translate="yes">{sel(gender, { female:<i/>, male:<b>b</b>, other:"no" })}</div>'
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        stdout = stdout.toString('utf8')
+        var translations = JSON.parse(stdout)
+        expect(translations).to.eql({
+          gender_select_female_i_male_b_other_no_f64b284c: {
+            message: '{ gender, select,\n  female {{ i }}\n    male {_b_}\n   other {no}\n}'
+          }
+        })
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('handles plural & selectordinal helpers', function (done) {
+      var input = 'const { plural, selectordinal: o } = require("format-message")\n' +
+        'export default <div translate="yes">{plural(n, 3, { one:"1", other:"o" })}v{o(new Date().getDate(), { other:"" })}</div>'
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        stdout = stdout.toString('utf8')
+        var translations = JSON.parse(stdout)
+        expect(translations).to.eql({
+          n_plural_offset_3_one_1_other_o_v_new_date_get_dat_90dd7dec: {
+            message: '{ n, plural, offset:3\n    one {1}\n  other {o}\n}v{ new_date_get_date, selectordinal,\n  other {}\n}'
+          }
+        })
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+  })
 })

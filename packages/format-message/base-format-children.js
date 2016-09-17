@@ -19,22 +19,32 @@ module.exports = function formatChildren (applyChildren, message, wrappers) {
     for (var k = 0; k < kk; ++k) {
       var key = keys[k]
       if (message.slice(m, m + key.length) === key) {
-        if (last < m) {
-          current.push(message.slice(last, m))
-        }
-        last = m + key.length
-        m = last - 1 // offset next ++
-        if (currentKey === key) {
+        if (currentKey === key) { // end token
+          var end = m
+          if (message.slice(m - 1, m) === ' ') {
+            --end // skip trailing space inside tag
+          }
+          if (last < end) {
+            current.push(message.slice(last, end))
+          }
           var children = current
           current = stack.pop()
           currentKey = stack.pop()
           current.push(applyChildren(wrappers[key], children))
-        } else {
+        } else { // start token
+          if (last < m) {
+            current.push(message.slice(last, m))
+          }
           stack.push(currentKey)
           stack.push(current)
           currentKey = key
           current = []
+          if (message.slice(m + key.length, m + key.length + 1) === ' ') {
+            ++m // skip leading space inside tag
+          }
         }
+        last = m + key.length
+        m = last - 1 // offset next ++
         break
       }
     }

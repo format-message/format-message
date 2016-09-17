@@ -59,6 +59,22 @@ describe('react formatChildren', function () {
     )
   })
 
+  it('ignores leading and trailing space inside wrapper', function () {
+    var results = formatChildren('hello _ * big * __world__ _', {
+      '_': React.createElement('div'),
+      '__': React.createElement('em'),
+      '*': React.createElement('strong')
+    })
+    expect(results).to.deep.equal([
+      'hello ',
+      React.createElement('div', null,
+        React.createElement('strong', null, 'big'),
+        ' ',
+        React.createElement('em', null, 'world')
+      )
+    ])
+  })
+
   it('throws when wrapper tokens aren\'t nested properly', function () {
     expect(function () {
       formatChildren('__**_*deep**_*__', {
