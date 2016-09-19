@@ -13,7 +13,8 @@
   "dependencies": {
     "babel-core": "^6.1.2",
     "babylon": "^6.0.0",
-    "format-message-babel-util": "^4.1.0",
+    "format-message": "^5.0.0",
+    "format-message-babel-util": "^5.0.0",
     "format-message-generate-id": "^4.0.0",
     "format-message-parse": "^4.0.0",
     "lookup-closest-locale": "^4.0.0",

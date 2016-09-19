@@ -16,6 +16,16 @@ function hasTranslateAttribute (path, value) {
   )
 }
 
+exports.getTargetLocale = getTargetLocale
+function getTargetLocale (path, value) {
+  var lang = getAttribute(path, 'lang')
+  return (
+    lang &&
+    lang.isStringLiteral(value) &&
+    lang.node.value
+  )
+}
+
 exports.getAttribute = getAttribute
 function getAttribute (path, name) {
   if (!path.isJSXElement()) return
@@ -51,42 +61,62 @@ exports.getElementMessageDetails = getElementMessageDetails
 function getElementMessageDetails (path) {
   var i = 0
   var wrapperChars = '_*'
-  function nextToken () {
+  var indirectChars = '⬖⬗⬘⬙⬥⬦⬧⬨⬩⬪⬫' // misc diamonds unlikely to be in a normal message
+  var indirect = indirectChars.length
+  var wrappers = {}
+  function nextToken (path) {
     var char = wrapperChars[i % wrapperChars.length]
     var length = Math.ceil(++i / wrapperChars.length)
     var token = ''
     while (length--) token += char
+    wrappers[token] = path.node
     return token
   }
-  return { default: getMessageText(path, nextToken) }
+  nextToken.indirect = function (path) {
+    var char = indirectChars[indirect % indirectChars.length]
+    var length = Math.ceil(++indirect / indirectChars.length)
+    var token = ''
+    while (length--) token += char
+    wrappers[token] = path.node
+    return token
+  }
+
+  var parameters = {}
+  return {
+    default: getMessageText(path, nextToken, parameters),
+    wrappers: wrappers,
+    parameters: parameters
+  }
 }
 
 exports.getMessageText = getMessageText
-function getMessageText (path, nextToken) {
+function getMessageText (path, nextToken, parameters) {
   return path.get('children').reduce(function (message, child) {
     if (child.isJSXText()) {
       return message + child.node.value
     }
     if (child.isJSXExpressionContainer()) {
-      return message + getParameterText(child.get('expression'), nextToken)
+      return message + getParameterText(child.get('expression'), nextToken, parameters)
     }
     if (child.isJSXElement()) {
-      return message + getChildMessageText(child, nextToken)
+      return message + getChildMessageText(child, nextToken, parameters)
     }
     return message
   }, '')
 }
 
 exports.getParameterText = getParameterText
-function getParameterText (path, nextToken) {
+function getParameterText (path, nextToken, parameters) {
   if (path.isStringLiteral()) {
     return path.node.value
   }
-  var parameterText = getParameterFromHelper(path, nextToken)
+  var parameterText = getParameterFromHelper(path, nextToken, parameters)
   if (parameterText) {
     return parameterText
   }
-  return '{ ' + getCodeSlug(path) + ' }'
+  var name = getCodeSlug(path)
+  parameters[name] = path.node
+  return '{ ' + name + ' }'
 }
 
 exports.getCodeSlug = getCodeSlug
@@ -103,18 +133,25 @@ function getCodeSlug (path) {
 }
 
 exports.getChildMessageText = getChildMessageText
-function getChildMessageText (path, nextToken) {
+function getChildMessageText (path, nextToken, parameters) {
+  var token
   var children = path.get('children')
   var hasSubContent = (
     children && children.length > 0 &&
     !hasTranslateAttribute(path)
   )
   if (!hasSubContent) {
-    return '{ ' + getElementSlug(path) + ' }'
+    var name = getElementSlug(path)
+    token = nextToken.indirect(path)
+    parameters[name] = {
+      originalElement: path.node,
+      value: token + ' ' + token
+    }
+    return '{ ' + name + ' }'
   }
 
-  var token = nextToken()
-  var innerText = getMessageText(path, nextToken)
+  token = nextToken(path)
+  var innerText = getMessageText(path, nextToken, parameters)
   var pre = token
   var post = token
   if (pre.slice(-1) === innerText[0]) pre = pre + ' '
@@ -135,44 +172,48 @@ function getElementSlug (path) {
 }
 
 exports.getParameterFromHelper = getParameterFromHelper
-function getParameterFromHelper (path, nextToken) {
+function getParameterFromHelper (path, nextToken, parameters) {
   if (!path.isCallExpression()) return
   var name = getHelperFunctionName(path.get('callee'))
   if (!name) return
 
   var args = path.get('arguments')
   if (args.length < 1) return
-  var parameter = getCodeSlug(args[0]) + ', ' + name
+  var id = getCodeSlug(args[0])
+  var parameter = id + ', ' + name
 
   if (name === 'number' || name === 'date' || name === 'time') {
     if (args[1] && args[1].isStringLiteral()) {
       parameter += ', ' + args[1].node.value
     }
+    parameters[id] = args[0].node
     return '{ ' + parameter + ' }'
   }
 
   var options
   if (name === 'select') {
     if (args.length < 2) return
-    options = getOptionsFromObjectExpression(args[1], nextToken)
+    options = getOptionsFromObjectExpression(args[1], nextToken, parameters)
     if (!options) return
+    parameters[id] = args[0].node
     return '{ ' + parameter + ', ' + options + ' }'
   }
 
   if (name === 'plural' || name === 'selectordinal') {
     if (args.length < 2) return
     var hasOffset = args[1].isNumericLiteral()
-    options = getOptionsFromObjectExpression(args[hasOffset ? 2 : 1], nextToken)
+    options = getOptionsFromObjectExpression(args[hasOffset ? 2 : 1], nextToken, parameters)
     if (!options) return
     if (hasOffset) {
       options = 'offset:' + args[1].node.value + options
     }
+    parameters[id] = args[0].node
     return '{ ' + parameter + ', ' + options + ' }'
   }
 }
 
 exports.getOptionsFromObjectExpression = getOptionsFromObjectExpression
-function getOptionsFromObjectExpression (path, nextToken) {
+function getOptionsFromObjectExpression (path, nextToken, parameters) {
   if (!path.isObjectExpression()) return
   var options = ''
   var properties = path.get('properties')
@@ -183,7 +224,7 @@ function getOptionsFromObjectExpression (path, nextToken) {
     var valuePath = property.get('value')
     var value
     if (valuePath.isJSXElement()) {
-      value = getChildMessageText(valuePath, nextToken)
+      value = getChildMessageText(valuePath, nextToken, parameters)
     } else if (valuePath.isStringLiteral()) {
       value = valuePath.node.value
     }
