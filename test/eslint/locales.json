@@ -1,4 +1,4 @@
 {
-  "en": { "a": "a", "b": "b", "c": "{c}", "d": "d", "{k}":"{k}", "same":"same" },
-  "pt": { "a": "a1", "b": "b2", "c": "c3", "bad1": "{", "bad2": "{z}", "{k}":"{y}", "same":"same" }
+  "en": { "a": "a", "b": "b", "c": "{c}", "d": "d", "{k}":"{k}", "same":"same", "{i}":"{i}", "{o,select,other{o}}":"{o,select,other{o}}", "{o,plural,other{o}}":"{o,plural,other{o}}" },
+  "pt": { "a": "a1", "b": "b2", "c": "c3", "bad1": "{", "bad2": "{z}", "{k}":"{y}", "same":"same", "{i}":"{i}", "{o,select,other{o}}":"{o,select,other{o}}", "{o,plural,other{o}}":"{o,plural,other{o}}" }
 }
