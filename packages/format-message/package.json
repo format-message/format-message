@@ -1,6 +1,6 @@
 {
   "name": "format-message",
-  "version": "5.0.0-beta.0",
+  "version": "5.0.0-beta.1",
   "description": "Internationalize text, numbers, and dates using ICU Message Format",
   "author": "Andy VanWagoner <thetalecrafter@gmail.com> (https://thetalecrafter.com/)",
   "homepage": "https://github.com/format-message/format-message",

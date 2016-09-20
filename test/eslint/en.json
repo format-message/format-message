@@ -1,1 +1,1 @@
-{ "en": { "a": "a", "b": "b", "c": "{c}", "d": "d", "{ k }":"{ k }", "same":"same", "_*bad3*_":"_*bad3*_", "_*good*_":"_*good*_" } }
+{ "en": { "a": "a", "b": "b", "c": "{c}", "d": "d", "{ k }":"{ k }", "same":"same", "_*bad3*_":"_*bad3*_", "_*good*_":"_*good*_", "_*good { place_holder }*_":"_*good { place_holder }*_" } }

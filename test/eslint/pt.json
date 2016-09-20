@@ -1,1 +1,1 @@
-{ "pt": { "a": "a1", "b": "b2", "c": "c3", "bad1": "{", "bad2": "{z}", "{ k }":"{y}", "same":"same", "_*bad3*_":"_*malo3_*", "_*good*_":"_*good*_" } }
+{ "pt": { "a": "a1", "b": "b2", "c": "c3", "bad1": "{", "bad2": "{z}", "{ k }":"{y}", "same":"same", "_*bad3*_":"_*malo3_*", "_*good*_":"_*good*_", "_*good { place_holder }*_":"_*bom { place_holder }*_" } }

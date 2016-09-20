@@ -10,12 +10,17 @@ module.exports = function formatChildren (applyChildren, message, wrappers) {
   var stack = []
   var current = []
   var currentKey
+  var curlyDepth = 0
   var keys = Object.keys(wrappers || {}).sort(function (a, b) {
     return b.length - a.length // longest first
   })
   var kk = keys.length
   var last = 0
   for (var m = 0; m < mm; ++m) {
+    if (message[m] === '{') ++curlyDepth
+    if (message[m] === '}') --curlyDepth
+    if (curlyDepth % 2 === 1) continue
+
     for (var k = 0; k < kk; ++k) {
       var key = keys[k]
       if (message.slice(m, m + key.length) === key) {

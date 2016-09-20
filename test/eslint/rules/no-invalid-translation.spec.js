@@ -24,6 +24,11 @@ tester.run('no-invalid-translation', rule, {
       code: '<a translate="yes"><b><s>good</s></b></a>',
       settings: settings,
       parserOptions: { ecmaFeatures: { jsx: true } }
+    },
+    {
+      code: '<a translate="yes"><b><s>good { place_holder }</s></b></a>',
+      settings: settings,
+      parserOptions: { ecmaFeatures: { jsx: true } }
     }
   ],
   invalid: [
