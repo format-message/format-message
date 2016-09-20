@@ -42,7 +42,7 @@ function getAttributes (path) {
   var attrs = path.get('openingElement.attributes') || []
   var map = {}
   attrs.forEach(function (attribute) {
-    if (attribute.get('name').isJSXIdentifier()) {
+    if (attribute.get('name') && attribute.get('name').isJSXIdentifier()) {
       map[attribute.get('name').node.name] = attribute.get('value')
     }
   })
@@ -92,8 +92,8 @@ function getElementMessageDetails (path) {
 exports.getMessageText = getMessageText
 function getMessageText (path, nextToken, parameters) {
   return path.get('children').reduce(function (message, child) {
-    if (child.isJSXText()) {
-      return message + child.node.value
+    if (child.isJSXText() || child.isLiteral()) {
+      return message + cleanJSXText(String(child.node.value))
     }
     if (child.isJSXExpressionContainer()) {
       return message + getParameterText(child.get('expression'), nextToken, parameters)
@@ -105,10 +105,55 @@ function getMessageText (path, nextToken, parameters) {
   }, '')
 }
 
+exports.cleanJSXText = cleanJSXText
+function cleanJSXText (text) {
+  var lines = text.split(/\r\n|\n|\r/)
+  var lastNonEmptyLine = 0
+
+  for (var l = 0; l < lines.length; ++l) {
+    if (lines[l].match(/[^ \t]/)) {
+      lastNonEmptyLine = l
+    }
+  }
+
+  var clean = ''
+  for (var i = 0; i < lines.length; ++i) {
+    var line = lines[i]
+    var isFirstLine = i === 0
+    var isLastLine = i === lines.length - 1
+    var isLastNonEmptyLine = i === lastNonEmptyLine
+
+    // replace rendered whitespace tabs with spaces
+    var trimmedLine = line.replace(/\t/g, ' ')
+
+    // trim whitespace touching a newline
+    if (!isFirstLine) {
+      trimmedLine = trimmedLine.replace(/^[ ]+/, '')
+    }
+
+    // trim whitespace touching an endline
+    if (!isLastLine) {
+      trimmedLine = trimmedLine.replace(/[ ]+$/, '')
+    }
+
+    if (trimmedLine) {
+      if (!isLastNonEmptyLine) {
+        trimmedLine += ' '
+      }
+
+      clean += trimmedLine
+    }
+  }
+  return clean
+}
+
 exports.getParameterText = getParameterText
 function getParameterText (path, nextToken, parameters) {
   if (path.isStringLiteral()) {
     return path.node.value
+  }
+  if (path.isJSXEmptyExpression()) {
+    return ''
   }
   var parameterText = getParameterFromHelper(path, nextToken, parameters)
   if (parameterText) {

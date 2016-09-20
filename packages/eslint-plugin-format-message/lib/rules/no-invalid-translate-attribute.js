@@ -10,6 +10,7 @@ module.exports = {
         var attributes = node.openingElement.attributes || []
         attributes.forEach(function (attribute) {
           var isTranslate = (
+            attribute.name &&
             attribute.name.type === 'JSXIdentifier' &&
             attribute.name.name === 'translate'
           )

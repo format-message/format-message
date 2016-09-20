@@ -339,6 +339,19 @@ describe('format-message extract', function () {
       }).stdin.end(input, 'utf8')
     })
 
+    it('ignores empty expressions', function (done) {
+      var input = '<div translate="yes">hello {place}{}</div>'
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        stdout = stdout.toString('utf8')
+        var translations = JSON.parse(stdout)
+        expect(translations).to.eql({
+          hello_place_e3c168ce: { message: 'hello { place }' }
+        })
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
     it('generates placeholder names for complex expressions', function (done) {
       var input = '<div translate="yes">hello {place+time}</div>'
       exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
@@ -438,6 +451,21 @@ describe('format-message extract', function () {
         var translations = JSON.parse(stdout)
         expect(translations).to.eql({
           hello_big_world_2e3facf2: { message: 'hello _*big* __world__ _' }
+        })
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('normalizes white space', function (done) {
+      var input = '<div translate="yes">\n' +
+        '\thello\n{" "}\n\t<b>\n\t\t<i>\n\t\t\tbig\n' +
+        '\t\t</i>\n\t\t<em>world</em>\n\t</b>\n</div>'
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        stdout = stdout.toString('utf8')
+        var translations = JSON.parse(stdout)
+        expect(translations).to.eql({
+          hello_big_world_f1a4f0ac: { message: 'hello _*big*__world__ _' }
         })
         done(err)
       }).stdin.end(input, 'utf8')

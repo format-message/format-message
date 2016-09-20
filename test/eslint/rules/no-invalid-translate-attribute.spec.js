@@ -11,6 +11,10 @@ tester.run('no-invalid-translate-attribute', rule, {
       parserOptions: { ecmaFeatures: { jsx: true } }
     },
     {
+      code: '<a {...atts}></a>',
+      parserOptions: { ecmaVersion: 6, ecmaFeatures: { jsx: true } }
+    },
+    {
       code: '<a translate="yes"><b><s>good</s></b></a>',
       parserOptions: { ecmaFeatures: { jsx: true } }
     },

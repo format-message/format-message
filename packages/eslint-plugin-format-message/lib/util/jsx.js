@@ -33,6 +33,7 @@ function getAttribute (node, name) {
   var attrs = node.openingElement.attributes || []
   var attrNode = attrs.filter(function (attribute) {
     return (
+      attribute.name &&
       attribute.name.type === 'JSXIdentifier' &&
       attribute.name.name === name
     )
@@ -46,7 +47,7 @@ function getAttributes (node) {
   var attrs = node.openingElement.attributes || []
   var map = {}
   attrs.forEach(function (attribute) {
-    if (attribute.name.type === 'JSXIdentifier') {
+    if (attribute.name && attribute.name.type === 'JSXIdentifier') {
       map[attribute.name.name] = attribute.value
     }
   })
@@ -89,7 +90,7 @@ exports.getMessageText = getMessageText
 function getMessageText (context, node, nextToken, parameters) {
   return node.children.reduce(function (message, child) {
     if (child.type === 'JSXText' || child.type === 'Literal') {
-      return message + child.value
+      return message + cleanJSXText(String(child.value))
     }
     if (child.type === 'JSXExpressionContainer') {
       return message + getParameterText(context, child.expression, nextToken, parameters)
@@ -101,10 +102,55 @@ function getMessageText (context, node, nextToken, parameters) {
   }, '')
 }
 
+exports.cleanJSXText = cleanJSXText
+function cleanJSXText (text) {
+  var lines = text.split(/\r\n|\n|\r/)
+  var lastNonEmptyLine = 0
+
+  for (var l = 0; l < lines.length; ++l) {
+    if (lines[l].match(/[^ \t]/)) {
+      lastNonEmptyLine = l
+    }
+  }
+
+  var clean = ''
+  for (var i = 0; i < lines.length; ++i) {
+    var line = lines[i]
+    var isFirstLine = i === 0
+    var isLastLine = i === lines.length - 1
+    var isLastNonEmptyLine = i === lastNonEmptyLine
+
+    // replace rendered whitespace tabs with spaces
+    var trimmedLine = line.replace(/\t/g, ' ')
+
+    // trim whitespace touching a newline
+    if (!isFirstLine) {
+      trimmedLine = trimmedLine.replace(/^[ ]+/, '')
+    }
+
+    // trim whitespace touching an endline
+    if (!isLastLine) {
+      trimmedLine = trimmedLine.replace(/[ ]+$/, '')
+    }
+
+    if (trimmedLine) {
+      if (!isLastNonEmptyLine) {
+        trimmedLine += ' '
+      }
+
+      clean += trimmedLine
+    }
+  }
+  return clean
+}
+
 exports.getParameterText = getParameterText
 function getParameterText (context, node, nextToken, parameters) {
   if (node.type === 'Literal') {
     return String(node.value)
+  }
+  if (node.type === 'JSXEmptyExpression') {
+    return ''
   }
   var parameterText = getParameterFromHelper(context, node, nextToken, parameters)
   if (parameterText) {
