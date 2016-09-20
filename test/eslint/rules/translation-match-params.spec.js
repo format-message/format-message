@@ -16,7 +16,12 @@ tester.run('translation-match-params', rule, {
     { code: 'var f=require("format-message");f("}")' },
     { code: 'var f=require("format-message");f("a", null, "en")', settings: settings },
     { code: 'var f=require("format-message");f("b")', settings: settings },
-    { code: 'var f=require("format-message");f("d")', settings: settings }
+    { code: 'var f=require("format-message");f("d")', settings: settings },
+    {
+      code: '<a translate="yes">d</a>',
+      settings: settings,
+      parserOptions: { ecmaFeatures: { jsx: true } }
+    }
   ],
   invalid: [
     {
@@ -30,11 +35,20 @@ tester.run('translation-match-params', rule, {
       errors: [ { message: 'Translation for "bad2" in "pt" has extra "z" placeholder' } ]
     },
     {
-      code: 'var f=require("format-message");f("{k}", { k:"k" })',
+      code: 'var f=require("format-message");f("{ k }", { k:"k" })',
       settings: settings,
       errors: [
-        { message: 'Translation for "{k}" in "pt" is missing "k" placeholder' },
-        { message: 'Translation for "{k}" in "pt" has extra "y" placeholder' }
+        { message: 'Translation for "{ k }" in "pt" is missing "k" placeholder' },
+        { message: 'Translation for "{ k }" in "pt" has extra "y" placeholder' }
+      ]
+    },
+    {
+      code: '<a translate="yes">{ k }</a>',
+      settings: settings,
+      parserOptions: { ecmaFeatures: { jsx: true } },
+      errors: [
+        { message: 'Translation for "{ k }" in "pt" is missing "k" placeholder' },
+        { message: 'Translation for "{ k }" in "pt" has extra "y" placeholder' }
       ]
     }
   ]

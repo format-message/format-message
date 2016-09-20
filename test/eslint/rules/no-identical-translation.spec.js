@@ -17,7 +17,12 @@ tester.run('no-identical-translation', rule, {
     { code: 'var f=require("format-message");f("a", null, "en")', settings: settings },
     { code: 'var f=require("format-message");f("b")', settings: settings },
     { code: 'var f=require("format-message");f("d")', settings: settings },
-    { code: 'var f=require("format-message");f("{i}", { i:1 })', settings: settings }
+    { code: 'var f=require("format-message");f("{i}", { i:1 })', settings: settings },
+    {
+      code: '<a translate="yes">b</a>',
+      settings: settings,
+      parserOptions: { ecmaFeatures: { jsx: true } }
+    }
   ],
   invalid: [
     {
@@ -26,14 +31,32 @@ tester.run('no-identical-translation', rule, {
       errors: [ { message: 'Translation for "same" in "pt" is identical to original' } ]
     },
     {
-      code: 'var f=require("format-message");f("{o,select,other{o}}", {o:1})',
+      code: 'var f=require("format-message");f("{ o, select, \\nother {o} }", {o:1})',
       settings: settings,
-      errors: [ { message: 'Translation for "{o,select,other{o}}" in "pt" is identical to original' } ]
+      errors: [ { message: 'Translation for "{ o, select, \nother {o} }" in "pt" is identical to original' } ]
     },
     {
-      code: 'var f=require("format-message");f("{o,plural,other{o}}", {o:1})',
+      code: 'var f=require("format-message");f("{ o, plural, \\nother {o} }", {o:1})',
       settings: settings,
-      errors: [ { message: 'Translation for "{o,plural,other{o}}" in "pt" is identical to original' } ]
+      errors: [ { message: 'Translation for "{ o, plural, \nother {o} }" in "pt" is identical to original' } ]
+    },
+    {
+      code: '<a translate="yes">same</a>',
+      settings: settings,
+      parserOptions: { ecmaFeatures: { jsx: true } },
+      errors: [ { message: 'Translation for "same" in "pt" is identical to original' } ]
+    },
+    {
+      code: 'var f=require("format-message");exports = <a translate="yes">{f.select(o,{other:"o"})}</a>',
+      settings: settings,
+      parserOptions: { ecmaFeatures: { jsx: true } },
+      errors: [ { message: 'Translation for "{ o, select, \nother {o} }" in "pt" is identical to original' } ]
+    },
+    {
+      code: 'var p=require("format-message").plural;exports = <a translate="yes">{p(o,{other:"o"})}</a>',
+      settings: settings,
+      parserOptions: { ecmaFeatures: { jsx: true } },
+      errors: [ { message: 'Translation for "{ o, plural, \nother {o} }" in "pt" is identical to original' } ]
     }
   ]
 })

@@ -9,17 +9,39 @@ module.exports = {
     'no-invalid-translation': require('./lib/rules/no-invalid-translation'),
     'no-missing-params': require('./lib/rules/no-missing-params'),
     'no-missing-translation': require('./lib/rules/no-missing-translation'),
-    'translation-match-params': require('./lib/rules/translation-match-params')
+    'translation-match-params': require('./lib/rules/translation-match-params'),
+    'no-empty-jsx-message': require('./lib/rules/no-empty-jsx-message'),
+    'no-invalid-translate-attribute': require('./lib/rules/no-invalid-translate-attribute')
   },
 
-  rulesConfig: {
-    'literal-pattern': 1,
-    'literal-locale': 1,
-    'no-identical-translation': 1,
-    'no-invalid-pattern': 2,
-    'no-invalid-translation': 2,
-    'no-missing-params': [ 2, { allowNonLiteral: true } ],
-    'no-missing-translation': 1,
-    'translation-match-params': 2
+  configs: {
+    default: {
+      rules: {
+        'format-message/literal-pattern': 1,
+        'format-message/literal-locale': 1,
+        'format-message/no-identical-translation': 1,
+        'format-message/no-invalid-pattern': 2,
+        'format-message/no-invalid-translation': 2,
+        'format-message/no-missing-params': [ 2, { allowNonLiteral: true } ],
+        'format-message/no-missing-translation': 1,
+        'format-message/translation-match-params': 2,
+        'format-message/no-empty-jsx-message': 1,
+        'format-message/no-invalid-translate-attribute': 1
+      }
+    },
+    recommended: {
+      rules: {
+        'format-message/literal-pattern': 2,
+        'format-message/literal-locale': 2,
+        'format-message/no-identical-translation': 1,
+        'format-message/no-invalid-pattern': 2,
+        'format-message/no-invalid-translation': 2,
+        'format-message/no-missing-params': [ 2, { allowNonLiteral: true } ],
+        'format-message/no-missing-translation': 1,
+        'format-message/translation-match-params': 2,
+        'format-message/no-empty-jsx-message': 2,
+        'format-message/no-invalid-translate-attribute': 2
+      }
+    }
   }
 }

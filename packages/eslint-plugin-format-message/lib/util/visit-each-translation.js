@@ -1,6 +1,6 @@
 'use strict'
 
-var visitFormatCall = require('./visit-format-call')
+var visitMessage = require('./visit-message')
 var getSettings = require('./get-settings')
 var getCommonTranslationInfo = require('./get-common-translation-info')
 
@@ -8,8 +8,8 @@ module.exports = function visitEachTranslation (context, visitor) {
   var settings = getSettings(context)
   var translations = settings.translations || {}
 
-  return visitFormatCall(context, function (node) {
-    var info = getCommonTranslationInfo(node)
+  return visitMessage(context, function (node) {
+    var info = getCommonTranslationInfo(context, node)
     var pattern = info.pattern
     var patternAst = info.patternAst
     var patternParams = info.patternParams
@@ -29,7 +29,8 @@ module.exports = function visitEachTranslation (context, visitor) {
         locale: locale,
         pattern: pattern,
         patternParams: patternParams,
-        translation: translation
+        translation: translation,
+        wrappers: info.wrappers
       })
     })
   })

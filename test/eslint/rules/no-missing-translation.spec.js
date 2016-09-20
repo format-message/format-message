@@ -18,7 +18,12 @@ tester.run('no-missing-translation', rule, {
     { code: 'var f=require("format-message");f(foo);b()' },
     { code: 'var f=require("format-message");f("}")' },
     { code: 'var f=require("format-message");f("a", null, "en")', settings: settings },
-    { code: 'var f=require("format-message");f("b")', settings: settings }
+    { code: 'var f=require("format-message");f("b")', settings: settings },
+    {
+      code: '<a translate="yes">b</a>',
+      settings: settings,
+      parserOptions: { ecmaFeatures: { jsx: true } }
+    }
   ],
   invalid: [
     {
@@ -33,6 +38,12 @@ tester.run('no-missing-translation', rule, {
         { message: 'Translation for "e" in "en" is missing' },
         { message: 'Translation for "e" in "pt" is missing' }
       ]
+    },
+    {
+      code: '<a translate="yes">d</a>',
+      settings: settings,
+      parserOptions: { ecmaFeatures: { jsx: true } },
+      errors: [ { message: 'Translation for "d" in "pt" is missing' } ]
     }
   ]
 })

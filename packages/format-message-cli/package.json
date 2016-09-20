@@ -45,7 +45,7 @@
     "babel-plugin-transform-format-message": "^5.0.0",
     "commander": "^2.8.1",
     "eslint": "^3.5.0",
-    "eslint-plugin-format-message": "^4.2.0",
+    "eslint-plugin-format-message": "^5.0.0",
     "glob": "^5.0.2",
     "js-yaml": "^3.4.3",
     "mkdirp": "^0.5.1",

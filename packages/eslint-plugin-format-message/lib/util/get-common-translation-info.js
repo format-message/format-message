@@ -2,10 +2,28 @@
 
 var parse = require('format-message-parse')
 var astUtil = require('./ast')
+var jsxUtil = require('./jsx')
 var cache = {}
 
-module.exports = function getCommonTranslationInfo (node) {
+module.exports = function getCommonTranslationInfo (context, node) {
+  if (node.type === 'CallExpression') return getInfoFromCallExpression(node)
+  if (node.type === 'JSXElement') return getInfoFromJSXElement(context, node)
+  return {}
+}
+
+function getInfoFromCallExpression (node) {
   var message = astUtil.getMessageDetails(node.arguments)
+  var locale = astUtil.getTargetLocale(node.arguments)
+  return getInfo(message, locale)
+}
+
+function getInfoFromJSXElement (context, node) {
+  var message = jsxUtil.getElementMessageDetails(context, node)
+  var locale = jsxUtil.getTargetLocale(node)
+  return getInfo(message, locale)
+}
+
+function getInfo (message, locale) {
   if (!message.default) return {}
 
   var pattern = message.default
@@ -22,14 +40,12 @@ module.exports = function getCommonTranslationInfo (node) {
     }
   }
 
-  // if a literal locale is specified, only validate that locale
-  var locale = astUtil.getTargetLocale(node.arguments)
-
   return {
     id: message.id,
     pattern: info.pattern,
     patternAst: info.patternAst,
     patternParams: info.patternParams,
-    locale: locale
+    locale: locale,
+    wrappers: message.wrappers
   }
 }
