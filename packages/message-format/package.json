@@ -22,7 +22,7 @@
     "icu"
   ],
   "dependencies": {
-    "format-message-interpret": "^4.0.0",
-    "format-message-parse": "^4.0.0"
+    "format-message-interpret": "^4.0.1",
+    "format-message-parse": "^4.1.1"
   }
 }
