@@ -1,8 +1,7 @@
 'use strict'
 
 var fs = require('fs')
-var util = require('format-message-babel-util')
-var jsxUtil = require('format-message-babel-util/jsx')
+var util = require('format-message-estree-util')
 var generate = require('format-message-generate-id')
 var parse = require('format-message-parse')
 var print = require('format-message-print')
@@ -94,15 +93,17 @@ module.exports = function () {
       },
 
       CallExpression: function (path, state) {
-        if (!util.isFormatMessage(path.get('callee'))) return
-        var message = util.getMessageDetails(path.get('arguments'))
+        util.setBabelContext(path, state)
+        if (!util.isFormatMessage(path.node.callee)) return
+        var message = util.getMessageDetails(path.node.arguments)
         if (!message || !message.default) return
         addMessage(path, state, message)
       },
 
       JSXElement: function (path, state) {
-        if (!jsxUtil.isTranslatableElement(path)) return
-        var message = jsxUtil.getElementMessageDetails(path)
+        util.setBabelContext(path, state)
+        if (!util.isTranslatableElement(path.node)) return
+        var message = util.getElementMessageDetails(path.node)
         if (!message || !message.default) return
         addMessage(path, state, message)
       }

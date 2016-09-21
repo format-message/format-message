@@ -10,30 +10,30 @@ describe('inferno formatChildren', function () {
   })
 
   it('preserves tokens with no element mapping', function () {
-    var results = formatChildren('_simple_')
-    expect(results).to.equal('_simple_')
+    var results = formatChildren('<0>simple</0>')
+    expect(results).to.equal('<0>simple</0>')
   })
 
   it('returns a single child for wrapped messages', function () {
-    var results = formatChildren('_simple_', {
-      _: Inferno.createVNode().setTag('span')
-    })
+    var results = formatChildren('<0>simple</0>', [
+      Inferno.createVNode().setTag('span')
+    ])
     expect(results).to.deep.equal(Inferno.createVNode().setTag('span').setChildren('simple'))
   })
 
   it('preserves the props of the wrappers', function () {
-    var results = formatChildren('_simple_', {
-      _: Inferno.createVNode().setTag('span').setAttrs({ className: 'foo' })
-    })
+    var results = formatChildren('<0>simple</0>', [
+      Inferno.createVNode().setTag('span').setAttrs({ className: 'foo' })
+    ])
     expect(results).to.deep.equal(Inferno.createVNode().setTag('span').setAttrs({
       className: 'foo'
     }).setChildren('simple'))
   })
 
   it('returns an array of children when there are many', function () {
-    var results = formatChildren('it was *his* fault', {
-      '*': Inferno.createVNode().setTag('em')
-    })
+    var results = formatChildren('it was <0>his</0> fault', [
+      Inferno.createVNode().setTag('em')
+    ])
     expect(results).to.deep.equal([
       'it was ',
       Inferno.createVNode().setTag('em').setChildren('his'),
@@ -42,12 +42,12 @@ describe('inferno formatChildren', function () {
   })
 
   it('nests arbitrarily deep', function () {
-    var results = formatChildren('__**_*deep*_**__', {
-      '__': Inferno.createVNode().setTag('div'),
-      '_': Inferno.createVNode().setTag('em'),
-      '**': Inferno.createVNode().setTag('span'),
-      '*': Inferno.createVNode().setTag('strong')
-    })
+    var results = formatChildren('<0><1><2><3>deep</3></2></1></0>', [
+      Inferno.createVNode().setTag('div'),
+      Inferno.createVNode().setTag('span'),
+      Inferno.createVNode().setTag('em'),
+      Inferno.createVNode().setTag('strong')
+    ])
     expect(results).to.deep.equal(
       Inferno.createVNode().setTag('div').setChildren(
         Inferno.createVNode().setTag('span').setChildren(
@@ -59,42 +59,26 @@ describe('inferno formatChildren', function () {
     )
   })
 
-  it('ignores leading and trailing space inside wrapper', function () {
-    var results = formatChildren('hello _ * big * __world__ _', {
-      '_': Inferno.createVNode().setTag('div'),
-      '__': Inferno.createVNode().setTag('em'),
-      '*': Inferno.createVNode().setTag('strong')
-    })
-    expect(results).to.deep.equal([
-      'hello ',
-      Inferno.createVNode().setTag('div').setChildren([
-        Inferno.createVNode().setTag('strong').setChildren('big'),
-        ' ',
-        Inferno.createVNode().setTag('em').setChildren('world')
-      ])
-    ])
-  })
-
   it('throws when wrapper tokens aren\'t nested properly', function () {
     expect(function () {
-      formatChildren('__**_*deep**_*__', {
-        '__': Inferno.createVNode().setTag('div'),
-        '_': Inferno.createVNode().setTag('em'),
-        '**': Inferno.createVNode().setTag('span'),
-        '*': Inferno.createVNode().setTag('strong')
-      })
+      formatChildren('<0><1><2><3>deep</2></3></1></0>', [
+        Inferno.createVNode().setTag('div'),
+        Inferno.createVNode().setTag('em'),
+        Inferno.createVNode().setTag('span'),
+        Inferno.createVNode().setTag('strong')
+      ])
     }).to.throw()
   })
 
   it('throws when mappings aren\'t valid elements', function () {
     expect(function () {
-      formatChildren('_test_', { '_': 'span' })
+      formatChildren('<0>test</0>', [ 'span' ])
     }).to.throw()
     expect(function () {
-      formatChildren('_test_', { '_': {} })
+      formatChildren('<0>test</0>', [ {} ])
     }).to.throw()
     expect(function () {
-      formatChildren('_test_', { '_': null })
+      formatChildren('<0>test</0>', [ 1 ])
     }).to.throw()
   })
 })

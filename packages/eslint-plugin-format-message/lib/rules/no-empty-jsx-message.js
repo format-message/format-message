@@ -1,6 +1,6 @@
 'use strict'
 
-var jsxUtil = require('../util/jsx')
+var util = require('format-message-estree-util')
 var visitJSXMessage = require('../util/visit-jsx-message')
 
 module.exports = {
@@ -9,7 +9,7 @@ module.exports = {
   },
   create: function (context) {
     return visitJSXMessage(context, function (node) {
-      var message = jsxUtil.getElementMessageDetails(context, node)
+      var message = util.getElementMessageDetails(node)
       if (!message.default) {
         context.report(node, 'JSX element has nothing to translate')
       }

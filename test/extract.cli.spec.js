@@ -10,12 +10,12 @@ describe('format-message extract', function () {
     it('finds and extracts simple strings', function (done) {
       var input = 'import formatMessage from "format-message"\nformatMessage("hello")'
       exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
         expect(translations).to.eql({
           hello_32e420db: { message: 'hello' }
         })
-        expect(stderr.toString('utf8')).to.equal('')
         done(err)
       }).stdin.end(input, 'utf8')
     })
@@ -160,11 +160,11 @@ describe('format-message extract', function () {
       var filename = 'test/format.spec.js'
       var cmd = 'packages/format-message-cli/format-message extract ' + filename
       exec(cmd, function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
         expect(translations.x_arg_z_c6ca7a80.message)
           .to.equal('x{ arg }z')
-        expect(stderr.toString('utf8')).to.equal('')
         done(err)
       })
     })
@@ -173,11 +173,11 @@ describe('format-message extract', function () {
       var filename = 'test/setup.js test/format.spec.js'
       var cmd = 'packages/format-message-cli/format-message extract ' + filename
       exec(cmd, function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
         expect(translations.x_arg_z_c6ca7a80.message)
           .to.equal('x{ arg }z')
-        expect(stderr.toString('utf8')).to.equal('')
         done(err)
       })
     })
@@ -186,11 +186,11 @@ describe('format-message extract', function () {
       var filename = '"test/**/*.spec.js"'
       var cmd = 'packages/format-message-cli/format-message extract ' + filename
       exec(cmd, function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
         expect(translations.x_arg_z_c6ca7a80.message)
           .to.equal('x{ arg }z')
-        expect(stderr.toString('utf8')).to.equal('')
         done(err)
       })
     })
@@ -306,7 +306,7 @@ describe('format-message extract', function () {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
         expect(translations).to.eql({
-          hello_place_e3c168ce: { message: 'hello { place }' }
+          hello_0_6169517a: { message: 'hello <0/>' }
         })
         done(err)
       }).stdin.end(input, 'utf8')
@@ -319,7 +319,7 @@ describe('format-message extract', function () {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
         expect(translations).to.eql({
-          hello_place_e3c168ce: { message: 'hello { place }' },
+          hello_0_6169517a: { message: 'hello <0/>' },
           world_3e83971e: { message: 'world' }
         })
         done(err)
@@ -372,59 +372,7 @@ describe('format-message extract', function () {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
         expect(translations).to.eql({
-          hello_span_b0e93035: { message: 'hello { span }' }
-        })
-        done(err)
-      }).stdin.end(input, 'utf8')
-    })
-
-    it('uses key for placeholder name', function (done) {
-      var input = '<div translate="yes">hello <span key="k" id="i" className="c" /></div>'
-      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
-        expect(stderr.toString('utf8')).to.equal('')
-        stdout = stdout.toString('utf8')
-        var translations = JSON.parse(stdout)
-        expect(translations).to.eql({
-          hello_k_888903ff: { message: 'hello { k }' }
-        })
-        done(err)
-      }).stdin.end(input, 'utf8')
-    })
-
-    it('uses id for placeholder name', function (done) {
-      var input = '<div translate="yes">hello <span id="i" className="c" /></div>'
-      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
-        expect(stderr.toString('utf8')).to.equal('')
-        stdout = stdout.toString('utf8')
-        var translations = JSON.parse(stdout)
-        expect(translations).to.eql({
-          hello_i_8b0dd791: { message: 'hello { i }' }
-        })
-        done(err)
-      }).stdin.end(input, 'utf8')
-    })
-
-    it('uses className for placeholder name', function (done) {
-      var input = '<div translate="yes">hello <span className="c" /></div>'
-      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
-        expect(stderr.toString('utf8')).to.equal('')
-        stdout = stdout.toString('utf8')
-        var translations = JSON.parse(stdout)
-        expect(translations).to.eql({
-          hello_c_869a5247: { message: 'hello { c }' }
-        })
-        done(err)
-      }).stdin.end(input, 'utf8')
-    })
-
-    it('uses tag name for placeholder name', function (done) {
-      var input = '<div translate="yes">hello <Dotted.Name /></div>'
-      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
-        expect(stderr.toString('utf8')).to.equal('')
-        stdout = stdout.toString('utf8')
-        var translations = JSON.parse(stdout)
-        expect(translations).to.eql({
-          hello_dotted_name_48bf3a2d: { message: 'hello { dotted_name }' }
+          hello_0_6169517a: { message: 'hello <0/>' }
         })
         done(err)
       }).stdin.end(input, 'utf8')
@@ -437,7 +385,7 @@ describe('format-message extract', function () {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
         expect(translations).to.eql({
-          hello_world_ba2ee887: { message: 'hello _world_' }
+          hello_0_world_0_874c3940: { message: 'hello <0>world</0>' }
         })
         done(err)
       }).stdin.end(input, 'utf8')
@@ -450,7 +398,7 @@ describe('format-message extract', function () {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
         expect(translations).to.eql({
-          hello_big_world_2e3facf2: { message: 'hello _*big* __world__ _' }
+          hello_0_1_big_1_2_world_2_0_ea7be782: { message: 'hello <0><1>big</1> <2>world</2></0>' }
         })
         done(err)
       }).stdin.end(input, 'utf8')
@@ -465,7 +413,7 @@ describe('format-message extract', function () {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
         expect(translations).to.eql({
-          hello_big_world_f1a4f0ac: { message: 'hello _*big*__world__ _' }
+          hello_0_1_big_1_2_world_2_0_9e3f6e63: { message: 'hello <0><1>big</1><2>world</2></0>' }
         })
         done(err)
       }).stdin.end(input, 'utf8')
@@ -495,8 +443,8 @@ describe('format-message extract', function () {
         stdout = stdout.toString('utf8')
         var translations = JSON.parse(stdout)
         expect(translations).to.eql({
-          gender_select_female_i_male_b_other_no_f64b284c: {
-            message: '{ gender, select,\n  female {{ i }}\n    male {_b_}\n   other {no}\n}'
+          gender_select_female_0_male_1_b_1_other_no_b965b266: {
+            message: '{ gender, select,\n  female {<0/>}\n    male {<1>b</1>}\n   other {no}\n}'
           }
         })
         done(err)

@@ -4,17 +4,10 @@ var baseFormatChildren = require('format-message/base-format-children')
 var parse = require('format-message-parse')
 
 var formatChildren = baseFormatChildren.bind(null, function (element, children) {
+  if (!children) return '{ ' + element + ' }'
   return '{ ' + element + ', select, other {' + children.join('') + '} }'
 })
 
-/**
- * Turns this:
- *  [ "You have ", [ "numBananas", "plural", 0, {
- *       "=0": [ "no bananas" ],
- *      "one": [ "a banana" ],
- *    "other": [ [ '#' ], " bananas" ]
- *  } ], " for sale." ]
- **/
 module.exports = function inlineMessageJSX (state) {
   // insert wrappers as selects
   var wrappers = Object.keys(state.wrappers).reduce(function (object, key) {
@@ -128,7 +121,7 @@ function transformSelect (state, id, children) {
 
   // special case for handling wrappers
   if (id.slice(0, 2) === '$$' && state.wrappers[id.slice(2)]) {
-    var wrapper = state.wrappers[id.slice(2)]
+    var wrapper = state.wrappers[id.slice(2)].node
     return t.jSXElement(
       wrapper.openingElement,
       wrapper.closingElement,
@@ -165,5 +158,9 @@ function transformSelect (state, id, children) {
 }
 
 function transformArgument (state, id) {
-  return state.parameters[id].originalElement || state.parameters[id]
+  // special case elements
+  if (id.slice(0, 2) === '$$' && state.wrappers[id.slice(2)]) {
+    return state.wrappers[id.slice(2)].node
+  }
+  return state.parameters[id]
 }

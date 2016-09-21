@@ -1,8 +1,7 @@
 'use strict'
 
 var path = require('path')
-var util = require('format-message-babel-util')
-var jsxUtil = require('format-message-babel-util/jsx')
+var util = require('format-message-estree-util')
 var generate = require('format-message-generate-id')
 var parse = require('format-message-parse')
 var lookupClosestLocale = require('lookup-closest-locale')
@@ -35,8 +34,9 @@ module.exports = function (bbl) {
   return {
     visitor: {
       CallExpression: function (path, state) {
-        if (!util.isFormatMessage(path.get('callee'))) return
-        var args = path.get('arguments')
+        util.setBabelContext(path, state)
+        if (!util.isFormatMessage(path.node.callee)) return
+        var args = path.node.arguments
         var message = util.getMessageDetails(args)
         if (!message || !message.default) return
 
@@ -94,8 +94,9 @@ module.exports = function (bbl) {
         path.replaceWith(inlineMessage(locale, ast, path, t))
       },
       JSXElement: function (path, state) {
-        if (!jsxUtil.isTranslatableElement(path)) return
-        var message = jsxUtil.getElementMessageDetails(path)
+        util.setBabelContext(path, state)
+        if (!util.isTranslatableElement(path.node)) return
+        var message = util.getElementMessageDetails(path.node)
         if (!message || !message.default) return
 
         // all allowed options
@@ -153,17 +154,15 @@ module.exports = function (bbl) {
           if (hasWrappers) {
             formatMessageCall = t.callExpression(formatChildrenId, [
               formatMessageCall,
-              t.objectExpression(Object.keys(message.wrappers).map(function (name) {
-                var preserveChildren = name.charCodeAt(0) > 128 // indirect use non-ascii
-                if (!preserveChildren) {
-                  message.wrappers[name].openingElement.selfClosing = true
-                  message.wrappers[name].closingElement = null
-                  message.wrappers[name].children = []
+              t.arrayExpression(Object.keys(message.wrappers).map(function (name) {
+                var node = message.wrappers[name].node
+                var selfClosing = message.wrappers[name].options.selfClosing
+                if (!selfClosing) {
+                  node.openingElement.selfClosing = true
+                  node.closingElement = null
+                  node.children = []
                 }
-                return t.objectProperty(
-                  t.stringLiteral(name),
-                  message.wrappers[name]
-                )
+                return node
               }))
             ])
           }
@@ -177,7 +176,7 @@ module.exports = function (bbl) {
         }
 
         // get translation and replace if necessary
-        var locale = jsxUtil.getTargetLocale(path) || defaultLocale
+        var locale = util.getElementTargetLocale(path) || defaultLocale
         var pattern = translations
           ? translate(locale, id, translations)
           : message.default

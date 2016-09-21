@@ -41,7 +41,7 @@ tester.run('no-invalid-translation', rule, {
       code: '<a translate="yes"><b><s>bad3</s></b></a>',
       settings: settings,
       parserOptions: { ecmaFeatures: { jsx: true } },
-      errors: [ { message: 'Translation for "_*bad3*_" in "pt" is invalid: Wrapping tokens not properly nested in "_*malo3_*"' } ]
+      errors: [ { message: 'Translation for "<0><1>bad3</1></0>" in "pt" is invalid: Wrapping tags not properly nested in "<0><1>malo</0></1>"' } ]
     }
   ]
 })

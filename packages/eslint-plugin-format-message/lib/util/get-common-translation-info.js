@@ -1,8 +1,8 @@
 'use strict'
 
 var parse = require('format-message-parse')
-var astUtil = require('./ast')
-var jsxUtil = require('./jsx')
+var util = require('format-message-estree-util')
+var getParamsFromPatternAst = require('./get-params-from-pattern-ast')
 var cache = {}
 
 module.exports = function getCommonTranslationInfo (context, node) {
@@ -12,14 +12,14 @@ module.exports = function getCommonTranslationInfo (context, node) {
 }
 
 function getInfoFromCallExpression (node) {
-  var message = astUtil.getMessageDetails(node.arguments)
-  var locale = astUtil.getTargetLocale(node.arguments)
+  var message = util.getMessageDetails(node.arguments)
+  var locale = util.getTargetLocale(node.arguments)
   return getInfo(message, locale)
 }
 
 function getInfoFromJSXElement (context, node) {
-  var message = jsxUtil.getElementMessageDetails(context, node)
-  var locale = jsxUtil.getTargetLocale(node)
+  var message = util.getElementMessageDetails(node)
+  var locale = util.getTargetLocale(node)
   return getInfo(message, locale)
 }
 
@@ -36,7 +36,7 @@ function getInfo (message, locale) {
       // ignore parse error here
     }
     if (info.patternAst) {
-      info.patternParams = astUtil.getParamsFromPatternAst(info.patternAst)
+      info.patternParams = getParamsFromPatternAst(info.patternAst)
     }
   }
 

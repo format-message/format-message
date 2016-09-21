@@ -1,17 +1,18 @@
 'use strict'
 
-var astUtil = require('./ast')
-var jsxUtil = require('./jsx')
+var util = require('format-message-estree-util')
 
 module.exports = function visitMessage (context, visitor) {
   return {
     'CallExpression': function (node) {
-      if (astUtil.isFormatMessage(context, node.callee)) {
+      util.setESLintContext(context)
+      if (util.isFormatMessage(node.callee)) {
         visitor.apply(this, arguments)
       }
     },
     'JSXElement': function (node) {
-      if (jsxUtil.isTranslatableElement(node)) {
+      util.setESLintContext(context)
+      if (util.isTranslatableElement(node)) {
         visitor.apply(this, arguments)
       }
     }

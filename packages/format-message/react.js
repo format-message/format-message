@@ -7,7 +7,7 @@ function applyChildren (element, children) {
   if (process.env.NODE_ENV !== 'production' && !React.isValidElement(element)) {
     throw new Error(JSON.stringify(element) + ' is not a valid element')
   }
-  return React.cloneElement.apply(React, [ element, null ].concat(children))
+  return React.cloneElement.apply(React, [ element, null ].concat(children || []))
 }
 
 exports.formatChildren = formatChildren.bind(null, applyChildren)

@@ -10,30 +10,30 @@ describe('react formatChildren', function () {
   })
 
   it('preserves tokens with no element mapping', function () {
-    var results = formatChildren('_simple_')
-    expect(results).to.equal('_simple_')
+    var results = formatChildren('<0>simple</0>')
+    expect(results).to.equal('<0>simple</0>')
   })
 
   it('returns a single child for wrapped messages', function () {
-    var results = formatChildren('_simple_', {
-      _: React.createElement('span')
-    })
+    var results = formatChildren('<0>simple</0>', [
+      React.createElement('span')
+    ])
     expect(results).to.deep.equal(React.createElement('span', null, 'simple'))
   })
 
   it('preserves the props of the wrappers', function () {
-    var results = formatChildren('_simple_', {
-      _: React.createElement('span', { className: 'foo' })
-    })
+    var results = formatChildren('<0>simple</0>', [
+      React.createElement('span', { className: 'foo' })
+    ])
     expect(results).to.deep.equal(React.createElement('span', {
       className: 'foo'
     }, 'simple'))
   })
 
   it('returns an array of children when there are many', function () {
-    var results = formatChildren('it was *his* fault', {
-      '*': React.createElement('em')
-    })
+    var results = formatChildren('it was <0>his</0> fault', [
+      React.createElement('em')
+    ])
     expect(results).to.deep.equal([
       'it was ',
       React.createElement('em', null, 'his'),
@@ -42,12 +42,12 @@ describe('react formatChildren', function () {
   })
 
   it('nests arbitrarily deep', function () {
-    var results = formatChildren('__**_*deep*_**__', {
-      '__': React.createElement('div'),
-      '_': React.createElement('em'),
-      '**': React.createElement('span'),
-      '*': React.createElement('strong')
-    })
+    var results = formatChildren('<0><1><2><3>deep</3></2></1></0>', [
+      React.createElement('div'),
+      React.createElement('span'),
+      React.createElement('em'),
+      React.createElement('strong')
+    ])
     expect(results).to.deep.equal(
       React.createElement('div', null,
         React.createElement('span', null,
@@ -59,42 +59,26 @@ describe('react formatChildren', function () {
     )
   })
 
-  it('ignores leading and trailing space inside wrapper', function () {
-    var results = formatChildren('hello _ * big * __world__ _', {
-      '_': React.createElement('div'),
-      '__': React.createElement('em'),
-      '*': React.createElement('strong')
-    })
-    expect(results).to.deep.equal([
-      'hello ',
-      React.createElement('div', null,
-        React.createElement('strong', null, 'big'),
-        ' ',
-        React.createElement('em', null, 'world')
-      )
-    ])
-  })
-
   it('throws when wrapper tokens aren\'t nested properly', function () {
     expect(function () {
-      formatChildren('__**_*deep**_*__', {
-        '__': React.createElement('div'),
-        '_': React.createElement('em'),
-        '**': React.createElement('span'),
-        '*': React.createElement('strong')
-      })
+      formatChildren('<0><1><2><3>deep</2></3></1></0>', [
+        React.createElement('div'),
+        React.createElement('em'),
+        React.createElement('span'),
+        React.createElement('strong')
+      ])
     }).to.throw()
   })
 
   it('throws when mappings aren\'t valid elements', function () {
     expect(function () {
-      formatChildren('_test_', { '_': 'span' })
+      formatChildren('<0>test</0>', [ 'span' ])
     }).to.throw()
     expect(function () {
-      formatChildren('_test_', { '_': {} })
+      formatChildren('<0>test</0>', [ {} ])
     }).to.throw()
     expect(function () {
-      formatChildren('_test_', { '_': null })
+      formatChildren('<0>test</0>', [ 1 ])
     }).to.throw()
   })
 })
