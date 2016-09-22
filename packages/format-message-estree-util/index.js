@@ -102,6 +102,7 @@ exports = module.exports = {
       (
         binding.node.type === 'VariableDeclarator' &&
         binding.node.id.type === 'Identifier' &&
+        binding.node.init &&
         this.isRequireFormatMessage(binding.node.init)
       )
     )
