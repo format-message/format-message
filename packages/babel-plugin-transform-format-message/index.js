@@ -56,7 +56,7 @@ module.exports = function (bbl) {
 
         // just add the generated id and remove description and other metadata
         if (!shouldInline) {
-          path.get('arguments')[0].replaceWith(t.objectExpression([
+          path.get('arguments.0').replaceWith(t.objectExpression([
             t.objectProperty(
               t.identifier('id'),
               t.stringLiteral(id)
