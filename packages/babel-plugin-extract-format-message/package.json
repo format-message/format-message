@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-extract-format-message",
-  "version": "5.0.0-beta.6",
+  "version": "5.0.0-beta.8",
   "description": "Generate a message id from the default message pattern",
   "author": "Andy VanWagoner <thetalecrafter@gmail.com> (https://thetalecrafter.com/)",
   "homepage": "https://github.com/format-message/format-message",
@@ -11,10 +11,10 @@
     "format-message"
   ],
   "dependencies": {
-    "format-message-estree-util": "^5.0.0-beta.6",
-    "format-message-generate-id": "^4.0.1",
-    "format-message-parse": "^4.1.1",
-    "format-message-print": "^4.0.1"
+    "format-message-estree-util": "^5.0.0-beta.8",
+    "format-message-generate-id": "^5.0.0-beta.8",
+    "format-message-parse": "^5.0.0-beta.8",
+    "format-message-print": "^5.0.0-beta.8"
   },
   "peerDependencies": {
     "babel-core": "^6.0.0"

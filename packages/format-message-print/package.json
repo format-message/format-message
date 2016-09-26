@@ -1,6 +1,6 @@
 {
   "name": "format-message-print",
-  "version": "4.0.1",
+  "version": "5.0.0-beta.8",
   "description": "Pretty print compact message format ast",
   "author": "Andy VanWagoner <thetalecrafter@gmail.com> (https://thetalecrafter.com/)",
   "homepage": "https://github.com/format-message/format-message",
