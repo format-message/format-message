@@ -55,7 +55,7 @@ formatMessage.setup({
 })
 ```
 
-Formatting `number`, `date`, and `time` arguments relies on the ECMAScript Internationalization API (`Intl`). If you are in an environment missing this API ([like node <= 0.12, IE < 11, or Safari][caniuse-intl]) you'll want to use a [polyfill][intl]. Otherwise formatting falls back on `toLocaleString` methods, which are most likely just aliases for `toString`.
+Formatting `number`, `date`, and `time` arguments relies on the ECMAScript Internationalization API (`Intl`). If you are in an environment missing this API ([like node <= 0.12, IE < 11, or Safari < 10][caniuse-intl]) you'll want to use a [polyfill][intl]. Otherwise an error will be thrown when trying to format these arguments.
 
 
 Format Overview

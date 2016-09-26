@@ -8,9 +8,6 @@ var plurals = require('format-message-interpret/plurals')
 var lookupClosestLocale = require('lookup-closest-locale')
 var formats = require('format-message-formats')
 
-var number = formats.number
-var date = formats.date
-var time = formats.time
 var cache = {}
 
 var currentLocale = 'en'
@@ -69,9 +66,9 @@ exports.setup = function setup (opt) {
   if ('missingReplacement' in opt) missingReplacement = opt.missingReplacement
   if (opt.missingTranslation) missingTranslation = opt.missingTranslation
   if (opt.formats) {
-    if (opt.formats.number) assign(number, opt.formats.number)
-    if (opt.formats.date) assign(date, opt.formats.date)
-    if (opt.formats.time) assign(time, opt.formats.time)
+    if (opt.formats.number) assign(formats.number, opt.formats.number)
+    if (opt.formats.date) assign(formats.date, opt.formats.date)
+    if (opt.formats.time) assign(formats.time, opt.formats.time)
   }
   return {
     locale: currentLocale,
@@ -79,45 +76,24 @@ exports.setup = function setup (opt) {
     generateId: generateId,
     missingReplacement: missingReplacement,
     missingTranslation: missingTranslation,
-    formats: { number: number, date: date, time: time }
+    formats: formats
   }
 }
 
-exports.number = function (value, style, locale) {
+function helper (type, value, style, locale) {
   locale = locale || currentLocale
-  var options = number[style] || number.decimal
-  if (typeof Intl === 'undefined') {
-    return Number(value).toLocaleString(locale, options)
-  }
+  var options = formats[type][style] || formats[type].default
   var cache = options.cache || (options.cache = {})
-  var format = cache[locale] ||
-    (cache[locale] = new Intl.NumberFormat(locale, options).format)
+  var format = cache[locale] || (cache[locale] = type === 'number'
+    ? Intl.NumberFormat(locale, options).format
+    : Intl.DateTimeFormat(locale, options).format
+  )
   return format(value)
 }
 
-exports.date = function (value, style, locale) {
-  locale = locale || currentLocale
-  var options = date[style] || date.medium
-  if (typeof Intl === 'undefined') {
-    return new Date(value).toLocaleDateString(locale, options)
-  }
-  var cache = options.cache || (options.cache = {})
-  var format = cache[locale] ||
-    (cache[locale] = new Intl.DateTimeFormat(locale, options).format)
-  return format(value)
-}
-
-exports.time = function (value, style, locale) {
-  locale = locale || currentLocale
-  var options = time[style] || time.medium
-  if (typeof Intl === 'undefined') {
-    return new Date(value).toLocaleTimeString(locale, options)
-  }
-  var cache = options.cache || (options.cache = {})
-  var format = cache[locale] ||
-    (cache[locale] = new Intl.DateTimeFormat(locale, options).format)
-  return format(value)
-}
+exports.number = helper.bind(null, 'number')
+exports.date = helper.bind(null, 'date')
+exports.time = helper.bind(null, 'time')
 
 exports.select = function (value, options) {
   return options[value] || options.other

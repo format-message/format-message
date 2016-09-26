@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.0.0
+
+This only updated the dependencies and bumped the version to match related
+libraries.
+
+* **Breaking Change**
+  * The fallback for missing Intl was removed from `format-message-interpret`.
+
 ## 2.0.0
 
 * **Spec Compliancy**

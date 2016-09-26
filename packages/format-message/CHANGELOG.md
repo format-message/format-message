@@ -13,6 +13,8 @@
     * `selectordinal (value [, offset ], options [, locale ])`
   * Allow `missingReplacement` to be a function
   * Added format-message/react module
+* **Breaking Change**
+  * format-message relies on Intl APIs for date an number formatting, if using in an environment without that API, you will need to use the Intl.js polyfill.
 
 ## 4.0.0
 
