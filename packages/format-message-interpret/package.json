@@ -11,7 +11,7 @@
     "format-message"
   ],
   "dependencies": {
-    "format-message-formats": "^4.0.0",
+    "format-message-formats": "^5.0.0-beta.9",
     "lookup-closest-locale": "^5.0.0-beta.9"
   }
 }
