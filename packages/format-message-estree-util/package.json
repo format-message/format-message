@@ -1,6 +1,6 @@
 {
   "name": "format-message-estree-util",
-  "version": "5.0.0-beta.8",
+  "version": "5.0.0-beta.9",
   "description": "Utility functions for format-message use in ECMAScript ASTs",
   "author": "Andy VanWagoner <thetalecrafter@gmail.com> (https://thetalecrafter.com/)",
   "homepage": "https://github.com/format-message/format-message",

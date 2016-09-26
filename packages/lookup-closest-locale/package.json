@@ -1,6 +1,6 @@
 {
   "name": "lookup-closest-locale",
-  "version": "5.0.0-beta.8",
+  "version": "5.0.0-beta.9",
   "description": "Lookup the closest locale from among object keys",
   "author": "Andy VanWagoner <thetalecrafter@gmail.com> (https://thetalecrafter.com/)",
   "homepage": "https://github.com/format-message/format-message",
