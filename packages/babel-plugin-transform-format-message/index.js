@@ -209,6 +209,21 @@ module.exports = function (bbl) {
           path.node.closingElement,
           inlineMessageJSX(message)
         ))
+      },
+      Program: {
+        exit: function (path, state) {
+          path.scope.crawl()
+          path.traverse({
+            ImportDeclaration: function (path, state) {
+              if (!path.get('source').isStringLiteral({ value: 'format-message' })) return
+              var isReferenced = path.node.specifiers.some(function (specifier) {
+                var binding = path.scope.getBinding(specifier.local.name)
+                return binding.referenced
+              })
+              if (!isReferenced) path.remove()
+            }
+          }, state)
+        }
       }
     }
   }

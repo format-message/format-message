@@ -2,6 +2,8 @@
 
 var baseFormatChildren = require('format-message/base-format-children')
 var parse = require('format-message-parse')
+var formats = require('format-message-formats')
+var addHelper = require('./inline-helpers').addHelper
 
 var formatChildren = baseFormatChildren.bind(null, function (element, children) {
   if (!children) return '{ ' + element + ' }'
@@ -78,6 +80,10 @@ function transformNumber (state, id, offset, style) {
   if (offset) {
     value = t.binaryExpression('-', value, t.numericLiteral(offset))
   }
+  if (!style || formats.number[style]) {
+    var callee = addHelper(state, 'number', style, state.locale)
+    return t.callExpression(callee, [ value ])
+  }
   var args = [
     value,
     t.stringLiteral(style || ''),
@@ -89,6 +95,10 @@ function transformNumber (state, id, offset, style) {
 
 function transformDateTime (state, id, type, style) {
   var t = state.t
+  if (!style || formats[type][style]) {
+    var callee = addHelper(state, type, style, state.locale)
+    return t.callExpression(callee, [ transformArgument(state, id) ])
+  }
   var args = [
     transformArgument(state, id),
     t.stringLiteral(style || ''),

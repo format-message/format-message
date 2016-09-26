@@ -15,6 +15,7 @@
     "babylon": "^6.0.0",
     "format-message": "^5.0.0-beta.3",
     "format-message-estree-util": "^5.0.0-beta.6",
+    "format-message-formats": "^5.0.0-beta.0",
     "format-message-generate-id": "^4.0.1",
     "format-message-parse": "^4.1.1",
     "lookup-closest-locale": "^4.0.0",
