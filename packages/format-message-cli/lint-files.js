@@ -18,16 +18,7 @@ module.exports = function extractFiles (files, options) {
         sourceType: 'module'
       },
       plugins: [ 'format-message' ],
-      rules: {
-        'format-message/literal-locale': 1,
-        'format-message/literal-pattern': 1,
-        'format-message/no-identical-translation': 1,
-        'format-message/no-invalid-pattern': 2,
-        'format-message/no-invalid-translation': 2,
-        'format-message/no-missing-params': [ 2, { 'allowNonLiteral': true } ],
-        'format-message/no-missing-translation': 1,
-        'format-message/translation-match-params': 2
-      },
+      extends: [ 'plugin:format-message/default' ],
       settings: {
         'format-message': {
           sourceLocale: options.locale,

@@ -45,7 +45,7 @@ API
 
 ### `print(pattern)`
 
-Generate a string from an ast
+Generate a string from an ast. The output is a canonical version of the pattern.
 
 
 License

@@ -1,13 +1,5 @@
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="82" height="82">
   <style>
-    @-webkit-keyframes blink {
-      0%, 98%, 100% {
-        -webkit-transform: scaleY(1);
-      }
-      99% {
-        -webkit-transform: scaleY(0);
-      }
-    }
     @keyframes blink {
       0%, 98%, 100% {
         transform: scaleY(1);
@@ -17,9 +9,7 @@
       }
     }
     #e {
-      -webkit-transform-origin: 0 36px;
       transform-origin: 0 36px;
-      -webkit-animation: blink 10s ease infinite;
       animation: blink 10s ease infinite;
     }
   </style>

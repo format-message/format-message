@@ -19,13 +19,29 @@ tester.run('no-invalid-translation', rule, {
     { code: 'var f=require("format-message");f("}")' },
     { code: 'var f=require("format-message");f("a", null, "en")', settings: settings },
     { code: 'var f=require("format-message");f("b")', settings: settings },
-    { code: 'var f=require("format-message");f("d")', settings: settings }
+    { code: 'var f=require("format-message");f("d")', settings: settings },
+    {
+      code: '<a translate="yes"><b><s>good</s></b></a>',
+      settings: settings,
+      parserOptions: { ecmaFeatures: { jsx: true } }
+    },
+    {
+      code: '<a translate="yes"><b><s>good { place_holder }</s></b></a>',
+      settings: settings,
+      parserOptions: { ecmaFeatures: { jsx: true } }
+    }
   ],
   invalid: [
     {
       code: 'var f=require("format-message");f("bad1")',
       settings: settings,
       errors: [ { message: 'Translation for "bad1" in "pt" is invalid: Expected argument id but end of input found in {' } ]
+    },
+    {
+      code: '<a translate="yes"><b><s>bad3</s></b></a>',
+      settings: settings,
+      parserOptions: { ecmaFeatures: { jsx: true } },
+      errors: [ { message: 'Translation for "<0><1>bad3</1></0>" in "pt" is invalid: Wrapping tags not properly nested in "<0><1>malo</0></1>"' } ]
     }
   ]
 })

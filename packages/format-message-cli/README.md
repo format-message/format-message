@@ -79,6 +79,7 @@ The `--inline` flag changes the behavior to inline one particular translation, a
     -e, --missing-translation [behavior]  behavior when --translations is specified, but a translated pattern is missing (error | warning | ignore) [error]
     -m, --missing-replacement [pattern]   pattern to inline when a translated pattern is missing, defaults to the source pattern
     -i, --inline                          inline the translation for the specified locale
+    -j, --jsx-target                      use helpers for the target framework [react]
     --source-maps-inline                  append sourceMappingURL comment to bottom of code
     -s, --source-maps                     save source map alongside the compiled code
     -f, --filename [filename]             filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]

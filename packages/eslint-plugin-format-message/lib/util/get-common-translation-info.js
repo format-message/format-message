@@ -1,11 +1,29 @@
 'use strict'
 
 var parse = require('format-message-parse')
-var astUtil = require('./ast')
+var util = require('format-message-estree-util')
+var getParamsFromPatternAst = require('./get-params-from-pattern-ast')
 var cache = {}
 
-module.exports = function getCommonTranslationInfo (node) {
-  var message = astUtil.getMessageDetails(node.arguments)
+module.exports = function getCommonTranslationInfo (context, node) {
+  if (node.type === 'CallExpression') return getInfoFromCallExpression(node)
+  if (node.type === 'JSXElement') return getInfoFromJSXElement(context, node)
+  return {}
+}
+
+function getInfoFromCallExpression (node) {
+  var message = util.getMessageDetails(node.arguments)
+  var locale = util.getTargetLocale(node.arguments)
+  return getInfo(message, locale)
+}
+
+function getInfoFromJSXElement (context, node) {
+  var message = util.getElementMessageDetails(node)
+  var locale = util.getTargetLocale(node)
+  return getInfo(message, locale)
+}
+
+function getInfo (message, locale) {
   if (!message.default) return {}
 
   var pattern = message.default
@@ -18,18 +36,16 @@ module.exports = function getCommonTranslationInfo (node) {
       // ignore parse error here
     }
     if (info.patternAst) {
-      info.patternParams = astUtil.getParamsFromPatternAst(info.patternAst)
+      info.patternParams = getParamsFromPatternAst(info.patternAst)
     }
   }
-
-  // if a literal locale is specified, only validate that locale
-  var locale = astUtil.getTargetLocale(node.arguments)
 
   return {
     id: message.id,
     pattern: info.pattern,
     patternAst: info.patternAst,
     patternParams: info.patternParams,
-    locale: locale
+    locale: locale,
+    wrappers: message.wrappers
   }
 }

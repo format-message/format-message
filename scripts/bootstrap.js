@@ -101,15 +101,9 @@ async.parallelLimit(packages.map(function (pack) {
           rimraf(link.dest, function (err) {
             if (err) return done(err)
 
-            fs.mkdir(link.dest, function (err) {
-              if (err) return done(err)
-
-              fs.writeFile(
-                path.join(link.dest, 'index.js'),
-                'module.exports = require(' + JSON.stringify(link.src) + ')',
-                done
-              )
-            })
+            child.exec('ln -s ' + link.src + ' ' + link.dest, {
+              cwd: pack.path
+            }, done)
           })
         }, done)
       })

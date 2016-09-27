@@ -16,8 +16,8 @@ Quick Examples
 By default, the passed in string is parsed and formatted.
 
 ```js
-var formatMessage = require('format-message');
-var message = formatMessage('Hello { place }!', { place: 'World' });
+var formatMessage = require('format-message')
+var message = formatMessage('Hello { place }!', { place: 'World' })
 ```
 
 You can pass an object to provide more information about a message.
@@ -55,7 +55,7 @@ formatMessage.setup({
 })
 ```
 
-Formatting `number`, `date`, and `time` arguments relies on the ECMAScript Internationalization API (`Intl`). If you are in an environment missing this API ([like node <= 0.12, IE < 11, or Safari][caniuse-intl]) you'll want to use a [polyfill][intl]. Otherwise formatting falls back on `toLocaleString` methods, which are most likely just aliases for `toString`.
+Formatting `number`, `date`, and `time` arguments relies on the ECMAScript Internationalization API (`Intl`). If you are in an environment missing this API ([like node <= 0.12, IE < 11, or Safari < 10][caniuse-intl]) you'll want to use a [polyfill][intl]. Otherwise an error will be thrown when trying to format these arguments.
 
 
 Format Overview
@@ -102,7 +102,7 @@ Parameters
 
 ### `formatMessage.setup(options)`
 
-Configure `formatMessage` behavior for subsequent calls. This should be called before any code that uses `formatMessage`.
+Configure `formatMessage` behavior for subsequent calls. This should be called before any code that uses `formatMessage`. Returns an object containing the current options.
 
 Parameters
 
@@ -113,16 +113,129 @@ Parameters
     - `defaultPattern` is the default message pattern.
     - This function must return a string id.
     - The [`format-message-generate-id`][format-message-generate-id] module has a few functions you can use if you don't want to use your own.
-  - `missingReplacement` is a string that will be used when a message translation isn't found. If null or not specified, then the default message is used.
+  - `missingReplacement` is a string or function that returns a string that will be used when a message translation isn't found. If a function, it will be called with `(pattern, id, locale)` parameters to get the replacement. If null or not specified, then the default message is used.
   - `missingTranslation` is one of `"ignore"`, `"warning"`, `"error"`. By default it is `"warning"`, and missing translations cause a console warning. If `"error"`, an error is thrown.
   - `formats` is an object containing objects that define placeholder styles `{ name, type, style }`:
     - `number` is an object containing number format styles to add. Each property name can be used afterwards as a style name for a number placeholder. The value of each property is an object that will be passed to an [`Intl.NumberFormat`][mdn-intl-numberformat] constructor as the second argument.
     - `date` is an object containing date format styles to add. Each property name can be used afterwards as a style name for a date placeholder. The value of each property is an object that will be passed to an [`Intl.DateTimeFormat`][mdn-intl-datetimeformat] constructor as the second argument.
     - `time` is an object containing time format styles to add. Each property name can be used afterwards as a style name for a time placeholder. The value of each property is an object that will be passed to an [`Intl.DateTimeFormat`][mdn-intl-datetimeformat] constructor as the second argument.
 
-### internal apis
+### Localization apis
 
-`formatMessage.number`, `formatMessage.date`, and `formatMessage.time` are used internally and are not intended for external use. If you want to just format numbers and dates, you can use the `Intl` APIs directly.
+format-message also provides a few extra functions to simplify localizing (but not translating) data. These mostly just pass through to `Intl` APIs.
+
+```js
+import { number, date, time, select, plural, selectordinal } from 'format-message'
+// or
+var { number, date, time, select, plural, selectordinal } = require('format-message')
+```
+
+### `number(value [, style [, locale ]])`
+
+Convert a number to a localized string.
+
+Parameters
+
+- `value` is the number to format.
+- `style` is the optional string name of a style (decimal, integer, percent, etc). Defaults to `'decimal'`.
+- `locale` is the optional BCP 47 language tag. If not passed, the locale passed to `setup()` will be used.
+
+### `date(value [, style [, locale ]])`
+
+Convert a date to a localized date string.
+
+Parameters
+
+- `value` is the date to format.
+- `style` is the optional string name of a style (short, medium, long, full, etc). Defaults to `'medium'`.
+- `locale` is the optional BCP 47 language tag. If not passed, the locale passed to `setup()` will be used.
+
+### `time(value [, style [, locale ]])`
+
+Convert a date to a localized time string.
+
+Parameters
+
+- `value` is the date to format.
+- `style` is the optional string name of a style (short, medium, long, full, etc). Defaults to `'medium'`.
+- `locale` is the optional BCP 47 language tag. If not passed, the locale passed to `setup()` will be used.
+
+### `select(value, options)`
+
+Select an option by exact text match. (This is not locale-specific.)
+
+Parameters
+
+- `value` is the string to match.
+- `options` is an object whose keys are candidates for matching `value`. The value of the property with the matching key is returned, or the `other` property's value. The object should always have an `other` property.
+
+### `plural(value [, offset ], options [, locale ])` and `selectordinal(value [, offset ], options [, locale ])`
+
+Select an option by matching plural rules. `plural` matches rules for cardinal numbers, and `selectordinal` matches rules for ordinal numbers. These function very similar to the parameters `plural` and `selectordinal` embedded in a message.
+
+Parameters
+
+- `value` is the number to match against plural rules.
+- `offset` is an optional number subtracted from value before matching keyword plural rules. The offset is not applied when matching exact number options.
+- `options` is an object whose keys are candidates for matching `value`. The value of the property with the matching key is returned, or the `other` property's value. The object should always have an `other` property. Keys should be either plural keywords (zero, one, two, few, many, other), or exact number matches (=13, =4, etc). Note that not all languages use all rules. For example English doesn't have a `zero` rule (0 falls under the `other` rule), but can still match `=0`.
+
+### format-message/react
+
+This module includes utilities for working specifically with react when composing messages with embedded components.
+
+### `formatChildren(message, elements)`
+
+Applies a message to a map of React elements to produce a list of child nodes.
+
+Parameters
+
+- `message` is a pre-formatted string containing tokens marking the beginning and ending of nodes.
+- `elements` is an object with keys matching tokens in the message, and values of React elements to put message parts in.
+
+Example
+
+```jsx
+import formatMessage from 'format-message'
+import {formatChildren} from 'format-message/react'
+
+export default ({ extensions }) =>
+  <div title={formatMessage('Choose a file')}>
+    {formatChildren(
+      formatMessage('Drag & Drop {extensions} files here _or_ __Browse__', {
+        extensions
+      }),
+      {
+        _: <span className="or" />,
+        __: <span className="browse" />
+      }
+    )}
+  </div>
+```
+
+produces the same tree as
+
+```jsx
+<div title="something">
+  Drag & Drop {extensions} files here
+  <span className="or">or</span>
+  <span className="browse">
+    Browse
+  </span>
+</div>
+```
+
+### format-message/inferno
+
+This module includes utilities for working specifically with Inferno when composing messages with embedded components. The API is identical to format-message/react, only it works with Inferno vdom nodes instead of React elements.
+
+### `formatChildren(message, elements)`
+
+Applies a message to a map of vdom nodes to produce a list of child nodes.
+
+Parameters
+
+- `message` is a pre-formatted string containing tokens marking the beginning and ending of nodes.
+- `elements` is an object with keys matching tokens in the message, and values of vdom elements to put message parts in.
 
 
 Example Messages
@@ -140,20 +253,24 @@ formatMessage('My Collections')
 ### Simple string placeholders
 
 ```js
-formatMessage('Welcome, {name}!', { name: 'Bob' });
+formatMessage('Welcome, {name}!', { name: 'Bob' })
 // "Bem Vindo, Bob!"
 ```
 
 ### Complex number, date, and time placeholders
 
 ```js
-formatMessage('{ n, number, percent }', { n: 0.1 });
+formatMessage('{ n, number, percent }', { n: 0.1 })
+// or preferred since there is no text to translate:
+number(0.1, 'percent')
 // "10%"
 
-formatMessage('{ shorty, date, short }', { shorty: new Date() });
+formatMessage('{ shorty, date, short }', { shorty: new Date() })
+// or preferred since there is no text to translate:
+date(new Date(), 'short')
 // "1/1/15"
 
-formatMessage('You took {n,number} pictures since {d,date} {d,time}', { n: 4000, d: new Date() });
+formatMessage('You took {n,number} pictures since {d,date} {d,time}', { n: 4000, d: new Date() })
 // "You took 4,000 pictures since Jan 1, 2015 9:33:04 AM"
 ```
 

@@ -25,9 +25,9 @@ alternative API and inlining translations at build time.
 
 Note: message-format relies on `Intl.NumberFormat` and `Intl.DateTimeFormat`
 for formatting `number`, `date`, and `time` arguments. If you are in an
-environment missing these (like node <= 0.10, IE < 11, or Safari) you'll
-need to use a [polyfill][intl]. If `Intl` formats are missing, it falls
-back on `toLocaleString` which may be the same as `toString`.
+environment missing these (like node <= 0.12, IE < 11, or Safari < 10) you'll
+need to use a [polyfill][intl]. If `Intl` formats are missing, an error occurs
+when formatting these arguments.
 
 
 Overview

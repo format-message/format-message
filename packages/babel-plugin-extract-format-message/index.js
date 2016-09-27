@@ -1,7 +1,7 @@
 'use strict'
 
 var fs = require('fs')
-var util = require('format-message-babel-util')
+var util = require('format-message-estree-util')
 var generate = require('format-message-generate-id')
 var parse = require('format-message-parse')
 var print = require('format-message-print')
@@ -55,6 +55,26 @@ module.exports = function () {
     }
   }
 
+  function addMessage (path, state, message) {
+    var pattern = print(parse(message.default)) // pretty format
+    var id = message.id || generateId(state.opts.generateId, message.default)
+    var description = message.description
+
+    if (!messages[id]) {
+      messages[id] = { message: pattern }
+    } else if (messages[id].message !== pattern) {
+      throw path.buildCodeFrameError(
+        'Duplicate message id ' + JSON.stringify(id) +
+        ', previously defined as ' + JSON.stringify(messages[id].message),
+        RangeError
+      )
+    }
+
+    if (description && !messages[id].description) {
+      messages[id].description = description
+    }
+  }
+
   return {
     pre: function () {
       clearTimeout(timer)
@@ -73,27 +93,19 @@ module.exports = function () {
       },
 
       CallExpression: function (path, state) {
-        if (!util.isFormatMessage(path.get('callee'))) return
-        var message = util.getMessageDetails(path.get('arguments'))
+        util.setBabelContext(path, state)
+        if (!util.isFormatMessage(path.node.callee)) return
+        var message = util.getMessageDetails(path.node.arguments)
         if (!message || !message.default) return
+        addMessage(path, state, message)
+      },
 
-        var pattern = print(parse(message.default)) // pretty format
-        var id = message.id || generateId(state.opts.generateId, message.default)
-        var description = message.description
-
-        if (!messages[id]) {
-          messages[id] = { message: pattern }
-        } else if (messages[id].message !== pattern) {
-          throw path.buildCodeFrameError(
-            'Duplicate message id ' + JSON.stringify(id) +
-            ', previously defined as ' + JSON.stringify(messages[id].message),
-            RangeError
-          )
-        }
-
-        if (description && !messages[id].description) {
-          messages[id].description = description
-        }
+      JSXElement: function (path, state) {
+        util.setBabelContext(path, state)
+        if (!util.isTranslatableElement(path.node)) return
+        var message = util.getElementMessageDetails(path.node)
+        if (!message || !message.default) return
+        addMessage(path, state, message)
       }
     }
   }

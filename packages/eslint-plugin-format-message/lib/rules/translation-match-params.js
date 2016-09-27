@@ -1,7 +1,7 @@
 'use strict'
 
 var parse = require('format-message-parse')
-var astUtil = require('../util/ast')
+var getParamsFromPatternAst = require('../util/get-params-from-pattern-ast')
 var visitEachTranslation = require('../util/visit-each-translation')
 
 module.exports = {
@@ -23,11 +23,11 @@ module.exports = {
         return // error handled elsewhere
       }
 
-      var translationParams = astUtil.getParamsFromPatternAst(translationAst)
+      var translationParams = getParamsFromPatternAst(translationAst)
       patternParams.forEach(function (paramName) {
         if (translationParams.indexOf(paramName) < 0) {
           context.report(
-            node.arguments[0] || node,
+            node.arguments && node.arguments[0] || node,
             'Translation for "' + id + '" in "' + locale + '" is missing "' +
               paramName + '" placeholder'
           )
@@ -36,7 +36,7 @@ module.exports = {
       translationParams.forEach(function (paramName) {
         if (patternParams.indexOf(paramName) < 0) {
           context.report(
-            node.arguments[0] || node,
+            node.arguments && node.arguments[0] || node,
             'Translation for "' + id + '" in "' + locale + '" has extra "' +
               paramName + '" placeholder'
           )

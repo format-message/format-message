@@ -1,5 +1,21 @@
 # Changelog
 
+## 5.0.0
+
+* **New Feature**
+  * `setup()` returns the current settings
+  * Added localization helpers to public api
+    * `number (value [, style [, locale ]])`
+    * `date (value [, style [, locale ]])`
+    * `time (value [, style [, locale ]])`
+    * `select (value, options)`
+    * `plural (value [, offset ], options [, locale ])`
+    * `selectordinal (value [, offset ], options [, locale ])`
+  * Allow `missingReplacement` to be a function
+  * Added format-message/react module
+* **Breaking Change**
+  * format-message relies on Intl APIs for date an number formatting, if using in an environment without that API, you will need to use the Intl.js polyfill.
+
 ## 4.0.0
 
 * **New Feature**

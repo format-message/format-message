@@ -1,6 +1,6 @@
 'use strict'
 
-var astUtil = require('../util/ast')
+var util = require('format-message-estree-util')
 var visitFormatCall = require('../util/visit-format-call')
 
 module.exports = {
@@ -9,7 +9,7 @@ module.exports = {
   },
   create: function (context) {
     return visitFormatCall(context, function (node) {
-      var message = astUtil.getMessageDetails(node.arguments)
+      var message = util.getMessageDetails(node.arguments)
       if (!message.default) {
         context.report(node.arguments[0] || node, 'Pattern is not a string literal')
       }

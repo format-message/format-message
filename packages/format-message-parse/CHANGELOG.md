@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.0.0
+
+This has been versioned only to match versions with related libraries. There are
+no changes to the functionality.
+
 ## 4.1.0
 
 * **New Feature**

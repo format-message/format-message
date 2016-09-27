@@ -18,7 +18,7 @@ module.exports = {
     var allowNonLiteral = (context.options[0] || {}).allowNonLiteral
 
     return visitFormatCall(context, function (node) {
-      var info = getCommonTranslationInfo(node)
+      var info = getCommonTranslationInfo(context, node)
       if (!info.patternAst) return // error in pattern, can't validate
       if (!info.patternParams.length) return // pattern does not require parameters
 

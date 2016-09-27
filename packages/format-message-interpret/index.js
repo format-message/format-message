@@ -74,37 +74,26 @@ function interpretElement (locale, element, parent) {
   }
 }
 
+function helper (type, style, locale) {
+  var options = formats[type][style] || formats[type].default
+  var cache = options.cache || (options.cache = {})
+  var format = cache[locale] || (cache[locale] = type === 'number'
+    ? Intl.NumberFormat(locale, options).format
+    : Intl.DateTimeFormat(locale, options).format
+  )
+  return format
+}
+
 function interpretNumber (locale, id, offset, style) {
   offset = offset || 0
-  var styles = formats.number
-  var opts = styles[style] || styles.decimal
-  if (typeof Intl === 'undefined') {
-    return function format (args) {
-      return Number(+args[id] - offset).toLocaleString(locale, opts)
-    }
-  }
-  var cache = opts.cache || (opts.cache = {})
-  var frmt = cache[locale] ||
-    (cache[locale] = new Intl.NumberFormat(locale, opts).format)
+  var frmt = helper('number', style, locale)
   return function format (args) {
     return frmt(+args[id] - offset)
   }
 }
 
 function interpretDateTime (locale, id, type, style) {
-  var styles = formats[type]
-  var opts = styles[style] || styles.medium
-  if (typeof Intl === 'undefined') {
-    var toLocaleString = type === 'time'
-      ? 'toLocaleTimeString'
-      : 'toLocaleDateString'
-    return function format (args) {
-      return new Date(args[id])[toLocaleString](locale, opts)
-    }
-  }
-  var cache = opts.cache || (opts.cache = {})
-  var frmt = cache[locale] ||
-    (cache[locale] = new Intl.DateTimeFormat(locale, opts).format)
+  var frmt = helper(type, style, locale)
   return function format (args) {
     return frmt(args[id])
   }

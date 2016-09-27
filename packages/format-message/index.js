@@ -4,12 +4,10 @@
 var assign = require('object-assign')
 var parse = require('format-message-parse')
 var interpret = require('format-message-interpret')
+var plurals = require('format-message-interpret/plurals')
 var lookupClosestLocale = require('lookup-closest-locale')
 var formats = require('format-message-formats')
 
-var number = formats.number
-var date = formats.date
-var time = formats.time
 var cache = {}
 
 var currentLocale = 'en'
@@ -18,24 +16,24 @@ var generateId = function (pattern) { return pattern }
 var missingReplacement = null
 var missingTranslation = 'warning'
 
-module.exports = formatMessage
+module.exports = exports = formatMessage
 function formatMessage (msg, args, locale) {
   locale = locale || currentLocale
   var pattern = typeof msg === 'string' ? msg : msg.default
   var id = typeof msg === 'object' && msg.id || generateId(pattern)
   var key = locale + ':' + id
   var format = cache[key] ||
-    (cache[key] = generateFormat(locale, pattern, id))
+    (cache[key] = generateFormat(pattern, id, locale))
   if (typeof format === 'string') return format
   return format(args)
 }
 
-function generateFormat (locale, pattern, id) {
-  pattern = translate(locale, pattern, id)
+function generateFormat (pattern, id, locale) {
+  pattern = translate(pattern, id, locale)
   return interpret(locale, parse(pattern))
 }
 
-function translate (locale, pattern, id) {
+function translate (pattern, id, locale) {
   if (!translations) return pattern
 
   locale = lookupClosestLocale(locale, translations)
@@ -44,6 +42,9 @@ function translate (locale, pattern, id) {
   if (translated != null) return translated
 
   var replacement = missingReplacement || pattern
+  if (typeof replacement === 'function') {
+    replacement = replacement(pattern, id, locale) || pattern
+  }
   var message = 'Translation for "' + id + '" in "' + locale + '" is missing'
 
   if (missingTranslation === 'ignore') {
@@ -57,7 +58,7 @@ function translate (locale, pattern, id) {
   return replacement
 }
 
-formatMessage.setup = function setup (opt) {
+exports.setup = function setup (opt) {
   opt = opt || {}
   if (opt.locale) currentLocale = opt.locale
   if ('translations' in opt) translations = opt.translations
@@ -65,41 +66,56 @@ formatMessage.setup = function setup (opt) {
   if ('missingReplacement' in opt) missingReplacement = opt.missingReplacement
   if (opt.missingTranslation) missingTranslation = opt.missingTranslation
   if (opt.formats) {
-    if (opt.formats.number) assign(number, opt.formats.number)
-    if (opt.formats.date) assign(date, opt.formats.date)
-    if (opt.formats.time) assign(time, opt.formats.time)
+    if (opt.formats.number) assign(formats.number, opt.formats.number)
+    if (opt.formats.date) assign(formats.date, opt.formats.date)
+    if (opt.formats.time) assign(formats.time, opt.formats.time)
+  }
+  return {
+    locale: currentLocale,
+    translations: translations,
+    generateId: generateId,
+    missingReplacement: missingReplacement,
+    missingTranslation: missingTranslation,
+    formats: formats
   }
 }
 
-formatMessage.number = function (locale, value, style) {
-  var options = number[style] || number.decimal
-  if (typeof Intl === 'undefined') {
-    return Number(value).toLocaleString(locale, options)
-  }
+function helper (type, value, style, locale) {
+  locale = locale || currentLocale
+  var options = formats[type][style] || formats[type].default
   var cache = options.cache || (options.cache = {})
-  var format = cache[locale] ||
-    (cache[locale] = new Intl.NumberFormat(locale, options).format)
+  var format = cache[locale] || (cache[locale] = type === 'number'
+    ? Intl.NumberFormat(locale, options).format
+    : Intl.DateTimeFormat(locale, options).format
+  )
   return format(value)
 }
 
-formatMessage.date = function (locale, value, style) {
-  var options = date[style] || date.medium
-  if (typeof Intl === 'undefined') {
-    return new Date(value).toLocaleDateString(locale, options)
-  }
-  var cache = options.cache || (options.cache = {})
-  var format = cache[locale] ||
-    (cache[locale] = new Intl.DateTimeFormat(locale, options).format)
-  return format(value)
+exports.number = helper.bind(null, 'number')
+exports.date = helper.bind(null, 'date')
+exports.time = helper.bind(null, 'time')
+
+exports.select = function (value, options) {
+  return options[value] || options.other
 }
 
-formatMessage.time = function (locale, value, style) {
-  var options = time[style] || time.medium
-  if (typeof Intl === 'undefined') {
-    return new Date(value).toLocaleTimeString(locale, options)
+function selectPlural (pluralType, value, offset, options, locale) {
+  if (typeof offset === 'object') { // offset is optional
+    locale = options
+    options = offset
+    offset = 0
   }
-  var cache = options.cache || (options.cache = {})
-  var format = cache[locale] ||
-    (cache[locale] = new Intl.DateTimeFormat(locale, options).format)
-  return format(value)
+
+  var closest = lookupClosestLocale(locale || currentLocale, plurals)
+  var plural = plurals[closest][pluralType]
+  if (!plural) return options.other
+
+  return (
+    options['=' + +value] ||
+    options[plural(value - offset)] ||
+    options.other
+  )
 }
+
+exports.plural = selectPlural.bind(null, 'cardinal')
+exports.selectordinal = selectPlural.bind(null, 'ordinal')

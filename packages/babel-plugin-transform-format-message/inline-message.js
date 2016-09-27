@@ -1,22 +1,24 @@
 'use strict'
 
-var babylon = require('babylon')
+var parse = require('babylon').parse
 var lookupClosestLocale = require('lookup-closest-locale')
+var formats = require('format-message-formats')
 var cldr = require('./cldr')
+var addHelper = require('./inline-helpers').addHelper
 
 var pluralVars = Object.keys(cldr.pluralVars).reduce(function (vars, key) {
   var keyId = key + 'Id'
   var keyAssign = key + 'Assign'
   vars[key] = function (state) {
     if (!state[keyId]) {
-      state[keyId] = state.callPath.scope.generateDeclaredUidIdentifier(key)
+      state[keyId] = state.path.scope.generateDeclaredUidIdentifier(key)
     }
     if (!state[keyAssign]) {
       var init = cldr.pluralVars[key].replace(/\bs\b/g, state.sId.name)
       state[keyAssign] = state.t.assignmentExpression(
         '=',
         state[keyId],
-        babylon.parse(init).program.body[0].expression
+        parse(init).program.body[0].expression
       )
     }
     return state[keyAssign]
@@ -43,8 +45,8 @@ var pluralVars = Object.keys(cldr.pluralVars).reduce(function (vars, key) {
  *    }) + " for sale.";
  *  })(args, "en")`
  **/
-module.exports = function inlineMessage (locale, elements, callPath, t) {
-  var state = { t: t, locale: locale, callPath: callPath }
+module.exports = function inlineMessage (locale, elements, path, t) {
+  var state = { t: t, locale: locale, path: path }
 
   if (elements.length === 1 && typeof elements[0] === 'string') {
     return t.stringLiteral(elements[0])
@@ -52,12 +54,12 @@ module.exports = function inlineMessage (locale, elements, callPath, t) {
     return t.stringLiteral('')
   }
 
-  var paramsPath = callPath.get('arguments')[1]
+  var paramsPath = path.get('arguments')[1]
   state.inlineParams = getInlineParams(paramsPath)
   var isParamsIdentifier = paramsPath && paramsPath.isIdentifier()
   if (!state.inlineParams) {
     state.paramsVarId = isParamsIdentifier ? paramsPath.node
-      : callPath.scope.generateDeclaredUidIdentifier('params')
+      : path.scope.generateDeclaredUidIdentifier('params')
   }
 
   var concatElements = transformSub(state, elements)
@@ -151,43 +153,45 @@ function transformNumber (state, id, offset, style) {
   if (offset) {
     value = t.binaryExpression('-', value, t.numericLiteral(offset))
   }
-  var args = [
-    t.stringLiteral(state.locale),
-    value
-  ]
-  if (style) {
-    args.push(t.stringLiteral(style))
+  if (!style || formats.number[style]) {
+    var callee = addHelper(state, 'number', style, state.locale)
+    return t.callExpression(callee, [ value ])
   }
   return t.callExpression(
     t.memberExpression(
-      state.callPath.node.callee,
+      state.path.node.callee,
       t.identifier('number')
     ),
-    args
+    [
+      value,
+      t.stringLiteral(style),
+      t.stringLiteral(state.locale)
+    ]
   )
 }
 
 function transformDateTime (state, id, type, style) {
   var t = state.t
-  var args = [
-    t.stringLiteral(state.locale),
-    transformArgument(state, id)
-  ]
-  if (style) {
-    args.push(t.stringLiteral(style))
+  if (!style || formats[type][style]) {
+    var callee = addHelper(state, type, style, state.locale)
+    return t.callExpression(callee, [ transformArgument(state, id) ])
   }
   return t.callExpression(
     t.memberExpression(
-      state.callPath.node.callee,
+      state.path.node.callee,
       t.identifier(type)
     ),
-    args
+    [
+      transformArgument(state, id),
+      t.stringLiteral(style),
+      t.stringLiteral(state.locale)
+    ]
   )
 }
 
 function transformPlural (state, id, type, offset, children) {
   var t = state.t
-  var scope = state.callPath.scope
+  var scope = state.path.scope
   var parent = [ id, type, offset ]
   var closest = lookupClosestLocale(state.locale, cldr.locales)
   var ptype = type === 'selectordinal' ? 'ordinal' : 'cardinal'
@@ -231,33 +235,13 @@ function transformPlural (state, id, type, offset, children) {
       exactConditions.push({ test: test, expr: expr })
     } else if (key in conditions) {
       var cond = conditions[key]
-      if (/\bi\b/.test(cond)) {
-        refs.i = pluralVars.i(state)
-        cond = cond.replace(/\bi\b/g, state.iId.name)
-      }
-      if (/\bv\b/.test(cond)) {
-        refs.v = pluralVars.v(state)
-        cond = cond.replace(/\bv\b/g, state.vId.name)
-      }
-      if (/\bw\b/.test(cond)) {
-        refs.w = pluralVars.w(state)
-        cond = cond.replace(/\bw\b/g, state.wId.name)
-      }
-      if (/\bf\b/.test(cond)) {
-        refs.f = pluralVars.f(state)
-        cond = cond.replace(/\bf\b/g, state.fId.name)
-      }
-      if (/\bt\b/.test(cond)) {
-        refs.t = pluralVars.t(state)
-        cond = cond.replace(/\bt\b/g, state.tId.name)
-      }
-      if (/\bn\b/.test(cond)) {
-        cond = cond.replace(/\bn\b/g, state.nId.name)
-      }
-      if (/\bs\b/.test(cond)) {
-        cond = cond.replace(/\bs\b/g, state.sId.name)
-      }
-      test = babylon.parse(cond).program.body[0].expression
+        .replace(/\b[ivbwftns]\b/g, function (varname) {
+          if (varname !== 'n' && varname !== 's') {
+            refs[varname] = pluralVars[varname](state)
+          }
+          return state[varname + 'Id'].name
+        })
+      test = parse(cond).program.body[0].expression
       keyConditions.push({ test: test, expr: expr })
     }
   })
@@ -284,7 +268,7 @@ function transformPlural (state, id, type, offset, children) {
 function transformSelect (state, id, children) {
   var t = state.t
   var s = state.sId ||
-    (state.sId = state.callPath.scope.generateDeclaredUidIdentifier('s'))
+    (state.sId = state.path.scope.generateDeclaredUidIdentifier('s'))
   var other = t.stringLiteral('')
   var conditions = []
   Object.keys(children).forEach(function (key) {
