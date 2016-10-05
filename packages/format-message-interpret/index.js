@@ -138,6 +138,17 @@ function interpretSelect (locale, id, children) {
 
 function interpretSimple (id) {
   return function format (args) {
+    var parts = id.split('.')
+    if (parts.length > 1) {
+      var i = 0
+      var l = parts.length
+      var a = args
+      for (i; i < l; i++) {
+        a = a[parts[i]]
+        if (!a) return '' + args[id]
+      }
+      return '' + a
+    }
     return '' + args[id]
   }
 }
