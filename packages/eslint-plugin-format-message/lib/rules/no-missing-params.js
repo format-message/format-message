@@ -3,6 +3,38 @@
 var getCommonTranslationInfo = require('../util/get-common-translation-info')
 var visitFormatCall = require('../util/visit-format-call')
 
+var validatePath = function (object, path) {
+
+  var pathSegments = path.split('.') || path;
+  var isValid = false;
+
+  var lookFurther = function(object, segment) {
+    if (object.properties[0].value.type === 'Literal') {
+      return object.properties[0].value.value === segment;
+    } else {
+      return lookFurther(object.properties[0].value, segment)
+    }
+  }
+
+  pathSegments.forEach(function (segment, i) {
+
+    if (i === 0) {
+      isValid = object.key.value === segment
+    } else if (object.value.properties[0].value.type === 'ObjectExpression' ) {
+      isValid = object.value.properties[0].key.value === segment
+      if (!isValid) {
+        isValid = lookFurther(object.value.properties[0].value, segment)
+      }
+    } else if (object.value.properties[0].value.type === 'Literal') {
+      isValid = object.value.properties[0].value.value === segment
+    }
+
+  })
+
+  return isValid;
+}
+
+
 module.exports = {
   meta: {
     schema: [ {
@@ -33,7 +65,13 @@ module.exports = {
       } else {
         info.patternParams.forEach(function (paramName) {
           var isFound = params.properties.some(function (prop) {
-            return prop.key.type === 'Identifier' && prop.key.name === paramName
+            if (prop.value.type === 'ObjectExpression') {
+              return validatePath(prop, paramName)
+            }
+            return (
+              prop.key.type === 'Identifier' && prop.key.name === paramName ||
+              prop.key.type === 'Literal' && prop.key.value === paramName
+            );
           })
           if (!isFound) {
             context.report(node.arguments[1], 'Pattern requires missing "' + paramName + '" parameter')
