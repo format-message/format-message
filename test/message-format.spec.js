@@ -130,7 +130,7 @@ describe('MessageFormat', function () {
 
     it('accepts arguments as a nested data object', function () {
       var pattern = 'x{ arg.y }z'
-      var message = new MessageFormat('en', pattern).format({ arg: { y:'y' } })
+      var message = new MessageFormat('en', pattern).format({ arg: { y: 'y' } })
 
       expect(message).to.equal('xyz')
     })
