@@ -10,7 +10,11 @@ tester.run('no-missing-params', rule, {
     { code: 'var f=require("format-message");f("f")' },
     { code: 'var f=require("format-message");f("f {b}", { b:1 })' },
     { code: 'var f=require("format-message");f("f {b} {c}", { b:1, c:2 })' },
-    { code: 'var f=require("format-message");f("f {b} {c}", bar)', options: [ { allowNonLiteral: true } ] }
+    { code: 'var f=require("format-message");f("f {b} {c}", bar)', options: [ { allowNonLiteral: true } ] },
+    { code: 'var f=require("format-message");f("h {b.c}", { "b.c": "c" })' },
+    { code: 'var f=require("format-message");f("h {b.c}", { "b": { "c": "c" }})' },
+    { code: 'var f=require("format-message");f("h {b.c.d.e.f}", { "b": { "c": { "d": { "e": { "f": "f" }}}}})' },
+    { code: 'var f=require("format-message");f("h {b.c.d.t}", { "b": { "c": { "d": { "t": "t", "e": { "f": { "g": "g" }}}}}})' }
   ],
   invalid: [
     {
@@ -25,6 +29,14 @@ tester.run('no-missing-params', rule, {
     {
       code: 'var f=require("format-message");f("{a}", { b:1 })',
       errors: [ { message: 'Pattern requires missing "a" parameter' } ]
+    },
+    {
+      code: 'var f=require("format-message");f("h {b.c}", { "b.d": "d" })',
+      errors: [ { message: 'Pattern requires missing "b.c" parameter' } ]
+    },
+    {
+      code: 'var f=require("format-message");f("h {b.c}", { "b": { "d": "d" } })',
+      errors: [ { message: 'Pattern requires missing "b.c" parameter' } ]
     }
   ]
 })
