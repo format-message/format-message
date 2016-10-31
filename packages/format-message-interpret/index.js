@@ -88,14 +88,14 @@ function interpretNumber (locale, id, offset, style) {
   offset = offset || 0
   var frmt = helper('number', style, locale)
   return function format (args) {
-    return frmt(+args[id] - offset)
+    return frmt(+getArg(id, args) - offset)
   }
 }
 
 function interpretDateTime (locale, id, type, style) {
   var frmt = helper(type, style, locale)
   return function format (args) {
-    return frmt(args[id])
+    return frmt(getArg(id, args))
   }
 }
 
@@ -114,8 +114,8 @@ function interpretPlural (locale, id, type, offset, children) {
 
   return function format (args) {
     var clause =
-      options['=' + +args[id]] ||
-      options[plural(args[id] - offset)] ||
+      options['=' + +getArg(id, args)] ||
+      options[plural(getArg(id, args) - offset)] ||
       options.other
     if (typeof clause === 'string') return clause
     return clause(args)
@@ -129,7 +129,7 @@ function interpretSelect (locale, id, children) {
   })
   return function format (args) {
     var clause =
-      options[args[id]] ||
+      options[getArg(id, args)] ||
       options.other
     if (typeof clause === 'string') return clause
     return clause(args)
@@ -138,17 +138,21 @@ function interpretSelect (locale, id, children) {
 
 function interpretSimple (id) {
   return function format (args) {
-    var parts = id.split('.')
-    if (parts.length > 1) {
-      var i = 0
-      var l = parts.length
-      var a = args
-      for (i; i < l; i++) {
-        a = a[parts[i]]
-        if (!a) return '' + args[id]
-      }
-      return '' + a
-    }
-    return '' + args[id]
+    return '' + getArg(id, args)
   }
+}
+
+function getArg (id, args) {
+  var parts = id.split('.')
+  if (parts.length > 1) {
+    var i = 0
+    var l = parts.length
+    var a = args
+    for (i; i < l; i++) {
+      a = a[parts[i]]
+      if (a === undefined) return args[id]
+    }
+    return a
+  }
+  return args[id]
 }
