@@ -143,6 +143,7 @@ function interpretSimple (id) {
 }
 
 function getArg (id, args) {
+  if (args[id] !== undefined) return args[id]
   var parts = id.split('.')
   if (parts.length > 1) {
     var i = 0
@@ -150,9 +151,8 @@ function getArg (id, args) {
     var a = args
     for (i; i < l; i++) {
       a = a[parts[i]]
-      if (a === undefined) return args[id]
+      if (a === undefined) return
     }
     return a
   }
-  return args[id]
 }
