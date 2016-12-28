@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.1.0
+
+Support namespacing formatMessage.
+Assume any module that ends with '/format-message' exports a namespaced formatMessage.
+
 ## 5.0.0
 
 Support extracting, linting, and transforming format-message v5 use.

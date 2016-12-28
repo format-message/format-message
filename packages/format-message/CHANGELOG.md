@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.1.0
+
+Added `namespace` function to create a namespaced formatMessage.
+
 ## 5.0.0
 
 * **New Feature**
