@@ -1,5 +1,7 @@
 'use strict'
 
+var MODULE_NAME_PATTERN = /(^|\/)format-message$/
+
 exports = module.exports = {
   setBabelContext: function (path, state) {
     this.context = {
@@ -72,7 +74,7 @@ exports = module.exports = {
     return (
       parent && parent.source &&
       this.isStringLiteral(parent.source) &&
-      parent.source.value === 'format-message' && (
+      MODULE_NAME_PATTERN.test(parent.source.value) && (
         node.type === 'ImportDefaultSpecifier' ||
         node.type === 'ImportSpecifier' &&
         node.imported && node.imported.name === 'default'
@@ -88,7 +90,7 @@ exports = module.exports = {
       node.callee.name === 'require' &&
       !!(arg = node.arguments[0]) &&
       this.isStringLiteral(arg) &&
-      arg.value === 'format-message'
+      MODULE_NAME_PATTERN.test(arg.value)
     )
   },
 
@@ -230,7 +232,7 @@ exports = module.exports = {
         this.isHelperName(name)
       ) &&
       this.isStringLiteral(parent.source) &&
-      parent.source.value === 'format-message'
+      MODULE_NAME_PATTERN.test(parent.source.value)
     )
     if (isImportHelper) return name
   },
