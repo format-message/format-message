@@ -120,6 +120,42 @@ Parameters
     - `date` is an object containing date format styles to add. Each property name can be used afterwards as a style name for a date placeholder. The value of each property is an object that will be passed to an [`Intl.DateTimeFormat`][mdn-intl-datetimeformat] constructor as the second argument.
     - `time` is an object containing time format styles to add. Each property name can be used afterwards as a style name for a time placeholder. The value of each property is an object that will be passed to an [`Intl.DateTimeFormat`][mdn-intl-datetimeformat] constructor as the second argument.
 
+### `formatMessage.namespace()`
+
+Return a new instance of `formatMessage` with isolated configuration. Calls to `setup()`
+on the new namespace will not be affect any another namespace (including the global
+namespace).
+
+```js
+var namespace = formatMessage.namespace()
+
+formatMessage.setup({
+  locale: "en",
+  translations: {
+    en: {
+      foo: "foo"
+    }
+  }
+})
+
+namespace.setup({
+  locale: "fr",
+  transations: {
+    fr: {
+      foo: "bar"
+    }
+  }
+})
+
+formatMessage("foo") // => "foo"
+namespace("foo") // => "bar"
+```
+
+If you are using a custom namespace and still want to be able to extract strings
+using the format message CLI, create a module named `format-message.js` that exports
+the new namespace. Import formatMessage from this module in all other modules that
+use the namespace.
+
 ### Localization apis
 
 format-message also provides a few extra functions to simplify localizing (but not translating) data. These mostly just pass through to `Intl` APIs.

@@ -344,4 +344,29 @@ describe('formatMessage', function () {
       expect(result).to.equal(1)
     })
   })
+
+  describe('namespace', function () {
+    var ns, options
+
+    beforeEach(function () {
+      ns = formatMessage.namespace()
+      options = ns.setup({
+        locale: 'fr',
+        translations: {
+          fr: {
+            foo: 'bar'
+          }
+        }
+      })
+    })
+
+    it('setup does not change other namespaces', function () {
+      var globalOptions = formatMessage.setup()
+      expect(options.transations).not.to.equal(globalOptions.translations)
+    })
+
+    it('uses its own configuration', function () {
+      expect(ns('foo')).to.equal('bar')
+    })
+  })
 })

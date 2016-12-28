@@ -250,6 +250,34 @@ describe('format-message extract', function () {
         done(err)
       }).stdin.end(input, 'utf8')
     })
+
+    describe('with custom modules named format-message', function () {
+      it('finds function name from require call', function (done) {
+        var input = 'var f=require("./custom/format-message");f("hello")'
+        exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
+          stdout = stdout.toString('utf8')
+          var translations = JSON.parse(stdout)
+          expect(translations).to.eql({
+            hello_32e420db: { message: 'hello' }
+          })
+          expect(stderr.toString('utf8')).to.equal('')
+          done(err)
+        }).stdin.end(input, 'utf8')
+      })
+
+      it('finds function name from import', function (done) {
+        var input = 'import __ from "./custom/format-message";__("hello")'
+        exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
+          stdout = stdout.toString('utf8')
+          var translations = JSON.parse(stdout)
+          expect(translations).to.eql({
+            hello_32e420db: { message: 'hello' }
+          })
+          expect(stderr.toString('utf8')).to.equal('')
+          done(err)
+        }).stdin.end(input, 'utf8')
+      })
+    })
   })
 
   describe('translate="yes"', function () {
