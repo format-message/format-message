@@ -1,6 +1,6 @@
 {
   "name": "format-message-parse",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "description": "Parse ICU message strings to a compact ast",
   "author": "Andy VanWagoner <thetalecrafter@gmail.com> (https://thetalecrafter.com/)",
   "homepage": "https://github.com/format-message/format-message",
