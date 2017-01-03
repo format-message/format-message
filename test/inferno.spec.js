@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 var expect = require('chai').expect
-var Inferno = require('inferno')
+var createElement = require('inferno-create-element')
 var formatChildren = require('../packages/format-message/inferno').formatChildren
 
 describe('inferno formatChildren', function () {
@@ -16,43 +16,43 @@ describe('inferno formatChildren', function () {
 
   it('returns a single child for wrapped messages', function () {
     var results = formatChildren('<0>simple</0>', [
-      Inferno.createVNode().setTag('span')
+      createElement('span')
     ])
-    expect(results).to.deep.equal(Inferno.createVNode().setTag('span').setChildren('simple'))
+    expect(results).to.deep.equal(createElement('span', null, 'simple'))
   })
 
   it('preserves the props of the wrappers', function () {
     var results = formatChildren('<0>simple</0>', [
-      Inferno.createVNode().setTag('span').setAttrs({ className: 'foo' })
+      createElement('span', { className: 'foo' })
     ])
-    expect(results).to.deep.equal(Inferno.createVNode().setTag('span').setAttrs({
+    expect(results).to.deep.equal(createElement('span', {
       className: 'foo'
-    }).setChildren('simple'))
+    }, 'simple'))
   })
 
   it('returns an array of children when there are many', function () {
     var results = formatChildren('it was <0>his</0> fault', [
-      Inferno.createVNode().setTag('em')
+      createElement('em')
     ])
     expect(results).to.deep.equal([
       'it was ',
-      Inferno.createVNode().setTag('em').setChildren('his'),
+      createElement('em', null, 'his'),
       ' fault'
     ])
   })
 
   it('nests arbitrarily deep', function () {
     var results = formatChildren('<0><1><2><3>deep</3></2></1></0>', [
-      Inferno.createVNode().setTag('div'),
-      Inferno.createVNode().setTag('span'),
-      Inferno.createVNode().setTag('em'),
-      Inferno.createVNode().setTag('strong')
+      createElement('div'),
+      createElement('span'),
+      createElement('em'),
+      createElement('strong')
     ])
     expect(results).to.deep.equal(
-      Inferno.createVNode().setTag('div').setChildren(
-        Inferno.createVNode().setTag('span').setChildren(
-          Inferno.createVNode().setTag('em').setChildren(
-            Inferno.createVNode().setTag('strong').setChildren('deep')
+      createElement('div', null,
+        createElement('span', null,
+          createElement('em', null,
+            createElement('strong', null, 'deep')
           )
         )
       )
@@ -62,10 +62,10 @@ describe('inferno formatChildren', function () {
   it('throws when wrapper tokens aren\'t nested properly', function () {
     expect(function () {
       formatChildren('<0><1><2><3>deep</2></3></1></0>', [
-        Inferno.createVNode().setTag('div'),
-        Inferno.createVNode().setTag('em'),
-        Inferno.createVNode().setTag('span'),
-        Inferno.createVNode().setTag('strong')
+        createElement('div'),
+        createElement('em'),
+        createElement('span'),
+        createElement('strong')
       ])
     }).to.throw()
   })
