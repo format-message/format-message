@@ -663,6 +663,18 @@ describe('format-message transform', function () {
       }).stdin.end(input, 'utf8')
     })
 
+    it('groups nested elements with no text', function (done) {
+      var input = '<div translate="yes">hello <b><i/><em/></b>world</div>'
+      exec('packages/format-message-cli/format-message transform', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        stdout = stdout.toString('utf8').trim()
+        expect(stdout).to.contain('id: "hello_0_world_35eac72f"')
+        expect(stdout).to.contain('default: "hello <0/>world"')
+        expect(stdout).to.contain('[<b><i /><em /></b>]')
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
     it('handles number, date, and time helpers', function (done) {
       var input = 'import { number, date, time } from "format-message"\n' +
         'export default <div translate="yes">Caught {number(count)} on {date(d, "short")} at {time(t)}</div>'

@@ -87,6 +87,23 @@ exports = module.exports = {
     }, '')
   },
 
+  hasTranslatableText: function (node) {
+    return node.children.some(function (child) {
+      if (child.type === 'JSXText' || this.isStringLiteral(child)) {
+        return this.cleanJSXText(String(child.value)).length > 0
+      }
+      if (child.type === 'JSXExpressionContainer') {
+        if (child.expression.type === 'JSXEmptyExpression') return false
+        if (this.isStringLiteral(child.expression)) return child.expression.value.length > 0
+        return true
+      }
+      if (child.type === 'JSXElement') {
+        return this.hasTranslatableText(child)
+      }
+      return false
+    }, this)
+  },
+
   cleanJSXText: function (text) {
     var lines = text.split(/\r\n|\n|\r/)
     var lastNonEmptyLine = 0
@@ -161,7 +178,8 @@ exports = module.exports = {
     var children = node.children
     var hasSubContent = (
       children && children.length > 0 &&
-      !this.hasTranslateAttribute(node)
+      !this.hasTranslateAttribute(node) &&
+      this.hasTranslatableText(node)
     )
     if (!hasSubContent) {
       token = nextToken(node, { selfClosing: true })
