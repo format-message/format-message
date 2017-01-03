@@ -432,6 +432,19 @@ describe('format-message extract', function () {
       }).stdin.end(input, 'utf8')
     })
 
+    it('groups nested elements with no translatable text', function (done) {
+      var input = '<div translate="yes">hello <b>{}<i/>{""}<em/></b>world</div>'
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        stdout = stdout.toString('utf8').trim()
+        var translations = JSON.parse(stdout)
+        expect(translations).to.eql({
+          hello_0_world_35eac72f: { message: 'hello <0/>world' }
+        })
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
     it('normalizes white space', function (done) {
       var input = '<div translate="yes">\n' +
         '\thello\n{" "}\n\t<b>\n\t\t<i>\n\t\t\tbig\n' +
