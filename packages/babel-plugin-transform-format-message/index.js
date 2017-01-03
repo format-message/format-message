@@ -31,6 +31,14 @@ module.exports = function (bbl) {
     if (translated != null) return translated
   }
 
+  function removeTranslateAttribute (path) {
+    path.get('openingElement.attributes').forEach(function (attribute) {
+      if (attribute.get('name').isJSXIdentifier({ name: 'translate' })) {
+        attribute.remove()
+      }
+    })
+  }
+
   return {
     visitor: {
       CallExpression: function (path, state) {
@@ -95,9 +103,9 @@ module.exports = function (bbl) {
       },
       JSXElement: function (path, state) {
         util.setBabelContext(path, state)
-        if (!util.isTranslatableElement(path.node)) return
+        if (!util.isTranslatableElement(path.node)) return removeTranslateAttribute(path)
         var message = util.getElementMessageDetails(path.node)
-        if (!message || !message.default) return
+        if (!message || !message.default) return removeTranslateAttribute(path)
 
         // all allowed options
         var translations = state.opts.inline && getTranslations(state.opts)
@@ -114,12 +122,7 @@ module.exports = function (bbl) {
         var hasParameters = Object.keys(message.parameters).length > 0
         var hasWrappers = Object.keys(message.wrappers).length > 0
 
-        // remove translate attribute
-        path.get('openingElement.attributes').forEach(function (attribute) {
-          if (attribute.get('name').isJSXIdentifier({ name: 'translate' })) {
-            attribute.remove()
-          }
-        })
+        removeTranslateAttribute(path)
 
         // just add the generated id and remove description and other metadata
         if (!shouldInline) {
