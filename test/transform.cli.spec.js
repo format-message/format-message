@@ -364,22 +364,22 @@ describe('format-message transform -i', function () {
       }).stdin.end(input, 'utf8')
     })
 
-    it('ignores empty element', function (done) {
+    it('ignores empty element except removing translate attribute', function (done) {
       var input = '<div translate="yes"></div>'
       exec('packages/format-message-cli/format-message transform -i', function (err, stdout, stderr) {
         expect(stderr.toString('utf8')).to.equal('')
         stdout = stdout.toString('utf8').trim()
-        expect(stdout).to.contain('<div translate="yes"></div>')
+        expect(stdout).to.contain('<div></div>')
         done(err)
       }).stdin.end(input, 'utf8')
     })
 
-    it('ignores element with no children', function (done) {
+    it('ignores element with no children except removing translate attribute', function (done) {
       var input = '<div translate="yes" />'
       exec('packages/format-message-cli/format-message transform -i', function (err, stdout, stderr) {
         expect(stderr.toString('utf8')).to.equal('')
         stdout = stdout.toString('utf8').trim()
-        expect(stdout).to.contain('<div translate="yes" />')
+        expect(stdout).to.contain('<div />')
         done(err)
       }).stdin.end(input, 'utf8')
     })
@@ -401,7 +401,7 @@ describe('format-message transform -i', function () {
         stdout = stdout.toString('utf8').trim()
         expect(stdout).to.not.contain('from "format-message"')
         expect(stdout).to.not.contain('translate="yes"')
-        expect(stdout).to.contain('<div>hello <Place translate="no">Untranslated</Place></div>')
+        expect(stdout).to.contain('<div>hello <Place>Untranslated</Place></div>')
         done(err)
       }).stdin.end(input, 'utf8')
     })
@@ -524,22 +524,22 @@ describe('format-message transform', function () {
       }).stdin.end(input, 'utf8')
     })
 
-    it('ignores empty element', function (done) {
+    it('ignores empty element except removing translate attribute', function (done) {
       var input = '<div translate="yes"></div>'
       exec('packages/format-message-cli/format-message transform', function (err, stdout, stderr) {
         expect(stderr.toString('utf8')).to.equal('')
         stdout = stdout.toString('utf8').trim()
-        expect(stdout).to.contain('<div translate="yes"></div>')
+        expect(stdout).to.contain('<div></div>')
         done(err)
       }).stdin.end(input, 'utf8')
     })
 
-    it('ignores element with no children', function (done) {
+    it('ignores element with no children except removing translate attribute', function (done) {
       var input = '<div translate="yes" />'
       exec('packages/format-message-cli/format-message transform', function (err, stdout, stderr) {
         expect(stderr.toString('utf8')).to.equal('')
         stdout = stdout.toString('utf8').trim()
-        expect(stdout).to.contain('<div translate="yes" />')
+        expect(stdout).to.contain('<div />')
         done(err)
       }).stdin.end(input, 'utf8')
     })
@@ -563,7 +563,7 @@ describe('format-message transform', function () {
         expect(stdout).to.not.contain('translate="yes"')
         expect(stdout).to.contain('id: "hello_0_6169517a"')
         expect(stdout).to.contain('default: "hello <0/>"')
-        expect(stdout).to.contain('<Place translate="no">Untranslated</Place>')
+        expect(stdout).to.contain('<Place>Untranslated</Place>')
         done(err)
       }).stdin.end(input, 'utf8')
     })
