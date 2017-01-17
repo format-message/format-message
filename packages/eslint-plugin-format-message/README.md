@@ -113,6 +113,8 @@ Since these problems can cause errors, by default this rule reports an error.
 
 This rule takes an object for an argument. If the object has a truthy `allowNonLiteral` property, then passing a variable instead of an object literal is assumed to have all the necessary parameters.
 
+Parameters support nested data objects. To prevent any issues, it's recommended that you avoid using object keys with `.` if you're using nested data. 
+
 #### no-missing-translation
 
 If translation settings are provided, each locale must have a translation for each message.
