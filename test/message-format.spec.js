@@ -121,6 +121,26 @@ describe('MessageFormat', function () {
       expect(message).to.equal('xyz')
     })
 
+    it('accepts arguments with periods', function () {
+      var pattern = 'x{ arg.y }z'
+      var message = new MessageFormat('en', pattern).format({ 'arg.y': 'y' })
+
+      expect(message).to.equal('xyz')
+    })
+
+    it('accepts arguments as a nested data object', function () {
+      var pattern = 'x{ arg.y }z'
+      var message = new MessageFormat('en', pattern).format({ arg: { y: 'y' } })
+
+      expect(message).to.equal('xyz')
+    })
+
+    it('will prioritize arguments with periods over nested data object', function () {
+      var pattern = 'x{ arg.y }z'
+      var message = new MessageFormat('en', pattern).format({ 'arg.y': 'y', arg: { y: 'a' } })
+      expect(message).to.equal('xyz')
+    })
+
     it('formats numbers, dates, and times', function () {
       var pattern = '{ n, number } : { d, date, short } { d, time, short }'
       var message = new MessageFormat('en', pattern).format({ n: 0, d: new Date(0) })

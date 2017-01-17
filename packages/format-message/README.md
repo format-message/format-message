@@ -293,6 +293,25 @@ formatMessage('Welcome, {name}!', { name: 'Bob' })
 // "Bem Vindo, Bob!"
 ```
 
+### String placeholders with nested data
+
+```js
+formatMessage('Welcome, {people.wes.name}, {people.julie.name}, and {people.sharon.name}!', {
+	people: {
+		wes: {
+			name: 'Wes Phillips'
+		},
+		julie: {
+			name: 'Julie Roberts'
+		},
+		sharon: {
+			name: 'Sharon Sanders'
+		}
+	}
+})
+// "Welcome, Wes Phillips, Julie Roberts, and Sharon Sanders!"
+```
+
 ### Complex number, date, and time placeholders
 
 ```js
