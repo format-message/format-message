@@ -27,6 +27,33 @@ describe('format-message transform -i', function () {
       }).stdin.end(input, 'utf8')
     })
 
+    it('handles placeholders', function (done) {
+      var input = 'import formatMessage from "format-message"\nformatMessage("hello {world}", {world:"world"})'
+      exec('packages/format-message-cli/format-message transform -i', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        expect(stdout.toString('utf8').trim()).to.equal('"hello " + "world";')
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('handles dotted placeholders', function (done) {
+      var input = 'import formatMessage from "format-message"\nformatMessage("hello {a.b}", {a:{b:"world"}})'
+      exec('packages/format-message-cli/format-message transform -i', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        expect(stdout.toString('utf8').trim()).to.equal('"hello " + "world";')
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
+    it('handles dotted placeholders for non-literal params', function (done) {
+      var input = 'import formatMessage from "format-message"\nformatMessage("hello {a.b.c}", params)'
+      exec('packages/format-message-cli/format-message transform -i', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        expect(stdout.toString('utf8').trim()).to.equal('"hello " + ("a.b.c" in params ? params["a.b.c"] : params.a.b.c);')
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
     it('can output to a -o file', function (done) {
       var input = 'import formatMessage from "format-message"\nformatMessage("hello")'
       var filename = 'test/translations/inline.js'

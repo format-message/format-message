@@ -76,11 +76,18 @@ module.exports = function inlineMessage (locale, elements, path, t) {
 
 function getInlineParams (path) {
   if (!canInlineParams(path)) return false
-  return path.get('properties').reduce(function (params, prop) {
+  return addToParams('', path, {})
+}
+
+function addToParams (prefix, path, params) {
+  path.get('properties').forEach(function (prop) {
     var key = prop.node.key.name || prop.node.key.value
-    params[key] = prop.node.value
-    return params
-  }, {})
+    params[prefix + key] = prop.node.value
+    if (prop.get('value').isObjectExpression()) {
+      addToParams(prefix + key + '.', prop.get('value'), params)
+    }
+  })
+  return params
 }
 
 function canInlineParams (path) {
@@ -90,6 +97,9 @@ function canInlineParams (path) {
       return (
         prop.isObjectProperty({ computed: false }) ||
         prop.get('key').isStringLiteral()
+      ) && (
+        !path.get('value').isObjectExpression() ||
+        canInlineParams(path.get('value'))
       )
     })
   )
@@ -300,10 +310,25 @@ function transformArgument (state, id) {
     return state.inlineParams[id] ||
       t.unaryExpression('void', t.numericLiteral(0), true)
   }
-  var validId = /^[a-z_$][a-z0-9_$]*$/.test(id)
+
+  var lookup = makeMemberExpression(t, state.paramsVarId, id)
+  var parts = id.split('.')
+  if (parts.length <= 1) return lookup
+
+  return t.conditionalExpression(
+    t.binaryExpression('in', t.stringLiteral(id), state.paramsVarId),
+    lookup,
+    parts.reduce(function (object, key) {
+      return makeMemberExpression(t, object, key)
+    }, state.paramsVarId)
+  )
+}
+
+function makeMemberExpression (t, object, key) {
+  var validId = /^[a-z_$][a-z0-9_$]*$/.test(key)
   return t.memberExpression(
-    state.paramsVarId,
-    validId ? t.identifier(id) : t.stringLiteral(id),
+    object,
+    validId ? t.identifier(key) : t.stringLiteral(key),
     !validId
   )
 }

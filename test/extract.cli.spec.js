@@ -46,6 +46,19 @@ describe('format-message extract', function () {
       }).stdin.end(input, 'utf8')
     })
 
+    it('handles dotted placeholders', function (done) {
+      var input = 'import formatMessage from "format-message"\nformatMessage("hello {world.msg}", { world: { msg: "world" } })'
+      exec('packages/format-message-cli/format-message extract', function (err, stdout, stderr) {
+        stdout = stdout.toString('utf8')
+        var translations = JSON.parse(stdout)
+        expect(translations).to.eql({
+          hello_world_msg_d025409b: { message: 'hello { world.msg }' }
+        })
+        expect(stderr.toString('utf8')).to.equal('')
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
     it('can output to a -o file', function (done) {
       var input = 'import formatMessage from "format-message"\nformatMessage("hello");formatMessage(`hello`)'
       var filename = 'test/translations/extract.underscored_crc32.json'
