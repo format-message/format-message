@@ -10,7 +10,7 @@ var simpleYml = require('./simple-yml')
 module.exports = function () {
   function generateId (type, pattern) {
     var fn = typeof type === 'function' ? type
-      : generate[type] || generate.underscored_crc32
+      : generate[type] || generate.literal
     return fn(pattern)
   }
 

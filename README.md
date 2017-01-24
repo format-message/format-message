@@ -63,7 +63,7 @@ Extract all of the messages you've used in your source code.
 
 ```bash
 $ npm i format-message-cli
-$ format-message extract "src/**/*.js" > ./locales/en/messages.json
+$ format-message extract "src/**/*.js" > ./locales/en/messages.json -g underscored_crc32
 ```
 
 Check that the translators preserved placeholders and proper message formatting.
