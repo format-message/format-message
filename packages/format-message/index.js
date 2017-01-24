@@ -14,7 +14,7 @@ function namespace () {
   var nsFormats = assign({}, formats)
   var currentLocale = 'en'
   var translations = null
-  var generateId = function (pattern) { return pattern }
+  var generateId = require('format-message-generate-id/underscored_crc32')
   var missingReplacement = null
   var missingTranslation = 'warning'
 

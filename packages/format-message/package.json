@@ -22,6 +22,7 @@
   ],
   "dependencies": {
     "format-message-formats": "^5.1.0",
+    "format-message-generate-id": "^5.1.0",
     "format-message-interpret": "^5.1.0",
     "format-message-parse": "^5.1.0",
     "lookup-closest-locale": "^5.1.0",

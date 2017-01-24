@@ -6,6 +6,7 @@ if (typeof Intl === 'undefined') {
 var expect = require('chai').expect
 var plurals = require('../packages/format-message-interpret/plurals')
 var formatMessage = require('format-message')
+var literalIdGenerator = require('../packages/format-message-generate-id/literal')
 
 describe('formatMessage', function () {
   describe('formatMessage', function () {
@@ -356,7 +357,8 @@ describe('formatMessage', function () {
           fr: {
             foo: 'bar'
           }
-        }
+        },
+        generateId: literalIdGenerator
       })
     })
 
