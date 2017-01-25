@@ -9,6 +9,7 @@ module.exports = {
     'no-invalid-translation': require('./lib/rules/no-invalid-translation'),
     'no-missing-params': require('./lib/rules/no-missing-params'),
     'no-missing-translation': require('./lib/rules/no-missing-translation'),
+    'no-top-scope': require('./lib/rules/no-top-scope'),
     'translation-match-params': require('./lib/rules/translation-match-params'),
     'no-empty-jsx-message': require('./lib/rules/no-empty-jsx-message'),
     'no-invalid-translate-attribute': require('./lib/rules/no-invalid-translate-attribute')
@@ -24,6 +25,7 @@ module.exports = {
         'format-message/no-invalid-translation': 2,
         'format-message/no-missing-params': [ 2, { allowNonLiteral: true } ],
         'format-message/no-missing-translation': 1,
+        'format-message/no-top-scope': 0,
         'format-message/translation-match-params': 2,
         'format-message/no-empty-jsx-message': 1,
         'format-message/no-invalid-translate-attribute': 1
@@ -38,6 +40,7 @@ module.exports = {
         'format-message/no-invalid-translation': 2,
         'format-message/no-missing-params': 2,
         'format-message/no-missing-translation': 0,
+        'format-message/no-top-scope': 0,
         'format-message/translation-match-params': 2,
         'format-message/no-empty-jsx-message': 2,
         'format-message/no-invalid-translate-attribute': 2
