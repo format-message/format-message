@@ -1,5 +1,7 @@
 # ![format-message][logo]
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/format-message/format-message.svg)](https://greenkeeper.io/)
+
 > Internationalize text, numbers, and dates using ICU Message Format.
 
 [![npm Version][npm-image]][npm]
