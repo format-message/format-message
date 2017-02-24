@@ -237,13 +237,13 @@ import {formatChildren} from 'format-message/react'
 export default ({ extensions }) =>
   <div title={formatMessage('Choose a file')}>
     {formatChildren(
-      formatMessage('Drag & Drop {extensions} files here _or_ __Browse__', {
+      formatMessage('Drag & Drop {extensions} files here <0>or</0> <1>Browse</1>', {
         extensions
       }),
-      {
-        _: <span className="or" />,
-        __: <span className="browse" />
-      }
+      [
+        <span className="or" />,
+        <span className="browse" />
+      ]
     )}
   </div>
 ```
