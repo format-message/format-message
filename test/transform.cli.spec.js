@@ -232,7 +232,7 @@ describe('format-message transform -i', function () {
       exec(cmd, function (err, stdout, stderr) {
         expect(stderr.toString('utf8')).to.equal('')
         expect(stdout.toString('utf8').trim()).to.match(
-          /^"hey everyone";?\s+\/\/# sourceMappingURL=data:application\/json;base64,/
+          /^"hey everyone";?\s+\/\/# sourceMappingURL=data:application\/json/
         )
         done(err)
       }).stdin.end(input, 'utf8')
