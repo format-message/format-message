@@ -52,17 +52,19 @@ exports = module.exports = {
 
   isStringLiteral: function (node) {
     return (
-      node.type === 'StringLiteral' || // babel
-      node.type === 'Literal' &&
-      typeof node.value === 'string'
+      node.type === 'StringLiteral' || ( // babel
+        node.type === 'Literal' &&
+        typeof node.value === 'string'
+      )
     )
   },
 
   isNumericLiteral: function (node) {
     return (
-      node.type === 'NumericLiteral' || // babel
-      node.type === 'Literal' &&
-      typeof node.value === 'number'
+      node.type === 'NumericLiteral' || ( // babel
+        node.type === 'Literal' &&
+        typeof node.value === 'number'
+      )
     )
   },
 
@@ -75,9 +77,10 @@ exports = module.exports = {
       parent && parent.source &&
       this.isStringLiteral(parent.source) &&
       MODULE_NAME_PATTERN.test(parent.source.value) && (
-        node.type === 'ImportDefaultSpecifier' ||
-        node.type === 'ImportSpecifier' &&
-        node.imported && node.imported.name === 'default'
+        node.type === 'ImportDefaultSpecifier' || (
+          node.type === 'ImportSpecifier' &&
+          node.imported && node.imported.name === 'default'
+        )
       )
     )
   },

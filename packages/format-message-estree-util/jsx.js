@@ -28,7 +28,7 @@ exports = module.exports = {
 
   getAttribute: function (node, name) {
     if (node.type !== 'JSXElement') return
-    var attrs = node.openingElement && node.openingElement.attributes || []
+    var attrs = (node.openingElement && node.openingElement.attributes) || []
     var attrNode = attrs.filter(function (attribute) {
       return (
         attribute.name &&

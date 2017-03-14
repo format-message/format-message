@@ -1,4 +1,5 @@
 /* eslint-env mocha */
+/* eslint-disable no-unused-expressions */
 var expect = require('chai').expect
 var exec = require('child_process').exec
 

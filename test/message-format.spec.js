@@ -1,4 +1,5 @@
 /* eslint-env mocha */
+/* eslint-disable no-unused-expressions */
 // include polyfll for Safari and PhantomJS
 if (typeof Intl === 'undefined') {
   require('intl')
