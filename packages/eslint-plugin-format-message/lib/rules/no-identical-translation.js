@@ -10,15 +10,17 @@ var PLURAL_OPTIONS = 3
 
 function hasTextPart (element) {
   return (
-    typeof element === 'string' ||
-    element[TYPE] === 'select' &&
-    Object.keys(element[SELECT_OPTIONS]).some(function (key) {
-      return element[SELECT_OPTIONS][key].some(hasTextPart)
-    }) ||
-    (element[TYPE] === 'plural' || element[TYPE] === 'selectordinal') &&
-    Object.keys(element[PLURAL_OPTIONS]).some(function (key) {
-      return element[PLURAL_OPTIONS][key].some(hasTextPart)
-    })
+    typeof element === 'string' || (
+      element[TYPE] === 'select' &&
+      Object.keys(element[SELECT_OPTIONS]).some(function (key) {
+        return element[SELECT_OPTIONS][key].some(hasTextPart)
+      })
+    ) || (
+      (element[TYPE] === 'plural' || element[TYPE] === 'selectordinal') &&
+      Object.keys(element[PLURAL_OPTIONS]).some(function (key) {
+        return element[PLURAL_OPTIONS][key].some(hasTextPart)
+      })
+    )
   )
 }
 

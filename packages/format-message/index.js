@@ -21,7 +21,7 @@ function namespace () {
   function formatMessage (msg, args, locale) {
     locale = locale || currentLocale
     var pattern = typeof msg === 'string' ? msg : msg.default
-    var id = typeof msg === 'object' && msg.id || generateId(pattern)
+    var id = (typeof msg === 'object' && msg.id) || generateId(pattern)
     var key = locale + ':' + id
     var format = cache[key] ||
       (cache[key] = generateFormat(pattern, id, locale))

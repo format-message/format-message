@@ -17,7 +17,7 @@ module.exports = {
           if (!isTranslate) return
           var translate = attribute.value
           if (translate && translate.type !== 'Literal') return
-          if (!translate || translate.value !== 'yes' && translate.value !== 'no') {
+          if (!translate || (translate.value !== 'yes' && translate.value !== 'no')) {
             context.report(attribute, 'Attribute translate should be "yes" or "no"')
           }
         })

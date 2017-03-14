@@ -62,8 +62,8 @@ module.exports = {
               return validatePath(prop, paramName)
             }
             return (
-              prop.key.type === 'Identifier' && prop.key.name === paramName ||
-              prop.key.type === 'Literal' && prop.key.value === paramName
+              (prop.key.type === 'Identifier' && prop.key.name === paramName) ||
+              (prop.key.type === 'Literal' && prop.key.value === paramName)
             )
           })
           if (!isFound) {
