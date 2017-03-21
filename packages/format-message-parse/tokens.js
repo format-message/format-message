@@ -128,7 +128,7 @@ function text (current, parentType) {
         char === '{' ||
         char === '}' ||
         (isHashSpecial && char === '#') ||
-        (isSpaceSpecial && isWhitespace(char))
+        parentType === 'style'
       ) {
         while (++current.index < length) {
           char = pattern[current.index]
