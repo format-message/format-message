@@ -40,6 +40,17 @@
         }
       }
     },
+    "ars": {
+      "plurals": {
+        "cardinal": {
+          "zero": "n === 0",
+          "one": "n === 1",
+          "two": "n === 2",
+          "few": "3 <= n % 100 && n % 100 <= 10",
+          "many": "11 <= n % 100 && n % 100 <= 99"
+        }
+      }
+    },
     "as": {
       "plurals": {
         "cardinal": {
@@ -953,14 +964,7 @@
     "pt": {
       "plurals": {
         "cardinal": {
-          "one": "(0 <= n && n <= 2) && n !== 2"
-        }
-      }
-    },
-    "pt-PT": {
-      "plurals": {
-        "cardinal": {
-          "one": "n === 1 && v === 0"
+          "one": "0 <= i && i <= 1"
         }
       }
     },
