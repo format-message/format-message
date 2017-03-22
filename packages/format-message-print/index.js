@@ -55,6 +55,12 @@ function printString (element, parent) {
     .replace(special, '\'$&\'') // escape syntax
 }
 
+function printStyle (element) {
+  var special = /[{}\s]+/g
+  if (!special.test(element)) return element.replace(/'/g, '\'\'')
+  return '\'' + element.replace(/'/g, '\'\'') + '\''
+}
+
 function printArgument (element) {
   var key = element[0]
   var type = element[1]
@@ -62,7 +68,7 @@ function printArgument (element) {
   return '{ ' +
     key +
     (type ? ', ' + type : '') +
-    (style ? ', ' + printString(style) : '') +
+    (style ? ', ' + printStyle(style) : '') +
   ' }'
 }
 

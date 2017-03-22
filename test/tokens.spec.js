@@ -266,5 +266,17 @@ describe('tokens()', function () {
         [ '}', '}' ]
       ])
     })
+
+    it('should always start an escape with `\'` in style text', function () {
+      expect(tokens("{n,date,'a style'}").tokens).to.deep.equal([
+        [ '{', '{' ],
+        [ 'id', 'n' ],
+        [ ',', ',' ],
+        [ 'type', 'date' ],
+        [ ',', ',' ],
+        [ 'style', "'a style'" ],
+        [ '}', '}' ]
+      ])
+    })
   })
 })

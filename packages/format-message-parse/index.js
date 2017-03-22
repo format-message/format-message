@@ -85,7 +85,7 @@ function parseText (current, parentType) {
         char === '{' ||
         char === '}' ||
         (isHashSpecial && char === '#') ||
-        (isArgStyle && isWhitespace(char))
+        isArgStyle
       ) {
         text += char
         while (++current.index < length) {

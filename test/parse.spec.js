@@ -264,5 +264,11 @@ describe('parse()', function () {
       expect(ast[0][3].other[0][0]).to.equal('#')
       expect(ast[0][3].other[1]).to.equal('#')
     })
+
+    it('should always start an escape with `\'` in style text', function () {
+      expect(parse("{n,date,'a style'}")).to.deep.equal([
+        [ 'n', 'date', 'a style' ]
+      ])
+    })
   })
 })
