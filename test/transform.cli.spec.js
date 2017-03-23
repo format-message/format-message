@@ -703,6 +703,21 @@ describe('format-message transform', function () {
       }).stdin.end(input, 'utf8')
     })
 
+    it('handles style names with spaces', function (done) {
+      var input = 'import { number, date, time } from "format-message"\n' +
+        'export default <div translate="yes">Caught {number(count)} on {date(d, "MMM d")} at {time(t)}</div>'
+      exec('packages/format-message-cli/format-message transform', function (err, stdout, stderr) {
+        expect(stderr.toString('utf8')).to.equal('')
+        stdout = stdout.toString('utf8').trim()
+        expect(stdout).to.contain('id: "caught_count_number_on_d_date_mmm_d_at_t_time_6fd1bfff"')
+        expect(stdout).to.contain('default: "Caught { count, number } on { d, date, \'MMM d\' } at { t, time }"')
+        expect(stdout).to.contain('count: count')
+        expect(stdout).to.contain('d: d')
+        expect(stdout).to.contain('t: t')
+        done(err)
+      }).stdin.end(input, 'utf8')
+    })
+
     it('handles number, date, and time helpers', function (done) {
       var input = 'import { number, date, time } from "format-message"\n' +
         'export default <div translate="yes">Caught {number(count)} on {date(d, "short")} at {time(t)}</div>'

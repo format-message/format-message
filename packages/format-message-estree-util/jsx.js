@@ -203,7 +203,12 @@ exports = module.exports = {
 
     if (name === 'number' || name === 'date' || name === 'time') {
       if (args[1] && this.isStringLiteral(args[1])) {
-        parameter += ', ' + args[1].value
+        var style = args[1].value
+        parameter += ', ' + (
+          /[{}\s]/.test(style)
+          ? '\'' + style.replace(/'/g, '\'\'') + '\''
+          : style.replace(/'/g, '\'\'')
+        )
       }
       parameters[id] = args[0]
       return '{ ' + parameter + ' }'
