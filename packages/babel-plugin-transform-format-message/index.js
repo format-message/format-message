@@ -165,6 +165,14 @@ module.exports = function (bbl) {
                   node.closingElement = null
                   node.children = []
                 }
+                if (!util.getAttribute(node, 'key')) {
+                  node.openingElement.attributes = [
+                    t.jSXAttribute(
+                      t.jSXIdentifier('key'),
+                      t.stringLiteral(name)
+                    )
+                  ].concat(node.openingElement.attributes || [])
+                }
                 return node
               }))
             ])

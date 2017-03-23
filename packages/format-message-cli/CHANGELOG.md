@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.1.4
+
+- Fixed placeholder style names with spaces or other special characters.
+- Fixed warnings about needing keys on transformed translate="yes" children.
+
 ## 5.1.0
 
 Support namespacing formatMessage.
