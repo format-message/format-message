@@ -19,7 +19,7 @@
     "chai": "^3.4.0",
     "cldr-core": "^31.0.0",
     "eslint": "^3.2.0",
-    "eslint-config-standard": "^7.0.1",
+    "eslint-config-standard": "^8.0.0",
     "eslint-plugin-promise": "^3.0.0",
     "eslint-plugin-standard": "^2.0.0",
     "inferno": "^1.0.5",
