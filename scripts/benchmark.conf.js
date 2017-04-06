@@ -1,8 +1,4 @@
 // Karma configuration
-// Generated on Wed Jan 28 2015 19:14:37 GMT-0700 (MST)
-
-const webpackConfig = require('../webpack.config')
-
 module.exports = function (config) {
   config.set({
 
@@ -30,10 +26,7 @@ module.exports = function (config) {
 
     webpack: {
       cache: true,
-      devtool: '#inline-source-map',
-      module: {
-        loaders: webpackConfig.module.loaders
-      }
+      devtool: 'inline-source-map'
     },
 
     // test results reporter to use

@@ -27,5 +27,3 @@ test
 .travis.yml
 .jshintrc
 karma.conf.js
-webpack.config.js
-

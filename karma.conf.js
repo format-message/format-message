@@ -28,10 +28,7 @@ module.exports = function (config) {
 
     webpack: {
       cache: true,
-      devtool: '#inline-source-map',
-      module: {
-        loaders: []
-      }
+      devtool: 'inline-source-map'
     },
 
     webpackMiddleware: {
