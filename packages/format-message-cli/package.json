@@ -49,6 +49,7 @@
     "glob": "^5.0.2",
     "js-yaml": "^3.4.3",
     "mkdirp": "^0.5.1",
+    "safe-buffer": "^5.0.1",
     "source-map": "^0.5.3"
   }
 }
