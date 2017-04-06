@@ -3,6 +3,7 @@
 var fs = require('fs')
 var path = require('path')
 var mkdirp = require('mkdirp')
+var Buffer = require('safe-buffer').Buffer
 var sourceMap = require('source-map')
 var babel = require('babel-core')
 var plugins = require('./plugins')
@@ -35,7 +36,7 @@ function sourceMapComment (path) {
 function sourceMapInlineComment (map) {
   return sourceMapComment(
     'data:application/json;base64,' +
-    new Buffer(JSON.stringify(map)).toString('base64')
+    Buffer.from(JSON.stringify(map)).toString('base64')
   )
 }
 
