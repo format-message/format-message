@@ -36,7 +36,7 @@ Configure the rules you want to use. These are the defaults.
     "format-message/no-identical-translation": 1,
     "format-message/no-invalid-pattern": 2,
     "format-message/no-invalid-translation": 2,
-    "format-message/no-missing-params": [ 2, { allowNonLiteral: true } ],
+    "format-message/no-missing-params": [ 2, { "allowNonLiteral": true } ],
     "format-message/no-missing-translation": 1,
     "format-message/translation-match-params": 2
   },
