@@ -260,6 +260,27 @@ produces the same tree as
 </div>
 ```
 
+You can also provide an Object and use tag names that match the object's property names
+
+```jsx
+import formatMessage from 'format-message'
+import {formatChildren} from 'format-message/react'
+
+export default ({ extensions }) =>
+  <div title={formatMessage('Choose a file')}>
+    {formatChildren(
+      formatMessage('Drag & Drop {extensions} files here <span1>or</span1> <span2>Browse</span2>', {
+        extensions
+      }),
+      {
+        span1: <span className="or" />,
+        span2: <span className="browse" />
+      }
+    )}
+  </div>
+```
+
+
 ### format-message/inferno
 
 This module includes utilities for working specifically with Inferno when composing messages with embedded components. The API is identical to format-message/react, only it works with Inferno vdom nodes instead of React elements.

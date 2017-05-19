@@ -3,7 +3,7 @@ var expect = require('chai').expect
 var React = require('react')
 var formatChildren = require('../packages/format-message/react').formatChildren
 
-describe('react formatChildren', function () {
+describe('react formatChildren with numeric index tags', function () {
   it('returns a single child for simple messages', function () {
     var results = formatChildren('simple')
     expect(results).to.equal('simple')
@@ -79,6 +79,81 @@ describe('react formatChildren', function () {
     }).to.throw()
     expect(function () {
       formatChildren('<0>test</0>', [ 1 ])
+    }).to.throw()
+  })
+})
+
+describe('react formatChildren with string tags', function () {
+  it('preserves tokens with no element mapping', function () {
+    var results = formatChildren('<span>simple</span>')
+    expect(results).to.equal('<span>simple</span>')
+  })
+
+  it('returns a single child for wrapped messages', function () {
+    var results = formatChildren('<span>simple</span>', {
+      span: React.createElement('span')
+    })
+    expect(results).to.deep.equal(React.createElement('span', null, 'simple'))
+  })
+
+  it('preserves the props of the wrappers', function () {
+    var results = formatChildren('<span>simple</span>', {
+      span: React.createElement('span', { className: 'foo' })
+    })
+    expect(results).to.deep.equal(React.createElement('span', {
+      className: 'foo'
+    }, 'simple'))
+  })
+
+  it('returns an array of children when there are many', function () {
+    var results = formatChildren('it was <em>his</em> fault', {
+      em: React.createElement('em')
+    })
+    expect(results).to.deep.equal([
+      'it was ',
+      React.createElement('em', null, 'his'),
+      ' fault'
+    ])
+  })
+
+  it('nests arbitrarily deep', function () {
+    var results = formatChildren('<div><span><em><strong>deep</strong></em></span></div>', {
+      div: React.createElement('div'),
+      span: React.createElement('span'),
+      em: React.createElement('em'),
+      strong: React.createElement('strong')
+    })
+    expect(results).to.deep.equal(
+      React.createElement('div', null,
+        React.createElement('span', null,
+          React.createElement('em', null,
+            React.createElement('strong', null, 'deep')
+          )
+        )
+      )
+    )
+  })
+
+  it('throws when wrapper tokens aren\'t nested properly', function () {
+    expect(function () {
+      formatChildren('<div><em><span><strong>deep</span></strong></em></div>', {
+        div: React.createElement('div'),
+        em: React.createElement('em'),
+        span: React.createElement('span'),
+        strong: React.createElement('strong')
+      })
+    }).to.throw()
+  })
+
+  it('throws when mappings aren\'t valid elements', function () {
+    expect(function () {
+      formatChildren('<span>test</span>', { span: 'span' })
+    }).to.throw()
+    expect(function () {
+      formatChildren('<foo>test</foo>', { foo: {} })
+    }).to.throw()
+    expect(function () {
+      formatChildren('<foo>test</foo>', { foo: 1 })
     }).to.throw()
   })
 })
