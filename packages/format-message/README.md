@@ -279,6 +279,7 @@ export default ({ extensions }) =>
     )}
   </div>
 ```
+To be valid, a tag name can include any character except `<`, `/`, `>`, and whitespace characters.
 
 
 ### format-message/inferno

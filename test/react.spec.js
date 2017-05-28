@@ -156,4 +156,19 @@ describe('react formatChildren with string tags', function () {
       formatChildren('<foo>test</foo>', { foo: 1 })
     }).to.throw()
   })
+
+  it('throws when wrapper tag names aren\'t valid', function () {
+    expect(function () {
+      formatChildren('<sp an>test</sp an>', { span: 'span' })
+    }).to.throw()
+    expect(function () {
+      formatChildren('<sp\nan>test</sp\nan>', { span: 'span' })
+    }).to.throw()
+    expect(function () {
+      formatChildren('<sp/an>test</sp/an>', { span: 'span' })
+    }).to.throw()
+    expect(function () {
+      formatChildren('<sp<an>test</sp<an>', { span: 'span' })
+    }).to.throw()
+  })
 })
