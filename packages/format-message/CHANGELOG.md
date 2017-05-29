@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.2.0
+
+Allow non-numeric tag names in messages for `formatChildren`.
+
 ## 5.1.0
 
 Added `namespace` function to create a namespaced formatMessage.
