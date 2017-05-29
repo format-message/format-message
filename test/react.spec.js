@@ -18,7 +18,7 @@ describe('react formatChildren with numeric index tags', function () {
     var results = formatChildren('<0>simple</0>', [
       React.createElement('span')
     ])
-    expect(results).to.deep.equal(React.createElement('span', null, 'simple'))
+    expect(results).to.deep.equal(React.createElement('span', { key: '0' }, 'simple'))
   })
 
   it('preserves the props of the wrappers', function () {
@@ -26,7 +26,8 @@ describe('react formatChildren with numeric index tags', function () {
       React.createElement('span', { className: 'foo' })
     ])
     expect(results).to.deep.equal(React.createElement('span', {
-      className: 'foo'
+      className: 'foo',
+      key: '0'
     }, 'simple'))
   })
 
@@ -36,7 +37,7 @@ describe('react formatChildren with numeric index tags', function () {
     ])
     expect(results).to.deep.equal([
       'it was ',
-      React.createElement('em', null, 'his'),
+      React.createElement('em', { key: '0' }, 'his'),
       ' fault'
     ])
   })
@@ -49,10 +50,10 @@ describe('react formatChildren with numeric index tags', function () {
       React.createElement('strong')
     ])
     expect(results).to.deep.equal(
-      React.createElement('div', null,
-        React.createElement('span', null,
-          React.createElement('em', null,
-            React.createElement('strong', null, 'deep')
+      React.createElement('div', { key: '0' },
+        React.createElement('span', { key: '1' },
+          React.createElement('em', { key: '2' },
+            React.createElement('strong', { key: '3' }, 'deep')
           )
         )
       )
@@ -93,7 +94,7 @@ describe('react formatChildren with string tags', function () {
     var results = formatChildren('<span>simple</span>', {
       span: React.createElement('span')
     })
-    expect(results).to.deep.equal(React.createElement('span', null, 'simple'))
+    expect(results).to.deep.equal(React.createElement('span', { key: 'span' }, 'simple'))
   })
 
   it('preserves the props of the wrappers', function () {
@@ -101,7 +102,8 @@ describe('react formatChildren with string tags', function () {
       span: React.createElement('span', { className: 'foo' })
     })
     expect(results).to.deep.equal(React.createElement('span', {
-      className: 'foo'
+      className: 'foo',
+      key: 'span'
     }, 'simple'))
   })
 
@@ -111,7 +113,7 @@ describe('react formatChildren with string tags', function () {
     })
     expect(results).to.deep.equal([
       'it was ',
-      React.createElement('em', null, 'his'),
+      React.createElement('em', { key: 'em' }, 'his'),
       ' fault'
     ])
   })
@@ -124,10 +126,10 @@ describe('react formatChildren with string tags', function () {
       strong: React.createElement('strong')
     })
     expect(results).to.deep.equal(
-      React.createElement('div', null,
-        React.createElement('span', null,
-          React.createElement('em', null,
-            React.createElement('strong', null, 'deep')
+      React.createElement('div', { key: 'div' },
+        React.createElement('span', { key: 'span' },
+          React.createElement('em', { key: 'em' },
+            React.createElement('strong', { key: 'strong' }, 'deep')
           )
         )
       )

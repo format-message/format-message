@@ -5,7 +5,7 @@ var parse = require('format-message-parse')
 var formats = require('format-message-formats')
 var addHelper = require('./inline-helpers').addHelper
 
-var formatChildren = baseFormatChildren.bind(null, function (element, children) {
+var formatChildren = baseFormatChildren.bind(null, function (key, element, children) {
   if (!children) return '{ ' + element + ' }'
   return '{ ' + element + ', select, other {' + children.join('') + '} }'
 })

@@ -47,7 +47,7 @@ module.exports = function formatChildren (applyChildren, message, wrappers) {
     }
 
     if (isSelfClosing) {
-      current.push(applyChildren(wrappers[key], null))
+      current.push(applyChildren(key, wrappers[key], null))
     } else if (isEnd) {
       if (currentKey !== key) {
         throw new Error('Wrapping tags not properly nested in "' + message + '"')
@@ -55,7 +55,7 @@ module.exports = function formatChildren (applyChildren, message, wrappers) {
       var children = current
       current = stack.pop()
       currentKey = stack.pop()
-      current.push(applyChildren(wrappers[key], children))
+      current.push(applyChildren(key, wrappers[key], children))
     } else { // start token
       stack.push(currentKey)
       stack.push(current)
