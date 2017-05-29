@@ -4,7 +4,7 @@ var baseFormatChildren = require('format-message/base-format-children')
 var parse = require('format-message-parse')
 var visitEachTranslation = require('../util/visit-each-translation')
 
-var formatChildren = baseFormatChildren.bind(null, function (element, children) {
+var formatChildren = baseFormatChildren.bind(null, function (key, element, children) {
   if (!children) return '{ ' + element + ' }'
   return '{ ' + element + ', select, other {' + children.join('') + '} }'
 })
