@@ -6,6 +6,8 @@
  * collects children for that wrapper until the ending token is found.
  */
 module.exports = function formatChildren (applyChildren, message, wrappers) {
+  var invalidChars = '</> \n\t\r'
+
   if (!wrappers) return message
   var mm = message.length
   var stack = []
@@ -28,14 +30,14 @@ module.exports = function formatChildren (applyChildren, message, wrappers) {
     }
 
     var e = s
-    while (message[e] >= '0' && message[e] <= '9') { ++e }
+    while (invalidChars.indexOf(message[e]) < 0) { ++e }
     if (!isEnd && message.slice(e, e + 2) === '/>') {
       isSelfClosing = true
     } else if (message[e] !== '>') {
-      continue
+      throw new Error('Wrapping tags include invalid characters in "' + message + '". Valid characters are any character except `<`, `/`, `>`, and whitespace characters.')
     }
 
-    var key = +message.slice(s, e)
+    var key = message.slice(s, e)
     if (!wrappers[key]) continue
     ++e
     if (isSelfClosing) ++e
