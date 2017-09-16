@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "async": "^2.0.0",
-    "babel-eslint": "^7.2.3",
+    "babel-eslint": "^8.0.0",
     "benchmark": "^2.1.0",
     "chai": "^4.0.1",
     "cldr-core": "^31.0.0",
