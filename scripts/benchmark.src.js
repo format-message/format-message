@@ -109,7 +109,7 @@ args = {
 }
 formatMessage(pattern, args, 'en') // prime cache
 intlMF = new IntlMF(pattern, 'en').format
-mf2 = new MessageFormat2('en').compile(pattern)
+// mf2 = new MessageFormat2('en').compile(pattern)
 mf = new MessageFormat(pattern, 'en').format
 BENCHMARK_PARSE && benchmark(
   'Parse complex message (no numbers or dates)', {
@@ -121,7 +121,7 @@ BENCHMARK_PARSE && benchmark(
 benchmark(
   'Format complex message (no numbers or dates)', {
     'intl-messageformat (reuse object)': function () { return intlMF(args) },
-    'messageformat (reuse object)': function () { return mf2(args) },
+//    'messageformat (reuse object)': function () { return mf2(args) }, // throws on two
     'message-format (reuse object)': function () { return mf(args) },
     'format-message': function () { return formatMessage(pattern, args) },
     'format-message (inlined)': function () {
