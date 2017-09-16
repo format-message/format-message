@@ -121,7 +121,7 @@ BENCHMARK_PARSE && benchmark(
 benchmark(
   'Format complex message (no numbers or dates)', {
     'intl-messageformat (reuse object)': function () { return intlMF(args) },
-//    'messageformat (reuse object)': function () { return mf2(args) }, // throws on two
+    // 'messageformat (reuse object)': function () { return mf2(args) }, // throws on two
     'message-format (reuse object)': function () { return mf(args) },
     'format-message': function () { return formatMessage(pattern, args) },
     'format-message (inlined)': function () {
@@ -170,14 +170,14 @@ mf = new MessageFormat(pattern, 'en').format
 BENCHMARK_PARSE && benchmark(
   'Parse complex message', {
     'intl-messageformat': function () { return intlParse(pattern) },
-//    'messageformat': function () { return parse2(pattern) }, // doesn't support date
+    // 'messageformat': function () { return parse2(pattern) }, // doesn't support date
     'format-message-parse': function () { return parse(pattern) }
   }
 )
 benchmark(
   'Format complex message', {
     'intl-messageformat (reuse object)': function () { return intlMF(args) },
-//    'messageformat (reuse object)': function () { return mf2(args) }, // doesn't support date
+    // 'messageformat (reuse object)': function () { return mf2(args) }, // doesn't support date
     'message-format (reuse object)': function () { return mf(args) },
     'format-message': function () { return formatMessage(pattern, args) },
     'format-message (inlined)': function () {
