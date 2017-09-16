@@ -206,8 +206,8 @@ exports = module.exports = {
         var style = args[1].value
         parameter += ', ' + (
           /[{}\s]/.test(style)
-          ? '\'' + style.replace(/'/g, '\'\'') + '\''
-          : style.replace(/'/g, '\'\'')
+            ? '\'' + style.replace(/'/g, '\'\'') + '\''
+            : style.replace(/'/g, '\'\'')
         )
       }
       parameters[id] = args[0]

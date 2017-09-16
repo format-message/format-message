@@ -11,8 +11,8 @@
     "format-message"
   ],
   "dependencies": {
+    "crc32": "^0.2.2",
     "format-message-parse": "^5.1.2",
-    "format-message-print": "^5.1.2",
-    "crc32": "^0.2.2"
+    "format-message-print": "^5.1.2"
   }
 }
