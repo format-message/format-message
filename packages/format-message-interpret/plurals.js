@@ -336,6 +336,14 @@ var f = [
   },
   function (s) {
     var n = +s
+    return (n === 1 || n === 5 || (7 <= n && n <= 9)) ? 'one'
+      : n === 2 || n === 3 ? 'two'
+      : n === 4 ? 'few'
+      : n === 6 ? 'many'
+      : 'other'
+  },
+  function (s) {
+    var n = +s
     return n === 1 ? 'one'
       : n % 10 === 4 && n % 100 !== 14 ? 'many'
       : 'other'
@@ -343,6 +351,11 @@ var f = [
   function (s) {
     var n = +s
     return (n % 10 === 1 || n % 10 === 2) && (n % 100 !== 11 && n % 100 !== 12) ? 'one'
+      : 'other'
+  },
+  function (s) {
+    var n = +s
+    return (n % 10 === 6 || n % 10 === 9) || n === 10 ? 'few'
       : 'other'
   },
   function (s) {
@@ -412,6 +425,7 @@ module.exports = {
   hsb: { cardinal: f[11] },
   hu: { cardinal: f[0], ordinal: f[41] },
   hy: { cardinal: f[12], ordinal: f[0] },
+  io: { cardinal: f[4] },
   is: { cardinal: f[18] },
   it: { cardinal: f[4], ordinal: f[42] },
   iu: { cardinal: f[19] },
@@ -462,7 +476,7 @@ module.exports = {
   ny: { cardinal: f[0] },
   nyn: { cardinal: f[0] },
   om: { cardinal: f[0] },
-  or: { cardinal: f[0] },
+  or: { cardinal: f[0], ordinal: f[48] },
   os: { cardinal: f[0] },
   pa: { cardinal: f[1] },
   pap: { cardinal: f[0] },
@@ -470,12 +484,14 @@ module.exports = {
   prg: { cardinal: f[23] },
   ps: { cardinal: f[0] },
   pt: { cardinal: f[28] },
+  'pt-PT': { cardinal: f[4] },
   rm: { cardinal: f[0] },
   ro: { cardinal: f[25], ordinal: f[0] },
   rof: { cardinal: f[0] },
   ru: { cardinal: f[29] },
   rwk: { cardinal: f[0] },
   saq: { cardinal: f[0] },
+  sd: { cardinal: f[0] },
   sdh: { cardinal: f[0] },
   se: { cardinal: f[19] },
   seh: { cardinal: f[0] },
@@ -491,12 +507,12 @@ module.exports = {
   sms: { cardinal: f[19] },
   sn: { cardinal: f[0] },
   so: { cardinal: f[0] },
-  sq: { cardinal: f[0], ordinal: f[48] },
+  sq: { cardinal: f[0], ordinal: f[49] },
   sr: { cardinal: f[7] },
   ss: { cardinal: f[0] },
   ssy: { cardinal: f[0] },
   st: { cardinal: f[0] },
-  sv: { cardinal: f[4], ordinal: f[49] },
+  sv: { cardinal: f[4], ordinal: f[50] },
   sw: { cardinal: f[4] },
   syr: { cardinal: f[0] },
   ta: { cardinal: f[0] },
@@ -504,14 +520,14 @@ module.exports = {
   teo: { cardinal: f[0] },
   ti: { cardinal: f[1] },
   tig: { cardinal: f[0] },
-  tk: { cardinal: f[0] },
+  tk: { cardinal: f[0], ordinal: f[51] },
   tl: { cardinal: f[13], ordinal: f[0] },
   tn: { cardinal: f[0] },
   tr: { cardinal: f[0] },
   ts: { cardinal: f[0] },
   tzm: { cardinal: f[33] },
   ug: { cardinal: f[0] },
-  uk: { cardinal: f[29], ordinal: f[50] },
+  uk: { cardinal: f[29], ordinal: f[52] },
   ur: { cardinal: f[4] },
   uz: { cardinal: f[0] },
   ve: { cardinal: f[0] },

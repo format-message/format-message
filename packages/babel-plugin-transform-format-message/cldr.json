@@ -520,6 +520,13 @@
         }
       }
     },
+    "io": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0"
+        }
+      }
+    },
     "is": {
       "plurals": {
         "cardinal": {
@@ -913,6 +920,12 @@
       "plurals": {
         "cardinal": {
           "one": "n === 1"
+        },
+        "ordinal": {
+          "one": "(n === 1 || n === 5 || (7 <= n && n <= 9))",
+          "two": "n === 2 || n === 3",
+          "few": "n === 4",
+          "many": "n === 6"
         }
       }
     },
@@ -968,6 +981,13 @@
         }
       }
     },
+    "pt-PT": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0"
+        }
+      }
+    },
     "rm": {
       "plurals": {
         "cardinal": {
@@ -1010,6 +1030,13 @@
       }
     },
     "saq": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "sd": {
       "plurals": {
         "cardinal": {
           "one": "n === 1"
@@ -1236,6 +1263,9 @@
       "plurals": {
         "cardinal": {
           "one": "n === 1"
+        },
+        "ordinal": {
+          "few": "(n % 10 === 6 || n % 10 === 9) || n === 10"
         }
       }
     },
