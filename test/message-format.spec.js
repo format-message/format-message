@@ -19,9 +19,9 @@ describe('MessageFormat', function () {
     })
 
     it('should resolve passed locale to closest supported locale', function () {
-      var message = new MessageFormat('pt-PT', 'ola')
+      var message = new MessageFormat('pt-DE', 'ola')
       expect(message.resolvedOptions().locale).to.equal('pt')
-      message = new MessageFormat('pt-BR', 'oi')
+      message = new MessageFormat('pt-US', 'oi')
       expect(message.resolvedOptions().locale).to.equal('pt')
     })
 
