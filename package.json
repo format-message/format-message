@@ -17,7 +17,7 @@
     "babel-eslint": "^8.0.0",
     "benchmark": "^2.1.0",
     "chai": "^4.0.1",
-    "cldr-core": "^31.0.0",
+    "cldr-core": "^32.0.0",
     "eslint": "^4.7.0",
     "eslint-config-standard": "^10.2.0",
     "eslint-plugin-import": "^2.2.0",
