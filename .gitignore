@@ -18,6 +18,7 @@ Session.vim
 
 # Node
 node_modules
+lerna-debug.log
 
 # generated
 .nyc_output
