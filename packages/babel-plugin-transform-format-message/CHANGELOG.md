@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.2.1
+
+Updated CLDR plural rules.
+
 ## 5.1.4
 
 - Fixed placeholder style names with spaces or other special characters.

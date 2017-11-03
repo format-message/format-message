@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.2.1
+
+Updated CLDR plural rules.
+
 ## 5.2.0
 
 Allow non-numeric tag names in messages for `formatChildren`.

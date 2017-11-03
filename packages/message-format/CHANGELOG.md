@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.2.1
+
+Updated CLDR plural rules.
+
 ## 5.0.0
 
 This only updated the dependencies and bumped the version to match related
