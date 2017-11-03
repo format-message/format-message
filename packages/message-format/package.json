@@ -1,6 +1,6 @@
 {
   "name": "message-format",
-  "version": "5.1.2",
+  "version": "5.2.1",
   "description": "Intl.MessageFormat prollyfill supporting ICU message format",
   "author": "Andy VanWagoner <thetalecrafter@gmail.com> (https://thetalecrafter.com/)",
   "homepage": "https://github.com/format-message/format-message",
@@ -22,7 +22,7 @@
     "icu"
   ],
   "dependencies": {
-    "format-message-interpret": "^5.1.2",
+    "format-message-interpret": "^5.2.1",
     "format-message-parse": "^5.1.2"
   }
 }
