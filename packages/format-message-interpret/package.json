@@ -1,6 +1,6 @@
 {
   "name": "format-message-interpret",
-  "version": "5.1.2",
+  "version": "5.2.1",
   "description": "Convert parsed format-message ast to function",
   "author": "Andy VanWagoner <thetalecrafter@gmail.com> (https://thetalecrafter.com/)",
   "homepage": "https://github.com/format-message/format-message",

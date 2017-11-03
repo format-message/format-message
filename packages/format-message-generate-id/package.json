@@ -1,6 +1,6 @@
 {
   "name": "format-message-generate-id",
-  "version": "5.1.2",
+  "version": "5.2.1",
   "description": "Generate a message id from the default message pattern",
   "author": "Andy VanWagoner <thetalecrafter@gmail.com> (https://thetalecrafter.com/)",
   "homepage": "https://github.com/format-message/format-message",
