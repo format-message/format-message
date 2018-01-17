@@ -26,6 +26,8 @@ find message patterns in files and verify there are no obvious problems
     -t, --translations [path]   location of the JSON file with message translations, if specified, translations are also checked for errors
     -f, --filename [filename]   filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]
     -s, --style [style]         error output format (stylish | checkstyle | compact | html | jslint-xml | json | junit | tap | unix) [stylish]
+    -e, --extends [extends]     sets the rules that are used for linting (default | recommended | customrules) [default]'
+    -c, --customrules [path]    location of the custom rules file
 
 #### Examples:
 
