@@ -52,6 +52,16 @@ function loadTranslations (file) {
   }
 }
 
+function loadJSONFile (file) {
+  file = pathUtil.resolve(file)
+  try {
+    return require(file)
+  } catch (err) {
+    var data = readFileSync(file, 'utf8')
+    return JSON.parse(data)
+  }
+}
+
 /**
  * version
  **/
@@ -79,6 +89,10 @@ program
     'error output format (stylish | checkstyle | compact | html | jslint-xml | json | junit | tap | unix) [stylish]',
     'stylish'
   )
+  .option('-e, --extends [extends]',
+    'sets the rules that are used for linting (default | recommended | customrules) [default]',
+    'default')
+  .option('-c, --customrules [path]', 'location of the custom rules file')
   .action(function (files, options) {
     files = flattenFiles(files)
 
@@ -98,6 +112,28 @@ program
         errors.push(err.message)
       }
     }
+    if (options.extends === 'default') {
+      options.extends = [ 'plugin:format-message/default' ]
+      options.customrules = null
+    } else if (options.extends === 'recommended') {
+      options.extends = [ 'plugin:format-message/recommended' ]
+      options.customrules = null
+    } else if (options.extends === 'customrules') {
+      options.extends = null
+      if (options.customrules && existsSync(options.customrules)) {
+        options.customrules = loadJSONFile(options.customrules)
+      } else {
+        if (options.customrules) {
+          errors.push('A valid file needs to be provided for "customrules". "' + options.customrules + '" is not a valid file.')
+        } else {
+          errors.push('When "customrules" is specified for "extends", a valid path has to be provided for "customrules".')
+        }
+        options.customrules = null
+      }
+    } else {
+      errors.push('A valid extends value [default, recommended, customrules] needs to be provided. "' + options.extends + '" is not valid.')
+    }
+
     if (errors.length) {
       console.error(errors.join('. '))
       process.exit(2)
@@ -108,7 +144,9 @@ program
         style: options.style,
         locale: options.locale,
         generateId: options.generateId,
-        translations: options.translations
+        translations: options.translations,
+        extends: options.extends,
+        customrules: options.customrules
       })
     })
   })

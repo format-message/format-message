@@ -4,29 +4,38 @@ var fs = require('fs')
 var CLIEngine = require('eslint').CLIEngine
 
 module.exports = function extractFiles (files, options) {
+  var baseConfig = {
+    ecmaFeatures: {
+      modules: true,
+      experimentalObjectRestSpread: true,
+      jsx: true
+    },
+    parserOptions: {
+      ecmaVersion: 6,
+      sourceType: 'module'
+    },
+    plugins: [ 'format-message' ],
+    settings: {
+      'format-message': {
+        sourceLocale: options.locale,
+        generateId: options.generateId,
+        translations: options.translations
+      }
+    }
+  }
+  // This conditionally adds either the extends or rules config option.
+  // Both can not be set as rules always overrides extends even if rules does
+  // not have a valid value.
+  if (options.extends) {
+    baseConfig.extends = options.extends
+  }
+  if (options.customrules) {
+    baseConfig.rules = options.customrules
+  }
   var cli = new CLIEngine({
     useEslintrc: false,
     envs: [ 'es6', 'browser', 'node' ],
-    baseConfig: {
-      ecmaFeatures: {
-        modules: true,
-        experimentalObjectRestSpread: true,
-        jsx: true
-      },
-      parserOptions: {
-        ecmaVersion: 6,
-        sourceType: 'module'
-      },
-      plugins: [ 'format-message' ],
-      extends: [ 'plugin:format-message/default' ],
-      settings: {
-        'format-message': {
-          sourceLocale: options.locale,
-          generateId: options.generateId,
-          translations: options.translations
-        }
-      }
-    }
+    baseConfig: baseConfig
   })
 
   var report = {
