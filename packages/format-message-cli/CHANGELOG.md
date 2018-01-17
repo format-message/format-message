@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.2.2
+
+Added the `--extends` and `--customrules` cli options.
+
 ## 5.1.4
 
 - Fixed placeholder style names with spaces or other special characters.
