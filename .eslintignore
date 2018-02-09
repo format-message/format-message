@@ -1,8 +1,0 @@
-packages/format-message-interpret/plurals.js
-scripts/benchmark.js
-scripts/cldr.js
-test/format-inline.spec.js
-node_modules
-**/node_modules
-.git/
-coverage

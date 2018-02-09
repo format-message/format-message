@@ -2,15 +2,12 @@
   "name": "format-message",
   "private": true,
   "scripts": {
-    "benchmark": "npm run benchmark-compile && node scripts/benchmark.js",
-    "benchmark-compile": "packages/format-message-cli/format-message transform -i scripts/benchmark.src.js > scripts/benchmark.js",
+    "benchmark": "node scripts/benchmark.js",
+    "cldr": "node scripts/cldr.js",
     "lerna": "lerna",
-    "lint": "eslint .",
-    "test": "npm run lint && npm run test-setup && npm run test-node && npm run test-browsers",
-    "test-browsers": "karma start",
-    "test-setup": "rm -rf test/inline && packages/format-message-cli/format-message transform -i test/format.spec.js > test/format-inline.spec.js",
-    "test-node": "nyc --reporter=lcov --reporter=text mocha -cG --timeout 10000 -R dot 'test/**/*.spec.js'",
-    "cldr": "node scripts/cldr.js"
+    "prebenchmark": "format-message transform -i scripts/benchmark.src.js > scripts/benchmark.js",
+    "pretest": "rm -rf test/inline && format-message transform -i test/format.spec.js > test/format-inline.spec.js",
+    "test": "eslint . && nyc mocha 'test/**/*.spec.js' && karma start"
   },
   "devDependencies": {
     "async": "^2.0.0",
@@ -45,6 +42,28 @@
     "react": "^16.0.0",
     "rimraf": "^2.4.3",
     "webpack": "^3.8.1"
+  },
+  "eslintConfig": {
+    "extends": [
+      "standard"
+    ],
+    "rules": {
+    }
+  },
+  "eslintIgnore": [
+    "packages/format-message-interpret/plurals.js",
+    "scripts/benchmark.js",
+    "scripts/cldr.js",
+    "test/format-inline.spec.js",
+    "**/node_modules",
+    "coverage"
+  ],
+  "nyc": {
+    "reporter": [
+      "html",
+      "lcov",
+      "text-summary"
+    ]
   },
   "version": "5.0.0",
   "workspaces": [
