@@ -41,7 +41,7 @@
     "nyc": "^11.0.2",
     "react": "^16.0.0",
     "rimraf": "^2.4.3",
-    "webpack": "^3.8.1"
+    "webpack": "^4.0.1"
   },
   "eslintConfig": {
     "extends": [
