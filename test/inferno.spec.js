@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 var expect = require('chai').expect
-var createElement = require('inferno-create-element')
+var createElement = require('inferno-create-element').createElement
 var formatChildren = require('../packages/format-message/inferno').formatChildren
 
 describe('inferno formatChildren with numeric index tags', function () {
