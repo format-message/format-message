@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.2.3
+
+Support inferno v4.
+
 ## 5.2.1
 
 Updated CLDR plural rules.
