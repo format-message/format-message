@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.2.3
+
+Fix a bug affecting react-native apps.
+
 ## 5.1.0
 
 Supports namespaced formatMessage.
