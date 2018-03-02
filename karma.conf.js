@@ -27,8 +27,7 @@ module.exports = function (config) {
     },
 
     webpack: {
-      cache: true,
-      devtool: 'inline-source-map'
+      mode: 'development'
     },
 
     webpackMiddleware: {
