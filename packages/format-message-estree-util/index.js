@@ -100,7 +100,7 @@ exports = module.exports = {
   isFormatMessage: function (node) {
     if (node.type !== 'Identifier') return false
     var binding = this.getBinding(node)
-    if (!binding) return false
+    if (!binding || !binding.node) return false
 
     return (
       this.isImportFormatMessage(binding) ||
