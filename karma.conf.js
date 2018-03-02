@@ -27,7 +27,10 @@ module.exports = function (config) {
     },
 
     webpack: {
-      mode: 'development'
+      mode: 'development',
+      resolve: {
+        mainFields: [ 'browser', 'main' ] // no module (inferno)
+      }
     },
 
     webpackMiddleware: {
