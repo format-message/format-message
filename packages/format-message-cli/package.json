@@ -1,6 +1,6 @@
 {
   "name": "format-message-cli",
-  "version": "5.2.3",
+  "version": "5.2.4",
   "description": "Command-line tools to lint, extract, and inline format-message translations",
   "author": "Andy VanWagoner <thetalecrafter@gmail.com> (https://thetalecrafter.com/)",
   "homepage": "https://github.com/format-message/format-message/tree/master/packages/format-message-cli",
