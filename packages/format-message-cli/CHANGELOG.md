@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.2.4
+
+Fix extract failing on dynamic `import()` syntax.
+
 ## 5.2.3
 
 Fix a bug affecting react-native apps.
