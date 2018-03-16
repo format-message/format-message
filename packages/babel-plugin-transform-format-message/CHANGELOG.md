@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.2.5
+
+Made formatChildren more lenient in parsing.
+
 ## 5.2.3
 
 Fix a bug affecting react-native apps.

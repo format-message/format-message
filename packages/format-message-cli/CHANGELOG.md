@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.2.5
+
+Made formatChildren more lenient in parsing.
+
 ## 5.2.4
 
 Fix extract failing on dynamic `import()` syntax.
