@@ -156,4 +156,21 @@ describe('inferno formatChildren with string tags', function () {
       formatChildren('<foo>test</foo>', { foo: 1 })
     }).to.throw()
   })
+
+  it('ignores invalid wrapper tags', function () {
+    var result = formatChildren('<sp an>test</sp an>', { span: 'span' })
+    expect(result).to.equal('<sp an>test</sp an>')
+
+    result = formatChildren('<sp\nan>test</sp\nan>', { span: 'span' })
+    expect(result).to.equal('<sp\nan>test</sp\nan>')
+
+    result = formatChildren('<sp/an>test</sp/an>', { span: 'span' })
+    expect(result).to.equal('<sp/an>test</sp/an>')
+
+    result = formatChildren('<sp<an>test</sp<an>', { span: 'span' })
+    expect(result).to.equal('<sp<an>test</sp<an>')
+
+    result = formatChildren('<span class="foobar">test</span>', { span: 'span' })
+    expect(result).to.equal('<span class="foobar">test</span>')
+  })
 })
