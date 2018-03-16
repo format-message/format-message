@@ -159,18 +159,20 @@ describe('react formatChildren with string tags', function () {
     }).to.throw()
   })
 
-  it('throws when wrapper tag names aren\'t valid', function () {
-    expect(function () {
-      formatChildren('<sp an>test</sp an>', { span: 'span' })
-    }).to.throw()
-    expect(function () {
-      formatChildren('<sp\nan>test</sp\nan>', { span: 'span' })
-    }).to.throw()
-    expect(function () {
-      formatChildren('<sp/an>test</sp/an>', { span: 'span' })
-    }).to.throw()
-    expect(function () {
-      formatChildren('<sp<an>test</sp<an>', { span: 'span' })
-    }).to.throw()
+  it('ignores invalid wrapper tags', function () {
+    var result = formatChildren('<sp an>test</sp an>', { span: 'span' })
+    expect(result).to.equal('<sp an>test</sp an>')
+
+    result = formatChildren('<sp\nan>test</sp\nan>', { span: 'span' })
+    expect(result).to.equal('<sp\nan>test</sp\nan>')
+
+    result = formatChildren('<sp/an>test</sp/an>', { span: 'span' })
+    expect(result).to.equal('<sp/an>test</sp/an>')
+
+    result = formatChildren('<sp<an>test</sp<an>', { span: 'span' })
+    expect(result).to.equal('<sp<an>test</sp<an>')
+
+    result = formatChildren('<span class="foobar">test</span>', { span: 'span' })
+    expect(result).to.equal('<span class="foobar">test</span>')
   })
 })
