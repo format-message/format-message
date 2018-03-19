@@ -8,10 +8,10 @@
 module.exports = function formatChildren (applyChildren, message, wrappers) {
   wrappers = wrappers || []
 
-  // at lest one word character (letter, digit, or _) surrounded by < >
+  // at least one word character (letter, digit, or _) surrounded by < >
   var wrappingToken = /<(\w+)>/g
 
-  // at lest one word character (letter, digit, or _) surrounded by < />
+  // at least one word character (letter, digit, or _) surrounded by < />
   var selfClosingToken = /<(\w+)\/>/g
 
   var results = []
@@ -24,7 +24,7 @@ module.exports = function formatChildren (applyChildren, message, wrappers) {
     token = {
       key: key,
       start: match.index,
-      end: message.indexOf(`</${key}>`)
+      end: message.indexOf('</' + key + '>')
     }
 
     tokens.forEach(function (t) {
@@ -44,8 +44,8 @@ module.exports = function formatChildren (applyChildren, message, wrappers) {
 
     if (wrappers[token.key]) {
       // get the text in between the token
-      var start = message.lastIndexOf(`<${token.key}>`)
-      var end = message.lastIndexOf(`</${token.key}>`)
+      var start = message.lastIndexOf('<' + token.key + '>')
+      var end = message.lastIndexOf('</' + token.key + '>')
       var value = message.substring(start + token.key.length + 2, end)
 
       var children = []
@@ -66,11 +66,11 @@ module.exports = function formatChildren (applyChildren, message, wrappers) {
       // replace the wrapper token with a self closing token in the message to
       // signify the replacement has been done. this also will allow a parent
       // token to add this token as a child
-      wrappers[`__${i}__`] = applyChildren(token.key, wrappers[token.key], children)
+      wrappers['__' + i + '__'] = applyChildren(token.key, wrappers[token.key], children)
 
       var left = message.substring(0, start)
       var right = message.substring(end + token.key.length + 3)
-      message = left + `<__${i}__/>` + right
+      message = left + '<__' + i + '__/>' + right
     }
   }
 
