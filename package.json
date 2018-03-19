@@ -33,7 +33,7 @@
     "karma-mocha": "^1.1.1",
     "karma-safari-launcher": "^1.0.0",
     "karma-sourcemap-loader": "^0.3.6",
-    "karma-webpack": "^2.0.13",
+    "karma-webpack": "^3.0.0",
     "lerna": "^2.5.1",
     "messageformat": "^1.0.0",
     "mkdirp": "^0.5.1",
