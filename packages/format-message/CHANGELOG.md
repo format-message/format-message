@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.2.6
+
+Fix IE11 compat by removing template literals.
+Test against Inferno v5.
+
 ## 5.2.5
 
 Made formatChildren more lenient in parsing.
