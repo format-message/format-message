@@ -177,7 +177,7 @@ var f = [
     var i = Math.floor(Math.abs(+s))
     var v = (s + '.').split('.')[1].length
     var f = +(s + '.').split('.')[1]
-    return v === 0 && i % 10 === 1 || f % 10 === 1 ? 'one'
+    return v === 0 && i % 10 === 1 && i % 100 !== 11 || f % 10 === 1 && f % 100 !== 11 ? 'one'
       : 'other'
   },
   function (s) {
@@ -491,6 +491,7 @@ module.exports = {
   ru: { cardinal: f[29] },
   rwk: { cardinal: f[0] },
   saq: { cardinal: f[0] },
+  scn: { cardinal: f[4], ordinal: f[42] },
   sd: { cardinal: f[0] },
   sdh: { cardinal: f[0] },
   se: { cardinal: f[19] },
