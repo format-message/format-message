@@ -77,7 +77,7 @@ program
   .description('find message patterns in files and verify there are no obvious problems')
   .option('-g, --generate-id [type]',
     'generate missing ids from default message pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]',
-    'underscored_crc32'
+    'literal'
   )
   .option('-l, --locale [locale]', 'BCP 47 language tags specifying the source default locale [en]', 'en')
   .option('-t, --translations [path]',
@@ -160,7 +160,7 @@ program
   .description('find and list all message patterns in files')
   .option('-g, --generate-id [type]',
     'generate missing ids from default message pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]',
-    'underscored_crc32'
+    'literal'
   )
   .option('-l, --locale [locale]', 'BCP 47 language tags specifying the source default locale [en]', 'en')
   .option('-f, --filename [filename]', 'filename to use when reading from stdin - this will be used in errors', 'stdin')
@@ -201,7 +201,7 @@ program
   .description('transform formatMessage calls either adding generated ids or inlining and optimizing a translation')
   .option('-g, --generate-id [type]',
     'generate missing ids from default message pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]',
-    'underscored_crc32'
+    'literal'
   )
   .option('-i, --inline', 'inline the translation for the specified locale')
   .option('-j, --jsx-target [name]', 'use helpers for the target framework [react]', 'react')

@@ -13,7 +13,7 @@ module.exports = function (bbl) {
 
   function generateId (type, pattern) {
     var fn = typeof type === 'function' ? type
-      : generate[type] || generate.underscored_crc32
+      : generate[type] || generate.literal
     return fn(pattern)
   }
 
