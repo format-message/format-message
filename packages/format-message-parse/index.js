@@ -1,5 +1,45 @@
+// @flow
+'use strict'
+
+/*::
+export type AST = Node[]
+type Node = string | Arg
+type Arg = SimpleArg | OffsetArg | FormattedArg
+type SimpleArg = [ string ]
+type OffsetArg = [ string, 'plural' | 'selectordinal', number, SubMessages ]
+type FormattedArg = [ string, string ] | [ string, string, string | SubMessages ]
+type SubMessages = { [string]: AST }
+export type Token = [ TokenType, string ]
+type TokenType = 'text' | 'space' | 'id' | 'type' | 'style' | 'offset' | 'number' | 'selector' | '{' | '}' | ',' | '#' | ':'
+type Context = {
+  pattern: string,
+  index: number,
+  tokens: ?Token[]
+}
+*/
+
+const ARG_OPN = '{'
+const ARG_CLS = '}'
+const ARG_SEP = ','
+const NUM_ARG = '#'
+const ESC = '\''
+const OFFSET = 'offset:'
+const simpleTypes = [
+  'number',
+  'date',
+  'time',
+  'ordinal',
+  'duration',
+  'spellout'
+]
+const submTypes = [
+  'plural',
+  'select',
+  'selectordinal'
+]
+
 /**
- * Parser
+ * parse
  *
  * Turns this:
  *  `You have { numBananas, plural,
@@ -14,31 +54,118 @@
  *      "one": [ "a banana" ],
  *    "other": [ [ '#' ], " bananas" ]
  *  } ], " for sale." ]
+ *
+ * tokens:
+ *  [
+ *    [ "text", "You have " ],
+ *    [ "{", "{" ],
+ *    [ "space", " " ],
+ *    [ "id", "numBananas" ],
+ *    [ ",", ", " ],
+ *    [ "space", " " ],
+ *    [ "type", "plural" ],
+ *    [ ",", "," ],
+ *    [ "space", "\n     " ],
+ *    [ "selector", "=0" ],
+ *    [ "space", " " ],
+ *    [ "{", "{" ],
+ *    [ "text", "no bananas" ],
+ *    [ "}", "}" ],
+ *    [ "space", "\n    " ],
+ *    [ "selector", "one" ],
+ *    [ "space", " " ],
+ *    [ "{", "{" ],
+ *    [ "text", "a banana" ],
+ *    [ "}", "}" ],
+ *    [ "space", "\n  " ],
+ *    [ "selector", "other" ],
+ *    [ "space", " " ],
+ *    [ "{", "{" ],
+ *    [ "#", "#" ],
+ *    [ "text", " bananas" ],
+ *    [ "}", "}" ],
+ *    [ "space", "\n" ],
+ *    [ "}", "}" ],
+ *    [ "text", " for sale." ]
+ *  ]
  **/
-'use strict'
-
-module.exports = function parse (pattern) {
-  if (typeof pattern !== 'string') throw new SyntaxError('Pattern must be a string')
-  return parseMessage({ pattern: pattern, index: 0 }, 'message')
+module.exports = function parse (pattern/*: string */, tokens/*:: ?: Token[] */)/*: AST */ {
+  return parseAST({ pattern: String(pattern), index: 0, tokens: tokens || null }, '')
 }
 
-function isDigit (char) {
-  return (
-    char === '0' ||
-    char === '1' ||
-    char === '2' ||
-    char === '3' ||
-    char === '4' ||
-    char === '5' ||
-    char === '6' ||
-    char === '7' ||
-    char === '8' ||
-    char === '9'
-  )
+function parseAST (current/*: Context */, parentType/*: string */)/*: AST */ {
+  const pattern = current.pattern
+  const length = pattern.length
+  const elements/*: AST */ = []
+  const start = current.index
+  const text = parseText(current, parentType)
+  if (text) elements.push(text)
+  if (text && current.tokens) current.tokens.push([ 'text', pattern.slice(start, current.index) ])
+  while (current.index < length) {
+    if (pattern[current.index] === ARG_CLS) {
+      if (!parentType) throw expected(current)
+      break
+    }
+    elements.push(parseArgument(current))
+    const start = current.index
+    const text = parseText(current, parentType)
+    if (text) elements.push(text)
+    if (text && current.tokens) current.tokens.push([ 'text', pattern.slice(start, current.index) ])
+  }
+  return elements
 }
 
-function isWhitespace (char) {
-  var code = char && char.charCodeAt(0)
+function parseText (current/*: Context */, parentType/*: string */)/*: string */ {
+  const pattern = current.pattern
+  const length = pattern.length
+  const isHashSpecial = (parentType === 'plural' || parentType === 'selectordinal')
+  const isArgStyle = (parentType === '{style}')
+  let text = ''
+  while (current.index < length) {
+    let char = pattern[current.index]
+    if (
+      char === ARG_OPN || char === ARG_CLS ||
+      (isHashSpecial && char === NUM_ARG) ||
+      (isArgStyle && isWhitespace(char.charCodeAt(0)))
+    ) {
+      break
+    } else if (char === ESC) {
+      char = pattern[++current.index]
+      if (char === ESC) { // double is always 1 '
+        text += char
+        ++current.index
+      } else if (
+        // only when necessary
+        char === ARG_OPN || char === ARG_CLS ||
+        (isHashSpecial && char === NUM_ARG) ||
+        isArgStyle
+      ) {
+        text += char
+        while (++current.index < length) {
+          char = pattern[current.index]
+          if (char === ESC && pattern[current.index + 1] === ESC) { // double is always 1 '
+            text += ESC
+            ++current.index
+          } else if (char === ESC) { // end of quoted
+            ++current.index
+            break
+          } else {
+            text += char
+          }
+        }
+      } else { // lone ' is just a '
+        text += ESC
+        // already incremented
+      }
+    } else {
+      text += char
+      ++current.index
+    }
+  }
+  return text
+}
+
+function isWhitespace (code/*: number */)/*: boolean */ {
   return (
     (code >= 0x09 && code <= 0x0D) ||
     code === 0x20 || code === 0x85 || code === 0xA0 || code === 0x180E ||
@@ -48,324 +175,187 @@ function isWhitespace (char) {
   )
 }
 
-function skipWhitespace (current) {
-  var pattern = current.pattern
-  var length = pattern.length
-  while (
-    current.index < length &&
-    isWhitespace(pattern[current.index])
-  ) {
+function skipWhitespace (current/*: Context */)/*: void */ {
+  const pattern = current.pattern
+  const length = pattern.length
+  const start = current.index
+  while (current.index < length && isWhitespace(pattern.charCodeAt(current.index))) {
     ++current.index
   }
-}
-
-function parseText (current, parentType) {
-  var pattern = current.pattern
-  var length = pattern.length
-  var isHashSpecial = (parentType === 'plural' || parentType === 'selectordinal')
-  var isArgStyle = (parentType === 'style')
-  var text = ''
-  var char
-  while (current.index < length) {
-    char = pattern[current.index]
-    if (
-      char === '{' ||
-      char === '}' ||
-      (isHashSpecial && char === '#') ||
-      (isArgStyle && isWhitespace(char))
-    ) {
-      break
-    } else if (char === '\'') {
-      char = pattern[++current.index]
-      if (char === '\'') { // double is always 1 '
-        text += char
-        ++current.index
-      } else if (
-        // only when necessary
-        char === '{' ||
-        char === '}' ||
-        (isHashSpecial && char === '#') ||
-        isArgStyle
-      ) {
-        text += char
-        while (++current.index < length) {
-          char = pattern[current.index]
-          if (pattern.slice(current.index, current.index + 2) === '\'\'') { // double is always 1 '
-            text += char
-            ++current.index
-          } else if (char === '\'') { // end of quoted
-            ++current.index
-            break
-          } else {
-            text += char
-          }
-        }
-      } else { // lone ' is just a '
-        text += '\''
-        // already incremented
-      }
-    } else {
-      text += char
-      ++current.index
-    }
+  if (start < current.index && current.tokens) {
+    current.tokens.push([ 'space', current.pattern.slice(start, current.index) ])
   }
-
-  return text
 }
 
-function parseArgument (current) {
-  var pattern = current.pattern
-  if (pattern[current.index] === '#') {
+function parseArgument (current/*: Context */)/*: Arg */ {
+  const pattern = current.pattern
+  if (pattern[current.index] === NUM_ARG) {
+    if (current.tokens) current.tokens.push([ NUM_ARG, NUM_ARG ])
     ++current.index // move passed #
-    return [ '#' ]
+    return [ NUM_ARG ]
   }
 
+  if (pattern[current.index] !== ARG_OPN) throw expected(current, ARG_OPN)
+  if (current.tokens) current.tokens.push([ ARG_OPN, ARG_OPN ])
   ++current.index // move passed {
-  var id = parseArgId(current)
-  var char = pattern[current.index]
-  if (char === '}') { // end argument
+  skipWhitespace(current)
+
+  const id = parseId(current)
+  if (!id) throw expected(current, 'argument id')
+  if (current.tokens) current.tokens.push([ 'id', id ])
+  skipWhitespace(current)
+
+  let char = pattern[current.index]
+  if (char === ARG_CLS) { // end argument
+    if (current.tokens) current.tokens.push([ ARG_CLS, ARG_CLS ])
     ++current.index // move passed }
     return [ id ]
   }
-  if (char !== ',') {
-    throwExpected(current, ',')
-  }
-  ++current.index // move passed ,
 
-  var type = parseArgType(current)
+  if (char !== ARG_SEP) throw expected(current, ARG_SEP + ' or ' + ARG_CLS)
+  if (current.tokens) current.tokens.push([ ARG_SEP, ARG_SEP ])
+  ++current.index // move passed ,
+  skipWhitespace(current)
+
+  const type = parseId(current)
+  if (!type) throw expected(current, 'argument type')
+  if (current.tokens) current.tokens.push([ 'type', type ])
+  skipWhitespace(current)
   char = pattern[current.index]
-  if (char === '}') { // end argument
-    if (
-      type === 'plural' ||
-      type === 'selectordinal' ||
-      type === 'select'
-    ) {
-      throwExpected(current, type + ' message options')
+  if (char === ARG_CLS) { // end argument
+    if (current.tokens) current.tokens.push([ ARG_CLS, ARG_CLS ])
+    if (type === 'plural' || type === 'selectordinal' || type === 'select') {
+      throw expected(current, type + ' message options')
     }
     ++current.index // move passed }
     return [ id, type ]
   }
-  if (char !== ',') {
-    throwExpected(current, ',')
-  }
+
+  if (char !== ARG_SEP) throw expected(current, ARG_SEP + ' or ' + ARG_CLS)
+  if (current.tokens) current.tokens.push([ ARG_SEP, ARG_SEP ])
   ++current.index // move passed ,
+  skipWhitespace(current)
 
-  var format
-  var offset
+  let arg
   if (type === 'plural' || type === 'selectordinal') {
-    offset = parsePluralOffset(current)
-    format = parseSubMessages(current, type)
+    const offset = parsePluralOffset(current)
+    skipWhitespace(current)
+    arg = [ id, type, offset, parseSubMessages(current, type) ]
   } else if (type === 'select') {
-    format = parseSubMessages(current, type)
-  } else {
-    format = parseSimpleFormat(current)
+    arg = [ id, type, parseSubMessages(current, type) ]
+  } else if (simpleTypes.indexOf(type) >= 0) {
+    arg = [ id, type, parseSimpleFormat(current) ]
+  } else { // custom placeholder type
+    const index = current.index
+    let format/*: string | SubMessages */ = parseSimpleFormat(current)
+    skipWhitespace(current)
+    if (pattern[current.index] === ARG_OPN) {
+      current.index = index // rewind, since should have been submessages
+      format = parseSubMessages(current, type)
+    }
+    arg = [ id, type, format ]
   }
-  char = pattern[current.index]
-  if (char !== '}') { // not ended argument
-    throwExpected(current, '}')
-  }
-  ++current.index // move passed
 
-  return (type === 'plural' || type === 'selectordinal')
-    ? [ id, type, offset, format ]
-    : [ id, type, format ]
+  skipWhitespace(current)
+  if (pattern[current.index] !== ARG_CLS) throw expected(current, ARG_CLS)
+  if (current.tokens) current.tokens.push([ ARG_CLS, ARG_CLS ])
+  ++current.index // move passed }
+  return arg
 }
 
-function parseArgId (current) {
-  skipWhitespace(current)
-  var pattern = current.pattern
-  var length = pattern.length
-  var id = ''
+function parseId (current/*: Context */)/*: string */ {
+  const pattern = current.pattern
+  const length = pattern.length
+  let id = ''
   while (current.index < length) {
-    var char = pattern[current.index]
-    if (char === '{' || char === '#') {
-      throwExpected(current, 'argument id')
-    }
-    if (char === '}' || char === ',' || isWhitespace(char)) {
-      break
-    }
+    const char = pattern[current.index]
+    if (
+      char === ARG_OPN || char === ARG_CLS || char === ARG_SEP ||
+      char === NUM_ARG || char === ESC || isWhitespace(char.charCodeAt(0))
+    ) break
     id += char
     ++current.index
   }
-  if (!id) {
-    throwExpected(current, 'argument id')
-  }
-  skipWhitespace(current)
   return id
 }
 
-function parseArgType (current) {
-  skipWhitespace(current)
-  var pattern = current.pattern
-  var argType
-  var types = [
-    'number', 'date', 'time', 'ordinal', 'duration', 'spellout', 'plural', 'selectordinal', 'select'
-  ]
-  for (var t = 0, tt = types.length; t < tt; ++t) {
-    var type = types[t]
-    if (pattern.slice(current.index, current.index + type.length) === type) {
-      argType = type
-      current.index += type.length
-      break
-    }
-  }
-  if (!argType) {
-    throwExpected(current, types.join(', '))
-  }
-  skipWhitespace(current)
-  return argType
-}
-
-function parseSimpleFormat (current) {
-  skipWhitespace(current)
-  var style = parseText(current, 'style')
-  if (!style) {
-    throwExpected(current, 'argument style name')
-  }
-  skipWhitespace(current)
+function parseSimpleFormat (current/*: Context */)/*: string */ {
+  const start = current.index
+  const style = parseText(current, '{style}')
+  if (!style) throw expected(current, 'argument style name')
+  if (current.tokens) current.tokens.push([ 'style', current.pattern.slice(start, current.index) ])
   return style
 }
 
-function parsePluralOffset (current) {
-  skipWhitespace(current)
-  var offset = 0
-  var pattern = current.pattern
-  var length = pattern.length
-  if (pattern.slice(current.index, current.index + 7) === 'offset:') {
-    current.index += 7 // move passed offset:
+function parsePluralOffset (current/*: Context */)/*: number */ {
+  const pattern = current.pattern
+  const length = pattern.length
+  let offset = 0
+  if (pattern.slice(current.index, current.index + OFFSET.length) === OFFSET) {
+    if (current.tokens) current.tokens.push([ 'offset', 'offset' ], [ ':', ':' ])
+    current.index += OFFSET.length // move passed offset:
     skipWhitespace(current)
-    var start = current.index
-    while (
-      current.index < length &&
-      isDigit(pattern[current.index])
-    ) {
+    const start = current.index
+    while (current.index < length && isDigit(pattern.charCodeAt(current.index))) {
       ++current.index
     }
-    if (start === current.index) {
-      throwExpected(current, 'offset number')
-    }
+    if (start === current.index) throw expected(current, 'offset number')
+    if (current.tokens) current.tokens.push([ 'number', pattern.slice(start, current.index) ])
     offset = +pattern.slice(start, current.index)
-    skipWhitespace(current)
   }
   return offset
 }
 
-function parseSubMessages (current, parentType) {
-  skipWhitespace(current)
-  var pattern = current.pattern
-  var length = pattern.length
-  var options = {}
-  var hasSubs = false
-  while (
-    current.index < length &&
-    pattern[current.index] !== '}'
-  ) {
-    var selector = parseSelector(current)
+function isDigit (code/*: number */)/*: boolean */ {
+  return (code >= 0x30 && code <= 0x39)
+}
+
+function parseSubMessages (current/*: Context */, parentType/*: string */)/*: SubMessages */ {
+  const pattern = current.pattern
+  const length = pattern.length
+  const options/*: SubMessages */ = {}
+  while (current.index < length && pattern[current.index] !== ARG_CLS) {
+    const selector = parseId(current)
+    if (!selector) throw expected(current, 'selector')
+    if (current.tokens) current.tokens.push([ 'selector', selector ])
     skipWhitespace(current)
     options[selector] = parseSubMessage(current, parentType)
-    hasSubs = true
     skipWhitespace(current)
   }
-  if (!hasSubs) {
-    throwExpected(current, parentType + ' message options')
-  }
-  if (!('other' in options)) { // does not have an other selector
-    throwExpected(current, null, null, '"other" option must be specified in ' + parentType)
+  if (!options.other && submTypes.indexOf(parentType) >= 0) {
+    throw expected(current, null, null, '"other" option must be specified in ' + parentType)
   }
   return options
 }
 
-function parseSelector (current) {
-  var pattern = current.pattern
-  var length = pattern.length
-  var selector = ''
-  while (current.index < length) {
-    var char = pattern[current.index]
-    if (char === '}' || char === ',') {
-      throwExpected(current, '{')
-    }
-    if (char === '{' || isWhitespace(char)) {
-      break
-    }
-    selector += char
-    ++current.index
-  }
-  if (!selector) {
-    throwExpected(current, 'selector')
-  }
-  skipWhitespace(current)
-  return selector
-}
-
-function parseSubMessage (current, parentType) {
-  var char = current.pattern[current.index]
-  if (char !== '{') {
-    throwExpected(current, '{')
-  }
+function parseSubMessage (current/*: Context */, parentType/*: string */)/*: AST */ {
+  if (current.pattern[current.index] !== ARG_OPN) throw expected(current, ARG_OPN + ' to start sub-message')
+  if (current.tokens) current.tokens.push([ ARG_OPN, ARG_OPN ])
   ++current.index // move passed {
-  var message = parseMessage(current, parentType)
-  char = current.pattern[current.index]
-  if (char !== '}') {
-    throwExpected(current, '}')
-  }
+  const message = parseAST(current, parentType)
+  if (current.pattern[current.index] !== ARG_CLS) throw expected(current, ARG_CLS + ' to end sub-message')
+  if (current.tokens) current.tokens.push([ ARG_CLS, ARG_CLS ])
   ++current.index // move passed }
   return message
 }
 
-function parseMessage (current, parentType) {
-  var pattern = current.pattern
-  var length = pattern.length
-  var text
-  var elements = []
-  if ((text = parseText(current, parentType))) {
-    elements.push(text)
-  }
-  while (current.index < length) {
-    if (pattern[current.index] === '}') {
-      if (parentType === 'message') {
-        throwExpected(current)
-      }
-      break
-    }
-    elements.push(parseArgument(current, parentType))
-    if ((text = parseText(current, parentType))) {
-      elements.push(text)
-    }
-  }
-  return elements
-}
-
-function throwExpected (current, expected, found, message) {
-  var pattern = current.pattern
-  var lines = pattern.slice(0, current.index).split(/\r?\n/)
-  var offset = current.index
-  var line = lines.length
-  var column = lines.slice(-1)[0].length
-  if (!found) {
-    if (current.index >= pattern.length) {
-      found = 'end of input'
-    } else {
-      found = pattern[current.index]
-      while (++current.index < pattern.length) {
-        var char = pattern[current.index]
-        // keep going until a non alphanumeric (allow accents)
-        if (!isDigit(char) && char.toUpperCase() === char.toLowerCase()) break
-        found += char
-      }
-    }
-  }
-  if (!message) {
-    message = errorMessage(expected, found)
-  }
+function expected (current/*: Context */, expected/*:: ?: ?string */, found/*:: ?: ?string */, message/*:: ?: string */) {
+  const pattern = current.pattern
+  const lines = pattern.slice(0, current.index).split(/\r?\n/)
+  const offset = current.index
+  const line = lines.length
+  const column = lines.slice(-1)[0].length
+  found = found || (
+    (current.index >= pattern.length) ? 'end of input'
+      : (parseId(current) || pattern[current.index])
+  )
+  if (!message) message = errorMessage(expected, found)
   message += ' in ' + pattern.replace(/\r?\n/g, '\n')
-
-  throw new SyntaxError(message, expected, found, offset, line, column)
+  return new SyntaxError(message, expected, found, offset, line, column)
 }
 
-function errorMessage (expected, found) {
-  if (!expected) {
-    return 'Unexpected ' + found + ' found'
-  }
+function errorMessage (expected/*: ?string */, found/* string */) {
+  if (!expected) return 'Unexpected ' + found + ' found'
   return 'Expected ' + expected + ' but ' + found + ' found'
 }
 
@@ -373,7 +363,7 @@ function errorMessage (expected, found) {
  * SyntaxError
  *  Holds information about bad syntax found in a message pattern
  **/
-function SyntaxError (message, expected, found, offset, line, column) {
+function SyntaxError (message/*: string */, expected/*: ?string */, found/*: ?string */, offset/*: number */, line/*: number */, column/*: number */) {
   Error.call(this, message)
   this.name = 'SyntaxError'
   this.message = message
@@ -383,7 +373,5 @@ function SyntaxError (message, expected, found, offset, line, column) {
   this.line = line
   this.column = column
 }
-
 SyntaxError.prototype = Object.create(Error.prototype)
-
 module.exports.SyntaxError = SyntaxError

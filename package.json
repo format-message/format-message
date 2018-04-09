@@ -7,7 +7,8 @@
     "lerna": "lerna",
     "prebenchmark": "format-message transform -i scripts/benchmark.src.js > scripts/benchmark.js",
     "pretest": "rm -rf test/inline && format-message transform -i test/format.spec.js > test/format-inline.spec.js",
-    "test": "eslint . && nyc mocha 'test/**/*.spec.js' && karma start"
+    "test": "eslint . && flow check && nyc mocha '{test,package}/**/*.spec.js' && karma start",
+    "mocha": "nyc mocha 'packages/**/*.spec.js'"
   },
   "devDependencies": {
     "async": "^2.0.0",
@@ -21,6 +22,7 @@
     "eslint-plugin-node": "^6.0.0",
     "eslint-plugin-promise": "^3.0.0",
     "eslint-plugin-standard": "^3.0.0",
+    "flow-bin": "^0.69.0",
     "inferno": "^5.0.0",
     "inferno-create-element": "^5.0.0",
     "intl": "^1.0.1",
@@ -47,8 +49,7 @@
     "extends": [
       "standard"
     ],
-    "rules": {
-    }
+    "rules": {}
   },
   "eslintIgnore": [
     "packages/format-message-interpret/plurals.js",

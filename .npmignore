@@ -1,10 +1,8 @@
 # ignore system files
 
 # OS X
-.DS_Store
 .Spotlight-V100
 .Trashes
-._*
 
 # Win
 Thumbs.db
@@ -12,15 +10,10 @@ Desktop.ini
 
 # vim
 *~
-.swp
 .*.sw[a-z]
 Session.vim
 
-# Node
-node_modules
-
 # non-distribution files
-src
 coverage
 scripts
 test

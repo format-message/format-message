@@ -2,7 +2,7 @@ if (typeof Intl === 'undefined') {
   require('intl')
   require('intl/locale-data/jsonp/en')
 }
-var BENCHMARK_PARSE = false
+var BENCHMARK_PARSE = true
 var IntlMF = require('intl-messageformat')
 var MessageFormat2 = require('messageformat')
 var MessageFormat = require('../packages/message-format')
@@ -14,7 +14,7 @@ var args
 var intlMF
 var mf
 var mf2
-var parse2 = new MessageFormat2('en').parse
+var parse2 = new MessageFormat2('en')
 var intlParse = IntlMF.__parse
 
 function benchmark (name, cases) {
@@ -46,7 +46,7 @@ mf = new MessageFormat(pattern, 'en').format
 BENCHMARK_PARSE && benchmark(
   'Parse simple message', {
     'intl-messageformat': function () { return intlParse(pattern) },
-    'messageformat': function () { return parse2(pattern) },
+    'messageformat': function () { return parse2.compile(pattern) },
     'format-message-parse': function () { return parse(pattern) }
   }
 )
@@ -69,7 +69,7 @@ mf = new MessageFormat(pattern, 'en').format
 BENCHMARK_PARSE && benchmark(
   'Parse common one arg message', {
     'intl-messageformat': function () { return intlParse(pattern) },
-    'messageformat': function () { return parse2(pattern) },
+    'messageformat': function () { return parse2.compile(pattern) },
     'format-message-parse': function () { return parse(pattern) }
   }
 )
@@ -89,7 +89,7 @@ pattern = `{name} had {
     female {her}
     other {their}
   } {
-  nth, plural,
+  nth, selectordinal,
     one {#st}
     two {#nd}
     few {#rd}
@@ -109,19 +109,19 @@ args = {
 }
 formatMessage(pattern, args, 'en') // prime cache
 intlMF = new IntlMF(pattern, 'en').format
-// mf2 = new MessageFormat2('en').compile(pattern)
+mf2 = new MessageFormat2('en').compile(pattern)
 mf = new MessageFormat(pattern, 'en').format
 BENCHMARK_PARSE && benchmark(
   'Parse complex message (no numbers or dates)', {
     'intl-messageformat': function () { return intlParse(pattern) },
-    'messageformat': function () { return parse2(pattern) },
+    'messageformat': function () { return parse2.compile(pattern) },
     'format-message-parse': function () { return parse(pattern) }
   }
 )
 benchmark(
   'Format complex message (no numbers or dates)', {
     'intl-messageformat (reuse object)': function () { return intlMF(args) },
-    // 'messageformat (reuse object)': function () { return mf2(args) }, // throws on two
+    'messageformat (reuse object)': function () { return mf2(args) },
     'message-format (reuse object)': function () { return mf(args) },
     'format-message': function () { return formatMessage(pattern, args) },
     'format-message (inlined)': function () {
@@ -165,19 +165,19 @@ args = {
 }
 formatMessage(pattern, args, 'en') // prime cache
 intlMF = new IntlMF(pattern, 'en').format
-// mf2 = new MessageFormat2('en').compile(pattern) // doesn't support date
+mf2 = new MessageFormat2('en').compile(pattern)
 mf = new MessageFormat(pattern, 'en').format
 BENCHMARK_PARSE && benchmark(
   'Parse complex message', {
     'intl-messageformat': function () { return intlParse(pattern) },
-    // 'messageformat': function () { return parse2(pattern) }, // doesn't support date
+    'messageformat': function () { return parse2.compile(pattern) },
     'format-message-parse': function () { return parse(pattern) }
   }
 )
 benchmark(
   'Format complex message', {
     'intl-messageformat (reuse object)': function () { return intlMF(args) },
-    // 'messageformat (reuse object)': function () { return mf2(args) }, // doesn't support date
+    'messageformat (reuse object)': function () { return mf2(args) },
     'message-format (reuse object)': function () { return mf(args) },
     'format-message': function () { return formatMessage(pattern, args) },
     'format-message (inlined)': function () {

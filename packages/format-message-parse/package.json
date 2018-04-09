@@ -1,13 +1,20 @@
 {
   "name": "format-message-parse",
   "version": "5.1.2",
-  "description": "Parse ICU message strings to a compact ast",
-  "author": "Andy VanWagoner <thetalecrafter@gmail.com> (https://thetalecrafter.com/)",
-  "homepage": "https://github.com/format-message/format-message",
+  "description": "Parse ICU MessageFormat pattern strings to a compact ast",
+  "author": "Andy VanWagoner <andy@thetalecrafter.com> (https://thetalecrafter.com/)",
+  "homepage": "https://github.com/format-message/format-message/tree/master/packages/format-message-parse",
   "license": "MIT",
   "repository": "format-message/format-message",
   "bugs": "https://github.com/format-message/format-message/issues",
   "keywords": [
-    "format-message"
+    "format-message",
+    "message-format",
+    "internationalization",
+    "i18n",
+    "icu",
+    "messageformat",
+    "pluralformat",
+    "selectformat"
   ]
 }
