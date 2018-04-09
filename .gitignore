@@ -25,4 +25,4 @@ lerna-debug.log
 coverage
 scripts/benchmark.js
 test/format-inline.spec.js
-
+yarn-error.log
