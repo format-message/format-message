@@ -106,7 +106,7 @@ function parseAST (current/*: Context */, parentType/*: string */)/*: AST */ {
       if (!parentType) throw expected(current)
       break
     }
-    elements.push(parseArgument(current))
+    elements.push(parsePlaceholder(current))
     const start = current.index
     const text = parseText(current, parentType)
     if (text) elements.push(text)
@@ -187,7 +187,7 @@ function skipWhitespace (current/*: Context */)/*: void */ {
   }
 }
 
-function parseArgument (current/*: Context */)/*: Arg */ {
+function parsePlaceholder (current/*: Context */)/*: Arg */ {
   const pattern = current.pattern
   if (pattern[current.index] === NUM_ARG) {
     if (current.tokens) current.tokens.push([ NUM_ARG, NUM_ARG ])
@@ -195,18 +195,19 @@ function parseArgument (current/*: Context */)/*: Arg */ {
     return [ NUM_ARG ]
   }
 
+  /* istanbul ignore if should be unreachable if parseAST and parseText are right */
   if (pattern[current.index] !== ARG_OPN) throw expected(current, ARG_OPN)
   if (current.tokens) current.tokens.push([ ARG_OPN, ARG_OPN ])
   ++current.index // move passed {
   skipWhitespace(current)
 
   const id = parseId(current)
-  if (!id) throw expected(current, 'argument id')
+  if (!id) throw expected(current, 'placeholder id')
   if (current.tokens) current.tokens.push([ 'id', id ])
   skipWhitespace(current)
 
   let char = pattern[current.index]
-  if (char === ARG_CLS) { // end argument
+  if (char === ARG_CLS) { // end placeholder
     if (current.tokens) current.tokens.push([ ARG_CLS, ARG_CLS ])
     ++current.index // move passed }
     return [ id ]
@@ -218,14 +219,14 @@ function parseArgument (current/*: Context */)/*: Arg */ {
   skipWhitespace(current)
 
   const type = parseId(current)
-  if (!type) throw expected(current, 'argument type')
+  if (!type) throw expected(current, 'placeholder type')
   if (current.tokens) current.tokens.push([ 'type', type ])
   skipWhitespace(current)
   char = pattern[current.index]
-  if (char === ARG_CLS) { // end argument
+  if (char === ARG_CLS) { // end placeholder
     if (current.tokens) current.tokens.push([ ARG_CLS, ARG_CLS ])
     if (type === 'plural' || type === 'selectordinal' || type === 'select') {
-      throw expected(current, type + ' message options')
+      throw expected(current, type + ' sub-messages')
     }
     ++current.index // move passed }
     return [ id, type ]
@@ -282,7 +283,7 @@ function parseId (current/*: Context */)/*: string */ {
 function parseSimpleFormat (current/*: Context */)/*: string */ {
   const start = current.index
   const style = parseText(current, '{style}')
-  if (!style) throw expected(current, 'argument style name')
+  if (!style) throw expected(current, 'placeholder style name')
   if (current.tokens) current.tokens.push([ 'style', current.pattern.slice(start, current.index) ])
   return style
 }
@@ -316,14 +317,14 @@ function parseSubMessages (current/*: Context */, parentType/*: string */)/*: Su
   const options/*: SubMessages */ = {}
   while (current.index < length && pattern[current.index] !== ARG_CLS) {
     const selector = parseId(current)
-    if (!selector) throw expected(current, 'selector')
+    if (!selector) throw expected(current, 'sub-message selector')
     if (current.tokens) current.tokens.push([ 'selector', selector ])
     skipWhitespace(current)
     options[selector] = parseSubMessage(current, parentType)
     skipWhitespace(current)
   }
   if (!options.other && submTypes.indexOf(parentType) >= 0) {
-    throw expected(current, null, null, '"other" option must be specified in ' + parentType)
+    throw expected(current, null, null, '"other" sub-message must be specified in ' + parentType)
   }
   return options
 }
@@ -346,7 +347,7 @@ function expected (current/*: Context */, expected/*:: ?: ?string */, found/*:: 
   const line = lines.length
   const column = lines.slice(-1)[0].length
   found = found || (
-    (current.index >= pattern.length) ? 'end of input'
+    (current.index >= pattern.length) ? 'end of message pattern'
       : (parseId(current) || pattern[current.index])
   )
   if (!message) message = errorMessage(expected, found)
@@ -356,7 +357,7 @@ function expected (current/*: Context */, expected/*:: ?: ?string */, found/*:: 
 
 function errorMessage (expected/*: ?string */, found/* string */) {
   if (!expected) return 'Unexpected ' + found + ' found'
-  return 'Expected ' + expected + ' but ' + found + ' found'
+  return 'Expected ' + expected + ' but found ' + found
 }
 
 /**
