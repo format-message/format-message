@@ -7,7 +7,6 @@
 
 var parse = require('format-message-parse')
 var interpret = require('format-message-interpret')
-var closestSupportedLocale = interpret.closestSupportedLocale
 
 function MessageFormat (locales, pattern) {
   if (!(this instanceof MessageFormat)) {
@@ -16,7 +15,7 @@ function MessageFormat (locales, pattern) {
 
   var root = interpret(locales, parse(pattern))
   this._internal = {
-    locale: closestSupportedLocale(locales),
+    locale: MessageFormat.supportedLocalesOf(locales)[0],
     format: typeof root === 'string'
       ? function format () { return root }
       : root
@@ -57,16 +56,14 @@ Object.defineProperties(MessageFormat, {
     configurable: true,
     writable: true,
     value: function supportedLocalesOf (requestedLocales) {
-      // if the closest match is a prefix of the requested,
-      // and it isn't a duplicate, then it is supported
-      return [].concat(requestedLocales || [])
-        .filter(function (locale, i, array) {
-          var closest = closestSupportedLocale(locale)
-          return (
-            closest === locale.slice(0, closest.length) &&
-            array.indexOf(locale) === i
-          )
-        })
+      // only those supported by all Intl objects used
+      return Intl.NumberFormat.supportedLocalesOf(
+        Intl.DateTimeFormat.supportedLocalesOf(
+          Intl.PluralRules
+            ? Intl.PluralRules.supportedLocalesOf(requestedLocales)
+            : requestedLocales
+        )
+      )
     }
   }
 })

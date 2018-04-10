@@ -1,5 +1,10 @@
 # Changelog
 
+## 6.0.0
+
+**Bug Fix**
+Updated supportedLocalesOf to be the union of supportedLocalesOf functions on Intl.NumberFormat, Intl.DateTimeFormat, and Intl.PluralRules.
+
 ## 5.2.1
 
 Updated CLDR plural rules.
