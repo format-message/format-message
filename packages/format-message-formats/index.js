@@ -1,3 +1,4 @@
+// @flow
 /**
  * formatting information
  **/
@@ -75,6 +76,22 @@ module.exports = {
       hour: 'numeric',
       minute: 'numeric',
       second: 'numeric'
+    }
+  },
+  duration: {
+    default: {
+      hours: {
+        minimumIntegerDigits: 1,
+        maximumFractionDigits: 0
+      },
+      minutes: {
+        minimumIntegerDigits: 2,
+        maximumFractionDigits: 0
+      },
+      seconds: {
+        minimumIntegerDigits: 2,
+        maximumFractionDigits: 3
+      }
     }
   }
 }

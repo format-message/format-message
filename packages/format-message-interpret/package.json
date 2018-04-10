@@ -1,14 +1,21 @@
 {
   "name": "format-message-interpret",
   "version": "5.2.1",
-  "description": "Convert parsed format-message ast to function",
-  "author": "Andy VanWagoner <thetalecrafter@gmail.com> (https://thetalecrafter.com/)",
-  "homepage": "https://github.com/format-message/format-message",
+  "description": "Convert format-message-parse ast to a function",
+  "author": "Andy VanWagoner <andy@thetalecrafter.com> (https://thetalecrafter.com/)",
+  "homepage": "https://github.com/format-message/format-message/tree/master/packages/format-message-interpret",
   "license": "MIT",
   "repository": "format-message/format-message",
   "bugs": "https://github.com/format-message/format-message/issues",
   "keywords": [
-    "format-message"
+    "format-message",
+    "message-format",
+    "internationalization",
+    "i18n",
+    "icu",
+    "messageformat",
+    "pluralformat",
+    "selectformat"
   ],
   "dependencies": {
     "format-message-formats": "^5.1.0",
