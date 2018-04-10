@@ -1,4 +1,3 @@
-/* globals Intl */
 'use strict'
 
 var assign = require('object-assign')
@@ -25,7 +24,6 @@ function namespace () {
     var key = locale + ':' + id
     var format = cache[key] ||
       (cache[key] = generateFormat(pattern, id, locale))
-    if (typeof format === 'string') return format
     return format(args)
   }
 

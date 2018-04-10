@@ -15,10 +15,8 @@ function MessageFormat (locales, pattern) {
 
   var root = interpret(locales, parse(pattern))
   this._internal = {
-    locale: MessageFormat.supportedLocalesOf(locales)[0],
-    format: typeof root === 'string'
-      ? function format () { return root }
-      : root
+    locale: MessageFormat.supportedLocalesOf(locales)[0] || 'en',
+    format: root
   }
 }
 module.exports = MessageFormat

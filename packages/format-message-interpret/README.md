@@ -1,6 +1,6 @@
 # ![format-message-interpret][logo]
 
-> Convert parsed format-message ast to function
+> Convert format-message-parse ast to a function
 
 [![npm Version][npm-image]][npm]
 [![JS Standard Style][style-image]][style]
@@ -36,10 +36,31 @@ interpret('en', parse('Hello, {name}!'))({ name: 'Jane' })
 API
 ---
 
-### `interpret(locale, ast)`
+### `interpret(locales: string | string[], ast: AST, types?: Types)`
 
-Generate a function from an `ast`, using the formatting rules of the `locale`
+Generate a function from an `ast`, using the formatting rules of the `locales` that accepts an arguments object, and returns a string. You can optionally pass custom `types`. Any non-standard type found in `ast` without a corresponding formatter in `types` will be treated as a simple string type.
 
+```js
+type Types = {
+  [type: string]: (locales: string | string[], node: string[]) =>
+    (value: any, args: Object) => string
+}
+```
+
+`types` is an object with each key being the name of the type as it appears in the message pattern. Each value is a function that takes the `locales`, and the `node` from the ast (like `[ 'a', 'mytype', 'style' ]`), and it returns a function that will be called with the specific `value`, and the complete arguments object. If the custom type was defined with sub-messages, those will already be converted to functions meant to be called with `args`.
+
+### `interpret.toParts(locales: string | string[], ast: AST, types?: Types)`
+
+Like, `interpret`, `interpretToParts` will generate a function accepting the message arguments. However, it will return an array of message parts, instead of a string. This is intended to help generate rich messages.
+
+```js
+interpret.toParts('en', parse('a {b} c'))({ b: 1 }) // [ 'a ', 1, ' c' ]
+interpret.toParts('en', parse('Click {a, element, children {here}}'), {
+  element: (locales, [ id, type, props ]) =>
+    (fn, args) => fn(props.children(args))
+})({ a: children => <a>{children}</a> })
+// [ 'Click ', <a>here</a> ]
+```
 
 License
 -------

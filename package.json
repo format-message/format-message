@@ -5,6 +5,7 @@
     "benchmark": "node scripts/benchmark.js",
     "cldr": "node scripts/cldr.js",
     "lerna": "lerna",
+    "postinstall": "node scripts/cldr.js",
     "prebenchmark": "format-message transform -i scripts/benchmark.src.js > scripts/benchmark.js",
     "pretest": "rm -rf test/inline && format-message transform -i test/format.spec.js > test/format-inline.spec.js",
     "test": "eslint . && flow check && nyc mocha '{test,package}/**/*.spec.js' && karma start",
@@ -46,18 +47,22 @@
     "webpack": "^4.0.1"
   },
   "eslintConfig": {
+    "globals": {
+      "Intl": true
+    },
     "extends": [
       "standard"
     ],
     "rules": {}
   },
   "eslintIgnore": [
+    "**/node_modules",
+    "coverage",
+    "flow-typed",
     "packages/format-message-interpret/plurals.js",
     "scripts/benchmark.js",
     "scripts/cldr.js",
-    "test/format-inline.spec.js",
-    "**/node_modules",
-    "coverage"
+    "test/format-inline.spec.js"
   ],
   "nyc": {
     "reporter": [
