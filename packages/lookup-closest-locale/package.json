@@ -2,12 +2,15 @@
   "name": "lookup-closest-locale",
   "version": "5.1.0",
   "description": "Lookup the closest locale from among object keys",
-  "author": "Andy VanWagoner <thetalecrafter@gmail.com> (https://thetalecrafter.com/)",
-  "homepage": "https://github.com/format-message/format-message",
+  "author": "Andy VanWagoner <andy@thetalecrafter.com> (https://thetalecrafter.com/)",
+  "homepage": "https://github.com/format-message/format-message/tree/master/packages/lookup-closest-locale",
   "license": "MIT",
   "repository": "format-message/format-message",
   "bugs": "https://github.com/format-message/format-message/issues",
   "keywords": [
-    "format-message"
+    "i18n",
+    "lookup",
+    "BCP47",
+    "language tag"
   ]
 }
