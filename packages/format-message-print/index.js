@@ -1,3 +1,23 @@
+// @flow
+'use strict'
+
+/*::
+import type {
+  AST,
+  Plural,
+  Styled,
+  SubMessages
+} from '../format-message-parse'
+type Placeholder = any // https://github.com/facebook/flow/issues/4050
+*/
+
+const SYNTAX_PLURAL = /[{}#]+/g
+const SYNTAX_STYLE = /[{}\s]+/g
+const SYNTAX_COMMON = /[{}]+/g
+const ESC = '\''
+const DBL_ESC = '\'\''
+const ARG_NUM = '#'
+
 /**
  * Print
  *
@@ -15,95 +35,68 @@
  *    other {# bananas}
  *  } for sale`
  **/
-'use strict'
-
-module.exports = function print (ast) {
-  return printMessage(ast)
+module.exports = function print (ast/*: AST */)/*: string */ {
+  return printMessage(ast, null)
 }
 
-function printMessage (ast, parent) {
+function printMessage (ast/*: AST */, parentType/*: ?string */) {
   return ast.map(function (element) {
-    return printElement(element, parent)
+    if (typeof element === 'string') return printText(element, parentType)
+    return printPlaceholder(element, parentType)
   }).join('')
 }
 
-function printElement (element, parent) {
-  if (typeof element === 'string') {
-    return printString(element, parent)
-  }
-
-  if (element[0] === '#') {
-    return '#'
-  }
-
-  var type = element[1]
-  switch (type) {
-    case 'plural':
-    case 'selectordinal':
-      return printPlural(element)
-    case 'select':
-      return printSelect(element)
-    default:
-      return printArgument(element)
-  }
-}
-
-function printString (element, parent) {
-  var special = (parent === 'plural') ? /[{}#]+/g : /[{}]+/g
-  return element
-    .replace(/'/g, '\'\'') // double apostrophe
+function printText (text/*: string */, parentType/*: ?string */) {
+  const special = (parentType === 'plural') ? SYNTAX_PLURAL : SYNTAX_COMMON
+  return text
+    .replace(/'/g, DBL_ESC) // double apostrophe
     .replace(special, '\'$&\'') // escape syntax
 }
 
-function printStyle (element) {
-  var special = /[{}\s]+/g
-  if (!special.test(element)) return element.replace(/'/g, '\'\'')
-  return '\'' + element.replace(/'/g, '\'\'') + '\''
+function printPlaceholder (placeholder/*: Placeholder */, parentType/*: ?string */) {
+  if (placeholder[0] === ARG_NUM) return ARG_NUM
+  if (typeof placeholder[2] === 'number') return printPlural(placeholder)
+  return printStyled(placeholder)
 }
 
-function printArgument (element) {
-  var key = element[0]
-  var type = element[1]
-  var style = element[2]
-  return '{ ' +
-    key +
-    (type ? ', ' + type : '') +
-    (style ? ', ' + printStyle(style) : '') +
-  ' }'
+function printStyled (placeholder/*: Styled */) {
+  const key = placeholder[0]
+  const type = placeholder[1]
+  const style = placeholder[2]
+  const styleStr = typeof style === 'object'
+    ? ',' + printChildren(style, type) + '\n'
+    : (style ? ', ' + printStyle(style) + ' ' : ' ')
+  return '{ ' + key + (type ? ', ' + type : '') + styleStr + '}'
 }
 
-function printPlural (element) {
-  var key = element[0]
-  var type = element[1]
-  var offset = element[2]
-  var options = element[3]
+function printStyle (style/*: string */) {
+  if (!SYNTAX_STYLE.test(style)) return style.replace(/'/g, DBL_ESC)
+  return ESC + style.replace(/'/g, DBL_ESC) + ESC
+}
+
+function printPlural (plural/*: Plural */) {
+  const key = plural[0]
+  const type = plural[1]
+  const offset = plural[2]
+  const children = plural[3]
   return '{ ' + key + ', ' + type + ',' +
     (offset ? ' offset:' + offset : '') +
-    printOptions(options, 'plural') +
+    printChildren(children, type) +
   '\n}'
 }
 
-function printSelect (element) {
-  var key = element[0]
-  var type = element[1]
-  var options = element[2]
-  return '{ ' + key + ', ' + type + ',' +
-    printOptions(options, 'select') +
-  '\n}'
-}
-
-function printOptions (options, parent) {
-  var keys = Object.keys(options)
-  var padLength = Math.max.apply(Math, keys.map(function (key) { return key.length }))
+function printChildren (children/*: SubMessages */, parentType/*: ?string */) {
+  const keys = Object.keys(children)
+  const padLength = keys.reduce(function (max, key) { return Math.max(max, key.length) }, 0)
   return keys.map(function (key) {
     return '\n  ' + leftSpacePad(key, padLength) +
-      ' {' + printMessage(options[key], parent) + '}'
+      ' {' + printMessage(children[key], parentType) + '}'
   }).join('')
 }
 
-function leftSpacePad (string, count) {
-  var padding = ''
-  for (var i = string.length; i < count; ++i) {
+function leftSpacePad (string/*: string */, count/*: number */) {
+  let padding = ''
+  for (let i = string.length; i < count; ++i) {
     padding += ' '
   }
   return padding + string

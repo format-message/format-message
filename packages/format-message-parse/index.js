@@ -2,15 +2,16 @@
 'use strict'
 
 /*::
-export type AST = Node[]
-type Node = string | Arg
-type Arg = SimpleArg | OffsetArg | FormattedArg
-type SimpleArg = [ string ]
-type OffsetArg = [ string, 'plural' | 'selectordinal', number, SubMessages ]
-type FormattedArg = [ string, string ] | [ string, string, string | SubMessages ]
-type SubMessages = { [string]: AST }
+export type AST = Element[]
+export type Element = string | Placeholder
+export type Placeholder = Plural | Styled | Typed | Simple
+export type Plural = [ string, 'plural' | 'selectordinal', number, SubMessages ]
+export type Styled = [ string, string, string | SubMessages ]
+export type Typed = [ string, string ]
+export type Simple = [ string ]
+export type SubMessages = { [string]: AST }
 export type Token = [ TokenType, string ]
-type TokenType = 'text' | 'space' | 'id' | 'type' | 'style' | 'offset' | 'number' | 'selector' | '{' | '}' | ',' | '#' | ':'
+export type TokenType = 'text' | 'space' | 'id' | 'type' | 'style' | 'offset' | 'number' | 'selector' | '{' | '}' | ',' | '#' | ':'
 type Context = {
   pattern: string,
   index: number,
@@ -187,7 +188,7 @@ function skipWhitespace (current/*: Context */)/*: void */ {
   }
 }
 
-function parsePlaceholder (current/*: Context */)/*: Arg */ {
+function parsePlaceholder (current/*: Context */)/*: Placeholder */ {
   const pattern = current.pattern
   if (pattern[current.index] === NUM_ARG) {
     if (current.tokens) current.tokens.push([ NUM_ARG, NUM_ARG ])
