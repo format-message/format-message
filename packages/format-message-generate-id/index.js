@@ -1,3 +1,4 @@
+// @flow
 'use strict'
 
 exports.literal = require('./literal')
