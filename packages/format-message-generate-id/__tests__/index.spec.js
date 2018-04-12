@@ -1,64 +1,94 @@
 /* eslint-env mocha */
-var expect = require('chai').expect
-var generate = require('../packages/format-message-generate-id')
+'use strict'
 
-describe('format-message-generate-id', function () {
+const expect = require('chai').expect
+const gen = require('..')
+
+describe('generate id', function () {
   describe('literal', function () {
-    var messages = {
+    it('simply returns the string argument', function () {
+      expect(gen.literal('litoral')).to.equal('litoral')
+    })
+
+    const messages = {
       'Mayan Temple at Yaxhá': 'Mayan Temple at Yaxhá',
       'Moroccan palace arches': 'Moroccan palace arches',
       '{error_message } Please try again by {clicking_here}.': '{error_message } Please try again by {clicking_here}.',
       '{ points, plural, =1 {1pt} other {#pts} }': '{ points, plural, =1 {1pt} other {#pts} }'
     }
-    var id = generate.literal
     it('returns exactly what goes in', function () {
       Object.keys(messages).forEach(function (key) {
-        expect(id(messages[key])).to.equal(key)
+        expect(gen.literal(messages[key])).to.equal(key)
       })
     })
   })
 
   describe('normalized', function () {
-    var messages = {
+    it('parses the pattern and returns it pretty printed', function () {
+      expect(gen.normalized('{  a,date,c}')).to.equal('{ a, date, c }')
+      expect(gen.normalized('{a, date,c }')).to.equal('{ a, date, c }')
+    })
+
+    const messages = {
       'Mayan Temple at Yaxhá': 'Mayan Temple at Yaxhá',
       'Moroccan palace arches': 'Moroccan palace arches',
       '{ error_message } Please try again by { clicking_here }.': '{error_message } Please try again by {clicking_here}.',
       '{ points, plural, =1 {1pt} other {#pts} }': '{points, plural,\n =1 {1pt}\n other {#pts}}'
     }
-    var id = generate.normalized
-    it('returns underscored with crc', function () {
+    it('returns normalized', function () {
       Object.keys(messages).forEach(function (key) {
-        expect(id(messages[key])).to.equal(key)
+        expect(gen.normalized(messages[key])).to.equal(key)
       })
     })
   })
 
   describe('underscored', function () {
-    var messages = {
+    it('removes accents', function () {
+      expect(gen.underscored('olá×5')).to.equal('ola_5')
+    })
+
+    it('converts to lower case', function () {
+      expect(gen.underscored('Hi')).to.equal('hi')
+    })
+
+    it('limits to 50 characters', function () {
+      const str =
+        '1234567890' +
+        '1234567890' +
+        '1234567890' +
+        '1234567890' +
+        '1234567890' +
+        '1234567890'
+      expect(gen.underscored(str).length).to.equal(50)
+    })
+
+    const messages = {
       'mayan_temple_at_yaxha': 'Mayan Temple at Yaxhá',
       'moroccan_palace_arches': 'Moroccan palace arches',
       'error_message_please_try_again_by_clicking_here': '{ error_message } Please try again by { clicking_here }.',
       'points_plural_1_1pt_other_pts': '{ points, plural, =1 {1pt} other {#pts} }'
     }
-    var id = generate.underscored
-    it('returns underscored with crc', function () {
+    it('returns underscored', function () {
       Object.keys(messages).forEach(function (key) {
-        expect(id(messages[key])).to.equal(key)
+        expect(gen.underscored(messages[key])).to.equal(key)
       })
     })
   })
 
   describe('underscored_crc32', function () {
-    var messages = {
+    it('appends a hex crc32 to an underscored', function () {
+      expect(gen.underscored_crc32('hi')).to.equal('hi_cbd0b723')
+    })
+
+    const messages = {
       'mayan_temple_at_yaxha_53063adb': 'Mayan Temple at Yaxhá',
       'moroccan_palace_arches_64e00da4': 'Moroccan palace arches',
       'error_message_please_try_again_by_clicking_here_a9edb579': '{ error_message } Please try again by { clicking_here }.',
       'points_plural_1_1pt_other_pts_d43a9750': '{ points, plural, =1 {1pt} other {#pts} }'
     }
-    var id = generate.underscored_crc32
     it('returns underscored with crc', function () {
       Object.keys(messages).forEach(function (key) {
-        expect(id(messages[key])).to.equal(key)
+        expect(gen.underscored_crc32(messages[key])).to.equal(key)
       })
     })
   })
