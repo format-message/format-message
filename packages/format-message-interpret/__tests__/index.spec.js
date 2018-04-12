@@ -49,6 +49,11 @@ describe('interpret()', function () {
     expect(format({ n: 1234.56 })).to.equal('1,235')
   })
 
+  it('interprets number pattern placeholders', function () {
+    const format = interpret([[ 'n', 'number', '0 ¤¤ EUR' ]], 'en')
+    expect(format({ n: 1234.5 })).to.equal('EUR1235')
+  })
+
   it('interprets ordinal placeholders (as plain numbers)', function () {
     const format = interpret([[ 'n', 'ordinal' ]], 'en')
     expect(format({ n: 1234.56 })).to.equal('1,234.56')
@@ -92,6 +97,11 @@ describe('interpret()', function () {
     expect(format({ d: new Date(0) })).to.match(/:00/)
     format = interpret([[ 'd', 'time', 'full' ]])
     expect(format({ d: new Date(0) })).to.match(/:00/)
+  })
+
+  it('interprets date pattern placeholders', function () {
+    const format = interpret([[ 'n', 'time', 'yyyy' ]], 'en')
+    expect(format({ n: new Date(2000, 6, 6) })).to.equal('2000')
   })
 
   it('interprets select placeholders', function () {

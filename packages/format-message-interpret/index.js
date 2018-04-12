@@ -54,7 +54,7 @@ function interpretAST (
   if (parts.length === 1) return parts[0]
   return function format (args) {
     let message = ''
-    for (let e = 0, ee = parts.length; e < ee; ++e) {
+    for (let e = 0; e < parts.length; ++e) {
       message += parts[e](args)
     }
     return message
@@ -125,7 +125,7 @@ function getArg (id/*: string */, args/*: ?Object */)/*: any */ {
 
 function interpretNumber (element/*: Placeholder */, locales/*: Locales */) {
   const style = element[2]
-  const options = formats.number[style] || formats.number.default
+  const options = formats.number[style] || formats.parseNumberPattern(style) || formats.number.default
   return new Intl.NumberFormat(locales, options).format
 }
 
@@ -151,7 +151,7 @@ function interpretDuration (element/*: Placeholder */, locales/*: Locales */) {
 function interpretDateTime (element/*: Placeholder */, locales/*: Locales */) {
   const type = element[1]
   const style = element[2]
-  const options = formats[type][style] || formats[type].default
+  const options = formats[type][style] || formats.parseDatePattern(style) || formats[type].default
   return new Intl.DateTimeFormat(locales, options).format
 }
 

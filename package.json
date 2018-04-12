@@ -4,6 +4,7 @@
   "scripts": {
     "benchmark": "node scripts/benchmark.js",
     "cldr": "node scripts/cldr.js",
+    "flow": "flow check",
     "lerna": "lerna",
     "postinstall": "node scripts/cldr.js",
     "prebenchmark": "format-message transform -i scripts/benchmark.src.js > scripts/benchmark.js",
