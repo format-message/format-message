@@ -1,20 +1,16 @@
-if (typeof Intl === 'undefined') {
-  require('intl')
-  require('intl/locale-data/jsonp/en')
-}
 var BENCHMARK_PARSE = true
 var IntlMF = require('intl-messageformat')
 var MessageFormat2 = require('messageformat')
 var MessageFormat = require('../packages/message-format')
 var formatMessage = require('format-message') // cannot be relative or else transform misses it
 var parse = require('../packages/format-message-parse')
+var parse2 = require('messageformat-parser').parse
 var Benchmark = require('benchmark')
 var pattern
 var args
 var intlMF
 var mf
 var mf2
-var parse2 = new MessageFormat2('en')
 var intlParse = IntlMF.__parse
 
 function benchmark (name, cases) {
@@ -46,7 +42,7 @@ mf = new MessageFormat(pattern, 'en').format
 BENCHMARK_PARSE && benchmark(
   'Parse simple message', {
     'intl-messageformat': function () { return intlParse(pattern) },
-    'messageformat': function () { return parse2.compile(pattern) },
+    'messageformat': function () { return parse2(pattern) },
     'format-message-parse': function () { return parse(pattern) }
   }
 )
@@ -69,7 +65,7 @@ mf = new MessageFormat(pattern, 'en').format
 BENCHMARK_PARSE && benchmark(
   'Parse common one arg message', {
     'intl-messageformat': function () { return intlParse(pattern) },
-    'messageformat': function () { return parse2.compile(pattern) },
+    'messageformat': function () { return parse2(pattern) },
     'format-message-parse': function () { return parse(pattern) }
   }
 )
@@ -114,7 +110,7 @@ mf = new MessageFormat(pattern, 'en').format
 BENCHMARK_PARSE && benchmark(
   'Parse complex message (no numbers or dates)', {
     'intl-messageformat': function () { return intlParse(pattern) },
-    'messageformat': function () { return parse2.compile(pattern) },
+    'messageformat': function () { return parse2(pattern) },
     'format-message-parse': function () { return parse(pattern) }
   }
 )
@@ -170,7 +166,7 @@ mf = new MessageFormat(pattern, 'en').format
 BENCHMARK_PARSE && benchmark(
   'Parse complex message', {
     'intl-messageformat': function () { return intlParse(pattern) },
-    'messageformat': function () { return parse2.compile(pattern) },
+    'messageformat': function () { return parse2(pattern) },
     'format-message-parse': function () { return parse(pattern) }
   }
 )

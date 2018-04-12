@@ -3,6 +3,8 @@
 ## 6.0.0
 
 **Breaking Change**
+The order of arguments passed to interpret has been changed.
+
 Placeholder ids absent from the arguments will no longer throw an error. You will instead see `'undefined'` in the final message. If you were relying on the error for validation, please use the lint rules instead.
 
 **New Feature**

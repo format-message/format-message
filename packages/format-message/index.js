@@ -29,7 +29,7 @@ function namespace () {
 
   function generateFormat (pattern, id, locale) {
     pattern = translate(pattern, id, locale)
-    return interpret(locale, parse(pattern))
+    return interpret(parse(pattern), locale)
   }
 
   function translate (pattern, id, locale) {
