@@ -1,8 +1,4 @@
 /* eslint-env mocha */
-if (typeof Intl === 'undefined') {
-  require('intl')
-  require('intl/locale-data/jsonp/en')
-}
 var expect = require('chai').expect
 var plurals = require('../packages/format-message-interpret/plurals')
 var formatMessage = require('format-message')

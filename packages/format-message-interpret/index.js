@@ -10,37 +10,37 @@ import type {
   SubMessages
 } from '../format-message-parse'
 type Locale = string
-type Locales = Locale | Locale[]
+type Locales = Locale | Locale[] | void
 type Placeholder = any[] // https://github.com/facebook/flow/issues/4050
-type Type = (Locales, Placeholder) => (any, ?Object) => any
-type Types = { [string]: Type }
+export type Type = (Placeholder, Locales) => (any, ?Object) => any
+export type Types = { [string]: Type }
 */
 
 exports = module.exports = function interpret (
-  locale/*: Locales */,
   ast/*: AST */,
+  locale/*: Locales */,
   types/*:: ?: Types */
 )/*: (args?: Object) => string */ {
-  return interpretAST(locale, ast, null, types || {}, true)
+  return interpretAST(ast, null, locale, types || {}, true)
 }
 
 exports.toParts = function toParts (
-  locale/*: Locales */,
   ast/*: AST */,
+  locale/*: Locales */,
   types/*:: ?: Types */
 )/*: (args?: Object) => any[] */ {
-  return interpretAST(locale, ast, null, types || {}, false)
+  return interpretAST(ast, null, locale, types || {}, false)
 }
 
 function interpretAST (
-  locale/*: Locales */,
   elements/*: any[] */,
   parent/*: ?Placeholder */,
+  locale/*: Locales */,
   types/*: Types */,
   join/*: boolean */
 )/*: Function */ {
   const parts = elements.map(function (element) {
-    return interpretElement(locale, element, parent, types, join)
+    return interpretElement(element, parent, locale, types, join)
   })
 
   if (!join) {
@@ -62,9 +62,9 @@ function interpretAST (
 }
 
 function interpretElement (
-  locale/*: Locales */,
   element/*: Placeholder */,
   parent/*: ?Placeholder */,
+  locale/*: Locales */,
   types/*: Types */,
   join/*: boolean */
 )/*: Function */ {
@@ -76,7 +76,7 @@ function interpretElement (
   if (parent && element[0] === '#') {
     const id = parent[0]
     const offset = parent[2]
-    const formatter = (types.number || defaults.number)(locale, [ id, 'number' ])
+    const formatter = (types.number || defaults.number)([ id, 'number' ], locale)
     return function format (args) {
       return formatter(getArg(id, args) - offset, args)
     }
@@ -89,20 +89,20 @@ function interpretElement (
   if (type === 'plural' || type === 'selectordinal') {
     const children = {}
     Object.keys(element[3]).forEach(function (key) {
-      children[key] = interpretAST(locale, element[3][key], element, types, join)
+      children[key] = interpretAST(element[3][key], element, locale, types, join)
     })
     element = [ element[0], element[1], element[2], children ]
   } else if (element[2] && typeof element[2] === 'object') {
     const children = {}
     Object.keys(element[2]).forEach(function (key) {
-      children[key] = interpretAST(locale, element[2][key], element, types, join)
+      children[key] = interpretAST(element[2][key], element, locale, types, join)
     })
     element = [ element[0], element[1], children ]
   }
 
   const getFrmt = type && (types[type] || defaults[type])
   if (getFrmt) {
-    const frmt = getFrmt(locale, element)
+    const frmt = getFrmt(element, locale)
     return function format (args) {
       return frmt(getArg(id, args), args)
     }
@@ -123,13 +123,13 @@ function getArg (id/*: string */, args/*: ?Object */)/*: any */ {
   return a
 }
 
-function interpretNumber (locales/*: Locales */, element/*: Placeholder */) {
+function interpretNumber (element/*: Placeholder */, locales/*: Locales */) {
   const style = element[2]
   const options = formats.number[style] || formats.number.default
   return new Intl.NumberFormat(locales, options).format
 }
 
-function interpretDuration (locales/*: Locales */, element/*: Placeholder */) {
+function interpretDuration (element/*: Placeholder */, locales/*: Locales */) {
   const style = element[2]
   const options = formats.duration[style] || formats.duration.default
   const fs = new Intl.NumberFormat(locales, options.seconds).format
@@ -148,14 +148,14 @@ function interpretDuration (locales/*: Locales */, element/*: Placeholder */) {
   }
 }
 
-function interpretDateTime (locales/*: Locales */, element/*: Placeholder */) {
+function interpretDateTime (element/*: Placeholder */, locales/*: Locales */) {
   const type = element[1]
   const style = element[2]
   const options = formats[type][style] || formats[type].default
   return new Intl.DateTimeFormat(locales, options).format
 }
 
-function interpretPlural (locales/*: Locales */, element/*: Placeholder */) {
+function interpretPlural (element/*: Placeholder */, locales/*: Locales */) {
   const type = element[1]
   const pluralType = type === 'selectordinal' ? 'ordinal' : 'cardinal'
   const offset = element[2]
@@ -179,7 +179,7 @@ function interpretPlural (locales/*: Locales */, element/*: Placeholder */) {
   }
 }
 
-function interpretSelect (locales/*: Locales */, element/*: Placeholder */) {
+function interpretSelect (element/*: Placeholder */, locales/*: Locales */) {
   const children = element[2]
   return function (value, args) {
     const clause = children[value] || children.other

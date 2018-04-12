@@ -4,7 +4,7 @@ declare var Intl: {
   NumberFormat: Class<NumberFormat>,
   PluralRules: ?Class<PluralRules>,
 
-  getCanonicalLocales (Locales): Locale[]
+  getCanonicalLocales (locales?: Locales): Locale[]
 }
 
 type Locale = string
@@ -33,7 +33,7 @@ declare class Collator {
     caseFirst?: 'upper' | 'lower' | 'false'
   };
 
-  static supportedLocalesOf (string | string[]): string[];
+  static supportedLocalesOf (locales?: Locales): Locale[];
 }
 
 type CollatorOptions = {
@@ -75,7 +75,7 @@ declare class DateTimeFormat {
     timeZoneName?: 'short' | 'long'
   };
 
-  static supportedLocalesOf (Locales): Locale[];
+  static supportedLocalesOf (locales?: Locales): Locale[];
 }
 
 type DateTimeFormatOptions = {
@@ -121,7 +121,7 @@ declare class NumberFormat {
     maximumSignificantDigits?: number
   };
 
-  static supportedLocalesOf (Locales): Locale[];
+  static supportedLocalesOf (locales?: Locales): Locale[];
 }
 
 type NumberFormatOptions = {
@@ -156,7 +156,7 @@ declare class PluralRules {
     pluralCategories: Rule[],
   };
 
-  static supportedLocalesOf (Locales): Locale[];
+  static supportedLocalesOf (locales?: Locales): Locale[];
 }
 
 type Rule = 'zero' | 'one' | 'two' | 'few' | 'many' | 'other'

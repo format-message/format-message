@@ -2,8 +2,15 @@
 
 ## 6.0.0
 
-**Bug Fix**
+**Breaking Change**
+Calling MessageFormat without `new` throws an error, to better match newer constructors added to JavaScript and Intl.
+
+The order of arguments passed to MessageFormat have changed.
+
 Updated supportedLocalesOf to be the union of supportedLocalesOf functions on Intl.NumberFormat, Intl.DateTimeFormat, and Intl.PluralRules.
+
+**New Feature**
+Custom placeholder types can be supported by passing in a new argument with formatter functions.
 
 ## 5.2.1
 
