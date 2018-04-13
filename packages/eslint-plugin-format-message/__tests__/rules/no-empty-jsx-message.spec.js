@@ -1,6 +1,6 @@
 'use strict'
 
-var rule = require('../../../packages/eslint-plugin-format-message/lib/rules/no-empty-jsx-message')
+var rule = require('../../lib/rules/no-empty-jsx-message')
 var RuleTester = require('eslint').RuleTester
 
 var tester = new RuleTester()

@@ -1,6 +1,6 @@
 'use strict'
 
-var rule = require('../../../packages/eslint-plugin-format-message/lib/rules/literal-locale')
+var rule = require('../../lib/rules/literal-locale')
 var RuleTester = require('eslint').RuleTester
 
 var tester = new RuleTester()

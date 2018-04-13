@@ -1,12 +1,12 @@
 'use strict'
 
-var rule = require('../../../packages/eslint-plugin-format-message/lib/rules/translation-match-params')
+var rule = require('../../lib/rules/translation-match-params')
 var RuleTester = require('eslint').RuleTester
 
 var settings = { 'format-message': {
   generateId: 'literal',
   sourceLocale: 'en',
-  translations: './test/eslint/locales.json'
+  translations: './packages/eslint-plugin-format-message/__tests__/locales.json'
 } }
 
 var tester = new RuleTester()

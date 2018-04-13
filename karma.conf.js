@@ -16,14 +16,17 @@ module.exports = function (config) {
 
     // list of files to exclude
     exclude: [
-      'test/**/*.cli.spec.js',
-      'test/eslint/**/*'
+      'packages/babel-plugin-extract-format-message/**/*',
+      'packages/babel-plugin-transform-format-message/**/*',
+      'packages/eslint-plugin-format-message/**/*',
+      'packages/format-message-cli/**/*',
+      'packages/format-message-estree-util/**/*'
     ],
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      '{test,packages}/**/*.js': [ 'webpack', 'sourcemap' ]
+      'packages/**/*.js': [ 'webpack', 'sourcemap' ]
     },
 
     webpack: {

@@ -1,6 +1,6 @@
 'use strict'
 
-var rule = require('../../../packages/eslint-plugin-format-message/lib/rules/no-missing-params')
+var rule = require('../../lib/rules/no-missing-params')
 var RuleTester = require('eslint').RuleTester
 
 var tester = new RuleTester()

@@ -1,14 +1,14 @@
 'use strict'
 
-var rule = require('../../../packages/eslint-plugin-format-message/lib/rules/no-missing-translation')
+var rule = require('../../lib/rules/no-missing-translation')
 var RuleTester = require('eslint').RuleTester
 
 var settings = { 'format-message': {
   generateId: 'literal',
   sourceLocale: 'en',
   translations: {
-    en: './test/eslint/en.json',
-    pt: './test/eslint/pt.json'
+    en: './packages/eslint-plugin-format-message/__tests__/en.json',
+    pt: './packages/eslint-plugin-format-message/__tests__/pt.json'
   }
 } }
 
