@@ -36,7 +36,7 @@ declare class Collator {
   static supportedLocalesOf (locales?: Locales): Locale[];
 }
 
-type CollatorOptions = {
+declare type CollatorOptions = {
   localeMatcher?: 'lookup' | 'best fit',
   usage?: 'sort' | 'search',
   sensitivity?: 'base' | 'accent' | 'case' | 'variant',
@@ -78,7 +78,7 @@ declare class DateTimeFormat {
   static supportedLocalesOf (locales?: Locales): Locale[];
 }
 
-type DateTimeFormatOptions = {
+declare type DateTimeFormatOptions = {
   localeMatcher?: 'lookup' | 'best fit',
   timeZone?: string,
   hour12?: boolean,
@@ -124,7 +124,7 @@ declare class NumberFormat {
   static supportedLocalesOf (locales?: Locales): Locale[];
 }
 
-type NumberFormatOptions = {
+declare type NumberFormatOptions = {
   localeMatcher?: 'lookup' | 'best fit',
   style?: 'decimal' | 'currency' | 'percent',
   currency?: string,
@@ -161,7 +161,7 @@ declare class PluralRules {
 
 type Rule = 'zero' | 'one' | 'two' | 'few' | 'many' | 'other'
 
-type PluralRulesOptions = {
+declare type PluralRulesOptions = {
   localeMatcher?: 'lookup' | 'best fit',
   type?: 'cardinal' | 'ordinal',
   minimumIntegerDigits?: number,

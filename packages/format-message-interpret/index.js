@@ -10,7 +10,7 @@ import type {
   SubMessages
 } from '../format-message-parse'
 type Locale = string
-type Locales = Locale | Locale[] | void
+type Locales = Locale | Locale[]
 type Placeholder = any[] // https://github.com/facebook/flow/issues/4050
 export type Type = (Placeholder, Locales) => (any, ?Object) => any
 export type Types = { [string]: Type }
@@ -18,18 +18,18 @@ export type Types = { [string]: Type }
 
 exports = module.exports = function interpret (
   ast/*: AST */,
-  locale/*: Locales */,
+  locale/*:: ?: Locales */,
   types/*:: ?: Types */
 )/*: (args?: Object) => string */ {
-  return interpretAST(ast, null, locale, types || {}, true)
+  return interpretAST(ast, null, locale || 'en', types || {}, true)
 }
 
 exports.toParts = function toParts (
   ast/*: AST */,
-  locale/*: Locales */,
+  locale/*:: ?: Locales */,
   types/*:: ?: Types */
 )/*: (args?: Object) => any[] */ {
-  return interpretAST(ast, null, locale, types || {}, false)
+  return interpretAST(ast, null, locale || 'en', types || {}, false)
 }
 
 function interpretAST (
@@ -165,8 +165,7 @@ function interpretPlural (element/*: Placeholder */, locales/*: Locales */) {
     pluralRules = new Intl.PluralRules(locales, { type: pluralType })
   } else {
     const locale = lookupClosestLocale(locales, plurals)
-    const select = plurals[locale][pluralType]
-    if (!select) return children.other
+    const select = (locale && plurals[locale][pluralType]) || returnOther
     pluralRules = { select: select }
   }
 
@@ -178,6 +177,8 @@ function interpretPlural (element/*: Placeholder */, locales/*: Locales */) {
     return clause(args)
   }
 }
+
+function returnOther (/*:: n:number */) { return 'other' }
 
 function interpretSelect (element/*: Placeholder */, locales/*: Locales */) {
   const children = element[2]

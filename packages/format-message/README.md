@@ -100,6 +100,14 @@ Parameters
   - When specified, format-message will attempt to look up the translation for each language until one is found.
   - When ommitted the locale configured in `setup()` is used instead.
 
+### `formatMessage.rich(pattern[, args[, locales]])`
+
+Translate and format the message with the given pattern and arguments and return an array of message parts. If the pattern contains any html-like tags (`<a>go</a>`, `<icon/>`, etc.) they are transformed into type `<>` placeholders (`{ a, <>, children {go} }`). The `<>` placeholder type expects a function that will receive the style or sub-messages.
+
+Parameters
+
+  The same as `formatMessage(pattern[, args[, locales]])`.
+
 ### `formatMessage.setup(options)`
 
 Configure `formatMessage` behavior for subsequent calls. This should be called before any code that uses `formatMessage`. Returns an object containing the current options.

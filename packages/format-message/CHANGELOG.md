@@ -1,5 +1,42 @@
 # Changelog
 
+## 6.0.0
+
+**New Feature**
+`setup()` can now receive a `types` property with custom placeholder type formatters.
+
+`formatMessage.rich(pattern, args [, locale ])` takes a pattern including simple html-like tags as placeholders.
+```js
+formatMessage.rich('Click <a>Here</a>!', {
+  a: ({ children }) => <Link>{children}</Link>
+})
+```
+You can also use a special placeholder type directly if you prefer:
+```js
+formatMessage.rich('Click { a, <>, children {Here} }!', {
+  a: ({ children }) => <Link>{children}</Link>
+})
+```
+Self-closing tags can be used for rich elements that have no child content:
+```js
+formatMessage.rich('Please enter values for field marked with <icon/>.', {
+  icon: () => <Icon />
+})
+```
+And if you don't need a function to generate the rich value, you can pass it directly.
+```js
+formatMessage.rich('Please enter values for field marked with <icon/>.', {
+  icon: <Icon />
+})
+```
+Or even use a normal placeholder.
+```js
+formatMessage.rich('Please enter values for field marked with {icon}.', {
+  icon: <Icon />
+})
+```
+
+
 ## 5.2.6
 
 Fix IE11 compat by removing template literals.

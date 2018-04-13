@@ -136,7 +136,7 @@ program
 
     if (errors.length) {
       console.error(errors.join('. '))
-      process.exit(2)
+      return process.exit(2)
     }
 
     addStdinToFiles(files, options, function () {
@@ -179,7 +179,7 @@ program
     })
     if (errors.length) {
       console.error(errors.join('. '))
-      process.exit(2)
+      return process.exit(2)
     }
 
     addStdinToFiles(files, options, function () {
@@ -255,7 +255,7 @@ program
     }
     if (errors.length) {
       console.error(errors.join('. '))
-      process.exit(2)
+      return process.exit(2)
     }
 
     addStdinToFiles(files, options, function () {
