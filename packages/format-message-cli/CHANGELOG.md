@@ -1,5 +1,10 @@
 # Changelog
 
+## 6.0.0
+
+**Breaking Change**
+The default for generateId is now `literal` to match the runtime.
+
 ## 5.2.6
 
 Fix IE11 compat by removing template literals.

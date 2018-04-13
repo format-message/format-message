@@ -73,7 +73,7 @@ describe('format-message transform -i', function () {
   describe('translations', function () {
     it('uses -t translations', function () {
       const input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
-      const cmd = 'format-message transform -i' +
+      const cmd = 'format-message transform -i -g underscored_crc32' +
       ' -t packages/format-message-cli/__tests__/translations/inline.underscored_crc32.json'
       const { stdout, stderr } = exec(cmd, input)
       expect(stderr).to.equal('')
@@ -82,7 +82,7 @@ describe('format-message transform -i', function () {
 
     it('uses --translations translations', function () {
       const input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
-      const cmd = 'format-message transform -i' +
+      const cmd = 'format-message transform -i -g underscored_crc32' +
       ' --translations packages/format-message-cli/__tests__/translations/inline.underscored_crc32.json'
       const { stdout, stderr } = exec(cmd, input)
       expect(stderr).to.equal('')
@@ -92,7 +92,7 @@ describe('format-message transform -i', function () {
     describe('locale', function () {
       it('uses -l locale', function () {
         const input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
-        const cmd = 'format-message transform -i' +
+        const cmd = 'format-message transform -i -g underscored_crc32' +
         ' -l pt' +
         ' -t packages/format-message-cli/__tests__/translations/inline.underscored_crc32.json'
         const { stdout, stderr } = exec(cmd, input)
@@ -102,7 +102,7 @@ describe('format-message transform -i', function () {
 
       it('uses --locale locale', function () {
         const input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
-        const cmd = 'format-message transform -i' +
+        const cmd = 'format-message transform -i -g underscored_crc32' +
         ' --locale pt' +
         ' -t packages/format-message-cli/__tests__/translations/inline.underscored_crc32.json'
         const { stdout, stderr } = exec(cmd, input)
@@ -114,7 +114,7 @@ describe('format-message transform -i', function () {
     describe('generate-id', function () {
       it('uses -g type', function () {
         const input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
-        const cmd = 'format-message transform -i' +
+        const cmd = 'format-message transform -i -g underscored_crc32' +
         ' -g underscored' +
         ' -t packages/format-message-cli/__tests__/translations/inline.underscored.json'
         const { stdout, stderr } = exec(cmd, input)
@@ -189,7 +189,7 @@ describe('format-message transform -i', function () {
   describe('source-maps-inline', function () {
     it('uses --source-maps-inline', function () {
       const input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
-      const cmd = 'format-message transform -i' +
+      const cmd = 'format-message transform -i -g underscored_crc32' +
       ' --source-maps-inline' +
       ' -t packages/format-message-cli/__tests__/translations/inline.underscored_crc32.json'
       const { stdout, stderr } = exec(cmd, input)
@@ -204,7 +204,7 @@ describe('format-message transform -i', function () {
     it('uses -s', function () {
       const input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
       const filename = 'packages/format-message-cli/__tests__/translations/inline.js'
-      const cmd = 'format-message transform -i' +
+      const cmd = 'format-message transform -i -g underscored_crc32' +
       ' -s' +
       ' -t packages/format-message-cli/__tests__/translations/inline.underscored_crc32.json' +
       ' --out-file ' + filename
@@ -222,7 +222,7 @@ describe('format-message transform -i', function () {
     it('uses --source-maps', function () {
       const input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
       const filename = 'packages/format-message-cli/__tests__/translations/inline.js'
-      const cmd = 'format-message transform -i' +
+      const cmd = 'format-message transform -i -g underscored_crc32' +
       ' --source-maps' +
       ' -t packages/format-message-cli/__tests__/translations/inline.underscored_crc32.json' +
       ' --out-file ' + filename
@@ -450,7 +450,7 @@ describe('format-message transform', function () {
       expect(stderr).to.equal('')
       expect(stdout).to.contain('from "format-message"')
       expect(stdout).to.not.contain('translate')
-      expect(stdout).to.contain('id: "hello_32e420db"')
+      expect(stdout).to.contain('id: "hello"')
       expect(stdout).to.contain('default: "hello"')
     })
 
@@ -481,7 +481,7 @@ describe('format-message transform', function () {
       expect(stderr).to.equal('')
       expect(stdout).to.contain('from "format-message"')
       expect(stdout).to.not.contain('translate="yes"')
-      expect(stdout).to.contain('id: "hello_0_6169517a"')
+      expect(stdout).to.contain('id: "hello <0/>"')
       expect(stdout).to.contain('default: "hello <0/>"')
       expect(stdout).to.contain('<Place key="0">Untranslated</Place>')
     })
@@ -492,9 +492,9 @@ describe('format-message transform', function () {
       expect(stderr).to.equal('')
       expect(stdout).to.contain('from "format-message"')
       expect(stdout).to.not.contain('translate="yes"')
-      expect(stdout).to.contain('id: "hello_0_6169517a"')
+      expect(stdout).to.contain('id: "hello <0/>"')
       expect(stdout).to.contain('default: "hello <0/>"')
-      expect(stdout).to.contain('id: "world_3e83971e"')
+      expect(stdout).to.contain('id: "world"')
       expect(stdout).to.contain('default: "world"')
       expect(stdout).to.contain('[<Place key="0">')
     })
@@ -505,7 +505,7 @@ describe('format-message transform', function () {
       expect(stderr).to.equal('')
       expect(stdout).to.contain('from "format-message"')
       expect(stdout).to.not.contain('translate="yes"')
-      expect(stdout).to.contain('id: "hello_place_e3c168ce"')
+      expect(stdout).to.contain('id: "hello { place }"')
       expect(stdout).to.contain('default: "hello { place }"')
       expect(stdout).to.contain('place: place')
     })
@@ -516,7 +516,7 @@ describe('format-message transform', function () {
       expect(stderr).to.equal('')
       expect(stdout).to.contain('from "format-message"')
       expect(stdout).to.not.contain('translate="yes"')
-      expect(stdout).to.contain('id: "hello_place_time_23aa07ee"')
+      expect(stdout).to.contain('id: "hello { place_time }"')
       expect(stdout).to.contain('default: "hello { place_time }"')
       expect(stdout).to.match(/place_time:\s*place\s*\+\s*time/)
     })
@@ -526,7 +526,7 @@ describe('format-message transform', function () {
       const { stdout, stderr } = exec('format-message transform', input)
       expect(stderr).to.equal('')
       expect(stdout).to.contain('from "format-message/react"')
-      expect(stdout).to.contain('id: "hello_0_world_0_874c3940"')
+      expect(stdout).to.contain('id: "hello <0>world</0>"')
       expect(stdout).to.contain('default: "hello <0>world</0>"')
       expect(stdout).to.contain('[<b key="0" />]')
     })
@@ -536,7 +536,7 @@ describe('format-message transform', function () {
       const { stdout, stderr } = exec('format-message transform --jsx-target inferno', input)
       expect(stderr).to.equal('')
       expect(stdout).to.contain('from "format-message/inferno"')
-      expect(stdout).to.contain('id: "hello_0_world_0_874c3940"')
+      expect(stdout).to.contain('id: "hello <0>world</0>"')
       expect(stdout).to.contain('default: "hello <0>world</0>"')
       expect(stdout).to.contain('[<b key="0" />]')
     })
@@ -546,7 +546,7 @@ describe('format-message transform', function () {
       const { stdout, stderr } = exec('format-message transform -j inferno', input)
       expect(stderr).to.equal('')
       expect(stdout).to.contain('from "format-message/inferno"')
-      expect(stdout).to.contain('id: "hello_0_world_0_874c3940"')
+      expect(stdout).to.contain('id: "hello <0>world</0>"')
       expect(stdout).to.contain('default: "hello <0>world</0>"')
       expect(stdout).to.contain('[<b key="0" />]')
     })
@@ -555,7 +555,7 @@ describe('format-message transform', function () {
       const input = '<div translate="yes">hello <b><i>big</i> <em>world</em></b></div>'
       const { stdout, stderr } = exec('format-message transform', input)
       expect(stderr).to.equal('')
-      expect(stdout).to.contain('id: "hello_0_1_big_1_2_world_2_0_ea7be782"')
+      expect(stdout).to.contain('id: "hello <0><1>big</1> <2>world</2></0>"')
       expect(stdout).to.contain('default: "hello <0><1>big</1> <2>world</2></0>"')
       expect(stdout).to.contain('[<b key="0" />, <i key="1" />, <em key="2" />]')
     })
@@ -564,7 +564,7 @@ describe('format-message transform', function () {
       const input = '<div translate="yes">hello <b><i/><em/></b>world</div>'
       const { stdout, stderr } = exec('format-message transform', input)
       expect(stderr).to.equal('')
-      expect(stdout).to.contain('id: "hello_0_world_35eac72f"')
+      expect(stdout).to.contain('id: "hello <0/>world"')
       expect(stdout).to.contain('default: "hello <0/>world"')
       expect(stdout).to.contain('[<b key="0"><i /><em /></b>]')
     })
@@ -574,7 +574,7 @@ describe('format-message transform', function () {
       'export default <div translate="yes">Caught {number(count)} on {date(d, "MMM d")} at {time(t)}</div>'
       const { stdout, stderr } = exec('format-message transform', input)
       expect(stderr).to.equal('')
-      expect(stdout).to.contain('id: "caught_count_number_on_d_date_mmm_d_at_t_time_6fd1bfff"')
+      expect(stdout).to.contain('id: "Caught { count, number } on { d, date, \'MMM d\' } at { t, time }"')
       expect(stdout).to.contain('default: "Caught { count, number } on { d, date, \'MMM d\' } at { t, time }"')
       expect(stdout).to.contain('count: count')
       expect(stdout).to.contain('d: d')
@@ -586,7 +586,7 @@ describe('format-message transform', function () {
       'export default <div translate="yes">Caught {number(count)} on {date(d, "short")} at {time(t)}</div>'
       const { stdout, stderr } = exec('format-message transform', input)
       expect(stderr).to.equal('')
-      expect(stdout).to.contain('id: "caught_count_number_on_d_date_short_at_t_time_4c96b100"')
+      expect(stdout).to.contain('id: "Caught { count, number } on { d, date, short } at { t, time }"')
       expect(stdout).to.contain('default: "Caught { count, number } on { d, date, short } at { t, time }"')
       expect(stdout).to.contain('count: count')
       expect(stdout).to.contain('d: d')
@@ -598,7 +598,7 @@ describe('format-message transform', function () {
       'export default <div translate="yes">{sel(gender, { female:<i/>, male:<b>b</b>, other:"no" })}</div>'
       const { stdout, stderr } = exec('format-message transform', input)
       expect(stderr).to.equal('')
-      expect(stdout).to.contain('id: "gender_select_female_0_male_1_b_1_other_no_b965b266"')
+      expect(stdout).to.contain('id: "{ gender, select, \\nfemale {<0/>}\\nmale {<1>b</1>}\\nother {no} }"')
       expect(stdout).to.contain('[<i key="0" />, <b key="1" />]')
     })
 
@@ -607,7 +607,7 @@ describe('format-message transform', function () {
       'export default <div translate="yes">{plural(n, 3, { one:"1", other:"o" })}v{o(new Date().getDate(), { other:"" })}</div>'
       const { stdout, stderr } = exec('format-message transform', input)
       expect(stderr).to.equal('')
-      expect(stdout).to.contain('id: "n_plural_offset_3_one_1_other_o_v_new_date_get_dat_90dd7dec"')
+      expect(stdout).to.contain('id: "{ n, plural, offset:3\\none {1}\\nother {o} }v{ new_date_get_date, selectordinal, \\nother {} }"')
       expect(stdout).to.contain('new_date_get_date: new Date().getDate()')
     })
   })

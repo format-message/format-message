@@ -13,7 +13,7 @@ describe('format-message extract', function () {
       expect(stderr).to.equal('')
       const translations = JSON.parse(stdout)
       expect(translations).to.eql({
-        hello_32e420db: { message: 'hello' }
+        hello: { message: 'hello' }
       })
     })
 
@@ -22,7 +22,7 @@ describe('format-message extract', function () {
       const { stdout, stderr } = exec('format-message extract', input)
       const translations = JSON.parse(stdout)
       expect(translations).to.eql({
-        hello_32e420db: { message: 'hello' }
+        hello: { message: 'hello' }
       })
       expect(stderr).to.equal('')
     })
@@ -32,7 +32,7 @@ describe('format-message extract', function () {
       const { stdout, stderr } = exec('format-message extract', input)
       const translations = JSON.parse(stdout)
       expect(translations).to.eql({
-        hello_32e420db: { message: 'hello' }
+        hello: { message: 'hello' }
       })
       expect(stderr).to.equal('')
     })
@@ -42,7 +42,7 @@ describe('format-message extract', function () {
       const { stdout, stderr } = exec('format-message extract', input)
       const translations = JSON.parse(stdout)
       expect(translations).to.eql({
-        hello_world_msg_d025409b: { message: 'hello { world.msg }' }
+        'hello {world.msg}': { message: 'hello { world.msg }' }
       })
       expect(stderr).to.equal('')
     })
@@ -57,7 +57,7 @@ describe('format-message extract', function () {
       const translations = JSON.parse(readFileSync(filename, 'utf8'))
       unlinkSync(filename)
       expect(translations).to.eql({
-        hello_32e420db: { message: 'hello' }
+        hello: { message: 'hello' }
       })
     })
 
@@ -71,7 +71,7 @@ describe('format-message extract', function () {
       const translations = JSON.parse(readFileSync(filename, 'utf8'))
       unlinkSync(filename)
       expect(translations).to.eql({
-        hello_32e420db: { message: 'hello' }
+        hello: { message: 'hello' }
       })
     })
 
@@ -79,7 +79,7 @@ describe('format-message extract', function () {
       const input = 'import formatMessage from "format-message"\nformatMessage("hello")'
       const { stdout, stderr } = exec('format-message extract --format yml', input)
       const translations = stdout
-      expect(translations).to.eql('en:\n  hello_32e420db: hello\n')
+      expect(translations).to.eql('en:\n  hello: hello\n')
       expect(stderr).to.equal('')
     })
 
@@ -110,7 +110,7 @@ describe('format-message extract', function () {
       const cmd = 'format-message extract -l pt --format yml'
       const { stdout, stderr } = exec(cmd, input)
       const translations = stdout
-      expect(translations).to.eql('pt:\n  hello_world_a55e96a3: hello world\n')
+      expect(translations).to.eql('pt:\n  "hello world": hello world\n')
       expect(stderr).to.equal('')
     })
 
@@ -119,7 +119,7 @@ describe('format-message extract', function () {
       const cmd = 'format-message extract --locale en-US --format yml'
       const { stdout, stderr } = exec(cmd, input)
       const translations = stdout
-      expect(translations).to.eql('en-US:\n  hello_world_a55e96a3: hello world\n')
+      expect(translations).to.eql('en-US:\n  "hello world": hello world\n')
       expect(stderr).to.equal('')
     })
 
@@ -144,7 +144,7 @@ describe('format-message extract', function () {
       const { stdout, stderr } = exec(cmd, '')
       expect(stderr).to.equal('')
       const translations = JSON.parse(stdout)
-      expect(translations.x_arg_z_c6ca7a80.message)
+      expect(translations['x{ arg }z'].message)
         .to.equal('x{ arg }z')
     })
 
@@ -154,7 +154,7 @@ describe('format-message extract', function () {
       const { stdout, stderr } = exec(cmd, '')
       expect(stderr).to.equal('')
       const translations = JSON.parse(stdout)
-      expect(translations.x_arg_z_c6ca7a80.message)
+      expect(translations['x{ arg }z'].message)
         .to.equal('x{ arg }z')
     })
 
@@ -164,7 +164,7 @@ describe('format-message extract', function () {
       const { stdout, stderr } = exec(cmd, '')
       expect(stderr).to.equal('')
       const translations = JSON.parse(stdout)
-      expect(translations.x_arg_z_c6ca7a80.message)
+      expect(translations['x{ arg }z'].message)
         .to.equal('x{ arg }z')
     })
   })
@@ -175,7 +175,7 @@ describe('format-message extract', function () {
       const { stdout, stderr } = exec('format-message extract', input)
       const translations = JSON.parse(stdout)
       expect(translations).to.eql({
-        hello_32e420db: { message: 'hello' }
+        hello: { message: 'hello' }
       })
       expect(stderr).to.equal('')
     })
@@ -186,8 +186,8 @@ describe('format-message extract', function () {
       const { stdout, stderr } = exec('format-message extract', input)
       const translations = JSON.parse(stdout)
       expect(translations).to.eql({
-        bye_374365a8: { message: 'bye' },
-        hello_32e420db: { message: 'hello' }
+        bye: { message: 'bye' },
+        hello: { message: 'hello' }
       })
       expect(stderr).to.equal('')
     })
@@ -197,7 +197,7 @@ describe('format-message extract', function () {
       const { stdout, stderr } = exec('format-message extract', input)
       const translations = JSON.parse(stdout)
       expect(translations).to.eql({
-        hello_32e420db: { message: 'hello' }
+        hello: { message: 'hello' }
       })
       expect(stderr).to.equal('')
     })
@@ -207,7 +207,7 @@ describe('format-message extract', function () {
       const { stdout, stderr } = exec('format-message extract', input)
       const translations = JSON.parse(stdout)
       expect(translations).to.eql({
-        hello_32e420db: { message: 'hello' }
+        hello: { message: 'hello' }
       })
       expect(stderr).to.equal('')
     })
@@ -218,7 +218,7 @@ describe('format-message extract', function () {
         const { stdout, stderr } = exec('format-message extract', input)
         const translations = JSON.parse(stdout)
         expect(translations).to.eql({
-          hello_32e420db: { message: 'hello' }
+          hello: { message: 'hello' }
         })
         expect(stderr).to.equal('')
       })
@@ -228,7 +228,7 @@ describe('format-message extract', function () {
         const { stdout, stderr } = exec('format-message extract', input)
         const translations = JSON.parse(stdout)
         expect(translations).to.eql({
-          hello_32e420db: { message: 'hello' }
+          hello: { message: 'hello' }
         })
         expect(stderr).to.equal('')
       })
@@ -242,7 +242,7 @@ describe('format-message extract', function () {
       expect(stderr).to.equal('')
       const translations = JSON.parse(stdout)
       expect(translations).to.eql({
-        hello_32e420db: { message: 'hello' }
+        hello: { message: 'hello' }
       })
     })
 
@@ -276,7 +276,7 @@ describe('format-message extract', function () {
       expect(stderr).to.equal('')
       const translations = JSON.parse(stdout)
       expect(translations).to.eql({
-        hello_0_6169517a: { message: 'hello <0/>' }
+        'hello <0/>': { message: 'hello <0/>' }
       })
     })
 
@@ -286,8 +286,8 @@ describe('format-message extract', function () {
       expect(stderr).to.equal('')
       const translations = JSON.parse(stdout)
       expect(translations).to.eql({
-        hello_0_6169517a: { message: 'hello <0/>' },
-        world_3e83971e: { message: 'world' }
+        'hello <0/>': { message: 'hello <0/>' },
+        world: { message: 'world' }
       })
     })
 
@@ -297,7 +297,7 @@ describe('format-message extract', function () {
       expect(stderr).to.equal('')
       const translations = JSON.parse(stdout)
       expect(translations).to.eql({
-        hello_place_e3c168ce: { message: 'hello { place }' }
+        'hello { place }': { message: 'hello { place }' }
       })
     })
 
@@ -307,7 +307,7 @@ describe('format-message extract', function () {
       expect(stderr).to.equal('')
       const translations = JSON.parse(stdout)
       expect(translations).to.eql({
-        hello_place_e3c168ce: { message: 'hello { place }' }
+        'hello { place }': { message: 'hello { place }' }
       })
     })
 
@@ -317,7 +317,7 @@ describe('format-message extract', function () {
       expect(stderr).to.equal('')
       const translations = JSON.parse(stdout)
       expect(translations).to.eql({
-        hello_place_time_23aa07ee: { message: 'hello { place_time }' }
+        'hello { place_time }': { message: 'hello { place_time }' }
       })
     })
 
@@ -327,7 +327,7 @@ describe('format-message extract', function () {
       expect(stderr).to.equal('')
       const translations = JSON.parse(stdout)
       expect(translations).to.eql({
-        hello_0_6169517a: { message: 'hello <0/>' }
+        'hello <0/>': { message: 'hello <0/>' }
       })
     })
 
@@ -337,7 +337,7 @@ describe('format-message extract', function () {
       expect(stderr).to.equal('')
       const translations = JSON.parse(stdout)
       expect(translations).to.eql({
-        hello_0_world_0_874c3940: { message: 'hello <0>world</0>' }
+        'hello <0>world</0>': { message: 'hello <0>world</0>' }
       })
     })
 
@@ -347,7 +347,7 @@ describe('format-message extract', function () {
       expect(stderr).to.equal('')
       const translations = JSON.parse(stdout)
       expect(translations).to.eql({
-        hello_0_1_big_1_2_world_2_0_ea7be782: { message: 'hello <0><1>big</1> <2>world</2></0>' }
+        'hello <0><1>big</1> <2>world</2></0>': { message: 'hello <0><1>big</1> <2>world</2></0>' }
       })
     })
 
@@ -357,7 +357,7 @@ describe('format-message extract', function () {
       expect(stderr).to.equal('')
       const translations = JSON.parse(stdout.trim())
       expect(translations).to.eql({
-        hello_0_world_35eac72f: { message: 'hello <0/>world' }
+        'hello <0/>world': { message: 'hello <0/>world' }
       })
     })
 
@@ -369,7 +369,7 @@ describe('format-message extract', function () {
       expect(stderr).to.equal('')
       const translations = JSON.parse(stdout)
       expect(translations).to.eql({
-        hello_0_1_big_1_2_world_2_0_9e3f6e63: { message: 'hello <0><1>big</1><2>world</2></0>' }
+        'hello <0><1>big</1><2>world</2></0>': { message: 'hello <0><1>big</1><2>world</2></0>' }
       })
     })
 
@@ -380,7 +380,7 @@ describe('format-message extract', function () {
       expect(stderr).to.equal('')
       const translations = JSON.parse(stdout)
       expect(translations).to.eql({
-        caught_count_number_on_d_date_short_at_t_time_4c96b100: {
+        'Caught { count, number } on { d, date, short } at { t, time }': {
           message: 'Caught { count, number } on { d, date, short } at { t, time }'
         }
       })
@@ -393,7 +393,7 @@ describe('format-message extract', function () {
       expect(stderr).to.equal('')
       const translations = JSON.parse(stdout)
       expect(translations).to.eql({
-        gender_select_female_0_male_1_b_1_other_no_b965b266: {
+        '{ gender, select, \nfemale {<0/>}\nmale {<1>b</1>}\nother {no} }': {
           message: '{ gender, select,\n  female {<0/>}\n    male {<1>b</1>}\n   other {no}\n}'
         }
       })
@@ -406,7 +406,7 @@ describe('format-message extract', function () {
       expect(stderr).to.equal('')
       const translations = JSON.parse(stdout)
       expect(translations).to.eql({
-        n_plural_offset_3_one_1_other_o_v_new_date_get_dat_90dd7dec: {
+        '{ n, plural, offset:3\none {1}\nother {o} }v{ new_date_get_date, selectordinal, \nother {} }': {
           message: '{ n, plural, offset:3\n    one {1}\n  other {o}\n}v{ new_date_get_date, selectordinal,\n  other {}\n}'
         }
       })
