@@ -6,7 +6,7 @@ const plurals = require('../plurals')
 
 describe('plurals', () => {
   const rules = 'zero one two few many other'.split(' ')
-  const nums = [ -10, -1, 0, 0.1, 1, 1.01, 2, 2.15, 3, 4, 6, 8, 14, 19, 25, 101, 111, 112, 1000000 ]
+  const nums = [ -10, -1, 0, 0.1, 1, 1.01, 1.23, 2, 2.15, 3, 4, 6, 8, 14, 19, 25, 99, 101, 111, 112, 1000000 ]
   Object.keys(plurals).forEach(function (locale) {
     if (plurals[locale].cardinal) {
       it('has ' + locale + ' cardinal rules', function () {

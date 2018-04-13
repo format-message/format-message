@@ -13,5 +13,8 @@ describe('lookupClosestLocale()', function () {
 
   it('returns undefined if locale is not a key in the object', function () {
     expect(lookup('pt-BR', { de: 1 })).to.equal(undefined)
+    expect(lookup('', { de: 1 })).to.equal(undefined)
+    expect(lookup(null, { de: 1 })).to.equal(undefined)
+    expect(lookup(undefined, { de: 1 })).to.equal(undefined)
   })
 })
