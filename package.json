@@ -9,8 +9,7 @@
     "postinstall": "node scripts/cldr.js",
     "prebenchmark": "format-message transform -i scripts/benchmark.src.js > scripts/benchmark.js",
     "pretest": "rm -rf test/inline && format-message transform -i packages/format-message/__tests__/index.spec.js > packages/format-message/__tests__/inline.spec.js",
-    "test": "eslint . && flow check && nyc mocha '{test,package}/**/*.spec.js' && karma start",
-    "mocha": "nyc mocha 'packages/**/*.spec.js'"
+    "test": "eslint . && flow check && nyc mocha 'packages/**/*.spec.js' && karma start"
   },
   "devDependencies": {
     "async": "^2.0.0",

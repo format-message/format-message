@@ -1,6 +1,6 @@
 'use strict'
 
-var rule = require('../../../packages/eslint-plugin-format-message/lib/rules/no-invalid-translate-attribute')
+var rule = require('../../lib/rules/no-invalid-translate-attribute')
 var RuleTester = require('eslint').RuleTester
 
 var tester = new RuleTester()

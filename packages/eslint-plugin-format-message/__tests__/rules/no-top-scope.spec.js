@@ -1,6 +1,6 @@
 'use strict'
 
-var rule = require('../../../packages/eslint-plugin-format-message/lib/rules/no-top-scope')
+var rule = require('../../lib/rules/no-top-scope')
 var RuleTester = require('eslint').RuleTester
 
 var tester = new RuleTester()
