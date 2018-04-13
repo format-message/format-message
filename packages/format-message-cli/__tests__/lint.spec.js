@@ -47,9 +47,8 @@ describe('format-message lint', function () {
   })
 
   describe('translations and file input', function () {
-    it('-g literal', function () {
+    it('default literal', function () {
       const cmd = 'format-message lint' +
-      ' -g literal' +
       ' -t packages/format-message-cli/__tests__/translations/lint.literal.json' +
       ' packages/format-message/__tests__/index.spec.js'
       const { code, stdout, stderr } = exec(cmd)
@@ -83,8 +82,9 @@ describe('format-message lint', function () {
       expect(stderr).to.contain('Pattern is not a string literal')
     })
 
-    it('default underscored_crc32', function () {
+    it('-g underscored_crc32', function () {
       const cmd = 'format-message lint' +
+      ' -g underscored_crc32' +
       ' -t packages/format-message-cli/__tests__/translations/lint.underscored_crc32.json' +
       ' packages/format-message/__tests__/index.spec.js'
       const { code, stdout, stderr } = exec(cmd)
