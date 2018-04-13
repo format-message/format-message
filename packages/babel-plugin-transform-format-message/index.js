@@ -26,7 +26,7 @@ module.exports = function (bbl) {
 
   function translate (locale, id, translations) {
     locale = lookupClosestLocale(locale, translations)
-    var translated = translations[locale] && translations[locale][id]
+    var translated = locale && translations[locale] && translations[locale][id]
     if (translated && translated.message) translated = translated.message
     if (translated != null) return translated
   }

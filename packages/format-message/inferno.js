@@ -1,8 +1,8 @@
+// @flow
 'use strict'
+const formatChildren = require('./base-format-children')
 
-var formatChildren = require('./base-format-children')
-
-function applyChildren (key, element, children) {
+function applyChildren (key/*: string */, element/*: any */, children/*: ?mixed[] */) {
   if (process.env.NODE_ENV !== 'production' && !element.flags) {
     throw new Error(JSON.stringify(element) + ' is not a valid element')
   }

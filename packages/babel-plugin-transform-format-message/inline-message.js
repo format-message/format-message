@@ -205,7 +205,7 @@ function transformPlural (state, id, type, offset, children) {
   var parent = [ id, type, offset ]
   var closest = lookupClosestLocale(state.locale, cldr.locales)
   var ptype = type === 'selectordinal' ? 'ordinal' : 'cardinal'
-  var conditions = cldr.locales[closest].plurals[ptype]
+  var conditions = (closest && cldr.locales[closest].plurals[ptype]) || {}
   var s = state.sId ||
     (state.sId = scope.generateDeclaredUidIdentifier('s'))
   var n = state.nId ||

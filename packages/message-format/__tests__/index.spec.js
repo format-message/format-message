@@ -2,7 +2,6 @@
 /* eslint-disable no-unused-expressions */
 const expect = require('chai').expect
 const MessageFormat = require('..')
-const plurals = require('format-message-interpret/plurals')
 
 describe('MessageFormat', function () {
   describe('constructor', function () {
@@ -253,50 +252,6 @@ describe('MessageFormat', function () {
       })
       expect(message.formatToParts()).to.eql([ 'a-b-c' ])
       expect(message.formatToParts({ a: 1 })).to.eql([ 'a-b-c' ])
-    })
-  })
-
-  describe('locales', function () {
-    const ns = [
-      -0.1, 0, 1, 1.01, 1.11, 1.13, 1.4, 1.7, 2, 3, 4, 6,
-      10, 11, 12, 13, 14, 15, 20, 27, 83, 93, 113, 1000000
-    ]
-    it('doesn\'t throw for any locale\'s plural function', function () {
-      const pattern =
-        '{n, plural,' +
-        '  zero {zero}' +
-        '   one {one}' +
-        '   two {two}' +
-        '   few {few}' +
-        '  many {many}' +
-        ' other {other}}'
-      Object.keys(plurals).forEach(function (locale) {
-        const message = new MessageFormat(pattern, locale)
-        expect(message.resolvedOptions().locale).to.equal(locale)
-        ns.forEach(function (n) {
-          const result = message.format({ n: n })
-          expect(result).to.match(/^(zero|one|two|few|many|other)$/)
-        })
-      })
-    })
-
-    it('doesn\'t throw for any locale\'s selectordinal function', function () {
-      const pattern =
-        '{n, selectordinal,' +
-        '  zero {zero}' +
-        '   one {one}' +
-        '   two {two}' +
-        '   few {few}' +
-        '  many {many}' +
-        ' other {other}}'
-      Object.keys(plurals).forEach(function (locale) {
-        const message = new MessageFormat(pattern, locale)
-        expect(message.resolvedOptions().locale).to.equal(locale)
-        ns.forEach(function (n) {
-          const result = message.format({ n: n })
-          expect(result).to.match(/^(zero|one|two|few|many|other)$/)
-        })
-      })
     })
   })
 })

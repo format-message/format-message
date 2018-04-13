@@ -1,3 +1,4 @@
+// @flow
 'use strict'
 
 /**
@@ -5,22 +6,26 @@
  * token matching a wrapper, it will replace the token with the wrapper, keeping
  * any children intact.
  */
-module.exports = function formatChildren (applyChildren, message, wrappers) {
+module.exports = function formatChildren (
+  applyChildren/*: (string, any, ?mixed[]) => any */,
+  message/*: string */,
+  wrappers/*: Object */
+) {
   wrappers = wrappers || []
 
   // at least one word character (letter, digit, or _) surrounded by < >
-  var wrappingToken = /<(\w+)>/g
+  const wrappingToken = /<(\w+)>/g
 
   // at least one word character (letter, digit, or _) surrounded by < />
-  var selfClosingToken = /<(\w+)\/>/g
+  const selfClosingToken = /<(\w+)\/>/g
 
-  var results = []
-  var match, token, i, split, result
+  const results = []
+  let match, token, i, split, result
 
   // check that wrapping tokens are properly nested
-  var tokens = []
+  const tokens = []
   while ((match = wrappingToken.exec(message)) !== null) {
-    var key = match[1]
+    const key = match[1]
     token = {
       key: key,
       start: match.index,
@@ -44,16 +49,16 @@ module.exports = function formatChildren (applyChildren, message, wrappers) {
 
     if (wrappers[token.key]) {
       // get the text in between the token
-      var start = message.lastIndexOf('<' + token.key + '>')
-      var end = message.lastIndexOf('</' + token.key + '>')
-      var value = message.substring(start + token.key.length + 2, end)
+      const start = message.lastIndexOf('<' + token.key + '>')
+      const end = message.lastIndexOf('</' + token.key + '>')
+      const value = message.substring(start + token.key.length + 2, end)
 
-      var children = []
+      const children = []
 
       // add all children between the token, replacing any self closing tokens
       // (which will be the odd index of the split)
       split = value.split(selfClosingToken)
-      for (var j = 0; j < split.length; ++j) {
+      for (let j = 0; j < split.length; ++j) {
         result = split[j]
 
         if (j % 2 === 1 && wrappers[result]) {
@@ -68,8 +73,8 @@ module.exports = function formatChildren (applyChildren, message, wrappers) {
       // token to add this token as a child
       wrappers['__' + i + '__'] = applyChildren(token.key, wrappers[token.key], children)
 
-      var left = message.substring(0, start)
-      var right = message.substring(end + token.key.length + 3)
+      const left = message.substring(0, start)
+      const right = message.substring(end + token.key.length + 3)
       message = left + '<__' + i + '__/>' + right
     }
   }
