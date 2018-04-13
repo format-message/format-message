@@ -53,6 +53,14 @@ module.exports = function () {
     } else {
       process.stdout.write(getFileContent())
     }
+
+    // clean up for subsequent calls (tests)
+    messages = {}
+    outFile = null
+    format = null
+    locale = 'en'
+    clearTimeout(timer)
+    timer = null
   }
 
   function addMessage (path, state, message) {
