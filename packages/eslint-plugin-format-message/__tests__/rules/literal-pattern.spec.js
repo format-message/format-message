@@ -7,6 +7,7 @@ var tester = new RuleTester()
 tester.run('literal-pattern', rule, {
   valid: [
     { code: 'var f=require("format-message");f("f")' },
+    { code: 'var f=require("format-message");f.rich("f")' },
     { code: 'var f=require("format-message");f("f {b}")' },
     // scope tracking
     { code: 'var f=require("foo");formatMessage(foo)' },
@@ -26,6 +27,10 @@ tester.run('literal-pattern', rule, {
   invalid: [
     {
       code: 'var f=require("format-message");f(somevar)',
+      errors: [ { message: 'Pattern is not a string literal' } ]
+    },
+    {
+      code: 'var f=require("format-message");f.rich(somevar)',
       errors: [ { message: 'Pattern is not a string literal' } ]
     },
     // scope tracking

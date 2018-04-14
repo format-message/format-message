@@ -24,6 +24,13 @@ describe('format-message transform -i', function () {
       expect(stdout.trim()).to.match(/^"hello"/)
     })
 
+    it('finds and replaces rich messages', function () {
+      const input = 'import formatMessage from "format-message"\nformatMessage.rich("hello")'
+      const { stdout, stderr } = exec('format-message transform -i', input)
+      expect(stderr).to.equal('')
+      expect(stdout.trim()).to.match(/^[\s*"hello"\s*]/)
+    })
+
     it('handles placeholders', function () {
       const input = 'import formatMessage from "format-message"\nformatMessage("hello {world}", {world:"world"})'
       const { stdout, stderr } = exec('format-message transform -i', input)
@@ -450,6 +457,7 @@ describe('format-message transform', function () {
       expect(stderr).to.equal('')
       expect(stdout).to.contain('from "format-message"')
       expect(stdout).to.not.contain('translate')
+      expect(stdout).to.contain('.rich({')
       expect(stdout).to.contain('id: "hello"')
       expect(stdout).to.contain('default: "hello"')
     })
@@ -481,8 +489,9 @@ describe('format-message transform', function () {
       expect(stderr).to.equal('')
       expect(stdout).to.contain('from "format-message"')
       expect(stdout).to.not.contain('translate="yes"')
-      expect(stdout).to.contain('id: "hello <0/>"')
-      expect(stdout).to.contain('default: "hello <0/>"')
+      expect(stdout).to.contain('.rich({')
+      expect(stdout).to.contain('id: "hello { 0 }"')
+      expect(stdout).to.contain('default: "hello { 0 }"')
       expect(stdout).to.contain('<Place key="0">Untranslated</Place>')
     })
 
@@ -492,8 +501,9 @@ describe('format-message transform', function () {
       expect(stderr).to.equal('')
       expect(stdout).to.contain('from "format-message"')
       expect(stdout).to.not.contain('translate="yes"')
-      expect(stdout).to.contain('id: "hello <0/>"')
-      expect(stdout).to.contain('default: "hello <0/>"')
+      expect(stdout).to.contain('.rich({')
+      expect(stdout).to.contain('id: "hello { 0 }"')
+      expect(stdout).to.contain('default: "hello { 0 }"')
       expect(stdout).to.contain('id: "world"')
       expect(stdout).to.contain('default: "world"')
       expect(stdout).to.contain('[<Place key="0">')
@@ -505,6 +515,7 @@ describe('format-message transform', function () {
       expect(stderr).to.equal('')
       expect(stdout).to.contain('from "format-message"')
       expect(stdout).to.not.contain('translate="yes"')
+      expect(stdout).to.contain('.rich({')
       expect(stdout).to.contain('id: "hello { place }"')
       expect(stdout).to.contain('default: "hello { place }"')
       expect(stdout).to.contain('place: place')
@@ -516,39 +527,22 @@ describe('format-message transform', function () {
       expect(stderr).to.equal('')
       expect(stdout).to.contain('from "format-message"')
       expect(stdout).to.not.contain('translate="yes"')
+      expect(stdout).to.contain('.rich({')
       expect(stdout).to.contain('id: "hello { place_time }"')
       expect(stdout).to.contain('default: "hello { place_time }"')
       expect(stdout).to.match(/place_time:\s*place\s*\+\s*time/)
     })
 
-    it('generates wrapper token for child element with text', function () {
+    it('generates token for child element with text', function () {
       const input = '<div translate="yes">hello <b>world</b></div>'
       const { stdout, stderr } = exec('format-message transform', input)
       expect(stderr).to.equal('')
-      expect(stdout).to.contain('from "format-message/react"')
+      expect(stdout).to.contain('from "format-message"')
+      expect(stdout).to.not.contain('translate="yes"')
+      expect(stdout).to.contain('.rich({')
       expect(stdout).to.contain('id: "hello <0>world</0>"')
       expect(stdout).to.contain('default: "hello <0>world</0>"')
-      expect(stdout).to.contain('[<b key="0" />]')
-    })
-
-    it('--jsx-target', function () {
-      const input = '<div translate="yes">hello <b>world</b></div>'
-      const { stdout, stderr } = exec('format-message transform --jsx-target inferno', input)
-      expect(stderr).to.equal('')
-      expect(stdout).to.contain('from "format-message/inferno"')
-      expect(stdout).to.contain('id: "hello <0>world</0>"')
-      expect(stdout).to.contain('default: "hello <0>world</0>"')
-      expect(stdout).to.contain('[<b key="0" />]')
-    })
-
-    it('-j', function () {
-      const input = '<div translate="yes">hello <b>world</b></div>'
-      const { stdout, stderr } = exec('format-message transform -j inferno', input)
-      expect(stderr).to.equal('')
-      expect(stdout).to.contain('from "format-message/inferno"')
-      expect(stdout).to.contain('id: "hello <0>world</0>"')
-      expect(stdout).to.contain('default: "hello <0>world</0>"')
-      expect(stdout).to.contain('[<b key="0" />]')
+      expect(stdout).to.contain('0: (children) => <b key="0">{children}</b>')
     })
 
     it('handles nested elements', function () {
@@ -557,16 +551,28 @@ describe('format-message transform', function () {
       expect(stderr).to.equal('')
       expect(stdout).to.contain('id: "hello <0><1>big</1> <2>world</2></0>"')
       expect(stdout).to.contain('default: "hello <0><1>big</1> <2>world</2></0>"')
-      expect(stdout).to.contain('[<b key="0" />, <i key="1" />, <em key="2" />]')
+      expect(stdout).to.contain('0: (children) => <b key="0">{children}</b>')
+      expect(stdout).to.contain('1: (children) => <i key="1">{children}</i>')
+      expect(stdout).to.contain('2: (children) => <em key="2">{children}</em>')
+    })
+
+    it('prefers the key attribute', function () {
+      const input = '<div translate="yes">name <b key="b"><i key="icon" /> required</b></div>'
+      const { stdout, stderr } = exec('format-message transform', input)
+      expect(stderr).to.equal('')
+      expect(stdout).to.contain('id: "name <b>{ icon } required</b>"')
+      expect(stdout).to.contain('default: "name <b>{ icon } required</b>"')
+      expect(stdout).to.contain('icon: <i key="icon" />')
+      expect(stdout).to.contain('b: (children) => <b key="b">{children}</b>')
     })
 
     it('groups nested elements with no text', function () {
       const input = '<div translate="yes">hello <b><i/><em/></b>world</div>'
       const { stdout, stderr } = exec('format-message transform', input)
       expect(stderr).to.equal('')
-      expect(stdout).to.contain('id: "hello <0/>world"')
-      expect(stdout).to.contain('default: "hello <0/>world"')
-      expect(stdout).to.contain('[<b key="0"><i /><em /></b>]')
+      expect(stdout).to.contain('id: "hello { 0 }world"')
+      expect(stdout).to.contain('default: "hello { 0 }world"')
+      expect(stdout).to.contain('0: <b key="0"><i /><em /></b>')
     })
 
     it('handles style names with spaces', function () {
@@ -598,8 +604,9 @@ describe('format-message transform', function () {
       'export default <div translate="yes">{sel(gender, { female:<i/>, male:<b>b</b>, other:"no" })}</div>'
       const { stdout, stderr } = exec('format-message transform', input)
       expect(stderr).to.equal('')
-      expect(stdout).to.contain('id: "{ gender, select, \\nfemale {<0/>}\\nmale {<1>b</1>}\\nother {no} }"')
-      expect(stdout).to.contain('[<i key="0" />, <b key="1" />]')
+      expect(stdout).to.contain('id: "{ gender, select, \\nfemale {{ 0 }}\\nmale {<1>b</1>}\\nother {no} }"')
+      expect(stdout).to.contain('0: <i key="0" />')
+      expect(stdout).to.contain('1: (children) => <b key="1">{children}</b>')
     })
 
     it('handles plural & selectordinal helpers', function () {

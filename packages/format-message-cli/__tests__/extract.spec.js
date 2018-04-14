@@ -47,6 +47,16 @@ describe('format-message extract', function () {
       expect(stderr).to.equal('')
     })
 
+    it('finds rich patterns', function () {
+      const input = 'import formatMessage from "format-message"\nformatMessage.rich("hello")'
+      const { stdout, stderr } = exec('format-message extract', input)
+      expect(stderr).to.equal('')
+      const translations = JSON.parse(stdout)
+      expect(translations).to.eql({
+        hello: { message: 'hello' }
+      })
+    })
+
     it('can output to a -o file', function () {
       const input = 'import formatMessage from "format-message"\nformatMessage("hello");formatMessage(`hello`)'
       const filename = 'packages/format-message-cli/__tests__/translations/extract.underscored_crc32.json'
