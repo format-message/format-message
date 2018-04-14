@@ -12,7 +12,9 @@ module.exports = {
     'no-top-scope': require('./lib/rules/no-top-scope'),
     'translation-match-params': require('./lib/rules/translation-match-params'),
     'no-empty-jsx-message': require('./lib/rules/no-empty-jsx-message'),
-    'no-invalid-translate-attribute': require('./lib/rules/no-invalid-translate-attribute')
+    'no-invalid-translate-attribute': require('./lib/rules/no-invalid-translate-attribute'),
+    'no-invalid-plural-keyword': require('./lib/rules/no-invalid-plural-keyword'),
+    'no-missing-plural-keyword': require('./lib/rules/no-missing-plural-keyword')
   },
 
   configs: {
@@ -28,7 +30,9 @@ module.exports = {
         'format-message/no-top-scope': 0,
         'format-message/translation-match-params': 2,
         'format-message/no-empty-jsx-message': 1,
-        'format-message/no-invalid-translate-attribute': 1
+        'format-message/no-invalid-translate-attribute': 1,
+        'format-message/no-invalid-plural-keyword': 1,
+        'format-message/no-missing-plural-keyword': 0
       }
     },
     recommended: {
@@ -43,7 +47,9 @@ module.exports = {
         'format-message/no-top-scope': 0,
         'format-message/translation-match-params': 2,
         'format-message/no-empty-jsx-message': 2,
-        'format-message/no-invalid-translate-attribute': 2
+        'format-message/no-invalid-translate-attribute': 2,
+        'format-message/no-invalid-plural-keyword': 2,
+        'format-message/no-missing-plural-keyword': 1
       }
     }
   }

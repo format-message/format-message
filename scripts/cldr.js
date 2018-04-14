@@ -105,6 +105,8 @@ for (const locale in pluralsTypeOrdinal) {
 const fileData = JSON.stringify({ pluralVars: pluralVars, locales: locales }, null, '  ')
 writeFileSync(__dirname + '/../packages/babel-plugin-transform-format-message/cldr.json', fileData, 'utf8')
 console.log('Wrote data to packages/babel-plugin-transform-format-message/cldr.json')
+writeFileSync(__dirname + '/../packages/eslint-plugin-format-message/cldr.json', fileData, 'utf8')
+console.log('Wrote data to packages/eslint-plugin-format-message/cldr.json')
 
 const interpretFileData = '\/\/ @flow\n\'use strict\'\n\n' +
   '/*:: export type Rule = \'zero\' | \'one\' | \'two\' | \'few\' | \'many\' | \'other\' */\n' +

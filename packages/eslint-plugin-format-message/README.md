@@ -113,7 +113,7 @@ Since these problems can cause errors, by default this rule reports an error.
 
 This rule takes an object for an argument. If the object has a truthy `allowNonLiteral` property, then passing a variable instead of an object literal is assumed to have all the necessary parameters.
 
-Parameters support nested data objects. To prevent any issues, it's recommended that you avoid using object keys with `.` if you're using nested data. 
+Parameters support nested data objects. To prevent any issues, it's recommended that you avoid using object keys with `.` if you're using nested data.
 
 #### no-missing-translation
 
@@ -126,6 +126,18 @@ By default this is a warning, serving as a reminder to ensure all messages get t
 If translation settings are provided, each translation must include the same placeholders found in the default message pattern found in the source code.
 
 Since these problems can cause errors, by default this rule reports an error.
+
+#### no-invalid-plural-keywords
+
+If a pattern or translation has a sub-message for a plural keyword that doesn't apply to the locale is used, the sub-message will never be displayed.
+
+By default this is a warning, since no errors will occur when the message is used.
+
+#### no-missing-plural-keywords
+
+If a pattern or translation is missing a plural sub-message for a keyword that applies to the locale, the "other" sub-message will be used instead. Missing the "other" sub-message makes the message invalid, which is handled by other rules.
+
+This recommended as a warning, since the "other" sub-message will be displayed, but by default is disabled.
 
 
 Settings

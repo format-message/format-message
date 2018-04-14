@@ -1,0 +1,1438 @@
+{
+  "pluralVars": {
+    "i": "Math.floor(Math.abs(+s))",
+    "v": "(s + '.').split('.')[1].length",
+    "w": "('' + s).replace(/^[^.]*.?|0+$/g, '').length",
+    "f": "+(s + '.').split('.')[1]",
+    "t": "+('' + s).replace(/^[^.]*.?|0+$/g, '')",
+    "n": "+s"
+  },
+  "locales": {
+    "af": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "ak": {
+      "plurals": {
+        "cardinal": {
+          "one": "0 <= n && n <= 1"
+        }
+      }
+    },
+    "am": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 0 || n === 1"
+        }
+      }
+    },
+    "ar": {
+      "plurals": {
+        "cardinal": {
+          "zero": "n === 0",
+          "one": "n === 1",
+          "two": "n === 2",
+          "few": "3 <= n % 100 && n % 100 <= 10",
+          "many": "11 <= n % 100 && n % 100 <= 99"
+        }
+      }
+    },
+    "ars": {
+      "plurals": {
+        "cardinal": {
+          "zero": "n === 0",
+          "one": "n === 1",
+          "two": "n === 2",
+          "few": "3 <= n % 100 && n % 100 <= 10",
+          "many": "11 <= n % 100 && n % 100 <= 99"
+        }
+      }
+    },
+    "as": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 0 || n === 1"
+        },
+        "ordinal": {
+          "one": "n === 1 || n === 5 || n === 7 || n === 8 || n === 9 || n === 10",
+          "two": "n === 2 || n === 3",
+          "few": "n === 4",
+          "many": "n === 6"
+        }
+      }
+    },
+    "asa": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "ast": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0"
+        }
+      }
+    },
+    "az": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        },
+        "ordinal": {
+          "one": "(i % 10 === 1 || i % 10 === 2 || i % 10 === 5 || i % 10 === 7 || i % 10 === 8) || (i % 100 === 20 || i % 100 === 50 || i % 100 === 70 || i % 100 === 80)",
+          "few": "(i % 10 === 3 || i % 10 === 4) || (i % 1000 === 100 || i % 1000 === 200 || i % 1000 === 300 || i % 1000 === 400 || i % 1000 === 500 || i % 1000 === 600 || i % 1000 === 700 || i % 1000 === 800 || i % 1000 === 900)",
+          "many": "i === 0 || i % 10 === 6 || (i % 100 === 40 || i % 100 === 60 || i % 100 === 90)"
+        }
+      }
+    },
+    "be": {
+      "plurals": {
+        "cardinal": {
+          "one": "n % 10 === 1 && n % 100 !== 11",
+          "few": "(2 <= n % 10 && n % 10 <= 4) && (n % 100 < 12 || 14 < n % 100)",
+          "many": "n % 10 === 0 || (5 <= n % 10 && n % 10 <= 9) || (11 <= n % 100 && n % 100 <= 14)"
+        },
+        "ordinal": {
+          "few": "(n % 10 === 2 || n % 10 === 3) && (n % 100 !== 12 && n % 100 !== 13)"
+        }
+      }
+    },
+    "bem": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "bez": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "bg": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "bh": {
+      "plurals": {
+        "cardinal": {
+          "one": "0 <= n && n <= 1"
+        }
+      }
+    },
+    "bn": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 0 || n === 1"
+        },
+        "ordinal": {
+          "one": "n === 1 || n === 5 || n === 7 || n === 8 || n === 9 || n === 10",
+          "two": "n === 2 || n === 3",
+          "few": "n === 4",
+          "many": "n === 6"
+        }
+      }
+    },
+    "br": {
+      "plurals": {
+        "cardinal": {
+          "one": "n % 10 === 1 && (n % 100 !== 11 && n % 100 !== 71 && n % 100 !== 91)",
+          "two": "n % 10 === 2 && (n % 100 !== 12 && n % 100 !== 72 && n % 100 !== 92)",
+          "few": "((3 <= n % 10 && n % 10 <= 4) || n % 10 === 9) && ((n % 100 < 10 || 19 < n % 100) && (n % 100 < 70 || 79 < n % 100) && (n % 100 < 90 || 99 < n % 100))",
+          "many": "n !== 0 && n % 1000000 === 0"
+        }
+      }
+    },
+    "brx": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "bs": {
+      "plurals": {
+        "cardinal": {
+          "one": "v === 0 && i % 10 === 1 && i % 100 !== 11 || f % 10 === 1 && f % 100 !== 11",
+          "few": "v === 0 && (2 <= i % 10 && i % 10 <= 4) && (i % 100 < 12 || 14 < i % 100) || (2 <= f % 10 && f % 10 <= 4) && (f % 100 < 12 || 14 < f % 100)"
+        }
+      }
+    },
+    "ca": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0"
+        },
+        "ordinal": {
+          "one": "n === 1 || n === 3",
+          "two": "n === 2",
+          "few": "n === 4"
+        }
+      }
+    },
+    "ce": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "cgg": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "chr": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "ckb": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "cs": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0",
+          "few": "(2 <= i && i <= 4) && v === 0",
+          "many": "v !== 0"
+        }
+      }
+    },
+    "cy": {
+      "plurals": {
+        "cardinal": {
+          "zero": "n === 0",
+          "one": "n === 1",
+          "two": "n === 2",
+          "few": "n === 3",
+          "many": "n === 6"
+        },
+        "ordinal": {
+          "zero": "n === 0 || n === 7 || n === 8 || n === 9",
+          "one": "n === 1",
+          "two": "n === 2",
+          "few": "n === 3 || n === 4",
+          "many": "n === 5 || n === 6"
+        }
+      }
+    },
+    "da": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1 || t !== 0 && (i === 0 || i === 1)"
+        }
+      }
+    },
+    "de": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0"
+        }
+      }
+    },
+    "dsb": {
+      "plurals": {
+        "cardinal": {
+          "one": "v === 0 && i % 100 === 1 || f % 100 === 1",
+          "two": "v === 0 && i % 100 === 2 || f % 100 === 2",
+          "few": "v === 0 && (3 <= i % 100 && i % 100 <= 4) || (3 <= f % 100 && f % 100 <= 4)"
+        }
+      }
+    },
+    "dv": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "ee": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "el": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "en": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0"
+        },
+        "ordinal": {
+          "one": "n % 10 === 1 && n % 100 !== 11",
+          "two": "n % 10 === 2 && n % 100 !== 12",
+          "few": "n % 10 === 3 && n % 100 !== 13"
+        }
+      }
+    },
+    "eo": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "es": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "et": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0"
+        }
+      }
+    },
+    "eu": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "fa": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 0 || n === 1"
+        }
+      }
+    },
+    "ff": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 0 || i === 1"
+        }
+      }
+    },
+    "fi": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0"
+        }
+      }
+    },
+    "fil": {
+      "plurals": {
+        "cardinal": {
+          "one": "v === 0 && (i === 1 || i === 2 || i === 3) || v === 0 && (i % 10 !== 4 && i % 10 !== 6 && i % 10 !== 9) || v !== 0 && (f % 10 !== 4 && f % 10 !== 6 && f % 10 !== 9)"
+        },
+        "ordinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "fo": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "fr": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 0 || i === 1"
+        },
+        "ordinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "fur": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "fy": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0"
+        }
+      }
+    },
+    "ga": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1",
+          "two": "n === 2",
+          "few": "3 <= n && n <= 6",
+          "many": "7 <= n && n <= 10"
+        },
+        "ordinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "gd": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1 || n === 11",
+          "two": "n === 2 || n === 12",
+          "few": "((3 <= n && n <= 10) || (13 <= n && n <= 19))"
+        }
+      }
+    },
+    "gl": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0"
+        }
+      }
+    },
+    "gsw": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "gu": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 0 || n === 1"
+        },
+        "ordinal": {
+          "one": "n === 1",
+          "two": "n === 2 || n === 3",
+          "few": "n === 4",
+          "many": "n === 6"
+        }
+      }
+    },
+    "guw": {
+      "plurals": {
+        "cardinal": {
+          "one": "0 <= n && n <= 1"
+        }
+      }
+    },
+    "gv": {
+      "plurals": {
+        "cardinal": {
+          "one": "v === 0 && i % 10 === 1",
+          "two": "v === 0 && i % 10 === 2",
+          "few": "v === 0 && (i % 100 === 0 || i % 100 === 20 || i % 100 === 40 || i % 100 === 60 || i % 100 === 80)",
+          "many": "v !== 0"
+        }
+      }
+    },
+    "ha": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "haw": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "he": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0",
+          "two": "i === 2 && v === 0",
+          "many": "v === 0 && (n < 0 || 10 < n) && n % 10 === 0"
+        }
+      }
+    },
+    "hi": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 0 || n === 1"
+        },
+        "ordinal": {
+          "one": "n === 1",
+          "two": "n === 2 || n === 3",
+          "few": "n === 4",
+          "many": "n === 6"
+        }
+      }
+    },
+    "hr": {
+      "plurals": {
+        "cardinal": {
+          "one": "v === 0 && i % 10 === 1 && i % 100 !== 11 || f % 10 === 1 && f % 100 !== 11",
+          "few": "v === 0 && (2 <= i % 10 && i % 10 <= 4) && (i % 100 < 12 || 14 < i % 100) || (2 <= f % 10 && f % 10 <= 4) && (f % 100 < 12 || 14 < f % 100)"
+        }
+      }
+    },
+    "hsb": {
+      "plurals": {
+        "cardinal": {
+          "one": "v === 0 && i % 100 === 1 || f % 100 === 1",
+          "two": "v === 0 && i % 100 === 2 || f % 100 === 2",
+          "few": "v === 0 && (3 <= i % 100 && i % 100 <= 4) || (3 <= f % 100 && f % 100 <= 4)"
+        }
+      }
+    },
+    "hu": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        },
+        "ordinal": {
+          "one": "n === 1 || n === 5"
+        }
+      }
+    },
+    "hy": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 0 || i === 1"
+        },
+        "ordinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "io": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0"
+        }
+      }
+    },
+    "is": {
+      "plurals": {
+        "cardinal": {
+          "one": "t === 0 && i % 10 === 1 && i % 100 !== 11 || t !== 0"
+        }
+      }
+    },
+    "it": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0"
+        },
+        "ordinal": {
+          "many": "n === 11 || n === 8 || n === 80 || n === 800"
+        }
+      }
+    },
+    "iu": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1",
+          "two": "n === 2"
+        }
+      }
+    },
+    "iw": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0",
+          "two": "i === 2 && v === 0",
+          "many": "v === 0 && (n < 0 || 10 < n) && n % 10 === 0"
+        }
+      }
+    },
+    "jgo": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "ji": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0"
+        }
+      }
+    },
+    "jmc": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "ka": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        },
+        "ordinal": {
+          "one": "i === 1",
+          "many": "i === 0 || ((2 <= i % 100 && i % 100 <= 20) || i % 100 === 40 || i % 100 === 60 || i % 100 === 80)"
+        }
+      }
+    },
+    "kab": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 0 || i === 1"
+        }
+      }
+    },
+    "kaj": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "kcg": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "kk": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        },
+        "ordinal": {
+          "many": "n % 10 === 6 || n % 10 === 9 || n % 10 === 0 && n !== 0"
+        }
+      }
+    },
+    "kkj": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "kl": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "kn": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 0 || n === 1"
+        }
+      }
+    },
+    "ks": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "ksb": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "ksh": {
+      "plurals": {
+        "cardinal": {
+          "zero": "n === 0",
+          "one": "n === 1"
+        }
+      }
+    },
+    "ku": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "kw": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1",
+          "two": "n === 2"
+        }
+      }
+    },
+    "ky": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "lag": {
+      "plurals": {
+        "cardinal": {
+          "zero": "n === 0",
+          "one": "(i === 0 || i === 1) && n !== 0"
+        }
+      }
+    },
+    "lb": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "lg": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "ln": {
+      "plurals": {
+        "cardinal": {
+          "one": "0 <= n && n <= 1"
+        }
+      }
+    },
+    "lt": {
+      "plurals": {
+        "cardinal": {
+          "one": "n % 10 === 1 && (n % 100 < 11 || 19 < n % 100)",
+          "few": "(2 <= n % 10 && n % 10 <= 9) && (n % 100 < 11 || 19 < n % 100)",
+          "many": "f !== 0"
+        }
+      }
+    },
+    "lv": {
+      "plurals": {
+        "cardinal": {
+          "zero": "n % 10 === 0 || (11 <= n % 100 && n % 100 <= 19) || v === 2 && (11 <= f % 100 && f % 100 <= 19)",
+          "one": "n % 10 === 1 && n % 100 !== 11 || v === 2 && f % 10 === 1 && f % 100 !== 11 || v !== 2 && f % 10 === 1"
+        }
+      }
+    },
+    "mas": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "mg": {
+      "plurals": {
+        "cardinal": {
+          "one": "0 <= n && n <= 1"
+        }
+      }
+    },
+    "mgo": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "mk": {
+      "plurals": {
+        "cardinal": {
+          "one": "v === 0 && i % 10 === 1 && i % 100 !== 11 || f % 10 === 1 && f % 100 !== 11"
+        },
+        "ordinal": {
+          "one": "i % 10 === 1 && i % 100 !== 11",
+          "two": "i % 10 === 2 && i % 100 !== 12",
+          "many": "(i % 10 === 7 || i % 10 === 8) && (i % 100 !== 17 && i % 100 !== 18)"
+        }
+      }
+    },
+    "ml": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "mn": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "mo": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0",
+          "few": "v !== 0 || n === 0 || n !== 1 && (1 <= n % 100 && n % 100 <= 19)"
+        },
+        "ordinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "mr": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 0 || n === 1"
+        },
+        "ordinal": {
+          "one": "n === 1",
+          "two": "n === 2 || n === 3",
+          "few": "n === 4"
+        }
+      }
+    },
+    "mt": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1",
+          "few": "n === 0 || (2 <= n % 100 && n % 100 <= 10)",
+          "many": "11 <= n % 100 && n % 100 <= 19"
+        }
+      }
+    },
+    "nah": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "naq": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1",
+          "two": "n === 2"
+        }
+      }
+    },
+    "nb": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "nd": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "ne": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        },
+        "ordinal": {
+          "one": "1 <= n && n <= 4"
+        }
+      }
+    },
+    "nl": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0"
+        }
+      }
+    },
+    "nn": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "nnh": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "no": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "nr": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "nso": {
+      "plurals": {
+        "cardinal": {
+          "one": "0 <= n && n <= 1"
+        }
+      }
+    },
+    "ny": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "nyn": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "om": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "or": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        },
+        "ordinal": {
+          "one": "(n === 1 || n === 5 || (7 <= n && n <= 9))",
+          "two": "n === 2 || n === 3",
+          "few": "n === 4",
+          "many": "n === 6"
+        }
+      }
+    },
+    "os": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "pa": {
+      "plurals": {
+        "cardinal": {
+          "one": "0 <= n && n <= 1"
+        }
+      }
+    },
+    "pap": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "pl": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0",
+          "few": "v === 0 && (2 <= i % 10 && i % 10 <= 4) && (i % 100 < 12 || 14 < i % 100)",
+          "many": "v === 0 && i !== 1 && (0 <= i % 10 && i % 10 <= 1) || v === 0 && (5 <= i % 10 && i % 10 <= 9) || v === 0 && (12 <= i % 100 && i % 100 <= 14)"
+        }
+      }
+    },
+    "prg": {
+      "plurals": {
+        "cardinal": {
+          "zero": "n % 10 === 0 || (11 <= n % 100 && n % 100 <= 19) || v === 2 && (11 <= f % 100 && f % 100 <= 19)",
+          "one": "n % 10 === 1 && n % 100 !== 11 || v === 2 && f % 10 === 1 && f % 100 !== 11 || v !== 2 && f % 10 === 1"
+        }
+      }
+    },
+    "ps": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "pt": {
+      "plurals": {
+        "cardinal": {
+          "one": "0 <= i && i <= 1"
+        }
+      }
+    },
+    "pt-PT": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0"
+        }
+      }
+    },
+    "rm": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "ro": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0",
+          "few": "v !== 0 || n === 0 || n !== 1 && (1 <= n % 100 && n % 100 <= 19)"
+        },
+        "ordinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "rof": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "ru": {
+      "plurals": {
+        "cardinal": {
+          "one": "v === 0 && i % 10 === 1 && i % 100 !== 11",
+          "few": "v === 0 && (2 <= i % 10 && i % 10 <= 4) && (i % 100 < 12 || 14 < i % 100)",
+          "many": "v === 0 && i % 10 === 0 || v === 0 && (5 <= i % 10 && i % 10 <= 9) || v === 0 && (11 <= i % 100 && i % 100 <= 14)"
+        }
+      }
+    },
+    "rwk": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "saq": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "scn": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0"
+        },
+        "ordinal": {
+          "many": "n === 11 || n === 8 || n === 80 || n === 800"
+        }
+      }
+    },
+    "sd": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "sdh": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "se": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1",
+          "two": "n === 2"
+        }
+      }
+    },
+    "seh": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "sh": {
+      "plurals": {
+        "cardinal": {
+          "one": "v === 0 && i % 10 === 1 && i % 100 !== 11 || f % 10 === 1 && f % 100 !== 11",
+          "few": "v === 0 && (2 <= i % 10 && i % 10 <= 4) && (i % 100 < 12 || 14 < i % 100) || (2 <= f % 10 && f % 10 <= 4) && (f % 100 < 12 || 14 < f % 100)"
+        }
+      }
+    },
+    "shi": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 0 || n === 1",
+          "few": "2 <= n && n <= 10"
+        }
+      }
+    },
+    "si": {
+      "plurals": {
+        "cardinal": {
+          "one": "(n === 0 || n === 1) || i === 0 && f === 1"
+        }
+      }
+    },
+    "sk": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0",
+          "few": "(2 <= i && i <= 4) && v === 0",
+          "many": "v !== 0"
+        }
+      }
+    },
+    "sl": {
+      "plurals": {
+        "cardinal": {
+          "one": "v === 0 && i % 100 === 1",
+          "two": "v === 0 && i % 100 === 2",
+          "few": "v === 0 && (3 <= i % 100 && i % 100 <= 4) || v !== 0"
+        }
+      }
+    },
+    "sma": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1",
+          "two": "n === 2"
+        }
+      }
+    },
+    "smi": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1",
+          "two": "n === 2"
+        }
+      }
+    },
+    "smj": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1",
+          "two": "n === 2"
+        }
+      }
+    },
+    "smn": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1",
+          "two": "n === 2"
+        }
+      }
+    },
+    "sms": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1",
+          "two": "n === 2"
+        }
+      }
+    },
+    "sn": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "so": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "sq": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        },
+        "ordinal": {
+          "one": "n === 1",
+          "many": "n % 10 === 4 && n % 100 !== 14"
+        }
+      }
+    },
+    "sr": {
+      "plurals": {
+        "cardinal": {
+          "one": "v === 0 && i % 10 === 1 && i % 100 !== 11 || f % 10 === 1 && f % 100 !== 11",
+          "few": "v === 0 && (2 <= i % 10 && i % 10 <= 4) && (i % 100 < 12 || 14 < i % 100) || (2 <= f % 10 && f % 10 <= 4) && (f % 100 < 12 || 14 < f % 100)"
+        }
+      }
+    },
+    "ss": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "ssy": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "st": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "sv": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0"
+        },
+        "ordinal": {
+          "one": "(n % 10 === 1 || n % 10 === 2) && (n % 100 !== 11 && n % 100 !== 12)"
+        }
+      }
+    },
+    "sw": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0"
+        }
+      }
+    },
+    "syr": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "ta": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "te": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "teo": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "ti": {
+      "plurals": {
+        "cardinal": {
+          "one": "0 <= n && n <= 1"
+        }
+      }
+    },
+    "tig": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "tk": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        },
+        "ordinal": {
+          "few": "(n % 10 === 6 || n % 10 === 9) || n === 10"
+        }
+      }
+    },
+    "tl": {
+      "plurals": {
+        "cardinal": {
+          "one": "v === 0 && (i === 1 || i === 2 || i === 3) || v === 0 && (i % 10 !== 4 && i % 10 !== 6 && i % 10 !== 9) || v !== 0 && (f % 10 !== 4 && f % 10 !== 6 && f % 10 !== 9)"
+        },
+        "ordinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "tn": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "tr": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "ts": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "tzm": {
+      "plurals": {
+        "cardinal": {
+          "one": "(0 <= n && n <= 1) || (11 <= n && n <= 99)"
+        }
+      }
+    },
+    "ug": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "uk": {
+      "plurals": {
+        "cardinal": {
+          "one": "v === 0 && i % 10 === 1 && i % 100 !== 11",
+          "few": "v === 0 && (2 <= i % 10 && i % 10 <= 4) && (i % 100 < 12 || 14 < i % 100)",
+          "many": "v === 0 && i % 10 === 0 || v === 0 && (5 <= i % 10 && i % 10 <= 9) || v === 0 && (11 <= i % 100 && i % 100 <= 14)"
+        },
+        "ordinal": {
+          "few": "n % 10 === 3 && n % 100 !== 13"
+        }
+      }
+    },
+    "ur": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0"
+        }
+      }
+    },
+    "uz": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "ve": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "vo": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "vun": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "wa": {
+      "plurals": {
+        "cardinal": {
+          "one": "0 <= n && n <= 1"
+        }
+      }
+    },
+    "wae": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "xh": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "xog": {
+      "plurals": {
+        "cardinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "yi": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 1 && v === 0"
+        }
+      }
+    },
+    "zu": {
+      "plurals": {
+        "cardinal": {
+          "one": "i === 0 || n === 1"
+        }
+      }
+    },
+    "lo": {
+      "plurals": {
+        "ordinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "ms": {
+      "plurals": {
+        "ordinal": {
+          "one": "n === 1"
+        }
+      }
+    },
+    "vi": {
+      "plurals": {
+        "ordinal": {
+          "one": "n === 1"
+        }
+      }
+    }
+  }
+}
