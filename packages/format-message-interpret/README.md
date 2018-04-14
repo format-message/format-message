@@ -42,7 +42,7 @@ Generate a function from an `ast`, using the formatting rules of the `locales` t
 
 ```js
 type Types = {
-  [type: string]: (locales: string | string[], node: string[]) =>
+  [type: string]: (placeholder: string[], locales: string | string[]) =>
     (value: any, args: Object) => string
 }
 ```

@@ -1,5 +1,12 @@
 # Changelog
 
+## 6.0.0
+
+**New Feature**
+* new rules to validate keywords of `plural` and `selectordinal`.
+  * `no-invalid-plural-keywords` - warns when a keyword like `two` is used, but will never match for the locale.
+  * `no-missing-plural-keywords` - warns when a keyword like `two` is not used, but matches some numbers in the locale.
+
 ## 5.2.6
 
 Fix IE11 compat by removing template literals.
