@@ -74,7 +74,7 @@ describe('MessageFormat', function () {
     })
 
     it('removes unsupported locales', function () {
-      expect(MessageFormat.supportedLocalesOf([ 'en', 'mi' ])).to.eql([ 'en' ])
+      expect(MessageFormat.supportedLocalesOf([ 'en', 'tlh' ])).to.eql([ 'en' ])
     })
 
     it('supports multiple locales', function () {
@@ -95,10 +95,10 @@ describe('MessageFormat', function () {
     })
 
     it('should resolve passed locale to closest supported locale', function () {
-      let message = new MessageFormat('ola', 'pt-DE')
-      expect(message.resolvedOptions().locale).to.equal('pt-DE')
-      message = new MessageFormat('oi', 'pt-US')
-      expect(message.resolvedOptions().locale).to.equal('pt-US')
+      let message = new MessageFormat('ola', 'pt-PT')
+      expect(message.resolvedOptions().locale).to.equal('pt-PT')
+      message = new MessageFormat('oi', 'pt-BR')
+      expect(message.resolvedOptions().locale).to.equal('pt-BR')
     })
   })
 
@@ -152,7 +152,7 @@ describe('MessageFormat', function () {
       const message = new MessageFormat(pattern, 'en').format({ n: 1000, d: localeEpoch })
       expect(message).to.include('1,000')
       expect(message).to.include('Jan')
-      expect(message).to.include('12:00')
+      expect(message).to.include('12')
     })
 
     it('handles plurals', function () {

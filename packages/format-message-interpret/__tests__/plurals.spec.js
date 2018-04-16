@@ -4,7 +4,7 @@
 const expect = require('chai').expect
 const plurals = require('../plurals')
 
-describe('plurals', () => {
+describe('plurals', function () {
   const rules = 'zero one two few many other'.split(' ')
   const nums = [ -10, -1, 0, 0.1, 1, 1.01, 1.23, 2, 2.15, 3, 4, 6, 8, 14, 19, 25, 99, 101, 111, 112, 1000000 ]
   Object.keys(plurals).forEach(function (locale) {
@@ -24,7 +24,7 @@ describe('plurals', () => {
     }
   })
 
-  it('knows correct English rules', () => {
+  it('knows correct English rules', function () {
     expect(plurals.en.cardinal(0)).to.equal('other')
     expect(plurals.en.cardinal(1)).to.equal('one')
     expect(plurals.en.cardinal('1.0')).to.equal('other')

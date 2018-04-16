@@ -51,7 +51,7 @@ describe('interpret()', function () {
 
   it('interprets number pattern placeholders', function () {
     const format = interpret([[ 'n', 'number', '0 ¤¤ EUR' ]], 'en')
-    expect(format({ n: 1234.5 })).to.equal('EUR1235')
+    expect(format({ n: 1234.5 })).to.match(/EUR\s*1235/)
   })
 
   it('interprets ordinal placeholders (as plain numbers)', function () {
@@ -73,7 +73,7 @@ describe('interpret()', function () {
     expect(format({ d: -60 })).to.equal('-01:00')
     expect(format({ d: -0 })).to.equal('00:00')
     expect(format({ d: 60 * 60 })).to.equal('1:00:00')
-    expect(format({ d: Infinity })).to.equal('∞')
+    expect(format({ d: Infinity })).to.be.oneOf([ '∞', 'Infinity' ])
 
     const formatDa = interpret([ [ 'd', 'duration' ] ], 'da')
     expect(formatDa({ d: 60 * 60 })).to.equal('1.00.00')
@@ -94,14 +94,14 @@ describe('interpret()', function () {
 
   it('interprets time placeholders', function () {
     let format = interpret([[ 'd', 'time' ]])
-    expect(format({ d: new Date(0) })).to.match(/:00/)
+    expect(format({ d: new Date(0) })).to.contain('00')
     format = interpret([[ 'd', 'time', 'full' ]])
-    expect(format({ d: new Date(0) })).to.match(/:00/)
+    expect(format({ d: new Date(0) })).to.contain('00')
   })
 
   it('interprets date pattern placeholders', function () {
     const format = interpret([[ 'n', 'time', 'yyyy' ]], 'en')
-    expect(format({ n: new Date(2000, 6, 6) })).to.equal('2000')
+    expect(format({ n: new Date(2000, 6, 6) })).to.contain('2000')
   })
 
   it('interprets select placeholders', function () {

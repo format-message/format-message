@@ -140,10 +140,11 @@ function interpretDuration (element/*: Placeholder */, locales/*: Locales */) {
   return function (s, args) {
     s = +s
     if (!isFinite(s)) return fs(s)
+    const sign = s < 0 ? fh(-1).replace(fh(1), '') : ''
     const h = ~~(s / 60 / 60) // ~~ acts much like Math.trunc
-    const m = ~~(s / 60 % 60) || (s < 0 ? -0.1 : 0) // preserve sign
-    return (h ? (fh(h) + sep) : '') +
-      fm(h ? Math.abs(m) : m) + sep +
+    const m = ~~(s / 60 % 60)
+    return sign + (h ? (fh(Math.abs(h)) + sep) : '') +
+      fm(Math.abs(m)) + sep +
       fs(Math.abs(s % 60))
   }
 }
