@@ -11,18 +11,23 @@ export type Typed = [ string, string ]
 export type Simple = [ string ]
 export type SubMessages = { [string]: AST }
 export type Token = [ TokenType, string ]
-export type TokenType = 'text' | 'space' | 'id' | 'type' | 'style' | 'offset' | 'number' | 'selector' | '{' | '}' | ',' | '#' | ':'
-type Context = {
+export type TokenType = 'text' | 'space' | 'id' | 'type' | 'style' | 'offset' | 'number' | 'selector' | 'syntax'
+type Context = {|
   pattern: string,
   index: number,
+  tagsType: ?string,
   tokens: ?Token[]
-}
+|}
 */
 
 const ARG_OPN = '{'
 const ARG_CLS = '}'
 const ARG_SEP = ','
 const NUM_ARG = '#'
+const TAG_OPN = '<'
+const TAG_CLS = '>'
+const TAG_END = '</'
+const TAG_SELF_CLS = '/>'
 const ESC = '\''
 const OFFSET = 'offset:'
 const simpleTypes = [
@@ -59,39 +64,47 @@ const submTypes = [
  * tokens:
  *  [
  *    [ "text", "You have " ],
- *    [ "{", "{" ],
+ *    [ "syntax", "{" ],
  *    [ "space", " " ],
  *    [ "id", "numBananas" ],
- *    [ ",", ", " ],
+ *    [ "syntax", ", " ],
  *    [ "space", " " ],
  *    [ "type", "plural" ],
- *    [ ",", "," ],
+ *    [ "syntax", "," ],
  *    [ "space", "\n     " ],
  *    [ "selector", "=0" ],
  *    [ "space", " " ],
- *    [ "{", "{" ],
+ *    [ "syntax", "{" ],
  *    [ "text", "no bananas" ],
- *    [ "}", "}" ],
+ *    [ "syntax", "}" ],
  *    [ "space", "\n    " ],
  *    [ "selector", "one" ],
  *    [ "space", " " ],
- *    [ "{", "{" ],
+ *    [ "syntax", "{" ],
  *    [ "text", "a banana" ],
- *    [ "}", "}" ],
+ *    [ "syntax", "}" ],
  *    [ "space", "\n  " ],
  *    [ "selector", "other" ],
  *    [ "space", " " ],
- *    [ "{", "{" ],
- *    [ "#", "#" ],
+ *    [ "syntax", "{" ],
+ *    [ "syntax", "#" ],
  *    [ "text", " bananas" ],
- *    [ "}", "}" ],
+ *    [ "syntax", "}" ],
  *    [ "space", "\n" ],
- *    [ "}", "}" ],
+ *    [ "syntax", "}" ],
  *    [ "text", " for sale." ]
  *  ]
  **/
-module.exports = function parse (pattern/*: string */, tokens/*:: ?: Token[] */)/*: AST */ {
-  return parseAST({ pattern: String(pattern), index: 0, tokens: tokens || null }, '')
+exports = module.exports = function parse (
+  pattern/*: string */,
+  options/*:: ?: { tagsType?: string, tokens?: Token[] } */
+)/*: AST */ {
+  return parseAST({
+    pattern: String(pattern),
+    index: 0,
+    tagsType: (options && options.tagsType) || null,
+    tokens: (options && options.tokens) || null
+  }, '')
 }
 
 function parseAST (current/*: Context */, parentType/*: string */)/*: AST */ {
@@ -107,6 +120,7 @@ function parseAST (current/*: Context */, parentType/*: string */)/*: AST */ {
       if (!parentType) throw expected(current)
       break
     }
+    if (parentType && current.tagsType && pattern.slice(current.index, current.index + TAG_END.length) === TAG_END) break
     elements.push(parsePlaceholder(current))
     const start = current.index
     const text = parseText(current, parentType)
@@ -120,6 +134,7 @@ function parseText (current/*: Context */, parentType/*: string */)/*: string */
   const pattern = current.pattern
   const length = pattern.length
   const isHashSpecial = (parentType === 'plural' || parentType === 'selectordinal')
+  const isAngleSpecial = !!current.tagsType
   const isArgStyle = (parentType === '{style}')
   let text = ''
   while (current.index < length) {
@@ -127,6 +142,7 @@ function parseText (current/*: Context */, parentType/*: string */)/*: string */
     if (
       char === ARG_OPN || char === ARG_CLS ||
       (isHashSpecial && char === NUM_ARG) ||
+      (isAngleSpecial && char === TAG_OPN) ||
       (isArgStyle && isWhitespace(char.charCodeAt(0)))
     ) {
       break
@@ -139,6 +155,7 @@ function parseText (current/*: Context */, parentType/*: string */)/*: string */
         // only when necessary
         char === ARG_OPN || char === ARG_CLS ||
         (isHashSpecial && char === NUM_ARG) ||
+        (isAngleSpecial && char === TAG_OPN) ||
         isArgStyle
       ) {
         text += char
@@ -191,14 +208,17 @@ function skipWhitespace (current/*: Context */)/*: void */ {
 function parsePlaceholder (current/*: Context */)/*: Placeholder */ {
   const pattern = current.pattern
   if (pattern[current.index] === NUM_ARG) {
-    if (current.tokens) current.tokens.push([ NUM_ARG, NUM_ARG ])
+    if (current.tokens) current.tokens.push([ 'syntax', NUM_ARG ])
     ++current.index // move passed #
     return [ NUM_ARG ]
   }
 
+  const tag = parseTag(current)
+  if (tag) return tag
+
   /* istanbul ignore if should be unreachable if parseAST and parseText are right */
   if (pattern[current.index] !== ARG_OPN) throw expected(current, ARG_OPN)
-  if (current.tokens) current.tokens.push([ ARG_OPN, ARG_OPN ])
+  if (current.tokens) current.tokens.push([ 'syntax', ARG_OPN ])
   ++current.index // move passed {
   skipWhitespace(current)
 
@@ -209,13 +229,13 @@ function parsePlaceholder (current/*: Context */)/*: Placeholder */ {
 
   let char = pattern[current.index]
   if (char === ARG_CLS) { // end placeholder
-    if (current.tokens) current.tokens.push([ ARG_CLS, ARG_CLS ])
+    if (current.tokens) current.tokens.push([ 'syntax', ARG_CLS ])
     ++current.index // move passed }
     return [ id ]
   }
 
   if (char !== ARG_SEP) throw expected(current, ARG_SEP + ' or ' + ARG_CLS)
-  if (current.tokens) current.tokens.push([ ARG_SEP, ARG_SEP ])
+  if (current.tokens) current.tokens.push([ 'syntax', ARG_SEP ])
   ++current.index // move passed ,
   skipWhitespace(current)
 
@@ -225,7 +245,7 @@ function parsePlaceholder (current/*: Context */)/*: Placeholder */ {
   skipWhitespace(current)
   char = pattern[current.index]
   if (char === ARG_CLS) { // end placeholder
-    if (current.tokens) current.tokens.push([ ARG_CLS, ARG_CLS ])
+    if (current.tokens) current.tokens.push([ 'syntax', ARG_CLS ])
     if (type === 'plural' || type === 'selectordinal' || type === 'select') {
       throw expected(current, type + ' sub-messages')
     }
@@ -234,7 +254,7 @@ function parsePlaceholder (current/*: Context */)/*: Placeholder */ {
   }
 
   if (char !== ARG_SEP) throw expected(current, ARG_SEP + ' or ' + ARG_CLS)
-  if (current.tokens) current.tokens.push([ ARG_SEP, ARG_SEP ])
+  if (current.tokens) current.tokens.push([ 'syntax', ARG_SEP ])
   ++current.index // move passed ,
   skipWhitespace(current)
 
@@ -260,12 +280,56 @@ function parsePlaceholder (current/*: Context */)/*: Placeholder */ {
 
   skipWhitespace(current)
   if (pattern[current.index] !== ARG_CLS) throw expected(current, ARG_CLS)
-  if (current.tokens) current.tokens.push([ ARG_CLS, ARG_CLS ])
+  if (current.tokens) current.tokens.push([ 'syntax', ARG_CLS ])
   ++current.index // move passed }
   return arg
 }
 
-function parseId (current/*: Context */)/*: string */ {
+function parseTag (current/*: Context */)/*: ?Placeholder */ {
+  const tagsType = current.tagsType
+  if (!tagsType || current.pattern[current.index] !== TAG_OPN) return
+
+  if (current.pattern.slice(current.index, current.index + TAG_END.length) === TAG_END) {
+    throw expected(current, null, 'closing tag without matching opening tag')
+  }
+  if (current.tokens) current.tokens.push([ 'syntax', TAG_OPN ])
+  ++current.index // move passed <
+
+  const id = parseId(current, true)
+  if (!id) throw expected(current, 'placeholder id')
+  if (current.tokens) current.tokens.push([ 'id', id ])
+  skipWhitespace(current)
+
+  if (current.pattern.slice(current.index, current.index + TAG_SELF_CLS.length) === TAG_SELF_CLS) {
+    if (current.tokens) current.tokens.push([ 'syntax', TAG_SELF_CLS ])
+    current.index += TAG_SELF_CLS.length
+    return [ id, tagsType ]
+  }
+  if (current.pattern[current.index] !== TAG_CLS) throw expected(current, TAG_CLS)
+  if (current.tokens) current.tokens.push([ 'syntax', TAG_CLS ])
+  ++current.index // move passed >
+
+  const children = parseAST(current, tagsType)
+
+  const end = current.index
+  if (current.pattern.slice(current.index, current.index + TAG_END.length) !== TAG_END) throw expected(current, TAG_END + id + TAG_CLS)
+  if (current.tokens) current.tokens.push([ 'syntax', TAG_END ])
+  current.index += TAG_END.length
+  const closeId = parseId(current, true)
+  if (closeId && current.tokens) current.tokens.push([ 'id', closeId ])
+  if (id !== closeId) {
+    current.index = end // rewind for better error message
+    throw expected(current, TAG_END + id + TAG_CLS, TAG_END + closeId + TAG_CLS)
+  }
+  skipWhitespace(current)
+  if (current.pattern[current.index] !== TAG_CLS) throw expected(current, TAG_CLS)
+  if (current.tokens) current.tokens.push([ 'syntax', TAG_CLS ])
+  ++current.index // move passed >
+
+  return [ id, tagsType, { children: children } ]
+}
+
+function parseId (current/*: Context */, isTag/*:: ?: boolean */)/*: string */ {
   const pattern = current.pattern
   const length = pattern.length
   let id = ''
@@ -273,7 +337,8 @@ function parseId (current/*: Context */)/*: string */ {
     const char = pattern[current.index]
     if (
       char === ARG_OPN || char === ARG_CLS || char === ARG_SEP ||
-      char === NUM_ARG || char === ESC || isWhitespace(char.charCodeAt(0))
+      char === NUM_ARG || char === ESC || isWhitespace(char.charCodeAt(0)) ||
+      (isTag && (char === TAG_OPN || char === TAG_CLS || char === '/'))
     ) break
     id += char
     ++current.index
@@ -294,7 +359,7 @@ function parsePluralOffset (current/*: Context */)/*: number */ {
   const length = pattern.length
   let offset = 0
   if (pattern.slice(current.index, current.index + OFFSET.length) === OFFSET) {
-    if (current.tokens) current.tokens.push([ 'offset', 'offset' ], [ ':', ':' ])
+    if (current.tokens) current.tokens.push([ 'offset', 'offset' ], [ 'syntax', ':' ])
     current.index += OFFSET.length // move passed offset:
     skipWhitespace(current)
     const start = current.index
@@ -332,11 +397,11 @@ function parseSubMessages (current/*: Context */, parentType/*: string */)/*: Su
 
 function parseSubMessage (current/*: Context */, parentType/*: string */)/*: AST */ {
   if (current.pattern[current.index] !== ARG_OPN) throw expected(current, ARG_OPN + ' to start sub-message')
-  if (current.tokens) current.tokens.push([ ARG_OPN, ARG_OPN ])
+  if (current.tokens) current.tokens.push([ 'syntax', ARG_OPN ])
   ++current.index // move passed {
   const message = parseAST(current, parentType)
   if (current.pattern[current.index] !== ARG_CLS) throw expected(current, ARG_CLS + ' to end sub-message')
-  if (current.tokens) current.tokens.push([ ARG_CLS, ARG_CLS ])
+  if (current.tokens) current.tokens.push([ 'syntax', ARG_CLS ])
   ++current.index // move passed }
   return message
 }

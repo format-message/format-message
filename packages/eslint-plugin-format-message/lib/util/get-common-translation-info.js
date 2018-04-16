@@ -14,16 +14,17 @@ module.exports = function getCommonTranslationInfo (context, node) {
 function getInfoFromCallExpression (node) {
   var message = util.getMessageDetails(node.arguments)
   var locale = util.getTargetLocale(node.arguments)
-  return getInfo(message, locale)
+  var isRich = util.isRichMessage(node.callee)
+  return getInfo(message, locale, isRich)
 }
 
 function getInfoFromJSXElement (context, node) {
   var message = util.getElementMessageDetails(node)
   var locale = util.getTargetLocale(node)
-  return getInfo(message, locale)
+  return getInfo(message, locale, true)
 }
 
-function getInfo (message, locale) {
+function getInfo (message, locale, isRich) {
   if (!message.default) return {}
 
   var pattern = message.default
@@ -31,7 +32,7 @@ function getInfo (message, locale) {
   if (!info) {
     info = cache[pattern] = { pattern: pattern }
     try {
-      info.patternAst = parse(pattern)
+      info.patternAst = parse(pattern, { tagsType: isRich ? '<>' : null })
     } catch (err) {
       // ignore parse error here
     }
@@ -46,6 +47,7 @@ function getInfo (message, locale) {
     patternAst: info.patternAst,
     patternParams: info.patternParams,
     locale: locale,
-    wrappers: message.wrappers
+    wrappers: info.wrappers,
+    isRich: isRich
   }
 }

@@ -104,6 +104,13 @@ Parameters
 
 Translate and format the message with the given pattern and arguments and return an array of message parts. If the pattern contains any html-like tags (`<a>go</a>`, `<icon/>`, etc.) they are transformed into type `<>` placeholders (`{ a, <>, children {go} }`). The `<>` placeholder type expects a function that will receive the style or sub-messages.
 
+```js
+formatMessage.rich("Click <a>here<a/>", {
+  a: ({ children }) => <Link>{children}</Link>
+})
+// returns [ "Click ", <Link>here</Link> ]
+```
+
 Parameters
 
   The same as `formatMessage(pattern[, args[, locales]])`.

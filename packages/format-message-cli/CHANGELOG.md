@@ -5,6 +5,8 @@
 **Breaking Change**
 The default for generateId is now `literal` to match the runtime.
 
+`-j` `--jsx-target` flags have been removed from `transform` since it relies on the `formatMessage.rich` function instead of `formatChildren`, and is no longer JSX library specific.
+
 ## 5.2.6
 
 Fix IE11 compat by removing template literals.

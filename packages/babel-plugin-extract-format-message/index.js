@@ -102,7 +102,7 @@ module.exports = function () {
 
       CallExpression: function (path, state) {
         util.setBabelContext(path, state)
-        if (!util.isFormatMessage(path.node.callee)) return
+        if (!util.isFormatMessage(path.node.callee) && !util.isRichMessage(path.node.callee)) return
         var message = util.getMessageDetails(path.node.arguments)
         if (!message || !message.default) return
         addMessage(path, state, message)

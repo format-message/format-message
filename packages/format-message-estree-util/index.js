@@ -88,7 +88,8 @@ exports = module.exports = {
   isRequireFormatMessage: function (node) {
     var arg
     return (
-      node.type === 'CallExpression' &&
+      node && node.type === 'CallExpression' &&
+      node.callee &&
       node.callee.type === 'Identifier' &&
       node.callee.name === 'require' &&
       !!(arg = node.arguments[0]) &&
@@ -111,6 +112,10 @@ exports = module.exports = {
         this.isRequireFormatMessage(binding.node.init)
       )
     )
+  },
+
+  isRichMessage: function (node) {
+    return this.getHelperFunctionName(node) === 'rich'
   },
 
   isStringish: function (node) {
@@ -244,8 +249,8 @@ exports = module.exports = {
     var name
     var isMemberRequire = (
       node.type === 'VariableDeclarator' &&
-      node.id.type === 'Identifier' &&
-      node.init.type === 'MemberExpression' &&
+      node.id && node.id.type === 'Identifier' &&
+      node.init && node.init.type === 'MemberExpression' &&
       this.isRequireFormatMessage(node.init.object) &&
       node.init.property.type === 'Identifier' &&
       (name = node.init.property.name) &&
@@ -256,7 +261,7 @@ exports = module.exports = {
     var isDestructureRequire = (
       node.type === 'VariableDeclarator' &&
       this.isRequireFormatMessage(node.init) &&
-      node.id.type === 'ObjectPattern' &&
+      node.id && node.id.type === 'ObjectPattern' &&
       node.id.properties.some(function (property) {
         var isAHelper = (
           property.key.type === 'Identifier' &&
@@ -280,7 +285,8 @@ exports = module.exports = {
       name === 'time' ||
       name === 'select' ||
       name === 'plural' ||
-      name === 'selectordinal'
+      name === 'selectordinal' ||
+      name === 'rich'
     )
   }
 }

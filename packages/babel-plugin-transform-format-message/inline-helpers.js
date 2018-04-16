@@ -5,6 +5,7 @@ var formats = require('format-message-formats')
 function objectToAst (t, object) {
   if (object === undefined) return t.identifier('undefined')
   if (object === null) return t.nullLiteral()
+  if (typeof object === 'boolean') return t.booleanLiteral(object)
   if (typeof object === 'number') return t.numericLiteral(object)
   if (typeof object === 'string') return t.stringLiteral(object)
   if (Array.isArray(object)) {
@@ -29,7 +30,11 @@ exports.addHelper = function (state, type, style, locale) {
   )
   if (helpers[id]) return helpers[id]
 
-  var options = formats[type][style]
+  var options = formats[type][style] ||
+    (style && (type === 'number'
+      ? formats.parseNumberPattern(style)
+      : formats.parseDatePattern(style)
+    )) || formats[type].default
   var constructor = type === 'number' ? 'NumberFormat' : 'DateTimeFormat'
   var t = state.t
   var init = t.memberExpression(

@@ -29,7 +29,8 @@ module.exports = function visitEachTranslation (context, visitor) {
         patternAst: patternAst,
         patternParams: patternParams,
         translation: translation,
-        wrappers: info.wrappers
+        wrappers: info.wrappers,
+        isRich: info.isRich
       })
     })
   })
