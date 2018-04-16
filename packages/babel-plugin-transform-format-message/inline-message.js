@@ -2,7 +2,6 @@
 
 var parse = require('babylon').parse
 var lookupClosestLocale = require('lookup-closest-locale')
-var formats = require('format-message-formats')
 var cldr = require('./cldr')
 var addHelper = require('./inline-helpers').addHelper
 
@@ -45,10 +44,10 @@ var pluralVars = Object.keys(cldr.pluralVars).reduce(function (vars, key) {
  *    }) + " for sale.";
  *  })(args, "en")`
  **/
-module.exports = function inlineMessage (locale, elements, path, t) {
-  var state = { t: t, locale: locale, path: path }
+module.exports = function inlineMessage (locale, elements, tagsType, path, t) {
+  var state = { t: t, locale: locale, path: path, tagsType: tagsType }
 
-  if (elements.length === 1 && typeof elements[0] === 'string') {
+  if (!tagsType && elements.length === 1 && typeof elements[0] === 'string') {
     return t.stringLiteral(elements[0])
   } else if (elements.length === 0) {
     return t.stringLiteral('')
@@ -57,9 +56,8 @@ module.exports = function inlineMessage (locale, elements, path, t) {
   var paramsPath = path.get('arguments')[1]
   state.inlineParams = getInlineParams(paramsPath)
   var isParamsIdentifier = paramsPath && paramsPath.isIdentifier()
-  if (!state.inlineParams) {
-    state.paramsVarId = isParamsIdentifier ? paramsPath.node
-      : path.scope.generateDeclaredUidIdentifier('params')
+  if (!state.inlineParams && isParamsIdentifier) {
+    state.paramsVarId = paramsPath.node
   }
 
   var concatElements = transformSub(state, elements)
@@ -111,9 +109,12 @@ function transformSub (state, elements, parent) {
     return t.stringLiteral('')
   }
 
-  return elements.map(function (element) {
+  var parts = elements.map(function (element) {
     return transformElement(state, element, parent)
-  }).reduce(function (left, right) {
+  })
+
+  if (state.tagsType) return t.arrayExpression(parts)
+  return parts.reduce(function (left, right) {
     return t.binaryExpression('+', left, right)
   })
 }
@@ -152,7 +153,10 @@ function transformElement (state, element, parent) {
       return transformPlural(state, id, type, offset, options)
     case 'select':
       return transformSelect(state, id, style)
+    case state.tagsType:
+      return transformTag(state, id, style)
     default:
+      if (type) return transformCustom(state, element)
       return transformArgument(state, id)
   }
 }
@@ -163,38 +167,33 @@ function transformNumber (state, id, offset, style) {
   if (offset) {
     value = t.binaryExpression('-', value, t.numericLiteral(offset))
   }
-  if (!style || formats.number[style]) {
-    var callee = addHelper(state, 'number', style, state.locale)
-    return t.callExpression(callee, [ value ])
-  }
-  return t.callExpression(
-    t.memberExpression(
-      state.path.node.callee,
-      t.identifier('number')
-    ),
-    [
-      value,
-      t.stringLiteral(style),
-      t.stringLiteral(state.locale)
-    ]
-  )
+  var callee = addHelper(state, 'number', style, state.locale)
+  return t.callExpression(callee, [ value ])
 }
 
 function transformDateTime (state, id, type, style) {
   var t = state.t
-  if (!style || formats[type][style]) {
-    var callee = addHelper(state, type, style, state.locale)
-    return t.callExpression(callee, [ transformArgument(state, id) ])
+  var callee = addHelper(state, type, style, state.locale)
+  return t.callExpression(callee, [ transformArgument(state, id) ])
+}
+
+function transformCustom (state, placeholder) {
+  if (!state.paramsVarId) {
+    state.paramsVarId = state.path.scope.generateDeclaredUidIdentifier('params')
   }
+  var t = state.t
   return t.callExpression(
     t.memberExpression(
       state.path.node.callee,
-      t.identifier(type)
+      t.identifier('custom')
     ),
     [
-      transformArgument(state, id),
-      t.stringLiteral(style),
-      t.stringLiteral(state.locale)
+      t.arrayExpression(placeholder.map(function (s) {
+        return t.stringLiteral(s)
+      })),
+      t.stringLiteral(state.locale),
+      transformArgument(state, placeholder[0]),
+      state.paramsVarId
     ]
   )
 }
@@ -304,6 +303,40 @@ function transformSelect (state, id, children) {
   ])
 }
 
+function transformTag (state, id, props) {
+  var t = state.t
+  var arg = transformArgument(state, id)
+  var params = []
+  if (typeof props === 'object') {
+    params.push(t.objectExpression(Object.keys(props).map(function (key) {
+      return t.objectProperty(
+        propertyKey(key, t),
+        transformSub(state, props[key])
+      )
+    })))
+  } else if (typeof props === 'string') {
+    params.push(t.stringLiteral(props))
+  }
+  if (arg.type === 'ArrowFunctionExpression' || arg.type === 'FunctionExpression') {
+    return t.callExpression(arg, params)
+  }
+
+  var s = state.sId ||
+    (state.sId = state.path.scope.generateDeclaredUidIdentifier('s'))
+  return t.sequenceExpression([
+    t.assignmentExpression('=', s, arg),
+    t.conditionalExpression(
+      t.binaryExpression(
+        '===',
+        t.unaryExpression('typeof', s),
+        t.stringLiteral('function')
+      ),
+      t.callExpression(s, params),
+      s
+    )
+  ])
+}
+
 function transformArgument (state, id) {
   var t = state.t
   if (state.inlineParams) {
@@ -311,6 +344,9 @@ function transformArgument (state, id) {
       t.unaryExpression('void', t.numericLiteral(0), true)
   }
 
+  if (!state.paramsVarId) {
+    state.paramsVarId = state.path.scope.generateDeclaredUidIdentifier('params')
+  }
   var lookup = makeMemberExpression(t, state.paramsVarId, id)
   var parts = id.split('.')
   if (parts.length <= 1) return lookup
@@ -324,11 +360,16 @@ function transformArgument (state, id) {
   )
 }
 
+var validId = /^[a-z_$][a-z0-9_$]*$/
+function propertyKey (key, t) {
+  return validId.test(key) ? t.identifier(key) : t.stringLiteral(key)
+}
+
 function makeMemberExpression (t, object, key) {
-  var validId = /^[a-z_$][a-z0-9_$]*$/.test(key)
+  var valid = validId.test(key)
   return t.memberExpression(
     object,
-    validId ? t.identifier(key) : t.stringLiteral(key),
-    !validId
+    valid ? t.identifier(key) : t.stringLiteral(key),
+    !valid
   )
 }

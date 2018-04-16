@@ -73,12 +73,9 @@ function namespace () {
 
   function formatToParts (pattern/*: string */, locales/*: Locales */) {
     const richTypes = assign({}, types)
-    richTypes['<>'] = richType
-    const richPattern = pattern
-      .replace(/<\/([^>\s]+)>/g, '}\n}')
-      .replace(/<([^>\s]+)\s*\/>/g, '{ $1, <> }')
-      .replace(/<([^>\s]+)>/g, '{ $1, <>,\n  children {')
-    return interpret.toParts(parse(richPattern), locales, richTypes)
+    const tagsType = '<>'
+    richTypes[tagsType] = richType
+    return interpret.toParts(parse(pattern, { tagsType: tagsType }), locales, richTypes)
   }
 
   function richType (node/*: any[] */, locales/*: Locales */) {
@@ -166,6 +163,11 @@ function namespace () {
 
   formatMessage.select = function (value, options) {
     return options[value] || options.other
+  }
+
+  formatMessage.custom = function (placeholder, locales, value, args) {
+    if (!(placeholder[1] in types)) return value
+    return types[placeholder[1]](placeholder, locales)(value, args)
   }
 
   formatMessage.plural = plural.bind(null, 'cardinal')

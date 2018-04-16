@@ -43,7 +43,8 @@ module.exports = function (bbl) {
     visitor: {
       CallExpression: function (path, state) {
         util.setBabelContext(path, state)
-        if (!util.isFormatMessage(path.node.callee)) return
+        var isRich = util.isRichMessage(path.node.callee)
+        if (!util.isFormatMessage(path.node.callee) && !isRich) return
         var args = path.node.arguments
         var message = util.getMessageDetails(args)
         if (!message || !message.default) return
@@ -87,7 +88,7 @@ module.exports = function (bbl) {
           if (missingTranslation === 'warning') {
             console.warn(errMessage)
           } else { // 'error'
-            throw path.buildCodeFrameError(errMessage, ReferenceError)
+            throw path.get('arguments')[0].buildCodeFrameError(errMessage, ReferenceError)
           }
         }
         if (pattern == null) {
@@ -98,8 +99,13 @@ module.exports = function (bbl) {
         }
 
         // replace with inline message
-        var ast = parse(pattern)
-        path.replaceWith(inlineMessage(locale, ast, path, t))
+        try {
+          var tagsType = isRich ? '<>' : null
+          var ast = parse(pattern, { tagsType: tagsType })
+        } catch (err) {
+          throw path.get('arguments')[0].buildCodeFrameError(err.message, ReferenceError)
+        }
+        path.replaceWith(inlineMessage(locale, ast, tagsType, path, t))
       },
       JSXElement: function (path, state) {
         util.setBabelContext(path, state)
@@ -114,7 +120,6 @@ module.exports = function (bbl) {
         var missingTranslation = state.opts.missingTranslation || 'warning'
         var missingReplacement = state.opts.missingReplacement
         var idType = state.opts.generateId
-        var jsxTarget = state.opts.jsxTarget || 'react'
 
         var id = message.id ||
           (message.id = generateId(idType, message.default))
@@ -129,11 +134,8 @@ module.exports = function (bbl) {
           var formatMessageId = state.addImport(
             'format-message', 'default', 'formatMessage'
           )
-          var formatChildrenId = hasWrappers && state.addImport(
-            'format-message/' + jsxTarget, 'formatChildren'
-          )
           var formatMessageCall =
-            t.callExpression(formatMessageId, [
+            t.callExpression(t.memberExpression(formatMessageId, t.identifier('rich')), [
               t.objectExpression([
                 t.objectProperty(
                   t.identifier('id'),
@@ -144,7 +146,7 @@ module.exports = function (bbl) {
                   t.stringLiteral(message.default)
                 )
               ])
-            ].concat(!hasParameters ? [] : [
+            ].concat(!hasParameters && !hasWrappers ? [] : [
               t.objectExpression(Object.keys(message.parameters).map(function (name) {
                 return t.objectProperty(
                   t.identifier(name),
@@ -152,19 +154,8 @@ module.exports = function (bbl) {
                     ? t.stringLiteral(message.parameters[name].value)
                     : message.parameters[name]
                 )
-              }))
-            ]))
-          if (hasWrappers) {
-            formatMessageCall = t.callExpression(formatChildrenId, [
-              formatMessageCall,
-              t.arrayExpression(Object.keys(message.wrappers).map(function (name) {
+              }).concat(Object.keys(message.wrappers).map(function (name) {
                 var node = message.wrappers[name].node
-                var selfClosing = message.wrappers[name].options.selfClosing
-                if (!selfClosing) {
-                  node.openingElement.selfClosing = true
-                  node.closingElement = null
-                  node.children = []
-                }
                 if (!util.getAttribute(node, 'key')) {
                   node.openingElement.attributes = [
                     t.jSXAttribute(
@@ -173,10 +164,24 @@ module.exports = function (bbl) {
                     )
                   ].concat(node.openingElement.attributes || [])
                 }
-                return node
-              }))
-            ])
-          }
+                var selfClosing = message.wrappers[name].options.selfClosing
+                if (!selfClosing) {
+                  node.children = [t.jSXExpressionContainer(t.identifier('children'))]
+                }
+                return t.objectProperty(
+                  t.identifier(name),
+                  selfClosing ? node : t.arrowFunctionExpression(
+                    [ t.objectPattern([ t.objectProperty(
+                      t.identifier('children'),
+                      t.identifier('children'),
+                      false,
+                      true
+                    ) ]) ],
+                    node
+                  )
+                )
+              })))
+            ]))
 
           path.replaceWith(t.jSXElement(
             path.node.openingElement,

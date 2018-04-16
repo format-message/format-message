@@ -103,7 +103,7 @@ module.exports = {
   parseNumberPattern: function (pattern/*: ?string */) {
     if (!pattern) return
     const options = {}
-    const currency = pattern.match(/[A-Z]{3}/i)
+    const currency = pattern.match(/\b[A-Z]{3}\b/i)
     let syms = pattern.replace(/[^¤]/g, '').length
     if (!syms && currency) syms = 1
     if (syms) {

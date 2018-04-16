@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 const expect = require('chai').expect
 const formatMessage = require('../../format-message') // needs to match
+const runtimeOnly = formatMessage
 
 describe('formatMessage', function () {
   beforeEach(function () {
@@ -35,6 +36,7 @@ describe('formatMessage', function () {
 
     it('formats numbers, dates, and times', function () {
       expect(formatMessage('{ n, number }', { n: 1000 })).to.equal('1,000')
+      expect(formatMessage('{ n, number, USD }', { n: 1000 })).to.equal('$1,000.00')
       expect(formatMessage('{ d, date, short }', { d: new Date(2010, 5, 14) }))
         .to.include('14')
       expect(formatMessage('{ d, time, short }', { d: new Date(2010, 5, 14, 15, 17) }))
@@ -102,8 +104,10 @@ describe('formatMessage', function () {
     })
 
     it('throws an error on mismatched tags', function () {
-      expect(function () { formatMessage.rich('</e>') }).to.throw()
-      expect(function () { formatMessage.rich('<s>') }).to.throw()
+      const justEnd = '</e>'
+      const justStart = '<s>'
+      expect(function () { formatMessage.rich(justEnd) }).to.throw()
+      expect(function () { formatMessage.rich(justStart) }).to.throw()
     })
   })
 
@@ -112,11 +116,10 @@ describe('formatMessage', function () {
       expect(function () { formatMessage.setup() }).to.not.throw()
     })
 
-    // uses variables to avoid inlining since the tests are about runtime config
+    // uses runtimeOnly to avoid inlining since the tests are about runtime config
     it('changes the default locale', function () {
       const options = formatMessage.setup({ locale: 'ar' })
-      const pattern = '{n,plural,few{few}other{other}}'
-      const message = formatMessage(pattern, { n: 3 })
+      const message = runtimeOnly('{n,plural,few{few}other{other}}', { n: 3 })
       expect(options.locale).to.equal('ar')
       expect(message).to.equal('few')
     })
@@ -130,11 +133,8 @@ describe('formatMessage', function () {
         } },
         generateId: function (pattern) { return pattern }
       })
-      // use variable to avoid inlining
-      const pattern = 'trans-test'
-      const message = formatMessage(pattern)
-      const pattern2 = 'trans-test2'
-      const message2 = formatMessage(pattern2)
+      const message = runtimeOnly('trans-test')
+      const message2 = runtimeOnly('trans-test2')
       expect(message).to.equal('test-success')
       expect(message2).to.equal('test-success2')
     })
@@ -150,9 +150,7 @@ describe('formatMessage', function () {
       // capturing error message is fickle in node
       console.warn = function () {}
 
-      const id = 'test'
-      const pattern = 'translation-test'
-      const message = formatMessage({ id: id, default: pattern })
+      const message = runtimeOnly({ id: 'test', default: 'translation-test' })
       console.warn = warn
 
       expect(options.missingTranslation).to.equal('warning')
@@ -173,8 +171,7 @@ describe('formatMessage', function () {
       })
 
       const id = 'test-' + Date.now() // cache bust
-      const pattern = 'translation-test'
-      const message = formatMessage({ id: id, default: pattern })
+      const message = runtimeOnly({ id: id, default: 'translation-test' })
       expect(args).to.deep.equal([ 'translation-test', id, 'en' ])
       expect(options.missingTranslation).to.equal('ignore')
       expect(options.missingReplacement).to.be.a('function')
@@ -187,8 +184,7 @@ describe('formatMessage', function () {
       })
 
       const id = 'test-' + Date.now() // cache bust
-      const pattern = 'translation-test'
-      const message = formatMessage({ id: id, default: pattern })
+      const message = runtimeOnly({ id: id, default: 'translation-test' })
       expect(options.missingReplacement).to.be.a('function')
       expect(message).to.equal('translation-test')
     })
@@ -199,10 +195,7 @@ describe('formatMessage', function () {
         missingTranslation: 'error'
       })
 
-      expect(function () {
-        const pattern = 'error-test'
-        formatMessage(pattern)
-      }).to.throw()
+      expect(function () { runtimeOnly('error-test') }).to.throw()
     })
 
     it('adds custom formats', function () {
@@ -219,11 +212,11 @@ describe('formatMessage', function () {
           minute: 'numeric'
         } }
       } })
-      let message = formatMessage('{ n, number, perc }', { n: 0.3672 })
+      let message = runtimeOnly('{ n, number, perc }', { n: 0.3672 })
       expect(message).to.match(/40\s*%/)
-      message = formatMessage('{ d, date, day }', { d: new Date('2015/10/19') })
+      message = runtimeOnly('{ d, date, day }', { d: new Date('2015/10/19') })
       expect(message).to.include('19')
-      message = formatMessage('{ t, time, minute }', { t: new Date('2015/10/19 5:06') })
+      message = runtimeOnly('{ t, time, minute }', { t: new Date('2015/10/19 5:06') })
       expect(message).to.include('5:06')
     })
 
@@ -238,8 +231,7 @@ describe('formatMessage', function () {
           }
         }
       })
-      const pattern = '{ a, locale }' // no inline
-      expect(formatMessage(pattern, {}, 'en-GB')).to.equal('en-GB')
+      expect(formatMessage('{ a, locale }', {}, 'en-GB')).to.equal('en-GB')
     })
   })
 

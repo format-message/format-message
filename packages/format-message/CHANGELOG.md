@@ -2,6 +2,11 @@
 
 ## 6.0.0
 
+**Breaking Change**
+The patterns and ids generated for `translate='yes'` messages has changed, and so may require re-translation.
+
+`formatChildren` is deprecated, since it can easily be confused by parameters that look like tags.
+
 **New Feature**
 `setup()` can now receive a `types` property with custom placeholder type formatters.
 

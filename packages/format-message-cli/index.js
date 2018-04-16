@@ -204,7 +204,6 @@ program
     'literal'
   )
   .option('-i, --inline', 'inline the translation for the specified locale')
-  .option('-j, --jsx-target [name]', 'use helpers for the target framework [react]', 'react')
   .option('-l, --locale [locale]', 'BCP 47 language tags specifying the target locale [en]', 'en')
   .option('-t, --translations [path]', 'location of the JSON file with message translations')
   .option('-e, --missing-translation [behavior]',
@@ -262,7 +261,6 @@ program
       transformFiles(files, {
         generateId: options.generateId,
         inline: options.inline,
-        jsxTarget: options.jsxTarget,
         locale: options.locale,
         translations: options.translations,
         missingTranslation: options.missingTranslation,
