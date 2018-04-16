@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-transform-format-message",
-  "version": "5.2.6",
+  "version": "6.0.0-alpha.0",
   "description": "Pre-generate ids from default messages or inline a single language translation",
   "author": "Andy VanWagoner <andy@thetalecrafter.com> (https://thetalecrafter.com/)",
   "homepage": "https://github.com/format-message/format-message/tree/master/packages/babel-plugin-transform-format-message",
@@ -13,12 +13,12 @@
   "dependencies": {
     "babel-core": "^6.26.0",
     "babylon": "^6.18.0",
-    "format-message": "^5.2.6",
-    "format-message-estree-util": "^5.2.3",
-    "format-message-formats": "^5.1.0",
-    "format-message-generate-id": "^5.2.1",
-    "format-message-parse": "^5.1.2",
-    "lookup-closest-locale": "^5.1.0",
+    "format-message": "^6.0.0-alpha.0",
+    "format-message-estree-util": "^6.0.0-alpha.0",
+    "format-message-formats": "^6.0.0-alpha.0",
+    "format-message-generate-id": "^6.0.0-alpha.0",
+    "format-message-parse": "^6.0.0-alpha.0",
+    "lookup-closest-locale": "^6.0.0-alpha.0",
     "source-map": "^0.5.7"
   },
   "peerDependencies": {
