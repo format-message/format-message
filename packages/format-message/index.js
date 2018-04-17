@@ -161,11 +161,11 @@ function namespace () {
     return new Date(value).toLocaleTimeString(locales || currentLocales, options)
   }
 
-  formatMessage.select = function (value, options) {
+  formatMessage.select = function (value/*: any */, options/*: Object */) {
     return options[value] || options.other
   }
 
-  formatMessage.custom = function (placeholder, locales, value, args) {
+  formatMessage.custom = function (placeholder/*: any[] */, locales/*: Locales */, value/*: any */, args/*: Object */) {
     if (!(placeholder[1] in types)) return value
     return types[placeholder[1]](placeholder, locales)(value, args)
   }

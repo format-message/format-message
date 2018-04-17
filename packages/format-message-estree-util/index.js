@@ -115,7 +115,8 @@ exports = module.exports = {
   },
 
   isRichMessage: function (node) {
-    return this.getHelperFunctionName(node) === 'rich'
+    var name = this.getFormatMessagePropertyName(node)
+    if (name === 'rich') return name
   },
 
   isStringish: function (node) {
@@ -205,6 +206,11 @@ exports = module.exports = {
   },
 
   getHelperFunctionName: function (node) {
+    var name = this.getFormatMessagePropertyName(node)
+    if (this.isHelperName(name)) return name
+  },
+
+  getFormatMessagePropertyName: function (node) {
     var binding
     var name
     var isImportedCall = (
@@ -220,8 +226,7 @@ exports = module.exports = {
       node.type === 'MemberExpression' &&
       this.isFormatMessage(node.object) &&
       node.property.type === 'Identifier' &&
-      (name = node.property.name) &&
-      this.isHelperName(name)
+      (name = node.property.name)
     )
     if (isMemberCall) return name
   },
@@ -236,8 +241,7 @@ exports = module.exports = {
       (
         node.type === 'ImportSpecifier' &&
         node.imported.type === 'Identifier' &&
-        (name = node.imported.name) &&
-        this.isHelperName(name)
+        (name = node.imported.name)
       ) &&
       this.isStringLiteral(parent.source) &&
       MODULE_NAME_PATTERN.test(parent.source.value)
@@ -253,8 +257,7 @@ exports = module.exports = {
       node.init && node.init.type === 'MemberExpression' &&
       this.isRequireFormatMessage(node.init.object) &&
       node.init.property.type === 'Identifier' &&
-      (name = node.init.property.name) &&
-      this.isHelperName(name)
+      (name = node.init.property.name)
     )
     if (isMemberRequire) return name
 
@@ -285,8 +288,7 @@ exports = module.exports = {
       name === 'time' ||
       name === 'select' ||
       name === 'plural' ||
-      name === 'selectordinal' ||
-      name === 'rich'
+      name === 'selectordinal'
     )
   }
 }
