@@ -4,6 +4,15 @@ const React = require('react')
 const formatChildren = require('../react').formatChildren
 
 describe('react formatChildren with numeric index tags', function () {
+  // ignore deprecation warnings
+  const warn = console.warn
+  before(function () {
+    console.warn = function () {}
+  })
+  after(function () {
+    console.warn = warn
+  })
+
   it('returns a single child for simple messages', function () {
     const results = formatChildren('simple')
     expect(results).to.equal('simple')
@@ -85,6 +94,15 @@ describe('react formatChildren with numeric index tags', function () {
 })
 
 describe('react formatChildren with string tags', function () {
+  // ignore deprecation warnings
+  const warn = console.warn
+  before(function () {
+    console.warn = function () {}
+  })
+  after(function () {
+    console.warn = warn
+  })
+
   it('preserves tokens with no element mapping', function () {
     const results = formatChildren('<span>simple</span>')
     expect(results).to.equal('<span>simple</span>')

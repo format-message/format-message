@@ -104,7 +104,7 @@ Parameters
 
 Translate and format the message with the given pattern and arguments and return an array of message parts. If the pattern contains any html-like tags (`<a>go</a>`, `<icon/>`, etc.) they are transformed into type `<>` placeholders (`{ a, <>, children {go} }`). The `<>` placeholder type expects a function that will receive the style or sub-messages.
 
-```js
+```jsx
 formatMessage.rich("Click <a>here<a/>", {
   a: ({ children }) => <Link>{children}</Link>
 })
@@ -166,10 +166,7 @@ formatMessage("foo") // => "foo"
 namespace("foo") // => "bar"
 ```
 
-If you are using a custom namespace and still want to be able to extract strings
-using the format message CLI, create a module named `format-message.js` that exports
-the new namespace. Import formatMessage from this module in all other modules that
-use the namespace.
+If you are using a custom namespace and still want to be able to extract strings using the format message CLI, create a module named `format-message.js` that exports the new namespace. Import formatMessage from this module in all other modules that use the namespace.
 
 ### Localization apis
 
@@ -232,6 +229,7 @@ Parameters
 
 ### format-message/react
 
+**Deprecated: Use `formatMessage.rich()` instead.**
 This module includes utilities for working specifically with react when composing messages with embedded components.
 
 ### `formatChildren(message, elements)`
@@ -299,6 +297,7 @@ To be valid, a tag name can include any character except `<`, `/`, `>`, and whit
 
 ### format-message/inferno
 
+**Deprecated: Use `formatMessage.rich()` instead.**
 This module includes utilities for working specifically with Inferno when composing messages with embedded components. The API is identical to format-message/react, only it works with Inferno vdom nodes instead of React elements.
 
 ### `formatChildren(message, elements)`

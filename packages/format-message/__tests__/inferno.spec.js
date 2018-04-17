@@ -4,6 +4,15 @@ const createElement = require('inferno-create-element').createElement
 const formatChildren = require('../inferno').formatChildren
 
 describe('inferno formatChildren with numeric index tags', function () {
+  // ignore deprecation warnings
+  const warn = console.warn
+  before(function () {
+    console.warn = function () {}
+  })
+  after(function () {
+    console.warn = warn
+  })
+
   it('returns a single child for simple messages', function () {
     const results = formatChildren('simple')
     expect(results).to.equal('simple')
@@ -84,6 +93,15 @@ describe('inferno formatChildren with numeric index tags', function () {
 })
 
 describe('inferno formatChildren with string tags', function () {
+  // ignore deprecation warnings
+  const warn = console.warn
+  before(function () {
+    console.warn = function () {}
+  })
+  after(function () {
+    console.warn = warn
+  })
+
   it('preserves tokens with no element mapping', function () {
     const results = formatChildren('<span>simple</span>')
     expect(results).to.equal('<span>simple</span>')
