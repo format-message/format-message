@@ -1,4 +1,5 @@
 'use strict'
+const lookupClosestLocale = require('lookup-closest-locale')
 const parse = require('format-message-parse')
 const visitEachTranslation = require('../util/visit-each-translation')
 const locales = require('../../cldr.json').locales
@@ -36,7 +37,8 @@ module.exports = {
     return visitEachTranslation(context, function ({ id, node, patternAst, locale, translation }) {
       if (!visitedNodes.has(node) && patternAst) {
         visitedNodes.add(node)
-        const rules = locales[sourceLocale] && locales[sourceLocale].plurals
+        const closest = lookupClosestLocale(sourceLocale, locales)
+        const rules = closest && locales[closest] && locales[closest].plurals
         getPlurals(patternAst).forEach(({ id, type, keywords }) => {
           if (!rules || !rules[type]) return
           Object.keys(rules[type]).filter(key => !keywords[key]).forEach(rule => {
@@ -47,7 +49,8 @@ module.exports = {
 
       if (translation == null) return // missing translation is handled in another rule
       try {
-        const rules = locales[locale] && locales[locale].plurals
+        const closest = lookupClosestLocale(locale, locales)
+        const rules = closest && locales[closest] && locales[closest].plurals
         getPlurals(parse(translation)).forEach(({ id, type, keywords }) => {
           if (!rules || !rules[type]) return
           Object.keys(rules[type]).filter(key => !keywords[key]).forEach(rule => {

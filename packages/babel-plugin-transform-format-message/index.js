@@ -134,6 +134,7 @@ module.exports = function (bbl) {
           var formatMessageId = state.addImport(
             'format-message', 'default', 'formatMessage'
           )
+          var childrenId
           var formatMessageCall =
             t.callExpression(t.memberExpression(formatMessageId, t.identifier('rich')), [
               t.objectExpression([
@@ -166,14 +167,17 @@ module.exports = function (bbl) {
                 }
                 var selfClosing = message.wrappers[name].options.selfClosing
                 if (!selfClosing) {
-                  node.children = [t.jSXExpressionContainer(t.identifier('children'))]
+                  if (!childrenId) {
+                    childrenId = path.scope.generateUidIdentifier('children')
+                  }
+                  node.children = [t.jSXExpressionContainer(childrenId)]
                 }
                 return t.objectProperty(
                   t.identifier(name),
                   selfClosing ? node : t.arrowFunctionExpression(
                     [ t.objectPattern([ t.objectProperty(
                       t.identifier('children'),
-                      t.identifier('children'),
+                      childrenId,
                       false,
                       true
                     ) ]) ],

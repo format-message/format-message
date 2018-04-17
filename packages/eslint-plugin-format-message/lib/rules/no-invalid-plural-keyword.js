@@ -1,4 +1,5 @@
 'use strict'
+const lookupClosestLocale = require('lookup-closest-locale')
 const parse = require('format-message-parse')
 const visitEachTranslation = require('../util/visit-each-translation')
 const locales = require('../../cldr.json').locales
@@ -32,15 +33,16 @@ module.exports = {
       if (!visitedNodes.has(node) && patternAst) {
         visitedNodes.add(node)
         const { cardinal, ordinal } = getPluralKeywords(patternAst)
-        const rules = locales[sourceLocale] && locales[sourceLocale].plurals
+        const closest = lookupClosestLocale(sourceLocale, locales)
+        const rules = closest && locales[closest] && locales[closest].plurals
         cardinal.forEach(rule => {
-          if (rule === 'other' || rule[0] === '=') return
-          if (rules && rules.cardinal && rules.cardinal[rule]) return
+          if (!rules || rule === 'other' || rule[0] === '=') return
+          if (rules.cardinal && rules.cardinal[rule]) return
           context.report(node, sourceLocale + ' has no "' + rule + '" cardinal plural rule')
         })
         ordinal.forEach(rule => {
-          if (rule === 'other' || rule[0] === '=') return
-          if (rules && rules.ordinal && rules.ordinal[rule]) return
+          if (!rules || rule === 'other' || rule[0] === '=') return
+          if (rules.ordinal && rules.ordinal[rule]) return
           context.report(node, sourceLocale + ' has no "' + rule + '" ordinal plural rule')
         })
       }
@@ -48,15 +50,16 @@ module.exports = {
       if (translation == null) return // missing translation is handled in another rule
       try {
         const { cardinal, ordinal } = getPluralKeywords(parse(translation))
-        const rules = locales[locale] && locales[locale].plurals
+        const closest = lookupClosestLocale(locale, locales)
+        const rules = closest && locales[closest] && locales[closest].plurals
         cardinal.forEach(rule => {
-          if (rule === 'other' || rule[0] === '=') return
-          if (rules && rules.cardinal && rules.cardinal[rule]) return
+          if (!rules || rule === 'other' || rule[0] === '=') return
+          if (rules.cardinal && rules.cardinal[rule]) return
           context.report(node, locale + ' has no "' + rule + '" cardinal plural rule')
         })
         ordinal.forEach(rule => {
-          if (rule === 'other' || rule[0] === '=') return
-          if (rules && rules.ordinal && rules.ordinal[rule]) return
+          if (!rules || rule === 'other' || rule[0] === '=') return
+          if (rules.ordinal && rules.ordinal[rule]) return
           context.report(node, locale + ' has no "' + rule + '" ordinal plural rule')
         })
       } catch (err) {

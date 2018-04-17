@@ -26,7 +26,8 @@
     "format-message": "^6.0.0-alpha.1",
     "format-message-estree-util": "^6.0.0-alpha.1",
     "format-message-generate-id": "^6.0.0-alpha.1",
-    "format-message-parse": "^6.0.0-alpha.1"
+    "format-message-parse": "^6.0.0-alpha.1",
+    "lookup-closest-locale": "^6.0.0-alpha.1"
   },
   "peerDependencies": {
     "eslint": ">=2.0.0"
