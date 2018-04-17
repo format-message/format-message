@@ -11,6 +11,13 @@ module.exports = function formatChildren (
   message/*: string */,
   wrappers/*: Object */
 ) {
+  if (process.env.NODE_ENV !== 'production' && typeof console === 'object') {
+    console.warn(
+      'Warning: formatChildren() is deprecated. Use formatMessage.rich() instead.\n' +
+      'https://github.com/format-message/format-message/tree/master/packages/format-message' +
+      '#formatmessagerichpattern-args-locales'
+    )
+  }
   wrappers = wrappers || []
 
   // at least one word character (letter, digit, or _) surrounded by < >

@@ -1,26 +1,11 @@
 'use strict'
 
-var baseFormatChildren = require('format-message/base-format-children')
 var parse = require('format-message-parse')
 var formats = require('format-message-formats')
 var addHelper = require('./inline-helpers').addHelper
 
-var formatChildren = baseFormatChildren.bind(null, function (key, element, children) {
-  if (!children) return '{ ' + element + ' }'
-  return '{ ' + element + ', select, other {' + children.join('') + '} }'
-})
-
 module.exports = function inlineMessageJSX (state) {
-  // insert wrappers as selects
-  var wrappers = Object.keys(state.wrappers).reduce(function (object, key) {
-    object[key] = '$$' + key
-    return object
-  }, {})
-
-  var pattern = formatChildren(state.pattern, wrappers)
-  if (Array.isArray(pattern)) pattern = pattern.join('')
-
-  return transformSub(state, parse(pattern))
+  return transformSub(state, parse(state.pattern, { tagsType: '<>' }))
 }
 
 function transformSub (state, elements, parent) {
@@ -34,8 +19,8 @@ function transformSub (state, elements, parent) {
       ? child : t.jSXExpressionContainer(child)
   })
   if (parent) {
-    if (children.length === 1) children = children[0]
-    if (children.length === 0) children = t.stringLiteral('')
+    if (children.length === 1) return children[0]
+    if (children.length === 0) return t.stringLiteral('')
   }
   return children
 }
@@ -69,6 +54,8 @@ function transformElement (state, element, parent) {
       return transformPlural(state, id, type, offset, options)
     case 'select':
       return transformSelect(state, id, style)
+    case '<>':
+      return transformTag(state, id, style)
     default:
       return transformArgument(state, id)
   }
@@ -128,17 +115,6 @@ function transformPlural (state, id, type, offset, children) {
 
 function transformSelect (state, id, children) {
   var t = state.t
-
-  // special case for handling wrappers
-  if (id.slice(0, 2) === '$$' && state.wrappers[id.slice(2)]) {
-    var wrapper = state.wrappers[id.slice(2)].node
-    return t.jSXElement(
-      wrapper.openingElement,
-      wrapper.closingElement,
-      transformSub(state, children.other)
-    )
-  }
-
   var parent = [ id, 'select' ]
   var s = state.sId ||
     (state.sId = state.path.scope.generateDeclaredUidIdentifier('s'))
@@ -156,7 +132,6 @@ function transformSelect (state, id, children) {
   })
 
   if (!conditions.length) { return other }
-
   return t.sequenceExpression([
     t.assignmentExpression(
       '=', s, transformArgument(state, id)
@@ -167,10 +142,19 @@ function transformSelect (state, id, children) {
   ])
 }
 
+function transformTag (state, id, props) {
+  var t = state.t
+  var wrapper = state.wrappers[id].node
+  if (!props) return wrapper
+  return t.jSXElement(
+    wrapper.openingElement,
+    wrapper.closingElement,
+    typeof props === 'string'
+      ? [ t.stringLiteral(props) ]
+      : transformSub(state, props.children)
+  )
+}
+
 function transformArgument (state, id) {
-  // special case elements
-  if (id.slice(0, 2) === '$$' && state.wrappers[id.slice(2)]) {
-    return state.wrappers[id.slice(2)].node
-  }
   return state.parameters[id]
 }
