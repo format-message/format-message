@@ -21,7 +21,7 @@ find message patterns in files and verify there are no obvious problems
 #### Options:
 
     -h, --help                  output usage information
-    -g, --generate-id [type]    generate missing ids from default message pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]
+    -g, --generate-id [type]    generate missing ids from default message pattern (literal | normalized | underscored | underscored_crc32) [literal]
     -l, --locale [locale]       BCP 47 language tags specifying the source default locale [en]
     -t, --translations [path]   location of the JSON file with message translations, if specified, translations are also checked for errors
     -f, --filename [filename]   filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]
@@ -45,7 +45,7 @@ find and list all message patterns in files
 #### Options:
 
     -h, --help                  output usage information
-    -g, --generate-id [type]    generate missing ids from default message pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]
+    -g, --generate-id [type]    generate missing ids from default message pattern (literal | normalized | underscored | underscored_crc32) [literal]
     -l, --locale [locale]       BCP 47 language tags specifying the source default locale [en]
     -f, --filename [filename]   filename to use when reading from stdin - this will be used in source-maps, errors etc [stdin]
     --format [format]           use the specified format instead of detecting from the --out-file extension (yaml | es6 | commonjs | json)
@@ -75,7 +75,7 @@ The `--inline` flag changes the behavior to inline one particular translation, a
 #### Options:
 
     -h, --help                            output usage information
-    -g, --generate-id [type]    generate missing ids from default message pattern (literal | normalized | underscored | underscored_crc32) [underscored_crc32]
+    -g, --generate-id [type]    generate missing ids from default message pattern (literal | normalized | underscored | underscored_crc32) [literal]
     -l, --locale [locale]                 BCP 47 language tags specifying the target locale [en]
     -t, --translations [path]             location of the JSON file with message translations
     -e, --missing-translation [behavior]  behavior when --translations is specified, but a translated pattern is missing (error | warning | ignore) [error]
