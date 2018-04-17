@@ -85,6 +85,13 @@ describe('interpret()', function () {
     expect(formatFil({ d: 60 * 60 })).to.equal('1:00:00')
   })
 
+  if (Intl.NumberFormat.supportedLocalesOf('ar')[0] === 'ar') {
+    it('puts the duration sign on the correct side of the number', function () {
+      const format = interpret([ [ 'd', 'duration' ] ], 'ar')
+      expect(format({ d: -12.3456 })).to.equal('؜-٠٠:١٢٫٣٤٦')
+    })
+  }
+
   it('interprets date placeholders', function () {
     let format = interpret([[ 'd', 'date' ]], 'en')
     expect(format({ d: new Date(0) })).to.match(/1/)
