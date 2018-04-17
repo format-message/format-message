@@ -549,7 +549,7 @@ describe('format-message transform', function () {
       expect(stdout).to.contain('.rich({')
       expect(stdout).to.contain('id: "hello <0>world</0>"')
       expect(stdout).to.contain('default: "hello <0>world</0>"')
-      expect(stdout).to.match(/0: \({\s*children\s*}\) => <b key="0">{children}<\/b>/)
+      expect(stdout).to.match(/0: \({\s*children: _children\s*}\) => <b key="0">{_children}<\/b>/)
     })
 
     it('handles nested elements', function () {
@@ -558,9 +558,9 @@ describe('format-message transform', function () {
       expect(stderr).to.equal('')
       expect(stdout).to.contain('id: "hello <0><1>big</1> <2>world</2></0>"')
       expect(stdout).to.contain('default: "hello <0><1>big</1> <2>world</2></0>"')
-      expect(stdout).to.match(/0: \({\s*children\s*}\) => <b key="0">{children}<\/b>/)
-      expect(stdout).to.match(/1: \({\s*children\s*}\) => <i key="1">{children}<\/i>/)
-      expect(stdout).to.match(/2: \({\s*children\s*}\) => <em key="2">{children}<\/em>/)
+      expect(stdout).to.match(/0: \({\s*children: _children\s*}\) => <b key="0">{_children}<\/b>/)
+      expect(stdout).to.match(/1: \({\s*children: _children\s*}\) => <i key="1">{_children}<\/i>/)
+      expect(stdout).to.match(/2: \({\s*children: _children\s*}\) => <em key="2">{_children}<\/em>/)
     })
 
     it('groups nested elements with no text', function () {
@@ -603,7 +603,7 @@ describe('format-message transform', function () {
       expect(stderr).to.equal('')
       expect(stdout).to.contain('id: "{ gender, select, \\nfemale {<0/>}\\nmale {<1>b</1>}\\nother {no} }"')
       expect(stdout).to.contain('0: <i key="0" />')
-      expect(stdout).to.match(/1: \({\s*children\s*}\) => <b key="1">{children}<\/b>/)
+      expect(stdout).to.match(/1: \({\s*children: _children\s*}\) => <b key="1">{_children}<\/b>/)
     })
 
     it('handles plural & selectordinal helpers', function () {

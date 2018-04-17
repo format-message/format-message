@@ -239,6 +239,7 @@ exports = module.exports = {
     var name
     var isImportHelper = (
       (
+        node &&
         node.type === 'ImportSpecifier' &&
         node.imported.type === 'Identifier' &&
         (name = node.imported.name)
@@ -252,6 +253,7 @@ exports = module.exports = {
   getRequireHelper: function (node, referenceName) {
     var name
     var isMemberRequire = (
+      node &&
       node.type === 'VariableDeclarator' &&
       node.id && node.id.type === 'Identifier' &&
       node.init && node.init.type === 'MemberExpression' &&
@@ -262,6 +264,7 @@ exports = module.exports = {
     if (isMemberRequire) return name
 
     var isDestructureRequire = (
+      node &&
       node.type === 'VariableDeclarator' &&
       this.isRequireFormatMessage(node.init) &&
       node.id && node.id.type === 'ObjectPattern' &&
