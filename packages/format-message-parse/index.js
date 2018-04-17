@@ -441,4 +441,4 @@ function SyntaxError (message/*: string */, expected/*: ?string */, found/*: ?st
   this.column = column
 }
 SyntaxError.prototype = Object.create(Error.prototype)
-module.exports.SyntaxError = SyntaxError
+exports.SyntaxError = SyntaxError
