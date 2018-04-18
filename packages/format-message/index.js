@@ -66,18 +66,12 @@ function namespace () {
     const id = (typeof msg === 'object' && msg.id) || generateId(pattern)
     const translated = translate(pattern, id, locales || currentLocales)
     const format = translated.toParts || (
-      translated.toParts = formatToParts(translated.message, locales || currentLocales)
+      translated.toParts = interpret.toParts(parse(pattern, { tagsType: tagsType }), locales || currentLocales, types)
     )
     return format(args)
   }
 
-  function formatToParts (pattern/*: string */, locales/*: Locales */) {
-    const richTypes = assign({}, types)
-    const tagsType = '<>'
-    richTypes[tagsType] = richType
-    return interpret.toParts(parse(pattern, { tagsType: tagsType }), locales, richTypes)
-  }
-
+  const tagsType = '<>'
   function richType (node/*: any[] */, locales/*: Locales */) {
     const style = node[2]
     return function (fn, args) {
@@ -85,6 +79,7 @@ function namespace () {
       return typeof fn === 'function' ? fn(props) : fn
     }
   }
+  types[tagsType] = richType
 
   function mapObject (object/* { [string]: (args?: Object) => any } */, args/*: ?Object */) {
     return Object.keys(object).reduce(function (mapped, key) {
@@ -128,7 +123,10 @@ function namespace () {
       if (opt.formats.date) assign(formats.date, opt.formats.date)
       if (opt.formats.time) assign(formats.time, opt.formats.time)
     }
-    if (opt.types) types = opt.types
+    if (opt.types) {
+      types = opt.types
+      types[tagsType] = richType
+    }
     return {
       locale: currentLocales,
       translations: translations,
