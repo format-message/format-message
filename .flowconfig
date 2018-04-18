@@ -4,6 +4,7 @@
 [include]
 
 [libs]
+packages/format-message-interpret/intl.js.flow
 
 [lints]
 
