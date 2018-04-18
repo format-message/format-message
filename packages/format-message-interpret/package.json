@@ -1,6 +1,6 @@
 {
   "name": "format-message-interpret",
-  "version": "6.0.0-alpha.1",
+  "version": "6.0.0-alpha.2",
   "description": "Convert format-message-parse ast to a function",
   "author": "Andy VanWagoner <andy@thetalecrafter.com> (https://thetalecrafter.com/)",
   "homepage": "https://github.com/format-message/format-message/tree/master/packages/format-message-interpret",
@@ -18,7 +18,7 @@
     "selectformat"
   ],
   "dependencies": {
-    "format-message-formats": "^6.0.0-alpha.1",
-    "lookup-closest-locale": "^6.0.0-alpha.1"
+    "format-message-formats": "^6.0.0-alpha.2",
+    "lookup-closest-locale": "^6.0.0-alpha.2"
   }
 }
