@@ -3,22 +3,14 @@
 ## 6.0.0
 
 **Breaking Change**
-The patterns and ids generated for `translate='yes'` messages has changed, and so may require re-translation.
-
-`formatChildren` is deprecated, since it can easily be confused by parameters that look like tags.
+`formatChildren` is deprecated, since it can easily be confused by parameters that look like tags. Use the new `formatMessage.rich` function instead.
 
 **New Feature**
 `setup()` can now receive a `types` property with custom placeholder type formatters.
 
-`formatMessage.rich(pattern, args [, locale ])` takes a pattern including simple html-like tags as placeholders.
+`formatMessage.rich(pattern, args [, locale ])` takes a pattern including simple (no attributes) html-like tags as placeholders.
 ```js
-formatMessage.rich('Click <a>Here</a>!', {
-  a: ({ children }) => <Link>{children}</Link>
-})
-```
-You can also use a special placeholder type directly if you prefer:
-```js
-formatMessage.rich('Click { a, <>, children {Here} }!', {
+formatMessage.rich('Click <a>here</a>!', {
   a: ({ children }) => <Link>{children}</Link>
 })
 ```

@@ -21,4 +21,4 @@ interpret.toParts('en', parse('a {b} c'))({ b: 1 }) // [ 'a ', 1, ' c' ]
 
 **Polish**
 Better code reuse internally, `let` and `const` declarations instead of `var`.
-Uses flow type comments to help prevent some kinds of issues.
+Uses flow type comments to help prevent some kinds of issues. You may need to add `node_modules/format-message-interpret/intl.js.flow` to your .flowconfig lib section if you do not have type definitions for the global `Intl` already.
