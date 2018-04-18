@@ -98,17 +98,19 @@ Parameters
 - `args` is an object containing the values to replace placeholders with. Required if the pattern contains placeholders.
 - `locales` is an optional string with a BCP 47 language tag, or an array of such strings.
   - When specified, format-message will attempt to look up the translation for each language until one is found.
-  - When ommitted the locale configured in `setup()` is used instead.
+  - When omitted the locale configured in `setup()` is used instead.
 
 ### `formatMessage.rich(pattern[, args[, locales]])`
 
-Translate and format the message with the given pattern and arguments and return an array of message parts. If the pattern contains any html-like tags (`<a>go</a>`, `<icon/>`, etc.) they are transformed into type `<>` placeholders (`{ a, <>, children {go} }`). The `<>` placeholder type expects a function that will receive the style or sub-messages.
+Translate and format the message with the given pattern and arguments and return an array of message parts. If the pattern contains any html-like tags (`<a>go</a>`, `<icon/>`, etc.) they are interpreted as placeholders expecting a function that will receive the children message parts as an array. Attributes are not supported for the placeholder tags and will throw a parse error.
+
+Note that for React, and perhaps other libraries as well, elements in an array should have a `key` specified, or you will trigger warnings.
 
 ```jsx
 formatMessage.rich("Click <a>here<a/>", {
-  a: ({ children }) => <Link>{children}</Link>
+  a: ({ children }) => <Link key="a">{children}</Link>
 })
-// returns [ "Click ", <Link>here</Link> ]
+// returns [ "Click ", <Link key="a">here</Link> ]
 ```
 
 Parameters

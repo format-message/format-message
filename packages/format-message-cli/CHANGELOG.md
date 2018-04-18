@@ -3,7 +3,7 @@
 ## 6.0.0
 
 **Breaking Change**
-The default for generateId is now `literal` to match the runtime.
+The default for generateId is now `literal` to match the runtime. You will need to add `-g underscored_crc32` to your cli commands if you were using the default before.
 
 `-j` `--jsx-target` flags have been removed from `transform` since it relies on the `formatMessage.rich` function instead of `formatChildren`, and is no longer JSX library specific.
 
