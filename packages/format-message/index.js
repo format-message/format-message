@@ -111,7 +111,7 @@ function namespace () {
     return translated
   }
 
-  formatMessage.setup = function setup (opt/*: Options */) {
+  formatMessage.setup = function setup (opt/*:: ?: Options */) {
     opt = opt || {}
     if (opt.locale) currentLocales = opt.locale
     if ('translations' in opt) translations = opt.translations || {}
