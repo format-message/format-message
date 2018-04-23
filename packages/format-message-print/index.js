@@ -12,7 +12,7 @@ type Placeholder = any // https://github.com/facebook/flow/issues/4050
 */
 
 const SYNTAX_PLURAL = /[{}#]+/g
-const SYNTAX_STYLE = /[{}\s]+/g
+const SYNTAX_STYLE = /[{}\s]+/
 const SYNTAX_COMMON = /[{}]+/g
 const ESC = '\''
 const DBL_ESC = '\'\''

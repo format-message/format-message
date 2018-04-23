@@ -22,6 +22,15 @@ describe('print()', function () {
     )
   })
 
+  it('consistently escapes style', function () {
+    // regress stateful regex bug
+    const pattern = print([
+      [ 'a', 'b', 'c d' ],
+      [ 'a', 'b', 'c d' ]
+    ])
+    expect(pattern).to.equal('{ a, b, \'c d\' }{ a, b, \'c d\' }')
+  })
+
   it('pretty formats plurals', function () {
     const pattern = print([
       [ 'bananas', 'plural', 0, {
