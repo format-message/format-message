@@ -22,18 +22,47 @@ type Translation = {
   toParts?: (args?: Object) => any[],
 }
 type Replacement = ?string | (string, string, locales?: Locales) => ?string
+type GenerateId = (string) => string
+type MissingTranslation = 'ignore' | 'warning' | 'error'
+type FormatObject = { [string]: * }
 type Options = {
   locale?: Locales,
   translations?: ?Translations,
-  generateId?: (string) => string,
+  generateId?: GenerateId,
   missingReplacement?: Replacement,
-  missingTranslation?: 'ignore' | 'warning' | 'error',
+  missingTranslation?: MissingTranslation,
   formats?: {
-    number?: { [string]: * },
-    date?: { [string]: * },
-    time?: { [string]: * }
+    number?: FormatObject,
+    date?: FormatObject,
+    time?: FormatObject
   },
   types?: Types
+}
+type Setup = {|
+  locale: Locales,
+  translations: Translations,
+  generateId: GenerateId,
+  missingReplacement: Replacement,
+  missingTranslation: MissingTranslation,
+  formats: {
+    number: FormatObject,
+    date: FormatObject,
+    time: FormatObject
+  },
+  types: Types
+|}
+type FormatMessage = {
+  (msg: Message, args?: Object, locales?: Locales): string,
+  rich (msg: Message, args?: Object, locales?: Locales): any[],
+  setup (opt?: Options): Setup,
+  number (value: number, style?: string, locales?: Locales): string,
+  date (value: number | Date, style?: string, locales?: Locales): string,
+  time (value: number | Date, style?: string, locales?: Locales): string,
+  select (value: any, options: Object): any,
+  custom (placeholder: any[], locales: Locales, value: any, args: Object): any,
+  plural (value: number, offset: any, options: any, locale: any): any,
+  selectordinal (value: number, offset: any, options: any, locale: any): any,
+  namespace (): FormatMessage
 }
 */
 
@@ -42,13 +71,13 @@ function assign/*:: <T: Object> */ (target/*: T */, source/*: Object */) {
   return target
 }
 
-function namespace () {
+function namespace ()/*: FormatMessage */ {
   const formats = assign({}, origFormats)
   let currentLocales/*: Locales */ = 'en'
   let translations/*: Translations */ = {}
-  let generateId/*: (string) => string */ = function (pattern) { return pattern }
+  let generateId/*: GenerateId */ = function (pattern) { return pattern }
   let missingReplacement/*: Replacement */ = null
-  let missingTranslation/*: 'ignore' | 'warning' | 'error' */ = 'warning'
+  let missingTranslation/*: MissingTranslation */ = 'warning'
   let types/*: Types */ = {}
 
   function formatMessage (msg/*: Message */, args/*:: ?: Object */, locales/*:: ?: Locales */) {
@@ -188,8 +217,9 @@ function namespace () {
   }
   function returnOther (/*:: n:number */) { return 'other' }
 
+  formatMessage.namespace = namespace
+
   return formatMessage
 }
 
 module.exports = exports = namespace()
-exports.namespace = namespace
