@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 const expect = require('chai').expect
 const formatMessage = require('../../format-message') // needs to match
+const interpret = require('format-message-interpret')
 const runtimeOnly = formatMessage
 
 describe('formatMessage', function () {
@@ -248,6 +249,15 @@ describe('formatMessage', function () {
       expect(formatMessage.number(12.345, '', 'en-u-nu-fullwide'))
         .to.equal('１２.３４５')
     })
+
+    it('handles bad values identically to interpret', function () {
+      const format = interpret([[ 'n', 'number' ]], 'en')
+      const values = [ 0, -0, '', false, true, null, NaN, undefined ]
+      values.forEach(function (value) {
+        expect(formatMessage.number(value)).to.equal(format({ n: value }))
+      })
+      expect(formatMessage.number()).to.equal(format())
+    })
   })
 
   describe('date', function () {
@@ -265,6 +275,15 @@ describe('formatMessage', function () {
       const result = formatMessage.date(new Date(2015, 11, 31), '', 'en-u-nu-fullwide')
       expect(result).to.include('３１')
     })
+
+    it('handles bad values identically to interpret', function () {
+      const format = interpret([[ 'd', 'date' ]], 'en')
+      const values = [ 0, -0, '', false, true, null, undefined ]
+      values.forEach(function (value) {
+        expect(formatMessage.date(value)).to.equal(format({ d: value }))
+      })
+      expect(formatMessage.date()).to.equal(format())
+    })
   })
 
   describe('time', function () {
@@ -281,6 +300,15 @@ describe('formatMessage', function () {
     it('uses the locale parameter', function () {
       const result = formatMessage.time(new Date(2015, 11, 31, 5, 16), '', 'en-u-nu-fullwide')
       expect(result).to.include('１６')
+    })
+
+    it('handles bad values identically to interpret', function () {
+      const format = interpret([[ 'd', 'time' ]], 'en')
+      const values = [ 0, -0, '', false, true, null, undefined ]
+      values.forEach(function (value) {
+        expect(formatMessage.time(value)).to.equal(format({ d: value }))
+      })
+      expect(formatMessage.time()).to.equal(format())
     })
   })
 
