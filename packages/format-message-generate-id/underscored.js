@@ -1,9 +1,9 @@
 // @flow
 'use strict'
-const normalized = require('./normalized')
+var normalized = require('./normalized')
 
 // credits to http://jsperf.com/unicode-to-ascii/3
-const table =
+var table =
   'AAAAAAACEEEEIIII' +
   'DNOOOOO.OUUUUY..' +
   'aaaaaaaceeeeiiii' +
@@ -17,14 +17,14 @@ const table =
   'SsTtTtTtUuUuUuUu' +
   'UuUuWwYyYZzZzZz.'
 function stripAccent (str/*: string */) {
-  let clean = ''
-  const strLength = str.length
-  const tableLength = table.length
-  for (let s = 0; s < strLength; ++s) {
-    let ch = str[s]
-    const t = ch.charCodeAt(0) - 192 // Index of character code in the strip string
+  var clean = ''
+  var strLength = str.length
+  var tableLength = table.length
+  for (var s = 0; s < strLength; ++s) {
+    var ch = str[s]
+    var t = ch.charCodeAt(0) - 192 // Index of character code in the strip string
     if (t >= 0 && t < tableLength) {
-      const ascii = table[t] // Character is within our table, so we can strip the accent...
+      var ascii = table[t] // Character is within our table, so we can strip the accent...
       if (ascii !== '.') ch = ascii // ...unless it was shown as a '.'
     }
     clean += ch

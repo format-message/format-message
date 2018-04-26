@@ -1,9 +1,9 @@
 // @flow
-const LONG = 'long'
-const SHORT = 'short'
-const NARROW = 'narrow'
-const NUMERIC = 'numeric'
-const TWODIGIT = '2-digit'
+var LONG = 'long'
+var SHORT = 'short'
+var NARROW = 'narrow'
+var NUMERIC = 'numeric'
+var TWODIGIT = '2-digit'
 
 /**
  * formatting information
@@ -102,9 +102,9 @@ module.exports = {
   },
   parseNumberPattern: function (pattern/*: ?string */) {
     if (!pattern) return
-    const options = {}
-    const currency = pattern.match(/\b[A-Z]{3}\b/i)
-    let syms = pattern.replace(/[^¤]/g, '').length
+    var options = {}
+    var currency = pattern.match(/\b[A-Z]{3}\b/i)
+    var syms = pattern.replace(/[^¤]/g, '').length
     if (!syms && currency) syms = 1
     if (syms) {
       options.style = 'currency'
@@ -116,16 +116,16 @@ module.exports = {
     if (!/[@#0]/.test(pattern)) return options.style ? options : undefined
     options.useGrouping = pattern.indexOf(',') >= 0
     if (/E\+?[@#0]+/i.test(pattern) || pattern.indexOf('@') >= 0) {
-      const size = pattern.replace(/E\+?[@#0]+|[^@#0]/gi, '')
+      var size = pattern.replace(/E\+?[@#0]+|[^@#0]/gi, '')
       options.minimumSignificantDigits = Math.min(Math.max(size.replace(/[^@0]/g, '').length, 1), 21)
       options.maximumSignificantDigits = Math.min(Math.max(size.length, 1), 21)
     } else {
-      const parts = pattern.replace(/[^#0.]/g, '').split('.')
-      const integer = parts[0]
-      let n = integer.length - 1
+      var parts = pattern.replace(/[^#0.]/g, '').split('.')
+      var integer = parts[0]
+      var n = integer.length - 1
       while (integer[n] === '0') --n
       options.minimumIntegerDigits = Math.min(Math.max(integer.length - 1 - n, 1), 21)
-      const fraction = parts[1] || ''
+      var fraction = parts[1] || ''
       n = 0
       while (fraction[n] === '0') ++n
       options.minimumFractionDigits = Math.min(Math.max(n, 0), 20)
@@ -136,10 +136,10 @@ module.exports = {
   },
   parseDatePattern: function (pattern/*: ?string */) {
     if (!pattern) return
-    const options = {}
-    for (let i = 0; i < pattern.length;) {
-      const current = pattern[i]
-      let n = 1
+    var options = {}
+    for (var i = 0; i < pattern.length;) {
+      var current = pattern[i]
+      var n = 1
       while (pattern[++i] === current) ++n
       switch (current) {
         case 'G':

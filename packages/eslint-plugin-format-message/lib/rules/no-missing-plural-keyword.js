@@ -1,16 +1,16 @@
 'use strict'
-const lookupClosestLocale = require('lookup-closest-locale')
-const parse = require('format-message-parse')
-const visitEachTranslation = require('../util/visit-each-translation')
-const locales = require('../../cldr.json').locales
+var lookupClosestLocale = require('lookup-closest-locale')
+var parse = require('format-message-parse')
+var visitEachTranslation = require('../util/visit-each-translation')
+var locales = require('../../cldr.json').locales
 
 function getPlurals (ast) {
-  const plurals = []
+  var plurals = []
   function search (element) {
     if (!Array.isArray(element)) return
-    const children = element[3] || element[2]
+    var children = element[3] || element[2]
     if (typeof children !== 'object') return
-    const type = element[1]
+    var type = element[1]
     if (type === 'selectordinal' || type === 'plural') {
       plurals.push({
         id: element[0],
@@ -31,14 +31,14 @@ module.exports = {
     schema: []
   },
   create: function (context) {
-    const settings = context.settings['format-message'] || {}
-    const sourceLocale = settings.sourceLocale || 'en'
-    const visitedNodes = new Set()
+    var settings = context.settings['format-message'] || {}
+    var sourceLocale = settings.sourceLocale || 'en'
+    var visitedNodes = new Set()
     return visitEachTranslation(context, function ({ id, node, patternAst, locale, translation }) {
       if (!visitedNodes.has(node) && patternAst) {
         visitedNodes.add(node)
-        const closest = lookupClosestLocale(sourceLocale, locales)
-        const rules = closest && locales[closest] && locales[closest].plurals
+        var closest = lookupClosestLocale(sourceLocale, locales)
+        var rules = closest && locales[closest] && locales[closest].plurals
         getPlurals(patternAst).forEach(({ id, type, keywords }) => {
           if (!rules || !rules[type]) return
           Object.keys(rules[type]).filter(key => !keywords[key]).forEach(rule => {
@@ -49,8 +49,8 @@ module.exports = {
 
       if (translation == null) return // missing translation is handled in another rule
       try {
-        const closest = lookupClosestLocale(locale, locales)
-        const rules = closest && locales[closest] && locales[closest].plurals
+        closest = lookupClosestLocale(locale, locales)
+        rules = closest && locales[closest] && locales[closest].plurals
         getPlurals(parse(translation)).forEach(({ id, type, keywords }) => {
           if (!rules || !rules[type]) return
           Object.keys(rules[type]).filter(key => !keywords[key]).forEach(rule => {

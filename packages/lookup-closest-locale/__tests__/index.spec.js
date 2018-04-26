@@ -1,6 +1,6 @@
 /* eslint-env mocha */
-const expect = require('chai').expect
-const lookup = require('..')
+var expect = require('chai').expect
+var lookup = require('..')
 
 describe('lookupClosestLocale()', function () {
   it('returns locale if it is a key in the object', function () {

@@ -1,9 +1,9 @@
 // @flow
 'use strict'
-const interpret = require('format-message-interpret')
-const parse = require('format-message-parse')
-const plurals = require('format-message-interpret/plurals')
-const supportedExp = new RegExp(
+var interpret = require('format-message-interpret')
+var parse = require('format-message-parse')
+var plurals = require('format-message-interpret/plurals')
+var supportedExp = new RegExp(
   '^(' + Object.keys(plurals).join('|') + ')\\b'
 )
 
@@ -23,7 +23,7 @@ type Internals = {
 }
 */
 
-const internals/*: WeakMap<MessageFormat, Internals> */ = new WeakMap()
+var internals/*: WeakMap<MessageFormat, Internals> */ = new WeakMap()
 
 /*!
  * Intl.MessageFormat prollyfill
@@ -38,7 +38,7 @@ function MessageFormat (
   if (!(this instanceof MessageFormat) || internals.has(this)) {
     throw new TypeError('calling MessageFormat constructor without new is invalid')
   }
-  const ast = parse(pattern)
+  var ast = parse(pattern)
   internals.set(this, {
     ast: ast,
     format: interpret(ast, locales, options && options.types),
@@ -54,7 +54,7 @@ Object.defineProperties(MessageFormat.prototype, {
   format: {
     configurable: true,
     get: function format () {
-      const values = internals.get(this)
+      var values = internals.get(this)
       if (!values) throw new TypeError('MessageFormat.prototype.format called on value that\'s not an object initialized as a MessageFormat')
       return values.format
     }
@@ -63,9 +63,9 @@ Object.defineProperties(MessageFormat.prototype, {
     configurable: true,
     writable: true,
     value: function formatToParts (args/*:: ?: Object */) {
-      const values = internals.get(this)
+      var values = internals.get(this)
       if (!values) throw new TypeError('MessageFormat.prototype.formatToParts called on value that\'s not an object initialized as a MessageFormat')
-      const frmt = values.toParts || (values.toParts = interpret.toParts(
+      var frmt = values.toParts || (values.toParts = interpret.toParts(
         values.ast,
         values.locales,
         values.options && values.options.types
@@ -77,7 +77,7 @@ Object.defineProperties(MessageFormat.prototype, {
     configurable: true,
     writable: true,
     value: function resolvedOptions () {
-      const values = internals.get(this)
+      var values = internals.get(this)
       if (!values) throw new TypeError('MessageFormat.prototype.resolvedOptions called on value that\'s not an object initialized as a MessageFormat')
       return {
         locale: values.locale

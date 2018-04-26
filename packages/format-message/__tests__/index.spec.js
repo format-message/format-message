@@ -1,8 +1,8 @@
 /* eslint-env mocha */
-const expect = require('chai').expect
-const formatMessage = require('../../format-message') // needs to match
-const interpret = require('format-message-interpret')
-const runtimeOnly = formatMessage
+var expect = require('chai').expect
+var formatMessage = require('../../format-message') // needs to match
+var interpret = require('format-message-interpret')
+var runtimeOnly = formatMessage
 
 describe('formatMessage', function () {
   beforeEach(function () {
@@ -15,23 +15,23 @@ describe('formatMessage', function () {
 
   describe('formatMessage', function () {
     it('formats a simple message', function () {
-      const message = formatMessage('Simple string with nothing special')
+      var message = formatMessage('Simple string with nothing special')
       expect(message).to.equal('Simple string with nothing special')
     })
 
     it('handles pattern with escaped text', function () {
-      const message = formatMessage('This isn\'\'t a \'{\'\'simple\'\'}\' \'string\'')
+      var message = formatMessage('This isn\'\'t a \'{\'\'simple\'\'}\' \'string\'')
       expect(message).to.equal('This isn\'t a {\'simple\'} \'string\'')
     })
 
     it('handles object with id, default, and description', function () {
-      const message = formatMessage({ id: 'foo_bar', default: 'foo bar', description: 'stuff' })
+      var message = formatMessage({ id: 'foo_bar', default: 'foo bar', description: 'stuff' })
       expect(message).to.equal('foo bar')
     })
 
     it('accepts arguments', function () {
-      const arg = 'y'
-      const message = formatMessage('x{ arg }z', { arg: arg })
+      var arg = 'y'
+      var message = formatMessage('x{ arg }z', { arg: arg })
       expect(message).to.equal('xyz')
     })
 
@@ -45,7 +45,7 @@ describe('formatMessage', function () {
     })
 
     it('handles plurals', function () {
-      const message = formatMessage(
+      var message = formatMessage(
         '{name} {numPeople, plural, offset:1 =0 {didn\'t carpool.} =1 {drove himself.} other {drove # people.}}',
         { name: 'Bob', numPeople: 5 }
       )
@@ -53,7 +53,7 @@ describe('formatMessage', function () {
     })
 
     it('handles select', function () {
-      const message = formatMessage(
+      var message = formatMessage(
         '{ gender, select, male {it\'s his turn} female {it\'s her turn} other {it\'s their turn}}',
         { gender: 'female' }
       )
@@ -67,14 +67,14 @@ describe('formatMessage', function () {
 
   describe('rich', function () {
     it('passes tag contents as children', function () {
-      const parts = formatMessage.rich('Click <a>Here</a>!', {
+      var parts = formatMessage.rich('Click <a>Here</a>!', {
         a: function (props) { return props }
       })
       expect(parts).to.deep.equal([ 'Click ', { children: [ 'Here' ] }, '!' ])
     })
 
     it('can use <> type directly', function () {
-      const parts = formatMessage.rich('Click {a,<>,p{there}}!', {
+      var parts = formatMessage.rich('Click {a,<>,p{there}}!', {
         a: function (props) { return props }
       })
       expect(parts).to.deep.equal([ 'Click ', { p: [ 'there' ] }, '!' ])
@@ -83,21 +83,21 @@ describe('formatMessage', function () {
     it('handles string style in <> type', function () {
       // note that the html syntax should never pass a string
       // this is a weird case where the style should probably get translated
-      const parts = formatMessage.rich('Click {a,<>,styl}!', {
+      var parts = formatMessage.rich('Click {a,<>,styl}!', {
         a: function (props) { return props }
       })
       expect(parts).to.deep.equal([ 'Click ', 'styl', '!' ])
     })
 
     it('handles message objects', function () {
-      const parts = formatMessage.rich({ default: '{ icon }' }, {
+      var parts = formatMessage.rich({ default: '{ icon }' }, {
         icon: '*icon*'
       })
       expect(parts).to.deep.equal([ '*icon*' ])
     })
 
     it('handles self-closing tags', function () {
-      const parts = formatMessage.rich('Click <a><b />Here</a>!', {
+      var parts = formatMessage.rich('Click <a><b />Here</a>!', {
         a: function (props) { return props },
         b: '/b/'
       })
@@ -105,8 +105,8 @@ describe('formatMessage', function () {
     })
 
     it('throws an error on mismatched tags', function () {
-      const justEnd = '</e>'
-      const justStart = '<s>'
+      var justEnd = '</e>'
+      var justStart = '<s>'
       expect(function () { formatMessage.rich(justEnd) }).to.throw()
       expect(function () { formatMessage.rich(justStart) }).to.throw()
     })
@@ -119,8 +119,8 @@ describe('formatMessage', function () {
 
     // uses runtimeOnly to avoid inlining since the tests are about runtime config
     it('changes the default locale', function () {
-      const options = formatMessage.setup({ locale: 'ar' })
-      const message = runtimeOnly('{n,plural,few{few}other{other}}', { n: 3 })
+      var options = formatMessage.setup({ locale: 'ar' })
+      var message = runtimeOnly('{n,plural,few{few}other{other}}', { n: 3 })
       expect(options.locale).to.equal('ar')
       expect(message).to.equal('few')
     })
@@ -134,24 +134,24 @@ describe('formatMessage', function () {
         } },
         generateId: function (pattern) { return pattern }
       })
-      const message = runtimeOnly('trans-test')
-      const message2 = runtimeOnly('trans-test2')
+      var message = runtimeOnly('trans-test')
+      var message2 = runtimeOnly('trans-test2')
       expect(message).to.equal('test-success')
       expect(message2).to.equal('test-success2')
     })
 
     it('changes the missing translation behavior', function () {
-      const options = formatMessage.setup({
+      var options = formatMessage.setup({
         locale: 'en',
         translations: { en: {} },
         missingTranslation: 'warning',
         missingReplacement: '!!!'
       })
-      const warn = console.warn
+      var warn = console.warn
       // capturing error message is fickle in node
       console.warn = function () {}
 
-      const message = runtimeOnly({ id: 'test', default: 'translation-test' })
+      var message = runtimeOnly({ id: 'test', default: 'translation-test' })
       console.warn = warn
 
       expect(options.missingTranslation).to.equal('warning')
@@ -160,8 +160,8 @@ describe('formatMessage', function () {
     })
 
     it('accepts a function for missingReplacement', function () {
-      let args
-      const options = formatMessage.setup({
+      var args
+      var options = formatMessage.setup({
         locale: 'en',
         translations: { en: {} },
         missingTranslation: 'ignore',
@@ -171,8 +171,8 @@ describe('formatMessage', function () {
         }
       })
 
-      const id = 'test-' + Date.now() // cache bust
-      const message = runtimeOnly({ id: id, default: 'translation-test' })
+      var id = 'test-' + Date.now() // cache bust
+      var message = runtimeOnly({ id: id, default: 'translation-test' })
       expect(args).to.deep.equal([ 'translation-test', id, 'en' ])
       expect(options.missingTranslation).to.equal('ignore')
       expect(options.missingReplacement).to.be.a('function')
@@ -180,12 +180,12 @@ describe('formatMessage', function () {
     })
 
     it('falls back to pattern if missingReplacement returns nothing', function () {
-      const options = formatMessage.setup({
+      var options = formatMessage.setup({
         missingReplacement: function (pattern, id, locale) {}
       })
 
-      const id = 'test-' + Date.now() // cache bust
-      const message = runtimeOnly({ id: id, default: 'translation-test' })
+      var id = 'test-' + Date.now() // cache bust
+      var message = runtimeOnly({ id: id, default: 'translation-test' })
       expect(options.missingReplacement).to.be.a('function')
       expect(message).to.equal('translation-test')
     })
@@ -213,7 +213,7 @@ describe('formatMessage', function () {
           minute: 'numeric'
         } }
       } })
-      let message = runtimeOnly('{ n, number, perc }', { n: 0.3672 })
+      var message = runtimeOnly('{ n, number, perc }', { n: 0.3672 })
       expect(message).to.match(/40\s*%/)
       message = runtimeOnly('{ d, date, day }', { d: new Date('2015/10/19') })
       expect(message).to.include('19')
@@ -251,8 +251,8 @@ describe('formatMessage', function () {
     })
 
     it('handles bad values identically to interpret', function () {
-      const format = interpret([[ 'n', 'number' ]], 'en')
-      const values = [ 0, -0, '', false, true, null, NaN, undefined ]
+      var format = interpret([[ 'n', 'number' ]], 'en')
+      var values = [ 0, -0, '', false, true, null, NaN, undefined ]
       values.forEach(function (value) {
         expect(formatMessage.number(value)).to.equal(format({ n: value }))
       })
@@ -262,23 +262,23 @@ describe('formatMessage', function () {
 
   describe('date', function () {
     it('localizes a date', function () {
-      const result = formatMessage.date(new Date(2015, 11, 31))
+      var result = formatMessage.date(new Date(2015, 11, 31))
       expect(result).to.include('2015')
     })
 
     it('uses the style parameter', function () {
-      const result = formatMessage.date(new Date(2015, 11, 31), 'short')
+      var result = formatMessage.date(new Date(2015, 11, 31), 'short')
       expect(result).to.include('12')
     })
 
     it('uses the locale parameter', function () {
-      const result = formatMessage.date(new Date(2015, 11, 31), '', 'en-u-nu-fullwide')
+      var result = formatMessage.date(new Date(2015, 11, 31), '', 'en-u-nu-fullwide')
       expect(result).to.include('３１')
     })
 
     it('handles bad values identically to interpret', function () {
-      const format = interpret([[ 'd', 'date' ]], 'en')
-      const values = [ 0, -0, '', false, true, null, undefined ]
+      var format = interpret([[ 'd', 'date' ]], 'en')
+      var values = [ 0, -0, '', false, true, null, undefined ]
       values.forEach(function (value) {
         expect(formatMessage.date(value)).to.equal(format({ d: value }))
       })
@@ -288,23 +288,23 @@ describe('formatMessage', function () {
 
   describe('time', function () {
     it('localizes a date', function () {
-      const result = formatMessage.time(new Date(2015, 11, 31, 5, 16))
+      var result = formatMessage.time(new Date(2015, 11, 31, 5, 16))
       expect(result).to.include('16')
     })
 
     it('uses the style parameter', function () {
-      const result = formatMessage.time(new Date(2015, 11, 31, 5, 16), 'short')
+      var result = formatMessage.time(new Date(2015, 11, 31, 5, 16), 'short')
       expect(result).to.include('16')
     })
 
     it('uses the locale parameter', function () {
-      const result = formatMessage.time(new Date(2015, 11, 31, 5, 16), '', 'en-u-nu-fullwide')
+      var result = formatMessage.time(new Date(2015, 11, 31, 5, 16), '', 'en-u-nu-fullwide')
       expect(result).to.include('１６')
     })
 
     it('handles bad values identically to interpret', function () {
-      const format = interpret([[ 'd', 'time' ]], 'en')
-      const values = [ 0, -0, '', false, true, null, undefined ]
+      var format = interpret([[ 'd', 'time' ]], 'en')
+      var values = [ 0, -0, '', false, true, null, undefined ]
       values.forEach(function (value) {
         expect(formatMessage.time(value)).to.equal(format({ d: value }))
       })
@@ -314,66 +314,66 @@ describe('formatMessage', function () {
 
   describe('select', function () {
     it('returns the matching value', function () {
-      const result = formatMessage.select('match', { match: 'one', other: 'other' })
+      var result = formatMessage.select('match', { match: 'one', other: 'other' })
       expect(result).to.equal('one')
     })
 
     it('returns other when there is no match', function () {
-      const result = formatMessage.select('bogus', { other: 1 })
+      var result = formatMessage.select('bogus', { other: 1 })
       expect(result).to.equal(1)
     })
   })
 
   describe('plural', function () {
     it('returns the matching value', function () {
-      const result = formatMessage.plural(1, { one: 'one1' })
+      var result = formatMessage.plural(1, { one: 'one1' })
       expect(result).to.equal('one1')
     })
 
     it('considers offset for keyword matches', function () {
-      const result = formatMessage.plural(2, 1, { one: 'one2' })
+      var result = formatMessage.plural(2, 1, { one: 'one2' })
       expect(result).to.equal('one2')
     })
 
     it('ignores offset for exact matches', function () {
-      const result = formatMessage.plural(2, 1, { '=2': 'two2' })
+      var result = formatMessage.plural(2, 1, { '=2': 'two2' })
       expect(result).to.equal('two2')
     })
 
     it('considers locale for keyword matches', function () {
-      const result = formatMessage.plural(2, { two: 2 }, 'ar')
+      var result = formatMessage.plural(2, { two: 2 }, 'ar')
       expect(result).to.equal(2)
     })
 
     it('returns other when there is no match', function () {
-      const result = formatMessage.plural(3, { other: 1 })
+      var result = formatMessage.plural(3, { other: 1 })
       expect(result).to.equal(1)
     })
 
     it('always returns other for unknown locale', function () {
-      const result = formatMessage.plural(3, { other: 1 }, 'tlh')
+      var result = formatMessage.plural(3, { other: 1 }, 'tlh')
       expect(result).to.equal(1)
     })
   })
 
   describe('selectordinal', function () {
     it('returns the matching value', function () {
-      const result = formatMessage.selectordinal(3, { few: 'one1' })
+      var result = formatMessage.selectordinal(3, { few: 'one1' })
       expect(result).to.equal('one1')
     })
 
     it('considers offset for keyword matches', function () {
-      const result = formatMessage.selectordinal(3, 1, { two: 'one2' })
+      var result = formatMessage.selectordinal(3, 1, { two: 'one2' })
       expect(result).to.equal('one2')
     })
 
     it('ignores offset for exact matches', function () {
-      const result = formatMessage.selectordinal(2, 1, { '=2': 'two2' })
+      var result = formatMessage.selectordinal(2, 1, { '=2': 'two2' })
       expect(result).to.equal('two2')
     })
 
     it('considers locale for keyword matches', function () {
-      let result = formatMessage.selectordinal(1, { one: 2 }, 'hy')
+      var result = formatMessage.selectordinal(1, { one: 2 }, 'hy')
       expect(result).to.equal(2)
       result = formatMessage.selectordinal(2, { two: 1, other: 'o' }, 'en')
       expect(result).to.equal(1)
@@ -382,13 +382,13 @@ describe('formatMessage', function () {
     })
 
     it('returns other when there is no match', function () {
-      const result = formatMessage.selectordinal(3, { other: 1 })
+      var result = formatMessage.selectordinal(3, { other: 1 })
       expect(result).to.equal(1)
     })
   })
 
   describe('namespace', function () {
-    let ns, options
+    var ns, options
 
     beforeEach(function () {
       ns = formatMessage.namespace()
@@ -403,7 +403,7 @@ describe('formatMessage', function () {
     })
 
     it('setup does not change other namespaces', function () {
-      const globalOptions = formatMessage.setup()
+      var globalOptions = formatMessage.setup()
       expect(options.transations).not.to.equal(globalOptions.translations)
     })
 

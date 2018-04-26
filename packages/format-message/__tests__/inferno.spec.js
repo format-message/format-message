@@ -1,11 +1,11 @@
 /* eslint-env mocha */
-const expect = require('chai').expect
-const createElement = require('inferno-create-element').createElement
-const formatChildren = require('../inferno').formatChildren
+var expect = require('chai').expect
+var createElement = require('inferno-create-element').createElement
+var formatChildren = require('../inferno').formatChildren
 
 describe('inferno formatChildren with numeric index tags', function () {
   // ignore deprecation warnings
-  const warn = console.warn
+  var warn = console.warn
   before(function () {
     console.warn = function () {}
   })
@@ -14,24 +14,24 @@ describe('inferno formatChildren with numeric index tags', function () {
   })
 
   it('returns a single child for simple messages', function () {
-    const results = formatChildren('simple')
+    var results = formatChildren('simple')
     expect(results).to.equal('simple')
   })
 
   it('preserves tokens with no element mapping', function () {
-    const results = formatChildren('<0>simple</0>')
+    var results = formatChildren('<0>simple</0>')
     expect(results).to.equal('<0>simple</0>')
   })
 
   it('returns a single child for wrapped messages', function () {
-    const results = formatChildren('<0>simple</0>', [
+    var results = formatChildren('<0>simple</0>', [
       createElement('span')
     ])
     expect(results).to.deep.equal(createElement('span', null, 'simple'))
   })
 
   it('preserves the props of the wrappers', function () {
-    const results = formatChildren('<0>simple</0>', [
+    var results = formatChildren('<0>simple</0>', [
       createElement('span', { className: 'foo' })
     ])
     expect(results).to.deep.equal(createElement('span', {
@@ -40,7 +40,7 @@ describe('inferno formatChildren with numeric index tags', function () {
   })
 
   it('returns an array of children when there are many', function () {
-    const results = formatChildren('it was <0>his</0> fault', [
+    var results = formatChildren('it was <0>his</0> fault', [
       createElement('em')
     ])
     expect(results).to.deep.equal([
@@ -51,7 +51,7 @@ describe('inferno formatChildren with numeric index tags', function () {
   })
 
   it('nests arbitrarily deep', function () {
-    const results = formatChildren('<0><1><2><3>deep</3></2></1></0>', [
+    var results = formatChildren('<0><1><2><3>deep</3></2></1></0>', [
       createElement('div'),
       createElement('span'),
       createElement('em'),
@@ -94,7 +94,7 @@ describe('inferno formatChildren with numeric index tags', function () {
 
 describe('inferno formatChildren with string tags', function () {
   // ignore deprecation warnings
-  const warn = console.warn
+  var warn = console.warn
   before(function () {
     console.warn = function () {}
   })
@@ -103,19 +103,19 @@ describe('inferno formatChildren with string tags', function () {
   })
 
   it('preserves tokens with no element mapping', function () {
-    const results = formatChildren('<span>simple</span>')
+    var results = formatChildren('<span>simple</span>')
     expect(results).to.equal('<span>simple</span>')
   })
 
   it('returns a single child for wrapped messages', function () {
-    const results = formatChildren('<span>simple</span>', {
+    var results = formatChildren('<span>simple</span>', {
       span: createElement('span')
     })
     expect(results).to.deep.equal(createElement('span', null, 'simple'))
   })
 
   it('preserves the props of the wrappers', function () {
-    const results = formatChildren('<span>simple</span>', {
+    var results = formatChildren('<span>simple</span>', {
       span: createElement('span', { className: 'foo' })
     })
     expect(results).to.deep.equal(createElement('span', {
@@ -124,7 +124,7 @@ describe('inferno formatChildren with string tags', function () {
   })
 
   it('returns an array of children when there are many', function () {
-    const results = formatChildren('it was <em>his</em> fault', {
+    var results = formatChildren('it was <em>his</em> fault', {
       em: createElement('em')
     })
     expect(results).to.deep.equal([
@@ -135,7 +135,7 @@ describe('inferno formatChildren with string tags', function () {
   })
 
   it('nests arbitrarily deep', function () {
-    const results = formatChildren('<div><span><em><strong>deep</strong></em></span></div>', {
+    var results = formatChildren('<div><span><em><strong>deep</strong></em></span></div>', {
       div: createElement('div'),
       span: createElement('span'),
       em: createElement('em'),
@@ -176,7 +176,7 @@ describe('inferno formatChildren with string tags', function () {
   })
 
   it('ignores invalid wrapper tags', function () {
-    let result = formatChildren('<sp an>test</sp an>', { span: 'span' })
+    var result = formatChildren('<sp an>test</sp an>', { span: 'span' })
     expect(result).to.equal('<sp an>test</sp an>')
 
     result = formatChildren('<sp\nan>test</sp\nan>', { span: 'span' })

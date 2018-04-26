@@ -1,8 +1,8 @@
 /* eslint-env mocha */
 'use strict'
 
-const expect = require('chai').expect
-const gen = require('..')
+var expect = require('chai').expect
+var gen = require('..')
 
 describe('generate id', function () {
   describe('literal', function () {
@@ -10,7 +10,7 @@ describe('generate id', function () {
       expect(gen.literal('litoral')).to.equal('litoral')
     })
 
-    const messages = {
+    var messages = {
       'Mayan Temple at Yaxhá': 'Mayan Temple at Yaxhá',
       'Moroccan palace arches': 'Moroccan palace arches',
       '{error_message } Please try again by {clicking_here}.': '{error_message } Please try again by {clicking_here}.',
@@ -29,7 +29,7 @@ describe('generate id', function () {
       expect(gen.normalized('{a, date,c }')).to.equal('{ a, date, c }')
     })
 
-    const messages = {
+    var messages = {
       'Mayan Temple at Yaxhá': 'Mayan Temple at Yaxhá',
       'Moroccan palace arches': 'Moroccan palace arches',
       '{ error_message } Please try again by { clicking_here }.': '{error_message } Please try again by {clicking_here}.',
@@ -52,7 +52,7 @@ describe('generate id', function () {
     })
 
     it('limits to 50 characters', function () {
-      const str =
+      var str =
         '1234567890' +
         '1234567890' +
         '1234567890' +
@@ -62,7 +62,7 @@ describe('generate id', function () {
       expect(gen.underscored(str).length).to.equal(50)
     })
 
-    const messages = {
+    var messages = {
       'mayan_temple_at_yaxha': 'Mayan Temple at Yaxhá',
       'moroccan_palace_arches': 'Moroccan palace arches',
       'error_message_please_try_again_by_clicking_here': '{ error_message } Please try again by { clicking_here }.',
@@ -80,7 +80,7 @@ describe('generate id', function () {
       expect(gen.underscored_crc32('hi')).to.equal('hi_cbd0b723')
     })
 
-    const messages = {
+    var messages = {
       'mayan_temple_at_yaxha_53063adb': 'Mayan Temple at Yaxhá',
       'moroccan_palace_arches_64e00da4': 'Moroccan palace arches',
       'error_message_please_try_again_by_clicking_here_a9edb579': '{ error_message } Please try again by { clicking_here }.',
