@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 const expect = require('chai').expect
 const formatMessage = require('../../format-message') // needs to match
+const interpret = require('format-message-interpret')
 const runtimeOnly = formatMessage
 
 describe('formatMessage', function () {
@@ -249,16 +250,13 @@ describe('formatMessage', function () {
         .to.equal('１２.３４５')
     })
 
-    it('handles bad values gracefully', function () {
-      expect(formatMessage.number(0)).to.equal('0')
-      expect(formatMessage.number(-0)).to.equal('0')
-      expect(formatMessage.number('')).to.equal('0')
-      expect(formatMessage.number(false)).to.equal('0')
-      expect(formatMessage.number(true)).to.equal('1')
-      expect(formatMessage.number(null)).to.equal('0')
-      expect(formatMessage.number(NaN)).to.equal('NaN')
-      expect(formatMessage.number(undefined)).to.equal('NaN')
-      expect(formatMessage.number()).to.equal('NaN')
+    it('handles bad values identically to interpret', function () {
+      const format = interpret([[ 'n', 'number' ]], 'en')
+      const values = [ 0, -0, '', false, true, null, NaN, undefined ]
+      values.forEach(function (value) {
+        expect(formatMessage.number(value)).to.equal(format({ n: value }))
+      })
+      expect(formatMessage.number()).to.equal(format())
     })
   })
 
@@ -278,15 +276,13 @@ describe('formatMessage', function () {
       expect(result).to.include('３１')
     })
 
-    it('handles bad values gracefully', function () {
-      expect(formatMessage.date(0)).to.be.a('string')
-      expect(formatMessage.date(-0)).to.be.a('string')
-      expect(formatMessage.date('')).to.be.a('string')
-      expect(formatMessage.date(false)).to.be.a('string')
-      expect(formatMessage.date(true)).to.be.a('string')
-      expect(formatMessage.date(null)).to.be.a('string')
-      expect(formatMessage.date(undefined)).to.be.a('string')
-      expect(formatMessage.date()).to.be.a('string')
+    it('handles bad values identically to interpret', function () {
+      const format = interpret([[ 'd', 'date' ]], 'en')
+      const values = [ 0, -0, '', false, true, null, undefined ]
+      values.forEach(function (value) {
+        expect(formatMessage.date(value)).to.equal(format({ d: value }))
+      })
+      expect(formatMessage.date()).to.equal(format())
     })
   })
 
@@ -306,15 +302,13 @@ describe('formatMessage', function () {
       expect(result).to.include('１６')
     })
 
-    it('handles bad values gracefully', function () {
-      expect(formatMessage.time(0)).to.be.a('string')
-      expect(formatMessage.time(-0)).to.be.a('string')
-      expect(formatMessage.time('')).to.be.a('string')
-      expect(formatMessage.time(false)).to.be.a('string')
-      expect(formatMessage.time(true)).to.be.a('string')
-      expect(formatMessage.time(null)).to.be.a('string')
-      expect(formatMessage.time(undefined)).to.be.a('string')
-      expect(formatMessage.time()).to.be.a('string')
+    it('handles bad values identically to interpret', function () {
+      const format = interpret([[ 'd', 'time' ]], 'en')
+      const values = [ 0, -0, '', false, true, null, undefined ]
+      values.forEach(function (value) {
+        expect(formatMessage.time(value)).to.equal(format({ d: value }))
+      })
+      expect(formatMessage.time()).to.equal(format())
     })
   })
 
