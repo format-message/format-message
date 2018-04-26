@@ -49,6 +49,18 @@ describe('interpret()', function () {
     expect(format({ n: 1234.56 })).to.equal('1,235')
   })
 
+  it('interprets bad number values gracefully', function () {
+    let format = interpret([[ 'n', 'number' ]], 'en')
+    expect(format({ n: 0 })).to.equal('0')
+    expect(format({ n: -0 })).to.equal('0')
+    expect(format({ n: '' })).to.equal('0')
+    expect(format({ n: false })).to.equal('0')
+    expect(format({ n: true })).to.equal('1')
+    expect(format({ n: NaN })).to.equal('NaN')
+    expect(format({ n: undefined })).to.equal('NaN')
+    expect(format({})).to.equal('NaN')
+  })
+
   it('interprets number pattern placeholders', function () {
     const format = interpret([[ 'n', 'number', '0 ¤¤ EUR' ]], 'en')
     expect(format({ n: 1234.5 })).to.match(/EUR\s*1235/)
@@ -99,11 +111,33 @@ describe('interpret()', function () {
     expect(format({ d: new Date(0) })).to.match(/Jan|Dec/)
   })
 
+  it('interprets bad date values gracefully', function () {
+    let format = interpret([[ 'd', 'date' ]], 'en')
+    expect(format({ d: 0 })).to.be.a('string')
+    expect(format({ d: -0 })).to.be.a('string')
+    expect(format({ d: '' })).to.be.a('string')
+    expect(format({ d: false })).to.be.a('string')
+    expect(format({ d: true })).to.be.a('string')
+    expect(format({ d: undefined })).to.be.a('string')
+    expect(format({})).to.be.a('string')
+  })
+
   it('interprets time placeholders', function () {
     let format = interpret([[ 'd', 'time' ]])
     expect(format({ d: new Date(0) })).to.contain('00')
     format = interpret([[ 'd', 'time', 'full' ]])
     expect(format({ d: new Date(0) })).to.contain('00')
+  })
+
+  it('interprets bad time values gracefully', function () {
+    let format = interpret([[ 'd', 'time' ]], 'en')
+    expect(format({ d: 0 })).to.be.a('string')
+    expect(format({ d: -0 })).to.be.a('string')
+    expect(format({ d: '' })).to.be.a('string')
+    expect(format({ d: false })).to.be.a('string')
+    expect(format({ d: true })).to.be.a('string')
+    expect(format({ d: undefined })).to.be.a('string')
+    expect(format({})).to.be.a('string')
   })
 
   it('interprets date pattern placeholders', function () {

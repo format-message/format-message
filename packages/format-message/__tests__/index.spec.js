@@ -248,6 +248,17 @@ describe('formatMessage', function () {
       expect(formatMessage.number(12.345, '', 'en-u-nu-fullwide'))
         .to.equal('１２.３４５')
     })
+
+    it('handles bad values gracefully', function () {
+      expect(formatMessage.number(0)).to.equal('0')
+      expect(formatMessage.number(-0)).to.equal('0')
+      expect(formatMessage.number('')).to.equal('0')
+      expect(formatMessage.number(false)).to.equal('0')
+      expect(formatMessage.number(true)).to.equal('1')
+      expect(formatMessage.number(NaN)).to.equal('NaN')
+      expect(formatMessage.number(undefined)).to.equal('NaN')
+      expect(formatMessage.number()).to.equal('NaN')
+    })
   })
 
   describe('date', function () {
@@ -265,6 +276,16 @@ describe('formatMessage', function () {
       const result = formatMessage.date(new Date(2015, 11, 31), '', 'en-u-nu-fullwide')
       expect(result).to.include('３１')
     })
+
+    it('handles bad values gracefully', function () {
+      expect(formatMessage.date(0)).to.be.a('string')
+      expect(formatMessage.date(-0)).to.be.a('string')
+      expect(formatMessage.date('')).to.be.a('string')
+      expect(formatMessage.date(false)).to.be.a('string')
+      expect(formatMessage.date(true)).to.be.a('string')
+      expect(formatMessage.date(undefined)).to.be.a('string')
+      expect(formatMessage.date()).to.be.a('string')
+    })
   })
 
   describe('time', function () {
@@ -281,6 +302,16 @@ describe('formatMessage', function () {
     it('uses the locale parameter', function () {
       const result = formatMessage.time(new Date(2015, 11, 31, 5, 16), '', 'en-u-nu-fullwide')
       expect(result).to.include('１６')
+    })
+
+    it('handles bad values gracefully', function () {
+      expect(formatMessage.time(0)).to.be.a('string')
+      expect(formatMessage.time(-0)).to.be.a('string')
+      expect(formatMessage.time('')).to.be.a('string')
+      expect(formatMessage.time(false)).to.be.a('string')
+      expect(formatMessage.time(true)).to.be.a('string')
+      expect(formatMessage.time(undefined)).to.be.a('string')
+      expect(formatMessage.time()).to.be.a('string')
     })
   })
 

@@ -171,21 +171,21 @@ function namespace ()/*: FormatMessage */ {
     const options = (style && formats.number[style]) ||
       formats.parseNumberPattern(style) ||
       formats.number.default
-    return value.toLocaleString(locales || currentLocales, options)
+    return new Intl.NumberFormat(locales || currentLocales, options).format(value)
   }
 
-  formatMessage.date = function (value/*: number | Date */, style/*:: ?: string */, locales/*:: ?: Locales */) {
+  formatMessage.date = function (value/*:: ?: number | Date */, style/*:: ?: string */, locales/*:: ?: Locales */) {
     const options = (style && formats.date[style]) ||
       formats.parseDatePattern(style) ||
       formats.date.default
-    return new Date(value).toLocaleDateString(locales || currentLocales, options)
+    return new Intl.DateTimeFormat(locales || currentLocales, options).format(value)
   }
 
-  formatMessage.time = function (value/*: number | Date */, style/*:: ?: string */, locales/*:: ?: Locales */) {
+  formatMessage.time = function (value/*:: ?: number | Date */, style/*:: ?: string */, locales/*:: ?: Locales */) {
     const options = (style && formats.time[style]) ||
       formats.parseDatePattern(style) ||
       formats.time.default
-    return new Date(value).toLocaleTimeString(locales || currentLocales, options)
+    return new Intl.DateTimeFormat(locales || currentLocales, options).format(value)
   }
 
   formatMessage.select = function (value/*: any */, options/*: Object */) {
