@@ -161,7 +161,7 @@ function interpretPlural (element/*: Placeholder */, locales/*: Locales */) {
   const offset = element[2]
   const children = element[3]
   let pluralRules
-  if (Intl.PluralRules) {
+  if (Intl.PluralRules && Intl.PluralRules.supportedLocalesOf(locales).length > 0) {
     pluralRules = new Intl.PluralRules(locales, { type: pluralType })
   } else {
     const locale = lookupClosestLocale(locales, plurals)

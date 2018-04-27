@@ -177,6 +177,9 @@ describe('interpret()', function () {
 
   it('uses Intl.PluralRules if available', function () {
     Intl.PluralRules = function () {}
+    Intl.PluralRules.supportedLocalesOf = function (locales) {
+      return [].concat(locales || [])
+    }
     Intl.PluralRules.prototype = {
       select: function () { return 'one' }
     }
@@ -185,6 +188,21 @@ describe('interpret()', function () {
       other: [ 'other' ]
     } ]])
     expect(format({ p: 200 })).to.equal('one')
+  })
+
+  it('ignores Intl.PluralRules if it does not support the locale', function () {
+    Intl.PluralRules = function () {}
+    Intl.PluralRules.supportedLocalesOf = function (locales) {
+      return []
+    }
+    Intl.PluralRules.prototype = {
+      select: function () { return 'one' }
+    }
+    const format = interpret([[ 'p', 'plural', 0, {
+      one: [ 'one' ],
+      other: [ 'other' ]
+    } ]], 'pt')
+    expect(format({ p: 200 })).to.equal('other')
   })
 
   it('defaults to other if no plural rules', function () {

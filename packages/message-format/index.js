@@ -99,11 +99,10 @@ Object.defineProperties(MessageFormat, {
       return [].concat(
         Intl.NumberFormat.supportedLocalesOf(requestedLocales),
         Intl.DateTimeFormat.supportedLocalesOf(requestedLocales),
-        Intl.PluralRules /* istanbul ignore next */
-          ? Intl.PluralRules.supportedLocalesOf(requestedLocales)
-          : [].concat(requestedLocales || []).filter(function (locale) {
-            return supportedExp.test(locale)
-          })
+        Intl.PluralRules ? Intl.PluralRules.supportedLocalesOf(requestedLocales) : [],
+        [].concat(requestedLocales || []).filter(function (locale) {
+          return supportedExp.test(locale)
+        })
       ).filter(function (v, i, a) { return a.indexOf(v) === i })
     }
   }
