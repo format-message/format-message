@@ -1,5 +1,10 @@
 # Changelog
 
+## 6.0.3
+
+Use `var` declarations for wider compatibility.
+Support Nodejs v10, and fall back to internal plural handling if Intl.PluralRules does not support the requested locale.
+
 ## 6.0.0
 
 **Breaking Change**
