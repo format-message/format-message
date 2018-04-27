@@ -21,6 +21,7 @@ node_modules
 lerna-debug.log
 
 # generated
+umd
 .nyc_output
 coverage
 scripts/benchmark.js
