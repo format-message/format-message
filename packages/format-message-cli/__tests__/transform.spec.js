@@ -1,84 +1,84 @@
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
-const expect = require('chai').expect
-const exec = require('./exec')
-const fsUtil = require('fs')
-const readFileSync = fsUtil.readFileSync
-const unlinkSync = fsUtil.unlinkSync
-const readdirSync = fsUtil.readdirSync
-const rmdirSync = fsUtil.rmdirSync
+var expect = require('chai').expect
+var exec = require('./exec')
+var fsUtil = require('fs')
+var readFileSync = fsUtil.readFileSync
+var unlinkSync = fsUtil.unlinkSync
+var readdirSync = fsUtil.readdirSync
+var rmdirSync = fsUtil.rmdirSync
 
 describe('format-message transform -i', function () {
   describe('stdin', function () {
     it('finds and replaces simple strings', function () {
-      const input = 'import formatMessage from "format-message"\nformatMessage("hello")'
-      const { stdout, stderr } = exec('format-message transform -i', input)
+      var input = 'import formatMessage from "format-message"\nformatMessage("hello")'
+      var { stdout, stderr } = exec('format-message transform -i', input)
       expect(stderr).to.equal('')
       expect(stdout.trim()).to.match(/^"hello"/)
     })
 
     it('finds and replaces template strings', function () {
-      const input = 'import formatMessage from "format-message"\nformatMessage(`hello`)'
-      const { stdout, stderr } = exec('format-message transform -i', input)
+      var input = 'import formatMessage from "format-message"\nformatMessage(`hello`)'
+      var { stdout, stderr } = exec('format-message transform -i', input)
       expect(stderr).to.equal('')
       expect(stdout.trim()).to.match(/^"hello"/)
     })
 
     it('finds and replaces rich messages', function () {
-      const input = 'import formatMessage from "format-message"\nformatMessage.rich("hello")'
-      const { stdout, stderr } = exec('format-message transform -i', input)
+      var input = 'import formatMessage from "format-message"\nformatMessage.rich("hello")'
+      var { stdout, stderr } = exec('format-message transform -i', input)
       expect(stderr).to.equal('')
       expect(stdout.trim()).to.match(/^\[\s*"hello"\s*\]/)
     })
 
     it('handles placeholders', function () {
-      const input = 'import formatMessage from "format-message"\nformatMessage("hello {world}", {world:"world"})'
-      const { stdout, stderr } = exec('format-message transform -i', input)
+      var input = 'import formatMessage from "format-message"\nformatMessage("hello {world}", {world:"world"})'
+      var { stdout, stderr } = exec('format-message transform -i', input)
       expect(stderr).to.equal('')
       expect(stdout.trim()).to.equal('"hello " + "world";')
     })
 
     it('handles dotted placeholders', function () {
-      const input = 'import formatMessage from "format-message"\nformatMessage("hello {a.b}", {a:{b:"world"}})'
-      const { stdout, stderr } = exec('format-message transform -i', input)
+      var input = 'import formatMessage from "format-message"\nformatMessage("hello {a.b}", {a:{b:"world"}})'
+      var { stdout, stderr } = exec('format-message transform -i', input)
       expect(stderr).to.equal('')
       expect(stdout.trim()).to.equal('"hello " + "world";')
     })
 
     it('handles dotted placeholders for non-literal params', function () {
-      const input = 'import formatMessage from "format-message"\nformatMessage("hello {a.b.c}", params)'
-      const { stdout, stderr } = exec('format-message transform -i', input)
+      var input = 'import formatMessage from "format-message"\nformatMessage("hello {a.b.c}", params)'
+      var { stdout, stderr } = exec('format-message transform -i', input)
       expect(stderr).to.equal('')
       expect(stdout.trim()).to.equal('"hello " + ("a.b.c" in params ? params["a.b.c"] : params.a.b.c);')
     })
 
     it('handles custom placeholders', function () {
-      const input = 'import formatMessage from "format-message"\nformatMessage("hello {a, b, c}", params)'
-      const { stdout, stderr } = exec('format-message transform -i', input)
+      var input = 'import formatMessage from "format-message"\nformatMessage("hello {a, b, c}", params)'
+      var { stdout, stderr } = exec('format-message transform -i', input)
       expect(stderr).to.equal('')
       expect(stdout.trim()).to.contain('"hello " + formatMessage.custom(["a", "b", "c"], "en", params.a, params);')
     })
 
     it('can output to a -o file', function () {
-      const input = 'import formatMessage from "format-message"\nformatMessage("hello")'
-      const filename = 'packages/format-message-cli/__tests__/translations/inline.js'
-      const cmd = 'format-message transform -i -o ' + filename
-      const { stdout, stderr } = exec(cmd, input)
+      var input = 'import formatMessage from "format-message"\nformatMessage("hello")'
+      var filename = 'packages/format-message-cli/__tests__/translations/inline.js'
+      var cmd = 'format-message transform -i -o ' + filename
+      var { stdout, stderr } = exec(cmd, input)
       expect(stderr).to.equal('')
       expect(stdout).to.equal('')
-      const fileContent = readFileSync(filename, 'utf8')
+      var fileContent = readFileSync(filename, 'utf8')
       unlinkSync(filename)
       expect(fileContent.trim()).to.match(/^"hello"/)
     })
 
     it('can output to a --out-file file', function () {
-      const input = 'import formatMessage from "format-message"\nformatMessage("hello")'
-      const filename = 'packages/format-message-cli/__tests__/translations/inline.js'
-      const cmd = 'format-message transform -i --out-file ' + filename
-      const { stdout, stderr } = exec(cmd, input)
+      var input = 'import formatMessage from "format-message"\nformatMessage("hello")'
+      var filename = 'packages/format-message-cli/__tests__/translations/inline.js'
+      var cmd = 'format-message transform -i --out-file ' + filename
+      var { stdout, stderr } = exec(cmd, input)
       expect(stderr).to.equal('')
       expect(stdout).to.equal('')
-      const fileContent = readFileSync(filename, 'utf8')
+      var fileContent = readFileSync(filename, 'utf8')
       unlinkSync(filename)
       expect(fileContent.trim()).to.match(/^"hello"/)
     })
@@ -86,40 +86,40 @@ describe('format-message transform -i', function () {
 
   describe('translations', function () {
     it('uses -t translations', function () {
-      const input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
-      const cmd = 'format-message transform -i -g underscored_crc32' +
+      var input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
+      var cmd = 'format-message transform -i -g underscored_crc32' +
       ' -t packages/format-message-cli/__tests__/translations/inline.underscored_crc32.json'
-      const { stdout, stderr } = exec(cmd, input)
+      var { stdout, stderr } = exec(cmd, input)
       expect(stderr).to.equal('')
       expect(stdout.trim()).to.match(/^"hey everyone"/)
     })
 
     it('uses --translations translations', function () {
-      const input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
-      const cmd = 'format-message transform -i -g underscored_crc32' +
+      var input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
+      var cmd = 'format-message transform -i -g underscored_crc32' +
       ' --translations packages/format-message-cli/__tests__/translations/inline.underscored_crc32.json'
-      const { stdout, stderr } = exec(cmd, input)
+      var { stdout, stderr } = exec(cmd, input)
       expect(stderr).to.equal('')
       expect(stdout.trim()).to.match(/^"hey everyone"/)
     })
 
     describe('locale', function () {
       it('uses -l locale', function () {
-        const input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
-        const cmd = 'format-message transform -i -g underscored_crc32' +
+        var input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
+        var cmd = 'format-message transform -i -g underscored_crc32' +
         ' -l pt' +
         ' -t packages/format-message-cli/__tests__/translations/inline.underscored_crc32.json'
-        const { stdout, stderr } = exec(cmd, input)
+        var { stdout, stderr } = exec(cmd, input)
         expect(stderr).to.equal('')
         expect(stdout.trim()).to.match(/^"oi mundo"/)
       })
 
       it('uses --locale locale', function () {
-        const input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
-        const cmd = 'format-message transform -i -g underscored_crc32' +
+        var input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
+        var cmd = 'format-message transform -i -g underscored_crc32' +
         ' --locale pt' +
         ' -t packages/format-message-cli/__tests__/translations/inline.underscored_crc32.json'
-        const { stdout, stderr } = exec(cmd, input)
+        var { stdout, stderr } = exec(cmd, input)
         expect(stderr).to.equal('')
         expect(stdout.trim()).to.match(/^"oi mundo"/)
       })
@@ -127,21 +127,21 @@ describe('format-message transform -i', function () {
 
     describe('generate-id', function () {
       it('uses -g type', function () {
-        const input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
-        const cmd = 'format-message transform -i -g underscored_crc32' +
+        var input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
+        var cmd = 'format-message transform -i -g underscored_crc32' +
         ' -g underscored' +
         ' -t packages/format-message-cli/__tests__/translations/inline.underscored.json'
-        const { stdout, stderr } = exec(cmd, input)
+        var { stdout, stderr } = exec(cmd, input)
         expect(stderr).to.equal('')
         expect(stdout.trim()).to.match(/^"hey everyone"/)
       })
 
       it('uses --generate-id type', function () {
-        const input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
-        const cmd = 'format-message transform -i' +
+        var input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
+        var cmd = 'format-message transform -i' +
         ' --generate-id normalized' +
         ' -t packages/format-message-cli/__tests__/translations/inline.normalized.json'
-        const { stdout, stderr } = exec(cmd, input)
+        var { stdout, stderr } = exec(cmd, input)
         expect(stderr).to.equal('')
         expect(stdout.trim()).to.match(/^"hey everyone"/)
       })
@@ -149,51 +149,51 @@ describe('format-message transform -i', function () {
 
     describe('missing-translation', function () {
       it('causes a fatal error by default', function () {
-        const input = 'import formatMessage from "format-message"\nformatMessage("not translated")'
-        const cmd = 'format-message transform -i' +
+        var input = 'import formatMessage from "format-message"\nformatMessage("not translated")'
+        var cmd = 'format-message transform -i' +
         ' -t packages/format-message-cli/__tests__/translations/inline.underscored_crc32.json'
         expect(function () { exec(cmd, input) })
           .to.throw('No en translation found')
       })
 
       it('can trigger a non-fatal warning instead with -e warning ', function () {
-        const input = 'import formatMessage from "format-message"\nformatMessage("not translated")'
-        const cmd = 'format-message transform -i' +
+        var input = 'import formatMessage from "format-message"\nformatMessage("not translated")'
+        var cmd = 'format-message transform -i' +
         ' -e warning' +
         ' -t packages/format-message-cli/__tests__/translations/inline.underscored_crc32.json'
-        const { stdout, stderr } = exec(cmd, input)
+        var { stdout, stderr } = exec(cmd, input)
         expect(stderr).to.match(/No en translation found/)
         expect(stdout.trim()).to.match(/^"not translated"/)
       })
 
       it('can be ignored with --missing-translation ignore', function () {
-        const input = 'import formatMessage from "format-message"\nformatMessage("not translated")'
-        const cmd = 'format-message transform -i' +
+        var input = 'import formatMessage from "format-message"\nformatMessage("not translated")'
+        var cmd = 'format-message transform -i' +
         ' --missing-translation ignore' +
         ' -t packages/format-message-cli/__tests__/translations/inline.underscored_crc32.json'
-        const { stdout, stderr } = exec(cmd, input)
+        var { stdout, stderr } = exec(cmd, input)
         expect(stderr).to.equal('')
         expect(stdout.trim()).to.match(/^"not translated"/)
       })
 
       it('can be replaced with -m replacement', function () {
-        const input = 'import formatMessage from "format-message"\nformatMessage("not translated")'
-        const cmd = 'format-message transform -i' +
+        var input = 'import formatMessage from "format-message"\nformatMessage("not translated")'
+        var cmd = 'format-message transform -i' +
         ' -e ignore' +
         ' -m "!!MISSING!!"' +
         ' -t packages/format-message-cli/__tests__/translations/inline.underscored_crc32.json'
-        const { stdout, stderr } = exec(cmd, input)
+        var { stdout, stderr } = exec(cmd, input)
         expect(stderr).to.equal('')
         expect(stdout.trim()).to.match(/^"!!MISSING!!"/)
       })
 
       it('can be replaced with --missing-replacement', function () {
-        const input = 'import formatMessage from "format-message"\nformatMessage("not translated")'
-        const cmd = 'format-message transform -i' +
+        var input = 'import formatMessage from "format-message"\nformatMessage("not translated")'
+        var cmd = 'format-message transform -i' +
         ' -e ignore' +
         ' --missing-replacement "!!MISSING!!"' +
         ' -t packages/format-message-cli/__tests__/translations/inline.underscored_crc32.json'
-        const { stdout, stderr } = exec(cmd, input)
+        var { stdout, stderr } = exec(cmd, input)
         expect(stderr).to.equal('')
         expect(stdout.trim()).to.match(/^"!!MISSING!!"/)
       })
@@ -202,11 +202,11 @@ describe('format-message transform -i', function () {
 
   describe('source-maps-inline', function () {
     it('uses --source-maps-inline', function () {
-      const input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
-      const cmd = 'format-message transform -i -g underscored_crc32' +
+      var input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
+      var cmd = 'format-message transform -i -g underscored_crc32' +
       ' --source-maps-inline' +
       ' -t packages/format-message-cli/__tests__/translations/inline.underscored_crc32.json'
-      const { stdout, stderr } = exec(cmd, input)
+      var { stdout, stderr } = exec(cmd, input)
       expect(stderr).to.equal('')
       expect(stdout.trim()).to.match(
         /^"hey everyone";?\s+\/\/# sourceMappingURL=data:application\/json/
@@ -216,51 +216,51 @@ describe('format-message transform -i', function () {
 
   describe('source-maps', function () {
     it('uses -s', function () {
-      const input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
-      const filename = 'packages/format-message-cli/__tests__/translations/inline.js'
-      const cmd = 'format-message transform -i -g underscored_crc32' +
+      var input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
+      var filename = 'packages/format-message-cli/__tests__/translations/inline.js'
+      var cmd = 'format-message transform -i -g underscored_crc32' +
       ' -s' +
       ' -t packages/format-message-cli/__tests__/translations/inline.underscored_crc32.json' +
       ' --out-file ' + filename
-      const { stdout, stderr } = exec(cmd, input)
+      var { stdout, stderr } = exec(cmd, input)
       expect(stderr).to.equal('')
       expect(stdout).to.equal('')
-      const fileContent = readFileSync(filename, 'utf8')
+      var fileContent = readFileSync(filename, 'utf8')
       unlinkSync(filename)
       expect(fileContent.trim()).to.match(/^"hey everyone"/)
-      const sourceMap = readFileSync(filename + '.map', 'utf8')
+      var sourceMap = readFileSync(filename + '.map', 'utf8')
       unlinkSync(filename + '.map')
       expect(JSON.parse(sourceMap)).to.not.be.empty
     })
 
     it('uses --source-maps', function () {
-      const input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
-      const filename = 'packages/format-message-cli/__tests__/translations/inline.js'
-      const cmd = 'format-message transform -i -g underscored_crc32' +
+      var input = 'import formatMessage from "format-message"\nformatMessage("hello world")'
+      var filename = 'packages/format-message-cli/__tests__/translations/inline.js'
+      var cmd = 'format-message transform -i -g underscored_crc32' +
       ' --source-maps' +
       ' -t packages/format-message-cli/__tests__/translations/inline.underscored_crc32.json' +
       ' --out-file ' + filename
-      const { stdout, stderr } = exec(cmd, input)
+      var { stdout, stderr } = exec(cmd, input)
       expect(stderr).to.equal('')
       expect(stdout).to.equal('')
-      const fileContent = readFileSync(filename, 'utf8')
+      var fileContent = readFileSync(filename, 'utf8')
       unlinkSync(filename)
       expect(fileContent.trim()).to.match(/^"hey everyone"/)
-      const sourceMap = readFileSync(filename + '.map', 'utf8')
+      var sourceMap = readFileSync(filename + '.map', 'utf8')
       unlinkSync(filename + '.map')
       expect(JSON.parse(sourceMap)).to.not.be.empty
     })
   })
 
   describe('out-dir', function () {
-    const dirname = 'test/inline'
-    const ofiles = readdirSync('packages/format-message/__tests__', 'utf8')
+    var dirname = 'test/inline'
+    var ofiles = readdirSync('packages/format-message/__tests__', 'utf8')
       .filter(function (file) {
         return file.slice(-3) === '.js'
       })
 
     afterEach(function () {
-      const files = readdirSync(dirname, 'utf8')
+      var files = readdirSync(dirname, 'utf8')
       files.forEach(function (file) {
         unlinkSync(dirname + '/' + file)
       })
@@ -268,72 +268,72 @@ describe('format-message transform -i', function () {
     })
 
     it('outputs files to the directory relative to root', function () {
-      const cmd = 'format-message transform -i' +
+      var cmd = 'format-message transform -i' +
       ' -d ' + dirname +
       ' -r packages/format-message/__tests__' +
       ' packages/format-message/__tests__/*.js'
-      const { stdout, stderr } = exec(cmd)
+      var { stdout, stderr } = exec(cmd)
       expect(stderr).to.equal('')
       expect(stdout).to.equal('')
-      const files = readdirSync(dirname, 'utf8').sort()
+      var files = readdirSync(dirname, 'utf8').sort()
       expect(files).to.be.eql(ofiles.sort())
-      const fileContent = readFileSync(dirname + '/index.spec.js', 'utf8')
+      var fileContent = readFileSync(dirname + '/index.spec.js', 'utf8')
       expect(fileContent.trim()).to.contain('\'x\' + arg + \'z\'')
     })
 
     it('uses -s source-maps', function () {
-      const cmd = 'format-message transform -i' +
+      var cmd = 'format-message transform -i' +
       ' -s' +
       ' -d ' + dirname +
       ' --root packages/format-message/__tests__' +
       ' packages/format-message/__tests__/*.js'
-      const { stdout, stderr } = exec(cmd)
+      var { stdout, stderr } = exec(cmd)
       expect(stderr).to.equal('')
       expect(stdout).to.equal('')
-      const files = readdirSync(dirname, 'utf8').sort()
+      var files = readdirSync(dirname, 'utf8').sort()
       expect(files).to.be.eql(
         ofiles.concat(ofiles.map(function (file) {
           return file + '.map'
         })).sort()
       )
-      const fileContent =
+      var fileContent =
         readFileSync(dirname + '/index.spec.js', 'utf8')
           .split('//# sourceMappingURL=')
       expect(fileContent[0].trim()).to.contain('\'x\' + arg + \'z\'')
       expect((fileContent[1] || '').trim()).to.equal('index.spec.js.map')
-      const sourceMap = readFileSync(dirname + '/index.spec.js.map', 'utf8')
+      var sourceMap = readFileSync(dirname + '/index.spec.js.map', 'utf8')
       expect(JSON.parse(sourceMap)).to.not.be.empty
     })
   })
 
   describe('autodetect function name', function () {
     it('finds function name from require call', function () {
-      const input = 'var f=require("format-message");f("hello")'
-      const { stdout, stderr } = exec('format-message transform -i', input)
+      var input = 'var f=require("format-message");f("hello")'
+      var { stdout, stderr } = exec('format-message transform -i', input)
       expect(stderr).to.equal('')
       expect(stdout).to.not.contain('f(')
     })
 
     it('handles multiple function names in function context', function () {
-      const input = 'import formatMessage from "format-message"\n' +
+      var input = 'import formatMessage from "format-message"\n' +
       'function foo(){var f=require("format-message");f("hello")}\n' +
       'function bar(){formatMessage("bye")}'
-      const { stdout, stderr } = exec('format-message transform -i', input)
+      var { stdout, stderr } = exec('format-message transform -i', input)
       expect(stderr).to.equal('')
       expect(stdout).to.not.contain('f(')
       expect(stdout).to.not.contain('formatMessage(')
     })
 
     it('finds function name from import', function () {
-      const input = 'import __ from "format-message";__("hello")'
-      const { stdout, stderr } = exec('format-message transform -i', input)
+      var input = 'import __ from "format-message";__("hello")'
+      var { stdout, stderr } = exec('format-message transform -i', input)
       expect(stderr).to.equal('')
       expect(stdout).to.not.contain('__(')
     })
 
     it('finds function name from default import', function () {
-      const input = 'import {default as __} from "format-message";__("hello")'
-      const { stdout, stderr } = exec('format-message transform -i', input)
+      var input = 'import {default as __} from "format-message";__("hello")'
+      var { stdout, stderr } = exec('format-message transform -i', input)
       expect(stderr).to.equal('')
       expect(stdout).to.not.contain('__(')
     })
@@ -341,36 +341,36 @@ describe('format-message transform -i', function () {
 
   describe('translate="yes"', function () {
     it('transforms messages from JSX', function () {
-      const input = 'export default <div translate="yes">hello</div>'
-      const { stdout, stderr } = exec('format-message transform -i', input)
+      var input = 'export default <div translate="yes">hello</div>'
+      var { stdout, stderr } = exec('format-message transform -i', input)
       expect(stderr).to.equal('')
       expect(stdout).to.contain('export default <div>hello</div>')
     })
 
     it('ignores empty element except removing translate attribute', function () {
-      const input = '<div translate="yes"></div>'
-      const { stdout, stderr } = exec('format-message transform -i', input)
+      var input = '<div translate="yes"></div>'
+      var { stdout, stderr } = exec('format-message transform -i', input)
       expect(stderr).to.equal('')
       expect(stdout).to.contain('<div></div>')
     })
 
     it('ignores element with no children except removing translate attribute', function () {
-      const input = '<div translate="yes" />'
-      const { stdout, stderr } = exec('format-message transform -i', input)
+      var input = '<div translate="yes" />'
+      var { stdout, stderr } = exec('format-message transform -i', input)
       expect(stderr).to.equal('')
       expect(stdout).to.contain('<div />')
     })
 
     it('ignores elements without translate="yes"', function () {
-      const input = '<div>Untranslated</div>'
-      const { stdout, stderr } = exec('format-message transform -i', input)
+      var input = '<div>Untranslated</div>'
+      var { stdout, stderr } = exec('format-message transform -i', input)
       expect(stderr).to.equal('')
       expect(stdout).to.contain('<div>Untranslated</div>')
     })
 
     it('treats child with translate="no" as opaque', function () {
-      const input = '<div translate="yes">hello <Place translate="no">Untranslated</Place></div>'
-      const { stdout, stderr } = exec('format-message transform -i', input)
+      var input = '<div translate="yes">hello <Place translate="no">Untranslated</Place></div>'
+      var { stdout, stderr } = exec('format-message transform -i', input)
       expect(stderr).to.equal('')
       expect(stdout).to.not.contain('from "format-message"')
       expect(stdout).to.not.contain('translate="yes"')
@@ -378,8 +378,8 @@ describe('format-message transform -i', function () {
     })
 
     it('treats child with translate="yes" as opaque', function () {
-      const input = '<div translate="yes">hello <Place translate="yes">world</Place></div>'
-      const { stdout, stderr } = exec('format-message transform -i', input)
+      var input = '<div translate="yes">hello <Place translate="yes">world</Place></div>'
+      var { stdout, stderr } = exec('format-message transform -i', input)
       expect(stderr).to.equal('')
       expect(stdout).to.not.contain('from "format-message"')
       expect(stdout).to.not.contain('translate="yes"')
@@ -387,8 +387,8 @@ describe('format-message transform -i', function () {
     })
 
     it('adds placeholders for expressions', function () {
-      const input = '<div translate="yes">hello {place}</div>'
-      const { stdout, stderr } = exec('format-message transform -i', input)
+      var input = '<div translate="yes">hello {place}</div>'
+      var { stdout, stderr } = exec('format-message transform -i', input)
       expect(stderr).to.equal('')
       expect(stdout).to.not.contain('from "format-message"')
       expect(stdout).to.not.contain('translate="yes"')
@@ -396,8 +396,8 @@ describe('format-message transform -i', function () {
     })
 
     it('generates placeholder names for complex expressions', function () {
-      const input = '<div translate="yes">hello {place+time}</div>'
-      const { stdout, stderr } = exec('format-message transform -i', input)
+      var input = '<div translate="yes">hello {place+time}</div>'
+      var { stdout, stderr } = exec('format-message transform -i', input)
       expect(stderr).to.equal('')
       expect(stdout).to.not.contain('from "format-message"')
       expect(stdout).to.not.contain('translate="yes"')
@@ -405,8 +405,8 @@ describe('format-message transform -i', function () {
     })
 
     it('generates wrapper token for child element with text', function () {
-      const input = '<div translate="yes">hello <b>world</b></div>'
-      const { stdout, stderr } = exec('format-message transform -i', input)
+      var input = '<div translate="yes">hello <b>world</b></div>'
+      var { stdout, stderr } = exec('format-message transform -i', input)
       expect(stderr).to.equal('')
       expect(stdout).to.not.contain('from "format-message"')
       expect(stdout).to.not.contain('translate="yes"')
@@ -414,8 +414,8 @@ describe('format-message transform -i', function () {
     })
 
     it('handles nested elements', function () {
-      const input = '<div translate="yes">hello <b><i>big</i> <em>world</em></b></div>'
-      const { stdout, stderr } = exec('format-message transform -i', input)
+      var input = '<div translate="yes">hello <b><i>big</i> <em>world</em></b></div>'
+      var { stdout, stderr } = exec('format-message transform -i', input)
       expect(stderr).to.equal('')
       expect(stdout).to.not.contain('from "format-message"')
       expect(stdout).to.not.contain('translate="yes"')
@@ -423,9 +423,9 @@ describe('format-message transform -i', function () {
     })
 
     it('handles number, date, and time helpers', function () {
-      const input = 'import { number, date, time } from "format-message"\n' +
+      var input = 'import { number, date, time } from "format-message"\n' +
       'export default <div translate="yes">Caught {number(count)} on {date(d, "short")} at {time(t)}</div>'
-      const { stdout, stderr } = exec('format-message transform -i', input)
+      var { stdout, stderr } = exec('format-message transform -i', input)
       expect(stderr).to.equal('')
       expect(stdout).to.not.contain('from "format-message"')
       expect(stdout).to.not.contain('translate="yes"')
@@ -435,9 +435,9 @@ describe('format-message transform -i', function () {
     })
 
     it('handles select helpers', function () {
-      const input = 'const sel = require("format-message").select\n' +
+      var input = 'var sel = require("format-message").select\n' +
       'export default <div translate="yes">{sel(gender, { female:<i/>, male:<b>b</b>, other:"no" })}</div>'
-      const { stdout, stderr } = exec('format-message transform -i', input)
+      var { stdout, stderr } = exec('format-message transform -i', input)
       expect(stderr).to.equal('')
       expect(stdout).to.not.contain('translate="yes"')
       expect(stdout).to.contain('s = gender,')
@@ -445,9 +445,9 @@ describe('format-message transform -i', function () {
     })
 
     it('handles plural & selectordinal helpers', function () {
-      const input = 'const { plural, selectordinal: o } = require("format-message")\n' +
+      var input = 'var { plural, selectordinal: o } = require("format-message")\n' +
       'export default <div translate="yes">{plural(n, 3, { one:"1", other:"o" })}v{o(new Date().getDate(), { other:"" })}</div>'
-      const { stdout, stderr } = exec('format-message transform -i', input)
+      var { stdout, stderr } = exec('format-message transform -i', input)
       expect(stderr).to.equal('')
       expect(stdout).to.not.contain('translate="yes"')
       expect(stdout).to.contain('plural(n, 3, {')
@@ -459,8 +459,8 @@ describe('format-message transform -i', function () {
 describe('format-message transform', function () {
   describe('translate="yes"', function () {
     it('transforms messages from JSX', function () {
-      const input = 'export default <div translate="yes">hello</div>'
-      const { stdout, stderr } = exec('format-message transform', input)
+      var input = 'export default <div translate="yes">hello</div>'
+      var { stdout, stderr } = exec('format-message transform', input)
       expect(stderr).to.equal('')
       expect(stdout).to.contain('from "format-message"')
       expect(stdout).to.not.contain('translate')
@@ -470,29 +470,29 @@ describe('format-message transform', function () {
     })
 
     it('ignores empty element except removing translate attribute', function () {
-      const input = '<div translate="yes"></div>'
-      const { stdout, stderr } = exec('format-message transform', input)
+      var input = '<div translate="yes"></div>'
+      var { stdout, stderr } = exec('format-message transform', input)
       expect(stderr).to.equal('')
       expect(stdout).to.contain('<div></div>')
     })
 
     it('ignores element with no children except removing translate attribute', function () {
-      const input = '<div translate="yes" />'
-      const { stdout, stderr } = exec('format-message transform', input)
+      var input = '<div translate="yes" />'
+      var { stdout, stderr } = exec('format-message transform', input)
       expect(stderr).to.equal('')
       expect(stdout).to.contain('<div />')
     })
 
     it('ignores elements without translate="yes"', function () {
-      const input = '<div>Untranslated</div>'
-      const { stdout, stderr } = exec('format-message transform', input)
+      var input = '<div>Untranslated</div>'
+      var { stdout, stderr } = exec('format-message transform', input)
       expect(stderr).to.equal('')
       expect(stdout).to.contain('<div>Untranslated</div>')
     })
 
     it('treats child with translate="no" as opaque', function () {
-      const input = '<div translate="yes">hello <Place translate="no">Untranslated</Place></div>'
-      const { stdout, stderr } = exec('format-message transform', input)
+      var input = '<div translate="yes">hello <Place translate="no">Untranslated</Place></div>'
+      var { stdout, stderr } = exec('format-message transform', input)
       expect(stderr).to.equal('')
       expect(stdout).to.contain('from "format-message"')
       expect(stdout).to.not.contain('translate="yes"')
@@ -503,8 +503,8 @@ describe('format-message transform', function () {
     })
 
     it('treats child with translate="yes" as opaque', function () {
-      const input = '<div translate="yes">hello <Place translate="yes">world</Place></div>'
-      const { stdout, stderr } = exec('format-message transform', input)
+      var input = '<div translate="yes">hello <Place translate="yes">world</Place></div>'
+      var { stdout, stderr } = exec('format-message transform', input)
       expect(stderr).to.equal('')
       expect(stdout).to.contain('from "format-message"')
       expect(stdout).to.not.contain('translate="yes"')
@@ -517,8 +517,8 @@ describe('format-message transform', function () {
     })
 
     it('adds placeholders for expressions', function () {
-      const input = '<div translate="yes">hello {place}</div>'
-      const { stdout, stderr } = exec('format-message transform', input)
+      var input = '<div translate="yes">hello {place}</div>'
+      var { stdout, stderr } = exec('format-message transform', input)
       expect(stderr).to.equal('')
       expect(stdout).to.contain('from "format-message"')
       expect(stdout).to.not.contain('translate="yes"')
@@ -529,8 +529,8 @@ describe('format-message transform', function () {
     })
 
     it('generates placeholder names for complex expressions', function () {
-      const input = '<div translate="yes">hello {place+time}</div>'
-      const { stdout, stderr } = exec('format-message transform', input)
+      var input = '<div translate="yes">hello {place+time}</div>'
+      var { stdout, stderr } = exec('format-message transform', input)
       expect(stderr).to.equal('')
       expect(stdout).to.contain('from "format-message"')
       expect(stdout).to.not.contain('translate="yes"')
@@ -541,8 +541,8 @@ describe('format-message transform', function () {
     })
 
     it('generates token for child element with text', function () {
-      const input = '<div translate="yes">hello <b>world</b></div>'
-      const { stdout, stderr } = exec('format-message transform', input)
+      var input = '<div translate="yes">hello <b>world</b></div>'
+      var { stdout, stderr } = exec('format-message transform', input)
       expect(stderr).to.equal('')
       expect(stdout).to.contain('from "format-message"')
       expect(stdout).to.not.contain('translate="yes"')
@@ -553,8 +553,8 @@ describe('format-message transform', function () {
     })
 
     it('handles nested elements', function () {
-      const input = '<div translate="yes">hello <b><i>big</i> <em>world</em></b></div>'
-      const { stdout, stderr } = exec('format-message transform', input)
+      var input = '<div translate="yes">hello <b><i>big</i> <em>world</em></b></div>'
+      var { stdout, stderr } = exec('format-message transform', input)
       expect(stderr).to.equal('')
       expect(stdout).to.contain('id: "hello <0><1>big</1> <2>world</2></0>"')
       expect(stdout).to.contain('default: "hello <0><1>big</1> <2>world</2></0>"')
@@ -564,8 +564,8 @@ describe('format-message transform', function () {
     })
 
     it('groups nested elements with no text', function () {
-      const input = '<div translate="yes">hello <b><i/><em/></b>world</div>'
-      const { stdout, stderr } = exec('format-message transform', input)
+      var input = '<div translate="yes">hello <b><i/><em/></b>world</div>'
+      var { stdout, stderr } = exec('format-message transform', input)
       expect(stderr).to.equal('')
       expect(stdout).to.contain('id: "hello <0/>world"')
       expect(stdout).to.contain('default: "hello <0/>world"')
@@ -573,9 +573,9 @@ describe('format-message transform', function () {
     })
 
     it('handles style names with spaces', function () {
-      const input = 'import { number, date, time } from "format-message"\n' +
+      var input = 'import { number, date, time } from "format-message"\n' +
       'export default <div translate="yes">Caught {number(count)} on {date(d, "MMM d")} at {time(t)}</div>'
-      const { stdout, stderr } = exec('format-message transform', input)
+      var { stdout, stderr } = exec('format-message transform', input)
       expect(stderr).to.equal('')
       expect(stdout).to.contain('id: "Caught { count, number } on { d, date, \'MMM d\' } at { t, time }"')
       expect(stdout).to.contain('default: "Caught { count, number } on { d, date, \'MMM d\' } at { t, time }"')
@@ -585,9 +585,9 @@ describe('format-message transform', function () {
     })
 
     it('handles number, date, and time helpers', function () {
-      const input = 'import { number, date, time } from "format-message"\n' +
+      var input = 'import { number, date, time } from "format-message"\n' +
       'export default <div translate="yes">Caught {number(count)} on {date(d, "short")} at {time(t)}</div>'
-      const { stdout, stderr } = exec('format-message transform', input)
+      var { stdout, stderr } = exec('format-message transform', input)
       expect(stderr).to.equal('')
       expect(stdout).to.contain('id: "Caught { count, number } on { d, date, short } at { t, time }"')
       expect(stdout).to.contain('default: "Caught { count, number } on { d, date, short } at { t, time }"')
@@ -597,9 +597,9 @@ describe('format-message transform', function () {
     })
 
     it('handles select helpers', function () {
-      const input = 'const sel = require("format-message").select\n' +
+      var input = 'var sel = require("format-message").select\n' +
       'export default <div translate="yes">{sel(gender, { female:<i/>, male:<b>b</b>, other:"no" })}</div>'
-      const { stdout, stderr } = exec('format-message transform', input)
+      var { stdout, stderr } = exec('format-message transform', input)
       expect(stderr).to.equal('')
       expect(stdout).to.contain('id: "{ gender, select, \\nfemale {<0/>}\\nmale {<1>b</1>}\\nother {no} }"')
       expect(stdout).to.contain('0: <i key="0" />')
@@ -607,9 +607,9 @@ describe('format-message transform', function () {
     })
 
     it('handles plural & selectordinal helpers', function () {
-      const input = 'const { plural, selectordinal: o } = require("format-message")\n' +
+      var input = 'var { plural, selectordinal: o } = require("format-message")\n' +
       'export default <div translate="yes">{plural(n, 3, { one:"1", other:"o" })}v{o(new Date().getDate(), { other:"" })}</div>'
-      const { stdout, stderr } = exec('format-message transform', input)
+      var { stdout, stderr } = exec('format-message transform', input)
       expect(stderr).to.equal('')
       expect(stdout).to.contain('id: "{ n, plural, offset:3\\none {1}\\nother {o} }v{ new_date_get_date, selectordinal, \\nother {} }"')
       expect(stdout).to.contain('new_date_get_date: new Date().getDate()')

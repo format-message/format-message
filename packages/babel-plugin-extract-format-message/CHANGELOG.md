@@ -1,5 +1,13 @@
 # Changelog
 
+## 6.0.3
+
+Use `var` declarations for wider compatibility.
+
+## 6.0.0
+
+Support `formatMessage.rich()`.
+
 ## 5.2.3
 
 Fix a bug affecting react-native apps.

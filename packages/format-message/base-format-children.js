@@ -21,18 +21,18 @@ module.exports = function formatChildren (
   wrappers = wrappers || []
 
   // at least one word character (letter, digit, or _) surrounded by < >
-  const wrappingToken = /<(\w+)>/g
+  var wrappingToken = /<(\w+)>/g
 
   // at least one word character (letter, digit, or _) surrounded by < />
-  const selfClosingToken = /<(\w+)\/>/g
+  var selfClosingToken = /<(\w+)\/>/g
 
-  const results = []
-  let match, token, i, split, result
+  var results = []
+  var match, token, i, split, result
 
   // check that wrapping tokens are properly nested
-  const tokens = []
+  var tokens = []
   while ((match = wrappingToken.exec(message)) !== null) {
-    const key = match[1]
+    var key = match[1]
     token = {
       key: key,
       start: match.index,
@@ -56,16 +56,16 @@ module.exports = function formatChildren (
 
     if (wrappers[token.key]) {
       // get the text in between the token
-      const start = message.lastIndexOf('<' + token.key + '>')
-      const end = message.lastIndexOf('</' + token.key + '>')
-      const value = message.substring(start + token.key.length + 2, end)
+      var start = message.lastIndexOf('<' + token.key + '>')
+      var end = message.lastIndexOf('</' + token.key + '>')
+      var value = message.substring(start + token.key.length + 2, end)
 
-      const children = []
+      var children = []
 
       // add all children between the token, replacing any self closing tokens
       // (which will be the odd index of the split)
       split = value.split(selfClosingToken)
-      for (let j = 0; j < split.length; ++j) {
+      for (var j = 0; j < split.length; ++j) {
         result = split[j]
 
         if (j % 2 === 1 && wrappers[result]) {
@@ -80,8 +80,8 @@ module.exports = function formatChildren (
       // token to add this token as a child
       wrappers['__' + i + '__'] = applyChildren(token.key, wrappers[token.key], children)
 
-      const left = message.substring(0, start)
-      const right = message.substring(end + token.key.length + 3)
+      var left = message.substring(0, start)
+      var right = message.substring(end + token.key.length + 3)
       message = left + '<__' + i + '__/>' + right
     }
   }

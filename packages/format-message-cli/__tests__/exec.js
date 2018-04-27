@@ -1,21 +1,21 @@
 'use strict'
-const cli = require('..')
+var cli = require('..')
 
-const SyncReadable = (input) => ({
+var SyncReadable = (input) => ({
   setEncoding () {},
   on (event, cb) { cb() },
   read () { return input }
 })
 
-const SyncWritable = () => ({
+var SyncWritable = () => ({
   data: '',
   write (data) { this.data += data }
 })
 
 module.exports = function exec (cmd, stdin) {
-  let code = 0
-  const process = global.process
-  const fake = global.process = {
+  var code = 0
+  var process = global.process
+  var fake = global.process = {
     exit: function (c) { code = c },
     argv: [ process.execPath ].concat(cmd.split(' ').map(arg =>
       arg[0] === '"' ? JSON.parse(arg) : arg
@@ -27,12 +27,12 @@ module.exports = function exec (cmd, stdin) {
   Object.keys(process).forEach(key => {
     fake[key] = fake[key] || process[key]
   })
-  const timers = new Set()
-  const setTimeout = global.setTimeout
-  const clearTimeout = global.clearTimeout
-  const consoleLog = console.log
-  const consoleWarn = console.warn
-  const consoleError = console.error
+  var timers = new Set()
+  var setTimeout = global.setTimeout
+  var clearTimeout = global.clearTimeout
+  var consoleLog = console.log
+  var consoleWarn = console.warn
+  var consoleError = console.error
   console.log = (...args) => { fake.stdout.write(args.join(' ')) }
   console.warn = (...args) => { fake.stderr.write(args.join(' ')) }
   console.error = (...args) => { fake.stderr.write(args.join(' ')) }
@@ -41,7 +41,7 @@ module.exports = function exec (cmd, stdin) {
     return fn
   }
   global.clearTimeout = (fn) => timers.delete(fn)
-  let error
+  var error
   try {
     cli.commands.forEach(command => {
       command.options.forEach(option => {

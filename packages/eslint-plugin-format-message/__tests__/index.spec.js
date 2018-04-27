@@ -1,11 +1,11 @@
 /* eslint-env mocha */
 'use strict'
-const expect = require('chai').expect
-const fs = require('fs')
-const path = require('path')
-const plugin = require('..')
+var expect = require('chai').expect
+var fs = require('fs')
+var path = require('path')
+var plugin = require('..')
 
-const rules = fs.readdirSync(path.resolve(__dirname, '../lib/rules/'))
+var rules = fs.readdirSync(path.resolve(__dirname, '../lib/rules/'))
   .filter(function (f) { return f[0] !== '.' })
   .map(function (f) { return path.basename(f, '.js') })
 

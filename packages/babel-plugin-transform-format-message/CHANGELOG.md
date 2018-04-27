@@ -1,5 +1,13 @@
 # Changelog
 
+## 6.0.3
+
+Use `var` declarations for wider compatibility.
+
+## 6.0.0
+
+Support `formatMessage.rich()`. Use that as the `translate='yes'` target instead of `formatChildren()`.
+
 ## 5.2.6
 
 Fix IE11 compat by removing template literals.

@@ -1,12 +1,12 @@
 /* eslint-env mocha */
 'use strict'
 
-const expect = require('chai').expect
-const print = require('..')
+var expect = require('chai').expect
+var print = require('..')
 
 describe('print()', function () {
   it('normalizes escaping', function () {
-    const pattern = print([
+    var pattern = print([
       'can\'t escape {}',
       [ 's', 'date', 'MM dd yy' ],
       [ 't', 't', '\'' ],
@@ -24,7 +24,7 @@ describe('print()', function () {
 
   it('consistently escapes style', function () {
     // regress stateful regex bug
-    const pattern = print([
+    var pattern = print([
       [ 'a', 'b', 'c d' ],
       [ 'a', 'b', 'c d' ]
     ])
@@ -32,7 +32,7 @@ describe('print()', function () {
   })
 
   it('pretty formats plurals', function () {
-    const pattern = print([
+    var pattern = print([
       [ 'bananas', 'plural', 0, {
         '=0': [ 'no bananas' ],
         one: [ [ '#' ], ' banana' ],
@@ -49,7 +49,7 @@ describe('print()', function () {
   })
 
   it('pretty prints selectordinal', function () {
-    const pattern = print([
+    var pattern = print([
       [ 'place', 'selectordinal', 0, {
         one: [ [ '#' ], 'st place' ],
         two: [ [ '#' ], 'nd place' ],
@@ -68,7 +68,7 @@ describe('print()', function () {
   })
 
   it('pretty prints select', function () {
-    const pattern = print([
+    var pattern = print([
       [ 'gender', 'select', {
         male: [ 'invite him' ],
         female: [ 'invite her' ],

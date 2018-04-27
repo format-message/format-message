@@ -1,8 +1,8 @@
 /* eslint-env mocha */
 'use strict'
 
-const expect = require('chai').expect
-const formats = require('..')
+var expect = require('chai').expect
+var formats = require('..')
 
 describe('formats', function () {
   describe('parseNumberPattern()', function () {

@@ -1,16 +1,16 @@
 'use strict'
-const lookupClosestLocale = require('lookup-closest-locale')
-const parse = require('format-message-parse')
-const visitEachTranslation = require('../util/visit-each-translation')
-const locales = require('../../cldr.json').locales
+var lookupClosestLocale = require('lookup-closest-locale')
+var parse = require('format-message-parse')
+var visitEachTranslation = require('../util/visit-each-translation')
+var locales = require('../../cldr.json').locales
 
 function getPluralKeywords (ast) {
-  const keywords = { cardinal: new Set(), ordinal: new Set() }
+  var keywords = { cardinal: new Set(), ordinal: new Set() }
   function search (element) {
     if (!Array.isArray(element)) return
-    const children = element[3] || element[2]
+    var children = element[3] || element[2]
     if (typeof children !== 'object') return
-    const type = element[1]
+    var type = element[1]
     Object.keys(children).forEach(key => {
       if (type === 'selectordinal') keywords.ordinal.add(key)
       else if (type === 'plural') keywords.cardinal.add(key)
@@ -26,15 +26,15 @@ module.exports = {
     schema: []
   },
   create: function (context) {
-    const settings = context.settings['format-message'] || {}
-    const sourceLocale = settings.sourceLocale || 'en'
-    const visitedNodes = new Set()
+    var settings = context.settings['format-message'] || {}
+    var sourceLocale = settings.sourceLocale || 'en'
+    var visitedNodes = new Set()
     return visitEachTranslation(context, function ({ id, node, patternAst, locale, translation }) {
       if (!visitedNodes.has(node) && patternAst) {
         visitedNodes.add(node)
-        const { cardinal, ordinal } = getPluralKeywords(patternAst)
-        const closest = lookupClosestLocale(sourceLocale, locales)
-        const rules = closest && locales[closest] && locales[closest].plurals
+        var { cardinal, ordinal } = getPluralKeywords(patternAst)
+        var closest = lookupClosestLocale(sourceLocale, locales)
+        var rules = closest && locales[closest] && locales[closest].plurals
         cardinal.forEach(rule => {
           if (!rules || rule === 'other' || rule[0] === '=') return
           if (rules.cardinal && rules.cardinal[rule]) return
@@ -49,9 +49,9 @@ module.exports = {
 
       if (translation == null) return // missing translation is handled in another rule
       try {
-        const { cardinal, ordinal } = getPluralKeywords(parse(translation))
-        const closest = lookupClosestLocale(locale, locales)
-        const rules = closest && locales[closest] && locales[closest].plurals
+        ({ cardinal, ordinal } = getPluralKeywords(parse(translation)))
+        closest = lookupClosestLocale(locale, locales)
+        rules = closest && locales[closest] && locales[closest].plurals
         cardinal.forEach(rule => {
           if (!rules || rule === 'other' || rule[0] === '=') return
           if (rules.cardinal && rules.cardinal[rule]) return

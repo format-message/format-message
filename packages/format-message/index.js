@@ -1,10 +1,10 @@
 // @flow
 'use strict'
-const parse = require('format-message-parse')
-const interpret = require('format-message-interpret')
-const plurals = require('format-message-interpret/plurals')
-const lookupClosestLocale = require('lookup-closest-locale')
-const origFormats = require('format-message-formats')
+var parse = require('format-message-parse')
+var interpret = require('format-message-interpret')
+var plurals = require('format-message-interpret/plurals')
+var lookupClosestLocale = require('lookup-closest-locale')
+var origFormats = require('format-message-formats')
 
 /*::
 import type { Types } from 'format-message-interpret'
@@ -72,39 +72,39 @@ function assign/*:: <T: Object> */ (target/*: T */, source/*: Object */) {
 }
 
 function namespace ()/*: FormatMessage */ {
-  const formats = assign({}, origFormats)
-  let currentLocales/*: Locales */ = 'en'
-  let translations/*: Translations */ = {}
-  let generateId/*: GenerateId */ = function (pattern) { return pattern }
-  let missingReplacement/*: Replacement */ = null
-  let missingTranslation/*: MissingTranslation */ = 'warning'
-  let types/*: Types */ = {}
+  var formats = assign({}, origFormats)
+  var currentLocales/*: Locales */ = 'en'
+  var translations/*: Translations */ = {}
+  var generateId/*: GenerateId */ = function (pattern) { return pattern }
+  var missingReplacement/*: Replacement */ = null
+  var missingTranslation/*: MissingTranslation */ = 'warning'
+  var types/*: Types */ = {}
 
   function formatMessage (msg/*: Message */, args/*:: ?: Object */, locales/*:: ?: Locales */) {
-    const pattern = typeof msg === 'string' ? msg : msg.default
-    const id = (typeof msg === 'object' && msg.id) || generateId(pattern)
-    const translated = translate(pattern, id, locales || currentLocales)
-    const format = translated.format || (
+    var pattern = typeof msg === 'string' ? msg : msg.default
+    var id = (typeof msg === 'object' && msg.id) || generateId(pattern)
+    var translated = translate(pattern, id, locales || currentLocales)
+    var format = translated.format || (
       translated.format = interpret(parse(translated.message), locales || currentLocales, types)
     )
     return format(args)
   }
 
   formatMessage.rich = function rich (msg/*: Message */, args/*:: ?: Object */, locales/*:: ?: Locales */) {
-    const pattern = typeof msg === 'string' ? msg : msg.default
-    const id = (typeof msg === 'object' && msg.id) || generateId(pattern)
-    const translated = translate(pattern, id, locales || currentLocales)
-    const format = translated.toParts || (
+    var pattern = typeof msg === 'string' ? msg : msg.default
+    var id = (typeof msg === 'object' && msg.id) || generateId(pattern)
+    var translated = translate(pattern, id, locales || currentLocales)
+    var format = translated.toParts || (
       translated.toParts = interpret.toParts(parse(pattern, { tagsType: tagsType }), locales || currentLocales, types)
     )
     return format(args)
   }
 
-  const tagsType = '<>'
+  var tagsType = '<>'
   function richType (node/*: any[] */, locales/*: Locales */) {
-    const style = node[2]
+    var style = node[2]
     return function (fn, args) {
-      const props = typeof style === 'object' ? mapObject(style, args) : style
+      var props = typeof style === 'object' ? mapObject(style, args) : style
       return typeof fn === 'function' ? fn(props) : fn
     }
   }
@@ -118,21 +118,21 @@ function namespace ()/*: FormatMessage */ {
   }
 
   function translate (pattern/*: string */, id/*: string */, locales/*: Locales */)/*: Translation */ {
-    const locale = lookupClosestLocale(locales, translations) || 'en'
-    const messages = translations[locale] || (translations[locale] = {})
-    let translated = messages[id]
+    var locale = lookupClosestLocale(locales, translations) || 'en'
+    var messages = translations[locale] || (translations[locale] = {})
+    var translated = messages[id]
     if (typeof translated === 'string') {
       translated = messages[id] = { message: translated }
     }
     if (!translated) {
-      const message = 'Translation for "' + id + '" in "' + locale + '" is missing'
+      var message = 'Translation for "' + id + '" in "' + locale + '" is missing'
       if (missingTranslation === 'warning') {
         /* istanbul ignore else */
         if (typeof console !== 'undefined') console.warn(message)
       } else if (missingTranslation !== 'ignore') { // 'error'
         throw new Error(message)
       }
-      const replacement = typeof missingReplacement === 'function'
+      var replacement = typeof missingReplacement === 'function'
         ? missingReplacement(pattern, id, locale) || pattern
         : missingReplacement || pattern
       translated = messages[id] = { message: replacement }
@@ -168,21 +168,21 @@ function namespace ()/*: FormatMessage */ {
   }
 
   formatMessage.number = function (value/*: number */, style/*:: ?: string */, locales/*:: ?: Locales */) {
-    const options = (style && formats.number[style]) ||
+    var options = (style && formats.number[style]) ||
       formats.parseNumberPattern(style) ||
       formats.number.default
     return new Intl.NumberFormat(locales || currentLocales, options).format(value)
   }
 
   formatMessage.date = function (value/*:: ?: number | Date */, style/*:: ?: string */, locales/*:: ?: Locales */) {
-    const options = (style && formats.date[style]) ||
+    var options = (style && formats.date[style]) ||
       formats.parseDatePattern(style) ||
       formats.date.default
     return new Intl.DateTimeFormat(locales || currentLocales, options).format(value)
   }
 
   formatMessage.time = function (value/*:: ?: number | Date */, style/*:: ?: string */, locales/*:: ?: Locales */) {
-    const options = (style && formats.time[style]) ||
+    var options = (style && formats.time[style]) ||
       formats.parseDatePattern(style) ||
       formats.time.default
     return new Intl.DateTimeFormat(locales || currentLocales, options).format(value)
@@ -211,8 +211,8 @@ function namespace ()/*: FormatMessage */ {
       options = offset
       offset = 0
     }
-    const closest = lookupClosestLocale(locale || currentLocales, plurals)
-    const plural = (closest && plurals[closest][pluralType]) || returnOther
+    var closest = lookupClosestLocale(locale || currentLocales, plurals)
+    var plural = (closest && plurals[closest][pluralType]) || returnOther
     return options['=' + +value] || options[plural(value - offset)] || options.other
   }
   function returnOther (/*:: n:number */) { return 'other' }

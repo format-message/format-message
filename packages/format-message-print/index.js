@@ -11,12 +11,12 @@ import type {
 type Placeholder = any // https://github.com/facebook/flow/issues/4050
 */
 
-const SYNTAX_PLURAL = /[{}#]+/g
-const SYNTAX_STYLE = /[{}\s]+/
-const SYNTAX_COMMON = /[{}]+/g
-const ESC = '\''
-const DBL_ESC = '\'\''
-const ARG_NUM = '#'
+var SYNTAX_PLURAL = /[{}#]+/g
+var SYNTAX_STYLE = /[{}\s]+/
+var SYNTAX_COMMON = /[{}]+/g
+var ESC = '\''
+var DBL_ESC = '\'\''
+var ARG_NUM = '#'
 
 /**
  * Print
@@ -47,7 +47,7 @@ function printMessage (ast/*: AST */, parentType/*: ?string */) {
 }
 
 function printText (text/*: string */, parentType/*: ?string */) {
-  const special = (parentType === 'plural') ? SYNTAX_PLURAL : SYNTAX_COMMON
+  var special = (parentType === 'plural') ? SYNTAX_PLURAL : SYNTAX_COMMON
   return text
     .replace(/'/g, DBL_ESC) // double apostrophe
     .replace(special, '\'$&\'') // escape syntax
@@ -60,10 +60,10 @@ function printPlaceholder (placeholder/*: Placeholder */, parentType/*: ?string 
 }
 
 function printStyled (placeholder/*: Styled */) {
-  const key = placeholder[0]
-  const type = placeholder[1]
-  const style = placeholder[2]
-  const styleStr = typeof style === 'object'
+  var key = placeholder[0]
+  var type = placeholder[1]
+  var style = placeholder[2]
+  var styleStr = typeof style === 'object'
     ? ',' + printChildren(style, type) + '\n'
     : (style ? ', ' + printStyle(style) + ' ' : ' ')
   return '{ ' + key + (type ? ', ' + type : '') + styleStr + '}'
@@ -75,10 +75,10 @@ function printStyle (style/*: string */) {
 }
 
 function printPlural (plural/*: Plural */) {
-  const key = plural[0]
-  const type = plural[1]
-  const offset = plural[2]
-  const children = plural[3]
+  var key = plural[0]
+  var type = plural[1]
+  var offset = plural[2]
+  var children = plural[3]
   return '{ ' + key + ', ' + type + ',' +
     (offset ? ' offset:' + offset : '') +
     printChildren(children, type) +
@@ -86,8 +86,8 @@ function printPlural (plural/*: Plural */) {
 }
 
 function printChildren (children/*: SubMessages */, parentType/*: ?string */) {
-  const keys = Object.keys(children)
-  const padLength = keys.reduce(function (max, key) { return Math.max(max, key.length) }, 0)
+  var keys = Object.keys(children)
+  var padLength = keys.reduce(function (max, key) { return Math.max(max, key.length) }, 0)
   return keys.map(function (key) {
     return '\n  ' + leftSpacePad(key, padLength) +
       ' {' + printMessage(children[key], parentType) + '}'
@@ -95,8 +95,8 @@ function printChildren (children/*: SubMessages */, parentType/*: ?string */) {
 }
 
 function leftSpacePad (string/*: string */, count/*: number */) {
-  let padding = ''
-  for (let i = string.length; i < count; ++i) {
+  var padding = ''
+  for (var i = string.length; i < count; ++i) {
     padding += ' '
   }
   return padding + string

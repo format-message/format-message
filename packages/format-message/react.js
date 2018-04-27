@@ -1,7 +1,7 @@
 // @flow
 'use strict'
-const React = require('react')
-const formatChildren = require('./base-format-children')
+var React = require('react')
+var formatChildren = require('./base-format-children')
 
 function applyChildren (key/*: string */, element/*: any */, children/*: ?mixed[] */) {
   if (process.env.NODE_ENV !== 'production' && !React.isValidElement(element)) {

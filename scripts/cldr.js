@@ -1,10 +1,10 @@
 'use strict'
 
-const writeFileSync = require('fs').writeFileSync
-const pluralsJSON = require('cldr-core/supplemental/plurals.json')
-const ordinalsJSON = require('cldr-core/supplemental/ordinals.json')
+var writeFileSync = require('fs').writeFileSync
+var pluralsJSON = require('cldr-core/supplemental/plurals.json')
+var ordinalsJSON = require('cldr-core/supplemental/ordinals.json')
 
-const pluralVars = {
+var pluralVars = {
   i: 'Math.floor(Math.abs(+s))',
   v: '(s + \'.\').split(\'.\')[1].length',
   w: '(\'\' + s).replace(/^[^.]*\.?|0+$/g, \'\').length',
@@ -13,15 +13,15 @@ const pluralVars = {
   n: '+s'
 }
 
-const pluralFunctions = []
+var pluralFunctions = []
 
 function parseRules (rules) {
-  const clauses = []
-  const data = {}
-  let keyword
-  let rule
+  var clauses = []
+  var data = {}
+  var keyword
+  var rule
 
-  for (const key in rules) {
+  for (var key in rules) {
     if (key === 'pluralRule-count-other') { continue }
     keyword = key.replace('pluralRule-count-', '')
     rule = rules[key].replace(/\s*@.*$/, '')
@@ -31,11 +31,11 @@ function parseRules (rules) {
     return null
   }
 
-  let fn = '    return '
-  const refs = { i: false, v: false, w: false, f: false, t: false, n: false }
+  var fn = '    return '
+  var refs = { i: false, v: false, w: false, f: false, t: false, n: false }
 
-  for (const [ keyword, rule ] of clauses) {
-    const condition = rule
+  for (var [ keyword, rule ] of clauses) {
+    var condition = rule
       .replace(/\bor\b/g, '||')
       .replace(/\band\b/g, '&&')
       .replace(/(\w(?:\s*%\s*\d+)?)\s*=\s*((?:[0-9.]+,)+[0-9.]+)/g, ($0, exp, ranges) =>
@@ -58,15 +58,15 @@ function parseRules (rules) {
     })
   }
 
-  const vars = Object.keys(refs)
+  var vars = Object.keys(refs)
     .filter(function (key) { return refs[key] })
     .map(function (key) {
       return refs[key] && key + ' = ' + pluralVars[key]
     })
-  if (vars.length) fn = '    const ' + vars.join('\n    const ') + '\n' + fn
+  if (vars.length) fn = '    var ' + vars.join('\n    var ') + '\n' + fn
 
   fn = '  function (s/*: string | number */)/*: Rule */ {\n' + fn + 'other\n  }'
-  let index = pluralFunctions.indexOf(fn)
+  var index = pluralFunctions.indexOf(fn)
   if (index < 0) {
     index = pluralFunctions.length
     pluralFunctions[index] = fn
@@ -78,20 +78,20 @@ function parseRules (rules) {
   }
 }
 
-const pluralsTypeCardinal = pluralsJSON.supplemental['plurals-type-cardinal']
-const pluralsTypeOrdinal = ordinalsJSON.supplemental['plurals-type-ordinal']
-const locales = {}
-const funcs = {}
+var pluralsTypeCardinal = pluralsJSON.supplemental['plurals-type-cardinal']
+var pluralsTypeOrdinal = ordinalsJSON.supplemental['plurals-type-ordinal']
+var locales = {}
+var funcs = {}
 
-for (const locale in pluralsTypeCardinal) {
-  const cardinal = parseRules(pluralsTypeCardinal[locale])
+for (var locale in pluralsTypeCardinal) {
+  var cardinal = parseRules(pluralsTypeCardinal[locale])
   if (cardinal) {
     locales[locale] = { plurals: { cardinal: cardinal.data } }
     funcs[locale] = 'cardinal: f[' + cardinal.func + ']'
   }
 }
-for (const locale in pluralsTypeOrdinal) {
-  const ordinal = parseRules(pluralsTypeOrdinal[locale])
+for (var locale in pluralsTypeOrdinal) {
+  var ordinal = parseRules(pluralsTypeOrdinal[locale])
   if (ordinal) {
     if (locales[locale]) {
       locales[locale].plurals.ordinal = ordinal.data
@@ -102,16 +102,16 @@ for (const locale in pluralsTypeOrdinal) {
     }
   }
 }
-const fileData = JSON.stringify({ pluralVars: pluralVars, locales: locales }, null, '  ')
+var fileData = JSON.stringify({ pluralVars: pluralVars, locales: locales }, null, '  ')
 writeFileSync(__dirname + '/../packages/babel-plugin-transform-format-message/cldr.json', fileData, 'utf8')
 console.log('Wrote data to packages/babel-plugin-transform-format-message/cldr.json')
 writeFileSync(__dirname + '/../packages/eslint-plugin-format-message/cldr.json', fileData, 'utf8')
 console.log('Wrote data to packages/eslint-plugin-format-message/cldr.json')
 
-const interpretFileData = '\/\/ @flow\n\'use strict\'\n\n' +
+var interpretFileData = '\/\/ @flow\n\'use strict\'\n\n' +
   '/*:: export type Rule = \'zero\' | \'one\' | \'two\' | \'few\' | \'many\' | \'other\' */\n' +
-  'const zero = \'zero\', one = \'one\', two = \'two\', few = \'few\', many = \'many\', other = \'other\'\n' +
-  'const f = [\n' + pluralFunctions.join(',\n') + '\n]\n\n' +
+  'var zero = \'zero\', one = \'one\', two = \'two\', few = \'few\', many = \'many\', other = \'other\'\n' +
+  'var f = [\n' + pluralFunctions.join(',\n') + '\n]\n\n' +
   'module.exports = {\n  ' +
     Object.keys(funcs).map(function (locale) {
       return (

@@ -2,26 +2,26 @@
 'use strict'
 
 /*:: export type Rule = 'zero' | 'one' | 'two' | 'few' | 'many' | 'other' */
-const zero = 'zero', one = 'one', two = 'two', few = 'few', many = 'many', other = 'other'
-const f = [
+var zero = 'zero', one = 'one', two = 'two', few = 'few', many = 'many', other = 'other'
+var f = [
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return n === 1 ? one
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return 0 <= n && n <= 1 ? one
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const i = Math.floor(Math.abs(+s))
-    const n = +s
+    var i = Math.floor(Math.abs(+s))
+    var n = +s
     return i === 0 || n === 1 ? one
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return n === 0 ? zero
       : n === 1 ? one
       : n === 2 ? two
@@ -30,20 +30,20 @@ const f = [
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const i = Math.floor(Math.abs(+s))
-    const v = (s + '.').split('.')[1].length
+    var i = Math.floor(Math.abs(+s))
+    var v = (s + '.').split('.')[1].length
     return i === 1 && v === 0 ? one
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return n % 10 === 1 && n % 100 !== 11 ? one
       : (2 <= n % 10 && n % 10 <= 4) && (n % 100 < 12 || 14 < n % 100) ? few
       : n % 10 === 0 || (5 <= n % 10 && n % 10 <= 9) || (11 <= n % 100 && n % 100 <= 14) ? many
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return n % 10 === 1 && (n % 100 !== 11 && n % 100 !== 71 && n % 100 !== 91) ? one
       : n % 10 === 2 && (n % 100 !== 12 && n % 100 !== 72 && n % 100 !== 92) ? two
       : ((3 <= n % 10 && n % 10 <= 4) || n % 10 === 9) && ((n % 100 < 10 || 19 < n % 100) && (n % 100 < 70 || 79 < n % 100) && (n % 100 < 90 || 99 < n % 100)) ? few
@@ -51,23 +51,23 @@ const f = [
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const i = Math.floor(Math.abs(+s))
-    const v = (s + '.').split('.')[1].length
-    const f = +(s + '.').split('.')[1]
+    var i = Math.floor(Math.abs(+s))
+    var v = (s + '.').split('.')[1].length
+    var f = +(s + '.').split('.')[1]
     return v === 0 && i % 10 === 1 && i % 100 !== 11 || f % 10 === 1 && f % 100 !== 11 ? one
       : v === 0 && (2 <= i % 10 && i % 10 <= 4) && (i % 100 < 12 || 14 < i % 100) || (2 <= f % 10 && f % 10 <= 4) && (f % 100 < 12 || 14 < f % 100) ? few
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const i = Math.floor(Math.abs(+s))
-    const v = (s + '.').split('.')[1].length
+    var i = Math.floor(Math.abs(+s))
+    var v = (s + '.').split('.')[1].length
     return i === 1 && v === 0 ? one
       : (2 <= i && i <= 4) && v === 0 ? few
       : v !== 0 ? many
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return n === 0 ? zero
       : n === 1 ? one
       : n === 2 ? two
@@ -76,35 +76,35 @@ const f = [
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const i = Math.floor(Math.abs(+s))
-    const t = +('' + s).replace(/^[^.]*.?|0+$/g, '')
-    const n = +s
+    var i = Math.floor(Math.abs(+s))
+    var t = +('' + s).replace(/^[^.]*.?|0+$/g, '')
+    var n = +s
     return n === 1 || t !== 0 && (i === 0 || i === 1) ? one
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const i = Math.floor(Math.abs(+s))
-    const v = (s + '.').split('.')[1].length
-    const f = +(s + '.').split('.')[1]
+    var i = Math.floor(Math.abs(+s))
+    var v = (s + '.').split('.')[1].length
+    var f = +(s + '.').split('.')[1]
     return v === 0 && i % 100 === 1 || f % 100 === 1 ? one
       : v === 0 && i % 100 === 2 || f % 100 === 2 ? two
       : v === 0 && (3 <= i % 100 && i % 100 <= 4) || (3 <= f % 100 && f % 100 <= 4) ? few
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const i = Math.floor(Math.abs(+s))
+    var i = Math.floor(Math.abs(+s))
     return i === 0 || i === 1 ? one
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const i = Math.floor(Math.abs(+s))
-    const v = (s + '.').split('.')[1].length
-    const f = +(s + '.').split('.')[1]
+    var i = Math.floor(Math.abs(+s))
+    var v = (s + '.').split('.')[1].length
+    var f = +(s + '.').split('.')[1]
     return v === 0 && (i === 1 || i === 2 || i === 3) || v === 0 && (i % 10 !== 4 && i % 10 !== 6 && i % 10 !== 9) || v !== 0 && (f % 10 !== 4 && f % 10 !== 6 && f % 10 !== 9) ? one
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return n === 1 ? one
       : n === 2 ? two
       : 3 <= n && n <= 6 ? few
@@ -112,15 +112,15 @@ const f = [
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return n === 1 || n === 11 ? one
       : n === 2 || n === 12 ? two
       : ((3 <= n && n <= 10) || (13 <= n && n <= 19)) ? few
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const i = Math.floor(Math.abs(+s))
-    const v = (s + '.').split('.')[1].length
+    var i = Math.floor(Math.abs(+s))
+    var v = (s + '.').split('.')[1].length
     return v === 0 && i % 10 === 1 ? one
       : v === 0 && i % 10 === 2 ? two
       : v === 0 && (i % 100 === 0 || i % 100 === 20 || i % 100 === 40 || i % 100 === 60 || i % 100 === 80) ? few
@@ -128,127 +128,127 @@ const f = [
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const i = Math.floor(Math.abs(+s))
-    const v = (s + '.').split('.')[1].length
-    const n = +s
+    var i = Math.floor(Math.abs(+s))
+    var v = (s + '.').split('.')[1].length
+    var n = +s
     return i === 1 && v === 0 ? one
       : i === 2 && v === 0 ? two
       : v === 0 && (n < 0 || 10 < n) && n % 10 === 0 ? many
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const i = Math.floor(Math.abs(+s))
-    const t = +('' + s).replace(/^[^.]*.?|0+$/g, '')
+    var i = Math.floor(Math.abs(+s))
+    var t = +('' + s).replace(/^[^.]*.?|0+$/g, '')
     return t === 0 && i % 10 === 1 && i % 100 !== 11 || t !== 0 ? one
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return n === 1 ? one
       : n === 2 ? two
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return n === 0 ? zero
       : n === 1 ? one
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const i = Math.floor(Math.abs(+s))
-    const n = +s
+    var i = Math.floor(Math.abs(+s))
+    var n = +s
     return n === 0 ? zero
       : (i === 0 || i === 1) && n !== 0 ? one
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const f = +(s + '.').split('.')[1]
-    const n = +s
+    var f = +(s + '.').split('.')[1]
+    var n = +s
     return n % 10 === 1 && (n % 100 < 11 || 19 < n % 100) ? one
       : (2 <= n % 10 && n % 10 <= 9) && (n % 100 < 11 || 19 < n % 100) ? few
       : f !== 0 ? many
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const v = (s + '.').split('.')[1].length
-    const f = +(s + '.').split('.')[1]
-    const n = +s
+    var v = (s + '.').split('.')[1].length
+    var f = +(s + '.').split('.')[1]
+    var n = +s
     return n % 10 === 0 || (11 <= n % 100 && n % 100 <= 19) || v === 2 && (11 <= f % 100 && f % 100 <= 19) ? zero
       : n % 10 === 1 && n % 100 !== 11 || v === 2 && f % 10 === 1 && f % 100 !== 11 || v !== 2 && f % 10 === 1 ? one
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const i = Math.floor(Math.abs(+s))
-    const v = (s + '.').split('.')[1].length
-    const f = +(s + '.').split('.')[1]
+    var i = Math.floor(Math.abs(+s))
+    var v = (s + '.').split('.')[1].length
+    var f = +(s + '.').split('.')[1]
     return v === 0 && i % 10 === 1 && i % 100 !== 11 || f % 10 === 1 && f % 100 !== 11 ? one
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const i = Math.floor(Math.abs(+s))
-    const v = (s + '.').split('.')[1].length
-    const n = +s
+    var i = Math.floor(Math.abs(+s))
+    var v = (s + '.').split('.')[1].length
+    var n = +s
     return i === 1 && v === 0 ? one
       : v !== 0 || n === 0 || n !== 1 && (1 <= n % 100 && n % 100 <= 19) ? few
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return n === 1 ? one
       : n === 0 || (2 <= n % 100 && n % 100 <= 10) ? few
       : 11 <= n % 100 && n % 100 <= 19 ? many
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const i = Math.floor(Math.abs(+s))
-    const v = (s + '.').split('.')[1].length
+    var i = Math.floor(Math.abs(+s))
+    var v = (s + '.').split('.')[1].length
     return i === 1 && v === 0 ? one
       : v === 0 && (2 <= i % 10 && i % 10 <= 4) && (i % 100 < 12 || 14 < i % 100) ? few
       : v === 0 && i !== 1 && (0 <= i % 10 && i % 10 <= 1) || v === 0 && (5 <= i % 10 && i % 10 <= 9) || v === 0 && (12 <= i % 100 && i % 100 <= 14) ? many
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const i = Math.floor(Math.abs(+s))
+    var i = Math.floor(Math.abs(+s))
     return 0 <= i && i <= 1 ? one
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const i = Math.floor(Math.abs(+s))
-    const v = (s + '.').split('.')[1].length
+    var i = Math.floor(Math.abs(+s))
+    var v = (s + '.').split('.')[1].length
     return v === 0 && i % 10 === 1 && i % 100 !== 11 ? one
       : v === 0 && (2 <= i % 10 && i % 10 <= 4) && (i % 100 < 12 || 14 < i % 100) ? few
       : v === 0 && i % 10 === 0 || v === 0 && (5 <= i % 10 && i % 10 <= 9) || v === 0 && (11 <= i % 100 && i % 100 <= 14) ? many
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const i = Math.floor(Math.abs(+s))
-    const n = +s
+    var i = Math.floor(Math.abs(+s))
+    var n = +s
     return i === 0 || n === 1 ? one
       : 2 <= n && n <= 10 ? few
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const i = Math.floor(Math.abs(+s))
-    const f = +(s + '.').split('.')[1]
-    const n = +s
+    var i = Math.floor(Math.abs(+s))
+    var f = +(s + '.').split('.')[1]
+    var n = +s
     return (n === 0 || n === 1) || i === 0 && f === 1 ? one
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const i = Math.floor(Math.abs(+s))
-    const v = (s + '.').split('.')[1].length
+    var i = Math.floor(Math.abs(+s))
+    var v = (s + '.').split('.')[1].length
     return v === 0 && i % 100 === 1 ? one
       : v === 0 && i % 100 === 2 ? two
       : v === 0 && (3 <= i % 100 && i % 100 <= 4) || v !== 0 ? few
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return (0 <= n && n <= 1) || (11 <= n && n <= 99) ? one
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return n === 1 || n === 5 || n === 7 || n === 8 || n === 9 || n === 10 ? one
       : n === 2 || n === 3 ? two
       : n === 4 ? few
@@ -256,26 +256,26 @@ const f = [
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const i = Math.floor(Math.abs(+s))
+    var i = Math.floor(Math.abs(+s))
     return (i % 10 === 1 || i % 10 === 2 || i % 10 === 5 || i % 10 === 7 || i % 10 === 8) || (i % 100 === 20 || i % 100 === 50 || i % 100 === 70 || i % 100 === 80) ? one
       : (i % 10 === 3 || i % 10 === 4) || (i % 1000 === 100 || i % 1000 === 200 || i % 1000 === 300 || i % 1000 === 400 || i % 1000 === 500 || i % 1000 === 600 || i % 1000 === 700 || i % 1000 === 800 || i % 1000 === 900) ? few
       : i === 0 || i % 10 === 6 || (i % 100 === 40 || i % 100 === 60 || i % 100 === 90) ? many
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return (n % 10 === 2 || n % 10 === 3) && (n % 100 !== 12 && n % 100 !== 13) ? few
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return n === 1 || n === 3 ? one
       : n === 2 ? two
       : n === 4 ? few
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return n === 0 || n === 7 || n === 8 || n === 9 ? zero
       : n === 1 ? one
       : n === 2 ? two
@@ -284,14 +284,14 @@ const f = [
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return n % 10 === 1 && n % 100 !== 11 ? one
       : n % 10 === 2 && n % 100 !== 12 ? two
       : n % 10 === 3 && n % 100 !== 13 ? few
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return n === 1 ? one
       : n === 2 || n === 3 ? two
       : n === 4 ? few
@@ -299,47 +299,47 @@ const f = [
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return n === 1 || n === 5 ? one
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return n === 11 || n === 8 || n === 80 || n === 800 ? many
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const i = Math.floor(Math.abs(+s))
+    var i = Math.floor(Math.abs(+s))
     return i === 1 ? one
       : i === 0 || ((2 <= i % 100 && i % 100 <= 20) || i % 100 === 40 || i % 100 === 60 || i % 100 === 80) ? many
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return n % 10 === 6 || n % 10 === 9 || n % 10 === 0 && n !== 0 ? many
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const i = Math.floor(Math.abs(+s))
+    var i = Math.floor(Math.abs(+s))
     return i % 10 === 1 && i % 100 !== 11 ? one
       : i % 10 === 2 && i % 100 !== 12 ? two
       : (i % 10 === 7 || i % 10 === 8) && (i % 100 !== 17 && i % 100 !== 18) ? many
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return n === 1 ? one
       : n === 2 || n === 3 ? two
       : n === 4 ? few
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return 1 <= n && n <= 4 ? one
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return (n === 1 || n === 5 || (7 <= n && n <= 9)) ? one
       : n === 2 || n === 3 ? two
       : n === 4 ? few
@@ -347,23 +347,23 @@ const f = [
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return n === 1 ? one
       : n % 10 === 4 && n % 100 !== 14 ? many
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return (n % 10 === 1 || n % 10 === 2) && (n % 100 !== 11 && n % 100 !== 12) ? one
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return (n % 10 === 6 || n % 10 === 9) || n === 10 ? few
       : other
   },
   function (s/*: string | number */)/*: Rule */ {
-    const n = +s
+    var n = +s
     return n % 10 === 3 && n % 100 !== 13 ? few
       : other
   }

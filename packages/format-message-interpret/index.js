@@ -1,8 +1,8 @@
 // @flow
 'use strict'
-const formats = require('format-message-formats')
-const lookupClosestLocale = require('lookup-closest-locale')
-const plurals = require('./plurals')
+var formats = require('format-message-formats')
+var lookupClosestLocale = require('lookup-closest-locale')
+var plurals = require('./plurals')
 
 /*::
 import type {
@@ -39,7 +39,7 @@ function interpretAST (
   types/*: Types */,
   join/*: boolean */
 )/*: Function */ {
-  const parts = elements.map(function (element) {
+  var parts = elements.map(function (element) {
     return interpretElement(element, parent, locale, types, join)
   })
 
@@ -53,8 +53,8 @@ function interpretAST (
 
   if (parts.length === 1) return parts[0]
   return function format (args) {
-    let message = ''
-    for (let e = 0; e < parts.length; ++e) {
+    var message = ''
+    for (var e = 0; e < parts.length; ++e) {
       message += parts[e](args)
     }
     return message
@@ -69,40 +69,41 @@ function interpretElement (
   join/*: boolean */
 )/*: Function */ {
   if (typeof element === 'string') {
-    const value/*: string */ = element
+    var value/*: string */ = element
     return function format () { return value }
   }
 
+  var id = element[0]
+  var type = element[1]
+
   if (parent && element[0] === '#') {
-    const id = parent[0]
-    const offset = parent[2]
-    const formatter = (types.number || defaults.number)([ id, 'number' ], locale)
+    id = parent[0]
+    var offset = parent[2]
+    var formatter = (types.number || defaults.number)([ id, 'number' ], locale)
     return function format (args) {
       return formatter(getArg(id, args) - offset, args)
     }
   }
 
-  const id = element[0]
-  const type = element[1]
-
   // pre-process children
+  var children
   if (type === 'plural' || type === 'selectordinal') {
-    const children = {}
+    children = {}
     Object.keys(element[3]).forEach(function (key) {
       children[key] = interpretAST(element[3][key], element, locale, types, join)
     })
     element = [ element[0], element[1], element[2], children ]
   } else if (element[2] && typeof element[2] === 'object') {
-    const children = {}
+    children = {}
     Object.keys(element[2]).forEach(function (key) {
       children[key] = interpretAST(element[2][key], element, locale, types, join)
     })
     element = [ element[0], element[1], children ]
   }
 
-  const getFrmt = type && (types[type] || defaults[type])
+  var getFrmt = type && (types[type] || defaults[type])
   if (getFrmt) {
-    const frmt = getFrmt(element, locale)
+    var frmt = getFrmt(element, locale)
     return function format (args) {
       return frmt(getArg(id, args), args)
     }
@@ -115,62 +116,62 @@ function interpretElement (
 
 function getArg (id/*: string */, args/*: ?Object */)/*: any */ {
   if (args && (id in args)) return args[id]
-  const parts = id.split('.')
-  let a = args
-  for (let i = 0, ii = parts.length; a && i < ii; ++i) {
+  var parts = id.split('.')
+  var a = args
+  for (var i = 0, ii = parts.length; a && i < ii; ++i) {
     a = a[parts[i]]
   }
   return a
 }
 
 function interpretNumber (element/*: Placeholder */, locales/*: Locales */) {
-  const style = element[2]
-  const options = formats.number[style] || formats.parseNumberPattern(style) || formats.number.default
+  var style = element[2]
+  var options = formats.number[style] || formats.parseNumberPattern(style) || formats.number.default
   return new Intl.NumberFormat(locales, options).format
 }
 
 function interpretDuration (element/*: Placeholder */, locales/*: Locales */) {
-  const style = element[2]
-  const options = formats.duration[style] || formats.duration.default
-  const fs = new Intl.NumberFormat(locales, options.seconds).format
-  const fm = new Intl.NumberFormat(locales, options.minutes).format
-  const fh = new Intl.NumberFormat(locales, options.hours).format
-  const sep = /^fi$|^fi-|^da/.test(String(locales)) ? '.' : ':'
+  var style = element[2]
+  var options = formats.duration[style] || formats.duration.default
+  var fs = new Intl.NumberFormat(locales, options.seconds).format
+  var fm = new Intl.NumberFormat(locales, options.minutes).format
+  var fh = new Intl.NumberFormat(locales, options.hours).format
+  var sep = /^fi$|^fi-|^da/.test(String(locales)) ? '.' : ':'
 
   return function (s, args) {
     s = +s
     if (!isFinite(s)) return fs(s)
-    const h = ~~(s / 60 / 60) // ~~ acts much like Math.trunc
-    const m = ~~(s / 60 % 60)
-    const dur = (h ? (fh(Math.abs(h)) + sep) : '') +
+    var h = ~~(s / 60 / 60) // ~~ acts much like Math.trunc
+    var m = ~~(s / 60 % 60)
+    var dur = (h ? (fh(Math.abs(h)) + sep) : '') +
       fm(Math.abs(m)) + sep + fs(Math.abs(s % 60))
     return s < 0 ? fh(-1).replace(fh(1), dur) : dur
   }
 }
 
 function interpretDateTime (element/*: Placeholder */, locales/*: Locales */) {
-  const type = element[1]
-  const style = element[2]
-  const options = formats[type][style] || formats.parseDatePattern(style) || formats[type].default
+  var type = element[1]
+  var style = element[2]
+  var options = formats[type][style] || formats.parseDatePattern(style) || formats[type].default
   return new Intl.DateTimeFormat(locales, options).format
 }
 
 function interpretPlural (element/*: Placeholder */, locales/*: Locales */) {
-  const type = element[1]
-  const pluralType = type === 'selectordinal' ? 'ordinal' : 'cardinal'
-  const offset = element[2]
-  const children = element[3]
-  let pluralRules
+  var type = element[1]
+  var pluralType = type === 'selectordinal' ? 'ordinal' : 'cardinal'
+  var offset = element[2]
+  var children = element[3]
+  var pluralRules
   if (Intl.PluralRules && Intl.PluralRules.supportedLocalesOf(locales).length > 0) {
     pluralRules = new Intl.PluralRules(locales, { type: pluralType })
   } else {
-    const locale = lookupClosestLocale(locales, plurals)
-    const select = (locale && plurals[locale][pluralType]) || returnOther
+    var locale = lookupClosestLocale(locales, plurals)
+    var select = (locale && plurals[locale][pluralType]) || returnOther
     pluralRules = { select: select }
   }
 
   return function (value, args) {
-    const clause =
+    var clause =
       children['=' + +value] ||
       children[pluralRules.select(value - offset)] ||
       children.other
@@ -181,14 +182,14 @@ function interpretPlural (element/*: Placeholder */, locales/*: Locales */) {
 function returnOther (/*:: n:number */) { return 'other' }
 
 function interpretSelect (element/*: Placeholder */, locales/*: Locales */) {
-  const children = element[2]
+  var children = element[2]
   return function (value, args) {
-    const clause = children[value] || children.other
+    var clause = children[value] || children.other
     return clause(args)
   }
 }
 
-const defaults/*: Types */ = {
+var defaults/*: Types */ = {
   number: interpretNumber,
   ordinal: interpretNumber, // TODO: support rbnf
   spellout: interpretNumber, // TODO: support rbnf

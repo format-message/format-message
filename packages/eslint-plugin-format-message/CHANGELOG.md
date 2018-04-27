@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.0.3
+
+Use `var` declarations for wider compatibility.
+
 ## 6.0.0
 
 **New Feature**

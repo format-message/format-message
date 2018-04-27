@@ -1,9 +1,9 @@
 /* eslint-env mocha */
 'use strict'
 
-const expect = require('chai').expect
-const parse = require('..')
-const SyntaxError = parse.SyntaxError
+var expect = require('chai').expect
+var parse = require('..')
+var SyntaxError = parse.SyntaxError
 
 describe('parse()', function () {
   it('coerces pattern to a string', function () {
@@ -14,7 +14,7 @@ describe('parse()', function () {
   })
 
   it('can parse "Hello, World!"', function () {
-    const msg = 'Hello, World!'
+    var msg = 'Hello, World!'
     expect(parse(msg)).to.deep.equal([ msg ])
   })
 
@@ -39,7 +39,7 @@ describe('parse()', function () {
   })
 
   it('can parse "{numPhotos, plural, =0{no photos} =1{one photo} other{# photos}}"', function () {
-    const msg = '{numPhotos, plural, =0{no photos} =1{one photo} other{# photos}}'
+    var msg = '{numPhotos, plural, =0{no photos} =1{one photo} other{# photos}}'
     expect(parse(msg)).to.deep.equal([
       [ 'numPhotos', 'plural', 0, {
         '=0': [ 'no photos' ],
@@ -50,7 +50,7 @@ describe('parse()', function () {
   })
 
   it('can parse "{numGuests, plural, offset:1 =0{no party} one{host and a guest} other{# guests}}"', function () {
-    const msg = '{numGuests, plural, offset:1 =0{no party} one{host and a guest} other{# guests}}'
+    var msg = '{numGuests, plural, offset:1 =0{no party} one{host and a guest} other{# guests}}'
     expect(parse(msg)).to.deep.equal([
       [ 'numGuests', 'plural', 1, {
         '=0': [ 'no party' ],
@@ -61,7 +61,7 @@ describe('parse()', function () {
   })
 
   it('can parse "{rank, selectordinal, one {#st} two {#nd} few {#rd} other {#th}}"', function () {
-    const msg = '{rank, selectordinal, one {#st} two {#nd} few {#rd} other {#th}}'
+    var msg = '{rank, selectordinal, one {#st} two {#nd} few {#rd} other {#th}}'
     expect(parse(msg)).to.deep.equal([
       [ 'rank', 'selectordinal', 0, {
         one: [ [ '#' ], 'st' ],
@@ -73,7 +73,7 @@ describe('parse()', function () {
   })
 
   it('can parse "{gender, select, female {woman} male {man} other {person}}"', function () {
-    const msg = '{gender, select, female {woman} male {man} other {person}}'
+    var msg = '{gender, select, female {woman} male {man} other {person}}'
     expect(parse(msg)).to.deep.equal([
       [ 'gender', 'select', {
         female: [ 'woman' ],
@@ -137,14 +137,14 @@ describe('parse()', function () {
 
   describe('tokens', function () {
     it('can parse "Hello, World!"', function () {
-      const tokens = []
-      const msg = 'Hello, World!'
+      var tokens = []
+      var msg = 'Hello, World!'
       expect(parse(msg, { tokens: tokens })).to.deep.equal([ msg ])
       expect(tokens).to.deep.equal([ [ 'text', msg ] ])
     })
 
     it('can parse "Hello, {name}!"', function () {
-      const tokens = []
+      var tokens = []
       expect(parse('Hello, {name}!', { tokens: tokens })).to.deep.equal([
         'Hello, ',
         [ 'name' ],
@@ -160,7 +160,7 @@ describe('parse()', function () {
     })
 
     it('can parse "{n,number}"', function () {
-      const tokens = []
+      var tokens = []
       expect(parse('{n,number}', { tokens: tokens })).to.deep.equal([
         [ 'n', 'number' ]
       ])
@@ -174,7 +174,7 @@ describe('parse()', function () {
     })
 
     it('can parse "{num, number, percent }"', function () {
-      const tokens = []
+      var tokens = []
       expect(parse('{num, number, percent }', { tokens: tokens })).to.deep.equal([
         [ 'num', 'number', 'percent' ]
       ])
@@ -193,8 +193,8 @@ describe('parse()', function () {
     })
 
     it('can parse "{numPhotos, plural, =0{no photos} =1{one photo} other{# photos}}"', function () {
-      const tokens = []
-      const msg = '{numPhotos, plural, =0{no photos} =1{one photo} other{# photos}}'
+      var tokens = []
+      var msg = '{numPhotos, plural, =0{no photos} =1{one photo} other{# photos}}'
       expect(parse(msg, { tokens: tokens })).to.deep.equal([
         [ 'numPhotos', 'plural', 0, {
           '=0': [ 'no photos' ],
@@ -230,8 +230,8 @@ describe('parse()', function () {
     })
 
     it('can parse "{numGuests, plural, offset:1 =0{no party} one{host and a guest} other{# guests}}"', function () {
-      const tokens = []
-      const msg = '{numGuests, plural, offset:1 =0{no party} one{host and a guest} other{# guests}}'
+      var tokens = []
+      var msg = '{numGuests, plural, offset:1 =0{no party} one{host and a guest} other{# guests}}'
       expect(parse(msg, { tokens: tokens })).to.deep.equal([
         [ 'numGuests', 'plural', 1, {
           '=0': [ 'no party' ],
@@ -271,7 +271,7 @@ describe('parse()', function () {
     })
 
     it('can parse "{a,b,c,d}"', function () {
-      const tokens = []
+      var tokens = []
       expect(parse('{a,b,c,d}', { tokens: tokens })).to.deep.equal([
         [ 'a', 'b', 'c,d' ]
       ])
@@ -287,7 +287,7 @@ describe('parse()', function () {
     })
 
     it('can parse simple xml tags as placeholders', function () {
-      const tokens = []
+      var tokens = []
       expect(parse('<a><i/>here</a>', { tokens: tokens, tagsType: '_' })).to.deep.equal([
         [ 'a', '_', {
           children: [ [ 'i', '_' ], 'here' ]
@@ -310,8 +310,8 @@ describe('parse()', function () {
 
   describe('whitespace', function () {
     it('should allow whitespace in and around text elements', function () {
-      const msg = '   some random test   '
-      const ast = parse(msg)
+      var msg = '   some random test   '
+      var ast = parse(msg)
       expect(ast[0]).to.equal(msg)
     })
 
@@ -322,9 +322,9 @@ describe('parse()', function () {
     })
 
     it('should consider lots of kinds of whitespace', function () {
-      const white = ' \t\v\r\n\u0085\u00A0\u180E\u2001\u2028\u2029\u202F\u205F\u2060\u3000\uFEFF'
-      const msg = white + '{' + white + 'p}'
-      const tokens = []
+      var white = ' \t\v\r\n\u0085\u00A0\u180E\u2001\u2028\u2029\u202F\u205F\u2060\u3000\uFEFF'
+      var msg = white + '{' + white + 'p}'
+      var tokens = []
       expect(parse(msg, { tokens: tokens })).to.deep.equal([
         white,
         [ 'p' ]
@@ -339,7 +339,7 @@ describe('parse()', function () {
     })
 
     it('allows trailing whitespace in simple xml tags', function () {
-      const tokens = []
+      var tokens = []
       expect(parse('<a ><i\n/>here</a\t >', { tokens: tokens, tagsType: '_' })).to.deep.equal([
         [ 'a', '_', {
           children: [ [ 'i', '_' ], 'here' ]
@@ -392,7 +392,7 @@ describe('parse()', function () {
   })
 
   it('throws on empty placeholder', function () {
-    const tokens = []
+    var tokens = []
     expect(function () { parse('{}', { tokens: tokens }) })
       .to.throw(SyntaxError, 'Expected placeholder id but found }')
     expect(tokens).to.deep.equal([
@@ -401,7 +401,7 @@ describe('parse()', function () {
   })
 
   it('throws on open brace in placeholder', function () {
-    const tokens = []
+    var tokens = []
     expect(function () { parse('{n{', { tokens: tokens }) })
       .to.throw(SyntaxError, 'Expected , or } but found {')
     expect(tokens).to.deep.equal([
@@ -411,7 +411,7 @@ describe('parse()', function () {
   })
 
   it('throws on missing type', function () {
-    const tokens = []
+    var tokens = []
     expect(function () { parse('{n,}', { tokens: tokens }) })
       .to.throw(SyntaxError, 'Expected placeholder type but found }')
     expect(tokens).to.deep.equal([
@@ -422,7 +422,7 @@ describe('parse()', function () {
   })
 
   it('throws on open brace after type', function () {
-    const tokens = []
+    var tokens = []
     expect(function () { parse('{n,d{', { tokens: tokens }) })
       .to.throw(SyntaxError, 'Expected , or } but found {')
     expect(tokens).to.deep.equal([
@@ -434,7 +434,7 @@ describe('parse()', function () {
   })
 
   it('throws on missing style', function () {
-    const tokens = []
+    var tokens = []
     expect(function () { parse('{n,t,}', { tokens: tokens }) })
       .to.throw(SyntaxError, 'Expected placeholder style name but found }')
     expect(tokens).to.deep.equal([
@@ -492,7 +492,7 @@ describe('parse()', function () {
   })
 
   it('throws on missing offset number', function () {
-    const tokens = []
+    var tokens = []
     expect(function () { parse('{n,plural,offset:}', { tokens: tokens }) })
       .to.throw(SyntaxError, 'Expected offset number but found }')
     expect(tokens).to.deep.equal([
@@ -507,7 +507,7 @@ describe('parse()', function () {
   })
 
   it('throws on missing closing brace', function () {
-    const tokens = []
+    var tokens = []
     expect(function () { parse('{a,b,c', { tokens: tokens }) })
       .to.throw(SyntaxError, 'Expected } but found end of message pattern')
     expect(tokens).to.deep.equal([
@@ -521,7 +521,7 @@ describe('parse()', function () {
   })
 
   it('throws on missing tag id', function () {
-    const tokens = []
+    var tokens = []
     expect(function () { parse('<>', { tokens: tokens, tagsType: '<>' }) })
       .to.throw(SyntaxError, 'Expected placeholder id but found >')
     expect(tokens).to.deep.equal([
@@ -530,7 +530,7 @@ describe('parse()', function () {
   })
 
   it('throws on missing > at end of tag', function () {
-    const tokens = []
+    var tokens = []
     expect(function () { parse('<a', { tokens: tokens, tagsType: '<>' }) })
       .to.throw(SyntaxError, 'Expected > but found end of message pattern')
     expect(tokens).to.deep.equal([
@@ -540,7 +540,7 @@ describe('parse()', function () {
   })
 
   it('throws on missing end tag', function () {
-    const tokens = []
+    var tokens = []
     expect(function () { parse('<a>', { tokens: tokens, tagsType: '<>' }) })
       .to.throw(SyntaxError, 'Expected </a> but found end of message pattern')
     expect(tokens).to.deep.equal([
@@ -551,7 +551,7 @@ describe('parse()', function () {
   })
 
   it('throws on missing > at end of end tag', function () {
-    const tokens = []
+    var tokens = []
     expect(function () { parse('<a></a', { tokens: tokens, tagsType: '<>' }) })
       .to.throw(SyntaxError, 'Expected > but found end of message pattern')
     expect(tokens).to.deep.equal([
@@ -564,14 +564,14 @@ describe('parse()', function () {
   })
 
   it('throws on end tag with no start', function () {
-    const tokens = []
+    var tokens = []
     expect(function () { parse('</end>', { tokens: tokens, tagsType: '<>' }) })
       .to.throw(SyntaxError, 'Unexpected closing tag without matching opening tag found')
     expect(tokens).to.deep.equal([])
   })
 
   it('throws on mismatched end tag', function () {
-    const tokens = []
+    var tokens = []
     expect(function () { parse('<a></b>', { tokens: tokens, tagsType: '<>' }) })
       .to.throw(SyntaxError, 'Expected </a> but found </b>')
     expect(tokens).to.deep.equal([

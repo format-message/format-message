@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
-const expect = require('chai').expect
-const MessageFormat = require('..')
+var expect = require('chai').expect
+var MessageFormat = require('..')
 
 describe('MessageFormat', function () {
   describe('constructor', function () {
@@ -10,7 +10,7 @@ describe('MessageFormat', function () {
         TypeError,
         'calling MessageFormat constructor without new is invalid'
       )
-      const message = new MessageFormat('')
+      var message = new MessageFormat('')
       expect(function () { MessageFormat.call(message, '', 'en') }).to.throw(
         TypeError,
         'calling MessageFormat constructor without new is invalid'
@@ -32,7 +32,7 @@ describe('MessageFormat', function () {
 
   describe('prototype', function () {
     (typeof Symbol === 'undefined' ? xit : it)('toStringTag', function () {
-      const descr = Object.getOwnPropertyDescriptor(MessageFormat.prototype, Symbol.toStringTag)
+      var descr = Object.getOwnPropertyDescriptor(MessageFormat.prototype, Symbol.toStringTag)
       expect(descr.writable).to.equal(false)
       expect(descr.enumerable).to.equal(false)
       expect(descr.configurable).to.equal(false)
@@ -40,7 +40,7 @@ describe('MessageFormat', function () {
     })
 
     it('has a format getter', function () {
-      const descr = Object.getOwnPropertyDescriptor(MessageFormat.prototype, 'format')
+      var descr = Object.getOwnPropertyDescriptor(MessageFormat.prototype, 'format')
       expect(descr.enumerable).to.equal(false)
       expect(descr.configurable).to.equal(true)
       expect(descr.get).to.exist
@@ -48,7 +48,7 @@ describe('MessageFormat', function () {
     })
 
     it('has a resolvedOptions value', function () {
-      const descr = Object.getOwnPropertyDescriptor(MessageFormat.prototype, 'resolvedOptions')
+      var descr = Object.getOwnPropertyDescriptor(MessageFormat.prototype, 'resolvedOptions')
       expect(descr.enumerable).to.equal(false)
       expect(descr.configurable).to.equal(true)
       expect(descr.writable).to.equal(true)
@@ -95,7 +95,7 @@ describe('MessageFormat', function () {
     })
 
     it('should resolve passed locale to closest supported locale', function () {
-      let message = new MessageFormat('ola', 'pt-PT')
+      var message = new MessageFormat('ola', 'pt-PT')
       expect(message.resolvedOptions().locale).to.equal('pt-PT')
       message = new MessageFormat('oi', 'pt-BR')
       expect(message.resolvedOptions().locale).to.equal('pt-BR')
@@ -111,63 +111,63 @@ describe('MessageFormat', function () {
     })
 
     it('formats a simple message', function () {
-      const pattern = 'Simple string with nothing special'
-      const message = new MessageFormat(pattern).format()
+      var pattern = 'Simple string with nothing special'
+      var message = new MessageFormat(pattern).format()
       expect(message).to.equal('Simple string with nothing special')
     })
 
     it('handles pattern with escaped text', function () {
-      const pattern = 'This isn\'\'t a \'{\'\'simple\'\'}\' \'string\''
-      const message = new MessageFormat(pattern).format()
+      var pattern = 'This isn\'\'t a \'{\'\'simple\'\'}\' \'string\''
+      var message = new MessageFormat(pattern).format()
       expect(message).to.equal('This isn\'t a {\'simple\'} \'string\'')
     })
 
     it('accepts arguments', function () {
-      const pattern = 'x{ arg }z'
-      const message = new MessageFormat(pattern).format({ arg: 'y' })
+      var pattern = 'x{ arg }z'
+      var message = new MessageFormat(pattern).format({ arg: 'y' })
       expect(message).to.equal('xyz')
     })
 
     it('accepts arguments with periods', function () {
-      const pattern = 'x{ arg.y }z'
-      const message = new MessageFormat(pattern).format({ 'arg.y': 'y' })
+      var pattern = 'x{ arg.y }z'
+      var message = new MessageFormat(pattern).format({ 'arg.y': 'y' })
       expect(message).to.equal('xyz')
     })
 
     it('accepts arguments as a nested data object', function () {
-      const pattern = 'x{ arg.y }z'
-      const message = new MessageFormat(pattern).format({ arg: { y: 'y' } })
+      var pattern = 'x{ arg.y }z'
+      var message = new MessageFormat(pattern).format({ arg: { y: 'y' } })
       expect(message).to.equal('xyz')
     })
 
     it('will prioritize arguments with periods over nested data object', function () {
-      const pattern = 'x{ arg.y }z'
-      const message = new MessageFormat(pattern).format({ 'arg.y': 'y', arg: { y: 'a' } })
+      var pattern = 'x{ arg.y }z'
+      var message = new MessageFormat(pattern).format({ 'arg.y': 'y', arg: { y: 'a' } })
       expect(message).to.equal('xyz')
     })
 
     it('formats numbers, dates, and times', function () {
-      const pattern = '{ n, number } : { d, date, full } { d, time, short }'
-      const localeEpoch = new Date(new Date(0).getTimezoneOffset() * 60 * 1000)
-      const message = new MessageFormat(pattern, 'en').format({ n: 1000, d: localeEpoch })
+      var pattern = '{ n, number } : { d, date, full } { d, time, short }'
+      var localeEpoch = new Date(new Date(0).getTimezoneOffset() * 60 * 1000)
+      var message = new MessageFormat(pattern, 'en').format({ n: 1000, d: localeEpoch })
       expect(message).to.include('1,000')
       expect(message).to.include('Jan')
       expect(message).to.include('12')
     })
 
     it('handles plurals', function () {
-      const pattern =
+      var pattern =
         '{name} {numPeople, plural, offset:1' +
         '    =0 {didn\'t carpool.}' +
         '    =1 {drove himself.}' +
         ' other {drove # people.}}'
-      const message = new MessageFormat(pattern, 'en')
+      var message = new MessageFormat(pattern, 'en')
         .format({ name: 'Bob', numPeople: 5 })
       expect(message).to.equal('Bob drove 4 people.')
     })
 
     it('handles plurals for other locales', function () {
-      const pattern =
+      var pattern =
         '{n, plural,' +
         '  zero {zero}' +
         '   one {one}' +
@@ -175,7 +175,7 @@ describe('MessageFormat', function () {
         '   few {few}' +
         '  many {many}' +
         ' other {other}}'
-      const message = new MessageFormat(pattern, 'ar')
+      var message = new MessageFormat(pattern, 'ar')
       expect(message.resolvedOptions().locale).to.equal('ar')
       expect(message.format({ n: 0 })).to.equal('zero')
       expect(message.format({ n: 1 })).to.equal('one')
@@ -185,13 +185,13 @@ describe('MessageFormat', function () {
     })
 
     it('handles selectordinals', function () {
-      const pattern =
+      var pattern =
         '{n, selectordinal,' +
         '   one {#st}' +
         '   two {#nd}' +
         '   few {#rd}' +
         ' other {#th}}'
-      const message = new MessageFormat(pattern)
+      var message = new MessageFormat(pattern)
       expect(message.format({ n: 1 })).to.equal('1st')
       expect(message.format({ n: 22 })).to.equal('22nd')
       expect(message.format({ n: 103 })).to.equal('103rd')
@@ -199,18 +199,18 @@ describe('MessageFormat', function () {
     })
 
     it('handles select', function () {
-      const pattern =
+      var pattern =
         '{ gender, select,' +
         '   male {it\'s his turn}' +
         ' female {it\'s her turn}' +
         '  other {it\'s their turn}}'
-      const message = new MessageFormat(pattern)
+      var message = new MessageFormat(pattern)
         .format({ gender: 'female' })
       expect(message).to.equal('it\'s her turn')
     })
 
     it('handles custom placeholder types', function () {
-      const message = new MessageFormat('{ a, locale }', 'en-GB', {
+      var message = new MessageFormat('{ a, locale }', 'en-GB', {
         types: {
           locale: function (placeholder, locale) {
             return function (value, args) {
@@ -241,7 +241,7 @@ describe('MessageFormat', function () {
     })
 
     it('handles custom placeholder types', function () {
-      const message = new MessageFormat('{a,b,c}', 'en', {
+      var message = new MessageFormat('{a,b,c}', 'en', {
         types: {
           b: function (placeholder, locale) {
             return function (value, args) {

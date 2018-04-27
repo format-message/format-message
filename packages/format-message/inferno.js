@@ -1,6 +1,6 @@
 // @flow
 'use strict'
-const formatChildren = require('./base-format-children')
+var formatChildren = require('./base-format-children')
 
 function applyChildren (key/*: string */, element/*: any */, children/*: ?mixed[] */) {
   if (process.env.NODE_ENV !== 'production' && !element.flags) {
