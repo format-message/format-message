@@ -2,7 +2,7 @@
   "name": "eslint-plugin-format-message",
   "version": "6.0.3",
   "description": "format-message i18n specific rules for ESLint",
-  "author": "Andy VanWagoner <andy@thetalecrafter.com> (https://thetalecrafter.com/)",
+  "author": "Andy VanWagoner <andy@vanwago.net>",
   "homepage": "https://github.com/format-message/format-message/tree/master/packages/eslint-plugin-format-message",
   "license": "MIT",
   "repository": "format-message/format-message",

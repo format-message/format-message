@@ -2,7 +2,7 @@
   "name": "message-format",
   "version": "6.0.3",
   "description": "Intl.MessageFormat prollyfill supporting ICU message format",
-  "author": "Andy VanWagoner <andy@thetalecrafter.com> (https://thetalecrafter.com/)",
+  "author": "Andy VanWagoner <andy@vanwago.net>",
   "homepage": "https://github.com/format-message/format-message/tree/master/packages/message-format",
   "license": "MIT",
   "repository": "format-message/format-message",

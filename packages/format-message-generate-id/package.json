@@ -2,7 +2,7 @@
   "name": "format-message-generate-id",
   "version": "6.0.3",
   "description": "Generate a message id from the default message pattern",
-  "author": "Andy VanWagoner <andy@thetalecrafter.com> (https://thetalecrafter.com/)",
+  "author": "Andy VanWagoner <andy@vanwago.net>",
   "homepage": "https://github.com/format-message/format-message/tree/master/packages/format-message-generate-id",
   "license": "MIT",
   "repository": "format-message/format-message",

@@ -2,7 +2,7 @@
   "name": "format-message-cli",
   "version": "6.0.3",
   "description": "Command-line tools to lint, extract, and inline format-message translations",
-  "author": "Andy VanWagoner <andy@thetalecrafter.com> (https://thetalecrafter.com/)",
+  "author": "Andy VanWagoner <andy@vanwago.net>",
   "homepage": "https://github.com/format-message/format-message/tree/master/packages/format-message-cli",
   "license": "MIT",
   "repository": "format-message/format-message",

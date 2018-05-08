@@ -2,7 +2,7 @@
   "name": "babel-plugin-transform-format-message",
   "version": "6.0.3",
   "description": "Pre-generate ids from default messages or inline a single language translation",
-  "author": "Andy VanWagoner <andy@thetalecrafter.com> (https://thetalecrafter.com/)",
+  "author": "Andy VanWagoner <andy@vanwago.net>",
   "homepage": "https://github.com/format-message/format-message/tree/master/packages/babel-plugin-transform-format-message",
   "license": "MIT",
   "repository": "format-message/format-message",

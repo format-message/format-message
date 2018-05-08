@@ -2,7 +2,7 @@
   "name": "format-message-print",
   "version": "6.0.3",
   "description": "Pretty print compact message format ast",
-  "author": "Andy VanWagoner <andy@thetalecrafter.com> (https://thetalecrafter.com/)",
+  "author": "Andy VanWagoner <andy@vanwago.net>",
   "homepage": "https://github.com/format-message/format-message/tree/master/packages/format-message-print",
   "license": "MIT",
   "repository": "format-message/format-message",
