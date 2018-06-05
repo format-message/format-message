@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.0.4
+
+Fixes `translation-match-params` to ignore missing translations.
+
 ## 6.0.3
 
 Use `var` declarations for wider compatibility.
