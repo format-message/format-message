@@ -17,6 +17,7 @@ tester.run('translation-match-params', rule, {
     { code: 'var f=require("format-message");f("a", null, "en")', settings: settings },
     { code: 'var f=require("format-message");f("b")', settings: settings },
     { code: 'var f=require("format-message");f("d")', settings: settings },
+    { code: 'var f=require("format-message");f("{missing}")', settings: settings },
     {
       code: '<a translate="yes">d</a>',
       settings: settings,

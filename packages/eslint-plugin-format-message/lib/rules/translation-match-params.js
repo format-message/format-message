@@ -10,7 +10,7 @@ module.exports = {
   },
   create: function (context) {
     return visitEachTranslation(context, function (info) {
-      if (!info.patternAst) return
+      if (!info.patternAst || !info.translation) return
       var id = info.id
       var node = info.node
       var locale = info.locale
