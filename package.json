@@ -8,6 +8,7 @@
     "lerna": "lerna",
     "postinstall": "node scripts/cldr.js",
     "prebenchmark": "format-message transform -i scripts/benchmark.src.js > scripts/benchmark.js",
+    "prelerna": "webpack",
     "pretest": "rm -rf test/inline && format-message transform -i packages/format-message/__tests__/index.spec.js > packages/format-message/__tests__/inline.spec.js",
     "test": "eslint . && flow check && nyc mocha 'packages/**/*.spec.js' && karma start"
   },
@@ -44,7 +45,8 @@
     "nyc": "^12.0.1",
     "react": "^16.0.0",
     "rimraf": "^2.4.3",
-    "webpack": "^4.0.1"
+    "webpack": "^4.0.1",
+    "webpack-cli": "^2.0.15"
   },
   "eslintConfig": {
     "globals": {
@@ -57,6 +59,7 @@
   },
   "eslintIgnore": [
     "**/node_modules",
+    "**/umd",
     "coverage",
     "flow-typed",
     "packages/format-message/__tests__/inline.spec.js",
