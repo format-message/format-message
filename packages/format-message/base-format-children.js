@@ -31,7 +31,7 @@ module.exports = function formatChildren (
 
   // check that wrapping tokens are properly nested
   var tokens = []
-  while ((match = wrappingToken.exec(message)) !== null) {
+  while ((match = wrappingToken.exec(message))) {
     var key = match[1]
     token = {
       key: key,
