@@ -1,6 +1,6 @@
 'use strict'
 
-var parse = require('babylon').parse
+var parse = require('@babel/parser').parse
 var lookupClosestLocale = require('lookup-closest-locale')
 var cldr = require('./cldr')
 var addHelper = require('./inline-helpers').addHelper

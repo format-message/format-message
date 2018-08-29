@@ -278,7 +278,7 @@ describe('format-message transform -i', function () {
       var files = readdirSync(dirname, 'utf8').sort()
       expect(files).to.be.eql(ofiles.sort())
       var fileContent = readFileSync(dirname + '/index.spec.js', 'utf8')
-      expect(fileContent.trim()).to.contain('\'x\' + arg + \'z\'')
+      expect(fileContent.trim()).to.contain('"x" + arg + "z"')
     })
 
     it('uses -s source-maps', function () {
@@ -299,7 +299,7 @@ describe('format-message transform -i', function () {
       var fileContent =
         readFileSync(dirname + '/index.spec.js', 'utf8')
           .split('//# sourceMappingURL=')
-      expect(fileContent[0].trim()).to.contain('\'x\' + arg + \'z\'')
+      expect(fileContent[0].trim()).to.contain('"x" + arg + "z"')
       expect((fileContent[1] || '').trim()).to.equal('index.spec.js.map')
       var sourceMap = readFileSync(dirname + '/index.spec.js.map', 'utf8')
       expect(JSON.parse(sourceMap)).to.not.be.empty

@@ -1,7 +1,7 @@
 'use strict'
 
 var fs = require('fs')
-var babel = require('babel-core')
+var babel = require('@babel/core')
 var plugins = require('./plugins')
 
 module.exports = function extractFiles (files, options) {
@@ -24,14 +24,17 @@ function forEachFile (files, fn) {
 }
 
 function extract (source, options) {
-  return babel.transform(source.sourceCode, {
+  return babel.transformSync(source.sourceCode, {
     ast: false,
     code: false,
     filename: source.sourceFileName,
     inputSourceMap: source.inputSourceMap,
     sourceRoot: options.root,
-    plugins: plugins.concat([
+    parserOpts: {
+      plugins: plugins
+    },
+    plugins: [
       [ require('babel-plugin-extract-format-message'), options ]
-    ])
+    ]
   })
 }
