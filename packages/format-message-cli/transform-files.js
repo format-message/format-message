@@ -5,7 +5,7 @@ var path = require('path')
 var mkdirp = require('mkdirp')
 var Buffer = require('safe-buffer').Buffer
 var sourceMap = require('source-map')
-var babel = require('babel-core')
+var babel = require('@babel/core')
 var plugins = require('./plugins')
 
 module.exports = function transformFiles (files, options) {
@@ -106,14 +106,17 @@ function transformManyToOne (files, options) {
 }
 
 function transform (source, options) {
-  return babel.transform(source.sourceCode, {
+  return babel.transformSync(source.sourceCode, {
     ast: false,
     filename: source.sourceFileName,
     inputSourceMap: source.inputSourceMap,
     sourceMaps: options.sourceMaps, // .map
     sourceRoot: options.root,
-    plugins: plugins.concat([
+    parserOpts: {
+      plugins: plugins
+    },
+    plugins: [
       [ require('babel-plugin-transform-format-message'), options ]
-    ])
+    ]
   })
 }

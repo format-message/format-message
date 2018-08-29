@@ -1,6 +1,7 @@
 'use strict'
 
 var path = require('path')
+var imports = require('@babel/helper-module-imports')
 var util = require('format-message-estree-util')
 var generate = require('format-message-generate-id')
 var parse = require('format-message-parse')
@@ -131,8 +132,8 @@ module.exports = function (bbl) {
 
         // just add the generated id and remove description and other metadata
         if (!shouldInline) {
-          var formatMessageId = state.addImport(
-            'format-message', 'default', 'formatMessage'
+          var formatMessageId = imports.addDefault(
+            path, 'format-message', { nameHint: 'formatMessage' }
           )
           var childrenId
           var formatMessageCall =
@@ -221,7 +222,7 @@ module.exports = function (bbl) {
         message.path = path
         message.t = t
         message.helper = function (type) {
-          return state.addImport('format-message', type)
+          return imports.addNamed(path, type, 'format-message')
         }
 
         path.replaceWith(t.jSXElement(
