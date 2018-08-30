@@ -1,6 +1,6 @@
 {
   "name": "format-message",
-  "version": "6.0.3",
+  "version": "6.1.0",
   "description": "Internationalize text, numbers, and dates using ICU Message Format",
   "author": "Andy VanWagoner <andy@vanwago.net>",
   "homepage": "https://github.com/format-message/format-message",
@@ -21,9 +21,9 @@
     "icu"
   ],
   "dependencies": {
-    "format-message-formats": "^6.0.3",
-    "format-message-interpret": "^6.0.3",
-    "format-message-parse": "^6.0.3",
-    "lookup-closest-locale": "^6.0.3"
+    "format-message-formats": "^6.1.0",
+    "format-message-interpret": "^6.1.0",
+    "format-message-parse": "^6.1.0",
+    "lookup-closest-locale": "^6.1.0"
   }
 }
