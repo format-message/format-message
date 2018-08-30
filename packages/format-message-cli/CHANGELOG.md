@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.1.0
+
+Uses babel 7 under the hood. Supports projects with .babelrc using v7 features.
+
 ## 6.0.3
 
 Use `var` declarations for wider compatibility.
