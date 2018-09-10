@@ -9,5 +9,6 @@
   "bugs": "https://github.com/format-message/format-message/issues",
   "keywords": [
     "format-message"
-  ]
+  ],
+  "types": "types.d.ts"
 }

@@ -17,6 +17,7 @@
     "pluralformat",
     "selectformat"
   ],
+  "types": "types.d.ts",
   "dependencies": {
     "format-message-formats": "^6.1.0",
     "lookup-closest-locale": "^6.1.0"
