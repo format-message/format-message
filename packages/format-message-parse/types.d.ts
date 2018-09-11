@@ -1,3 +1,10 @@
+interface ParseOptions {
+    tagsType?: string
+    tokens?: parse.Token[]
+}
+
+declare function parse(pattern: string, options?: ParseOptions): parse.AST;
+
 declare namespace parse {
     export type AST = Element[]
     export type Element = string | Placeholder
@@ -25,10 +32,4 @@ declare namespace parse {
     }
 }
 
-interface ParseOptions {
-    tagsType?: string
-    tokens?: parse.Token[]
-}
-
-declare function parse(pattern: string, options?: ParseOptions): parse.AST;
 export = parse;

@@ -1,5 +1,7 @@
 import { AST, Placeholder } from 'format-message-parse';
 
+declare function interpret(ast: AST, locale?: interpret.Locales, types?: interpret.Types): (args?: object) => string;
+
 declare namespace interpret {
     type Locale = string
     type Locales = Locale | Locale[]
@@ -14,5 +16,4 @@ declare namespace interpret {
     export const types: Types;
 }
 
-declare function interpret(ast: AST, locale?: interpret.Locales, types?: interpret.Types): (args?: object) => string;
 export = interpret;
