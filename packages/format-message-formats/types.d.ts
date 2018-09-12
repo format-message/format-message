@@ -1,10 +1,10 @@
-interface FormatGroup<T> {
+export interface FormatGroup<T> {
     default: T
 
     [style: string]: T
 }
 
-interface DurationFormatOptions {
+export interface DurationFormatOptions {
     hours: Intl.NumberFormatOptions
     minutes: Intl.NumberFormatOptions
     seconds: Intl.NumberFormatOptions

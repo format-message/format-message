@@ -3,8 +3,8 @@ import { AST, Placeholder } from 'format-message-parse';
 declare function interpret(ast: AST, locale?: interpret.Locales, types?: interpret.Types): (args?: object) => string;
 
 declare namespace interpret {
-    type Locale = string
-    type Locales = Locale | Locale[]
+    export type Locale = string
+    export type Locales = Locale | Locale[]
     export type Type = (placeholder: Placeholder, locales: Locales) => (context: any, params?: object) => any
 
     export interface Types {

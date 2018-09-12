@@ -1,9 +1,4 @@
-interface ParseOptions {
-    tagsType?: string
-    tokens?: parse.Token[]
-}
-
-declare function parse(pattern: string, options?: ParseOptions): parse.AST;
+declare function parse(pattern: string, options?: parse.ParseOptions): parse.AST;
 
 declare namespace parse {
     export type AST = Element[]
@@ -20,6 +15,12 @@ declare namespace parse {
 
     export type Token = [TokenType, string]
     export type TokenType = 'text' | 'space' | 'id' | 'type' | 'style' | 'offset' | 'number' | 'selector' | 'syntax'
+
+    export interface ParseOptions {
+        tagsType?: string
+        tokens?: parse.Token[]
+    }
+
 
     export class SyntaxError extends Error {
         expected: string | undefined;
