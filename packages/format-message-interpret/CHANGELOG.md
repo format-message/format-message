@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.2.0
+
+Add TypeScript type definitions.
+
 ## 6.0.3
 
 Use `var` declarations for wider compatibility.

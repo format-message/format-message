@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.2.0
+
+Add TypeScript type definitions.
+
 ## 6.0.4
 
 Fixes `translation-match-params` to ignore missing translations.

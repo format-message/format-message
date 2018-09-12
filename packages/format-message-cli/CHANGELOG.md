@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.2.0
+
+Add TypeScript type definitions.
+
 ## 6.1.0
 
 Uses babel 7 under the hood. Supports projects with .babelrc using v7 features.
