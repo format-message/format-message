@@ -1,6 +1,6 @@
 {
   "name": "format-message-formats",
-  "version": "6.1.0",
+  "version": "6.2.0",
   "description": "Options for Intl APIs used by format-message",
   "author": "Andy VanWagoner <andy@vanwago.net>",
   "homepage": "https://github.com/format-message/format-message/tree/master/packages/format-message-formats",

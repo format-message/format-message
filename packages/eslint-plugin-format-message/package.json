@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-format-message",
-  "version": "6.1.0",
+  "version": "6.2.0",
   "description": "format-message i18n specific rules for ESLint",
   "author": "Andy VanWagoner <andy@vanwago.net>",
   "homepage": "https://github.com/format-message/format-message/tree/master/packages/eslint-plugin-format-message",
@@ -23,11 +23,11 @@
     "icu"
   ],
   "dependencies": {
-    "format-message": "^6.1.0",
+    "format-message": "^6.2.0",
     "format-message-estree-util": "^6.1.0",
-    "format-message-generate-id": "^6.1.0",
-    "format-message-parse": "^6.1.0",
-    "lookup-closest-locale": "^6.1.0"
+    "format-message-generate-id": "^6.2.0",
+    "format-message-parse": "^6.2.0",
+    "lookup-closest-locale": "^6.2.0"
   },
   "peerDependencies": {
     "eslint": ">=2.0.0"

@@ -1,6 +1,6 @@
 {
   "name": "message-format",
-  "version": "6.1.0",
+  "version": "6.2.0",
   "description": "Intl.MessageFormat prollyfill supporting ICU message format",
   "author": "Andy VanWagoner <andy@vanwago.net>",
   "homepage": "https://github.com/format-message/format-message/tree/master/packages/message-format",
@@ -23,7 +23,7 @@
   ],
   "types": "types.d.ts",
   "dependencies": {
-    "format-message-interpret": "^6.1.0",
-    "format-message-parse": "^6.1.0"
+    "format-message-interpret": "^6.2.0",
+    "format-message-parse": "^6.2.0"
   }
 }
