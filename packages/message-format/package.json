@@ -21,6 +21,7 @@
     "gender",
     "icu"
   ],
+  "types": "types.d.ts",
   "dependencies": {
     "format-message-interpret": "^6.1.0",
     "format-message-parse": "^6.1.0"

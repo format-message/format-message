@@ -12,5 +12,6 @@
     "lookup",
     "BCP47",
     "language tag"
-  ]
+  ],
+  "types": "types.d.ts"
 }

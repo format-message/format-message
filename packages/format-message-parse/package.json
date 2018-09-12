@@ -16,5 +16,6 @@
     "messageformat",
     "pluralformat",
     "selectformat"
-  ]
+  ],
+  "types": "types.d.ts"
 }
