@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.2.1
+
+Fix translations not returning from `rich()`.
+
 ## 6.2.0
 
 Add TypeScript type definitions.
