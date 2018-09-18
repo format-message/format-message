@@ -95,7 +95,7 @@ function namespace ()/*: FormatMessage */ {
     var id = (typeof msg === 'object' && msg.id) || generateId(pattern)
     var translated = translate(pattern, id, locales || currentLocales)
     var format = translated.toParts || (
-      translated.toParts = interpret.toParts(parse(pattern, { tagsType: tagsType }), locales || currentLocales, types)
+      translated.toParts = interpret.toParts(parse(translated.message, { tagsType: tagsType }), locales || currentLocales, types)
     )
     return format(args)
   }
