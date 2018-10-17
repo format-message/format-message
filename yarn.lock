@@ -1526,9 +1526,9 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-cldr-core@^33.0.0:
-  version "33.0.0"
-  resolved "https://registry.yarnpkg.com/cldr-core/-/cldr-core-33.0.0.tgz#200f32e7c09dd7adbe16b0cf6ee8f75e2ca4b194"
+cldr-core@^34.0.0:
+  version "34.0.0"
+  resolved "https://registry.yarnpkg.com/cldr-core/-/cldr-core-34.0.0.tgz#2e9d1f9909868e93e70c4813a74f331af028d66c"
 
 cli-cursor@^2.1.0:
   version "2.1.0"
