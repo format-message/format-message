@@ -23,7 +23,7 @@ type Internals = {
 }
 */
 
-var internals/*: WeakMap<MessageFormat, Internals> */ = new WeakMap()
+var internals/*: WeakMap<Object, Internals> */ = new WeakMap()
 
 /*!
  * Intl.MessageFormat prollyfill
