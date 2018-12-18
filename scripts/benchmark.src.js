@@ -42,7 +42,7 @@ mf = new MessageFormat(pattern, 'en').format
 BENCHMARK_PARSE && benchmark(
   'Parse simple message', {
     'intl-messageformat': function () { return intlParse(pattern) },
-    'messageformat': function () { return parse2(pattern) },
+    'messageformat-parser': function () { return parse2(pattern) },
     'format-message-parse': function () { return parse(pattern) }
   }
 )
@@ -65,7 +65,7 @@ mf = new MessageFormat(pattern, 'en').format
 BENCHMARK_PARSE && benchmark(
   'Parse common one arg message', {
     'intl-messageformat': function () { return intlParse(pattern) },
-    'messageformat': function () { return parse2(pattern) },
+    'messageformat-parser': function () { return parse2(pattern) },
     'format-message-parse': function () { return parse(pattern) }
   }
 )
@@ -110,7 +110,7 @@ mf = new MessageFormat(pattern, 'en').format
 BENCHMARK_PARSE && benchmark(
   'Parse complex message (no numbers or dates)', {
     'intl-messageformat': function () { return intlParse(pattern) },
-    'messageformat': function () { return parse2(pattern) },
+    'messageformat-parser': function () { return parse2(pattern) },
     'format-message-parse': function () { return parse(pattern) }
   }
 )
@@ -166,7 +166,7 @@ mf = new MessageFormat(pattern, 'en').format
 BENCHMARK_PARSE && benchmark(
   'Parse complex message', {
     'intl-messageformat': function () { return intlParse(pattern) },
-    'messageformat': function () { return parse2(pattern) },
+    'messageformat-parser': function () { return parse2(pattern) },
     'format-message-parse': function () { return parse(pattern) }
   }
 )
