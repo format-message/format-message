@@ -80,6 +80,8 @@ declare namespace formatMessage {
 
     export function plural(value: number, offset: any, options: any, locale: any): any
 
+    export function plural(value: number, options: any): any
+
     export function selectordinal(value: number, offset: any, options: any, locale: any): any
 
     export function namespace(): typeof formatMessage
