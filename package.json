@@ -26,7 +26,7 @@
     "flow-bin": "^0.98.0",
     "inferno": "^5.0.0",
     "inferno-create-element": "^5.0.0",
-    "intl-messageformat": "^2.1.0",
+    "intl-messageformat": "^3.0.0",
     "karma": "^4.0.0",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^2.0.0",
