@@ -22,6 +22,14 @@ tester.run('translation-match-params', rule, {
       code: '<a translate="yes">d</a>',
       settings: settings,
       parserOptions: { ecmaFeatures: { jsx: true } }
+    },
+    {
+      code: 'var f=require("format-message");' +
+        'f.rich("<b>c</b>", { ' +
+          'b: function(props) { return <b>{props.children}</b> } ' +
+        '})',
+      settings: settings,
+      parserOptions: { ecmaFeatures: { jsx: true } }
     }
   ],
   invalid: [
@@ -50,6 +58,28 @@ tester.run('translation-match-params', rule, {
       errors: [
         { message: 'Translation for "{ k }" in "pt" is missing "k" placeholder' },
         { message: 'Translation for "{ k }" in "pt" has extra "y" placeholder' }
+      ]
+    },
+    {
+      code: 'var f=require("format-message");' +
+        'f.rich("<i>d</i>", { ' +
+          'i: function(props) { return <i>{props.children}</i> } ' +
+        '})',
+      settings: settings,
+      parserOptions: { ecmaFeatures: { jsx: true } },
+      errors: [
+        'Translation for "<i>d</i>" in "pt" is missing "i" placeholder'
+      ]
+    },
+    {
+      code: 'var f=require("format-message");' +
+        'f.rich("<u>e</u>", { ' +
+          'u: function(props) { return <u>{props.children}</u> } ' +
+        '})',
+      settings: settings,
+      parserOptions: { ecmaFeatures: { jsx: true } },
+      errors: [
+        'Translation for "<u>e</u>" in "pt" is missing "u" placeholder'
       ]
     }
   ]
