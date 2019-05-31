@@ -37,7 +37,7 @@ function getInfo (message, locale, isRich) {
       // ignore parse error here
     }
     if (info.patternAst) {
-      info.patternParams = getParamsFromPatternAst(info.patternAst)
+      info.patternParams = getParamsFromPatternAst(info.patternAst, isRich)
     }
   }
 
