@@ -11,7 +11,10 @@
     "{ o, plural, \nother {o} }": "{ o, plural, \nother {o} }",
     "<b>c</b>": "<b>c</b>",
     "<i>d</i>": "<i>d</i>",
-    "<u>e</u>": "<u>e</u>"
+    "<u>e</u>": "<u>e</u>",
+    "<p>{f}</p>": "<p>{f}</p>",
+    "<q>g</q>": "<q>g</q>",
+    "<s />": "<s />"
   },
   "pt": {
     "a": "a1",
@@ -26,6 +29,9 @@
     "{ o, plural, \nother {o} }": "{ o, plural, \nother {o} }",
     "<b>c</b>": "<b>c</b>",
     "<i>d</i>": "d",
-    "<u>e</u>": "{u}e"
+    "<u>e</u>": "{u}e",
+    "<p>{f}</p>": "<p></p>",
+    "<q>g</q>": "{<q>}g",
+    "<s />": "<s />"
   }
 }
