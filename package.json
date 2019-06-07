@@ -35,7 +35,7 @@
     "karma-mocha": "^1.1.1",
     "karma-safari-launcher": "^1.0.0",
     "karma-sourcemap-loader": "^0.3.6",
-    "karma-webpack": "^3.0.0",
+    "karma-webpack": "^4.0.0",
     "lerna": "^3.13.3",
     "messageformat": "^2.0.0",
     "messageformat-parser": "^4.0.0",
