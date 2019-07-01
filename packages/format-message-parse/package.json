@@ -1,6 +1,6 @@
 {
   "name": "format-message-parse",
-  "version": "6.2.0",
+  "version": "6.2.2",
   "description": "Parse ICU MessageFormat pattern strings to a compact ast",
   "author": "Andy VanWagoner <andy@vanwago.net>",
   "homepage": "https://github.com/format-message/format-message/tree/master/packages/format-message-parse",

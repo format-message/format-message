@@ -1,6 +1,6 @@
 {
   "name": "format-message-interpret",
-  "version": "6.2.0",
+  "version": "6.2.2",
   "description": "Convert format-message-parse ast to a function",
   "author": "Andy VanWagoner <andy@vanwago.net>",
   "homepage": "https://github.com/format-message/format-message/tree/master/packages/format-message-interpret",
