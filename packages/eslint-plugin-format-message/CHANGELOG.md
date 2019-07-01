@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.2.2
+
+Handle rich text parameters in `translation-match-params` rule.
+
 ## 6.2.0
 
 Add TypeScript type definitions.
