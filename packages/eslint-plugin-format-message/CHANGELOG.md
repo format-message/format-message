@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.2.3
+
+Handle rich text parameters in `no-missing-params` rule.
+
 ## 6.2.2
 
 Handle rich text parameters in `translation-match-params` rule.
