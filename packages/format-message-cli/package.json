@@ -1,6 +1,6 @@
 {
   "name": "format-message-cli",
-  "version": "6.2.2",
+  "version": "6.2.3",
   "description": "Command-line tools to lint, extract, and inline format-message translations",
   "author": "Andy VanWagoner <andy@vanwago.net>",
   "homepage": "https://github.com/format-message/format-message/tree/master/packages/format-message-cli",
@@ -28,11 +28,11 @@
   },
   "dependencies": {
     "@babel/core": "^7.0.0",
-    "babel-plugin-extract-format-message": "^6.2.2",
-    "babel-plugin-transform-format-message": "^6.2.2",
+    "babel-plugin-extract-format-message": "^6.2.3",
+    "babel-plugin-transform-format-message": "^6.2.3",
     "commander": "^2.11.0",
     "eslint": "^3.19.0",
-    "eslint-plugin-format-message": "^6.2.2",
+    "eslint-plugin-format-message": "^6.2.3",
     "glob": "^5.0.15",
     "js-yaml": "^3.10.0",
     "mkdirp": "^0.5.1",

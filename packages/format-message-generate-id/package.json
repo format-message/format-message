@@ -1,6 +1,6 @@
 {
   "name": "format-message-generate-id",
-  "version": "6.2.2",
+  "version": "6.2.3",
   "description": "Generate a message id from the default message pattern",
   "author": "Andy VanWagoner <andy@vanwago.net>",
   "homepage": "https://github.com/format-message/format-message/tree/master/packages/format-message-generate-id",
@@ -12,7 +12,7 @@
   ],
   "dependencies": {
     "crc32": "^0.2.2",
-    "format-message-parse": "^6.2.2",
-    "format-message-print": "^6.2.2"
+    "format-message-parse": "^6.2.3",
+    "format-message-print": "^6.2.3"
   }
 }
