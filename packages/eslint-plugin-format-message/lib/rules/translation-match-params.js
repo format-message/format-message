@@ -3,10 +3,7 @@
 var parse = require('format-message-parse')
 var getParamsFromPatternAst = require('../util/get-params-from-pattern-ast')
 var visitEachTranslation = require('../util/visit-each-translation')
-
-function isRichTextParam (paramName) {
-  return typeof paramName === 'object' && paramName.isRich === true
-}
+var richTextParams = require('../util/rich-text-params')
 
 module.exports = {
   meta: {
@@ -32,7 +29,7 @@ module.exports = {
       var translationParams = getParamsFromPatternAst(translationAst, isRich)
       patternParams.forEach(function (paramName) {
         if (translationParams.indexOf(paramName) < 0) {
-          var paramType = isRichTextParam(paramName) ? 'rich text ' : ''
+          var paramType = richTextParams.isRichTextParam(paramName) ? 'rich text ' : ''
           context.report(
             (node.arguments && node.arguments[0]) || node,
             'Translation for "' + id + '" in "' + locale + '" is missing ' +
@@ -42,7 +39,7 @@ module.exports = {
       })
       translationParams.forEach(function (paramName) {
         if (patternParams.indexOf(paramName) < 0) {
-          var paramType = isRichTextParam(paramName) ? 'rich text ' : ''
+          var paramType = richTextParams.isRichTextParam(paramName) ? 'rich text ' : ''
           context.report(
             (node.arguments && node.arguments[0]) || node,
             'Translation for "' + id + '" in "' + locale + '" has extra ' +

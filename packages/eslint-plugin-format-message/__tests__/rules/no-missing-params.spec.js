@@ -14,7 +14,10 @@ tester.run('no-missing-params', rule, {
     { code: 'var f=require("format-message");f("h {b.c}", { "b.c": "c" })' },
     { code: 'var f=require("format-message");f("h {b.c}", { "b": { "c": "c" }})' },
     { code: 'var f=require("format-message");f("h {b.c.d.e.f}", { "b": { "c": { "d": { "e": { "f": "f" }}}}})' },
-    { code: 'var f=require("format-message");f("h {b.c.d.t}", { "b": { "c": { "d": { "t": "t", "e": { "f": { "g": "g" }}}}}})' }
+    { code: 'var f=require("format-message");f("h {b.c.d.t}", { "b": { "c": { "d": { "t": "t", "e": { "f": { "g": "g" }}}}}})' },
+    { code: 'var f=require("format-message");f.rich("<a>b</a>", { a: function(props) { return props } })' },
+    { code: 'var f=require("format-message");f.rich("<i>j</i>", { "i": function(props) { return props } })' },
+    { code: 'var f=require("format-message");f("h{<i>}", { "<i>": "i" })' }
   ],
   invalid: [
     {
@@ -37,6 +40,18 @@ tester.run('no-missing-params', rule, {
     {
       code: 'var f=require("format-message");f("h {b.c}", { "b": { "d": "d" } })',
       errors: [ { message: 'Pattern requires missing "b.c" parameter' } ]
+    },
+    {
+      code: 'var f=require("format-message");f.rich("<b>c</b>", { z:1 })',
+      errors: [ { message: 'Pattern requires missing rich text "<b>" parameter' } ]
+    },
+    {
+      code: 'var f=require("format-message");f.rich("<q>r</q>", { "<q>":1 })',
+      errors: [ { message: 'Pattern requires missing rich text "<q>" parameter' } ]
+    },
+    {
+      code: 'var f=require("format-message");f("o{<p>}", { p:1 })',
+      errors: [ { message: 'Pattern requires missing "<p>" parameter' } ]
     }
   ]
 })

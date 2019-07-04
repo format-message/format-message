@@ -1,20 +1,6 @@
 'use strict'
 
-var richTagCache = []
-function getRichTag (name) {
-  var cachedTag = richTagCache.find(function (cacheEntry) {
-    return cacheEntry.name === name
-  })
-  if (cachedTag) return cachedTag
-
-  var tag = {
-    isRich: true,
-    name: name,
-    toString: function () { return '<' + name + '>' }
-  }
-  richTagCache.push(tag)
-  return tag
-}
+var richTextParams = require('./rich-text-params')
 
 module.exports = function getParamsFromPatternAst (ast, isRich) {
   if (!ast || !ast.slice) return []
@@ -30,7 +16,7 @@ module.exports = function getParamsFromPatternAst (ast, isRich) {
     var isRichParam = isRich && type === '<>'
 
     if (isRichParam) {
-      name = getRichTag(name)
+      name = richTextParams.getRichTextParam(name)
     }
     if (params.indexOf(name) < 0) params.push(name)
 

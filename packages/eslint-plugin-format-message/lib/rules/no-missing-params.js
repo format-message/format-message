@@ -2,6 +2,7 @@
 
 var getCommonTranslationInfo = require('../util/get-common-translation-info')
 var visitFormatCall = require('../util/visit-format-call')
+var richTextParams = require('../util/rich-text-params')
 
 var validatePath = function (object, path) {
   var pathSegments = path.split('.') || path
@@ -57,17 +58,29 @@ module.exports = {
         context.report(node.arguments[1], 'Parameters is not an object literal')
       } else {
         info.patternParams.forEach(function (paramName) {
+          var isRich = info.isRich && richTextParams.isRichTextParam(paramName)
+          var paramNameForComparison = isRich ? paramName.name : paramName
           var isFound = params.properties.some(function (prop) {
             if (prop.value.type === 'ObjectExpression') {
               return validatePath(prop, paramName)
             }
-            return (
-              (prop.key.type === 'Identifier' && prop.key.name === paramName) ||
-              (prop.key.type === 'Literal' && prop.key.value === paramName)
-            )
+
+            var propName
+            if (prop.key.type === 'Identifier') {
+              propName = prop.key.name
+            }
+            if (prop.key.type === 'Literal') {
+              propName = prop.key.value
+            }
+
+            return propName === paramNameForComparison
           })
           if (!isFound) {
-            context.report(node.arguments[1], 'Pattern requires missing "' + paramName + '" parameter')
+            var paramType = isRich ? 'rich text ' : ''
+            context.report(
+              node.arguments[1],
+              'Pattern requires missing ' + paramType + '"' + paramName + '" parameter'
+            )
           }
         })
       }
