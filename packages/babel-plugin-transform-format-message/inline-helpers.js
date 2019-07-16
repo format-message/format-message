@@ -24,7 +24,7 @@ function objectToAst (t, object) {
 
 exports.addHelper = function (state, type, style, locale) {
   style = style || 'default'
-  var id = [ style, locale, type ].join('_')
+  var id = [style, locale, type].join('_')
   var helpers = state.path.hub.file.formatMessageHelpers || (
     state.path.hub.file.formatMessageHelpers = {}
   )
@@ -43,7 +43,7 @@ exports.addHelper = function (state, type, style, locale) {
         t.identifier('Intl'),
         t.identifier(constructor)
       ),
-      [ t.stringLiteral(locale), objectToAst(t, options) ]
+      [t.stringLiteral(locale), objectToAst(t, options)]
     ),
     t.identifier('format')
   )

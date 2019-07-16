@@ -31,14 +31,14 @@ var validatePath = function (object, path) {
 
 module.exports = {
   meta: {
-    schema: [ {
+    schema: [{
       type: 'object',
       properties: {
         allowNonLiteral: {
           type: 'boolean'
         }
       }
-    } ]
+    }]
   },
   create: function (context) {
     var allowNonLiteral = (context.options[0] || {}).allowNonLiteral

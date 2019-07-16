@@ -113,10 +113,10 @@ program
       }
     }
     if (options.extends === 'default') {
-      options.extends = [ 'plugin:format-message/default' ]
+      options.extends = ['plugin:format-message/default']
       options.customrules = null
     } else if (options.extends === 'recommended') {
-      options.extends = [ 'plugin:format-message/recommended' ]
+      options.extends = ['plugin:format-message/recommended']
       options.customrules = null
     } else if (options.extends === 'customrules') {
       options.extends = null

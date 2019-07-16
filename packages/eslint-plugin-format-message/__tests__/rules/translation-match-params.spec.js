@@ -43,12 +43,12 @@ tester.run('translation-match-params', rule, {
     {
       code: 'var f=require("format-message");f("c", { c:"!" })',
       settings: settings,
-      errors: [ { message: 'Translation for "c" in "en" has extra "c" placeholder' } ]
+      errors: [{ message: 'Translation for "c" in "en" has extra "c" placeholder' }]
     },
     {
       code: 'var f=require("format-message");f("bad2", foo)',
       settings: settings,
-      errors: [ { message: 'Translation for "bad2" in "pt" has extra "z" placeholder' } ]
+      errors: [{ message: 'Translation for "bad2" in "pt" has extra "z" placeholder' }]
     },
     {
       code: 'var f=require("format-message");f("{ k }", { k:"k" })',

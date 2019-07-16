@@ -152,7 +152,7 @@ module.exports = {
         case 'M':
         case 'L':
           n = Math.min(Math.max(n - 1, 0), 4)
-          options.month = [ NUMERIC, TWODIGIT, SHORT, LONG, NARROW ][n]
+          options.month = [NUMERIC, TWODIGIT, SHORT, LONG, NARROW][n]
           break
         case 'E':
         case 'e':

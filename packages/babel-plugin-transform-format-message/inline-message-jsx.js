@@ -69,7 +69,7 @@ function transformNumber (state, id, offset, style) {
   }
   if (!style || formats.number[style]) {
     var callee = addHelper(state, 'number', style, state.locale)
-    return t.callExpression(callee, [ value ])
+    return t.callExpression(callee, [value])
   }
   var args = [
     value,
@@ -84,7 +84,7 @@ function transformDateTime (state, id, type, style) {
   var t = state.t
   if (!style || formats[type][style]) {
     var callee = addHelper(state, type, style, state.locale)
-    return t.callExpression(callee, [ transformArgument(state, id) ])
+    return t.callExpression(callee, [transformArgument(state, id)])
   }
   var args = [
     transformArgument(state, id),
@@ -97,7 +97,7 @@ function transformDateTime (state, id, type, style) {
 
 function transformPlural (state, id, type, offset, children) {
   var t = state.t
-  var parent = [ id, type, offset ]
+  var parent = [id, type, offset]
   var args = [
     transformArgument(state, id),
     t.numericLiteral(offset),
@@ -115,7 +115,7 @@ function transformPlural (state, id, type, offset, children) {
 
 function transformSelect (state, id, children) {
   var t = state.t
-  var parent = [ id, 'select' ]
+  var parent = [id, 'select']
   var s = state.sId ||
     (state.sId = state.path.scope.generateDeclaredUidIdentifier('s'))
   var other = t.stringLiteral('')
@@ -150,7 +150,7 @@ function transformTag (state, id, props) {
     wrapper.openingElement,
     wrapper.closingElement,
     typeof props === 'string'
-      ? [ t.stringLiteral(props) ]
+      ? [t.stringLiteral(props)]
       : transformSub(state, props.children)
   )
 }

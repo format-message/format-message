@@ -20,23 +20,23 @@ tester.run('literal-pattern', rule, {
     { code: 'import {default as f} from "format-message";f("b")', parserOptions: { ecmaVersion: 6, sourceType: 'module' } },
     {
       code: 'import f from "format-message";f("f")',
-      parser: 'babel-eslint',
+      parser: require.resolve('babel-eslint'),
       parserOptions: { ecmaVersion: 6, sourceType: 'module' }
     }
   ],
   invalid: [
     {
       code: 'var f=require("format-message");f(somevar)',
-      errors: [ { message: 'Pattern is not a string literal' } ]
+      errors: [{ message: 'Pattern is not a string literal' }]
     },
     {
       code: 'var f=require("format-message");f.rich(somevar)',
-      errors: [ { message: 'Pattern is not a string literal' } ]
+      errors: [{ message: 'Pattern is not a string literal' }]
     },
     // scope tracking
     {
       code: 'var f=require("format-message");f(foo)',
-      errors: [ { message: 'Pattern is not a string literal' } ]
+      errors: [{ message: 'Pattern is not a string literal' }]
     },
     {
       code: 'var fm=require("format-message");fm(a);function a(){var f=require("format-message");f(foo)};fm(after)',
@@ -57,18 +57,18 @@ tester.run('literal-pattern', rule, {
     {
       code: 'import f from "format-message";f(b)',
       parserOptions: { ecmaVersion: 6, sourceType: 'module' },
-      errors: [ { message: 'Pattern is not a string literal' } ]
+      errors: [{ message: 'Pattern is not a string literal' }]
     },
     {
       code: 'import {default as f} from "format-message";f(b)',
       parserOptions: { ecmaVersion: 6, sourceType: 'module' },
-      errors: [ { message: 'Pattern is not a string literal' } ]
+      errors: [{ message: 'Pattern is not a string literal' }]
     },
     {
       code: 'import {default as f} from "format-message";f(b)',
-      parser: 'babel-eslint',
+      parser: require.resolve('babel-eslint'),
       parserOptions: { ecmaVersion: 6, sourceType: 'module' },
-      errors: [ { message: 'Pattern is not a string literal' } ]
+      errors: [{ message: 'Pattern is not a string literal' }]
     }
   ]
 })

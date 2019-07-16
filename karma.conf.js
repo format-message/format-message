@@ -7,7 +7,7 @@ module.exports = function (config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: [ 'mocha', 'chai' ],
+    frameworks: ['mocha', 'chai'],
 
     // list of files / patterns to load in the browser
     files: [
@@ -26,13 +26,14 @@ module.exports = function (config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'packages/**/*.js': [ 'webpack', 'sourcemap' ]
+      'packages/**/*.js': ['webpack', 'sourcemap']
     },
 
     webpack: {
       mode: 'development',
+      devtool: 'inline-source-map',
       resolve: {
-        mainFields: [ 'browser', 'main' ] // no module (inferno)
+        mainFields: ['browser', 'main'] // no module (inferno)
       }
     },
 
@@ -49,7 +50,7 @@ module.exports = function (config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: [ 'dots' ],
+    reporters: ['dots'],
 
     // web server port
     port: 9876,
@@ -67,15 +68,15 @@ module.exports = function (config) {
     customLaunchers: {
       ChromeHeadless: {
         base: 'Chrome',
-        flags: [ '--headless', '--disable-gpu', '--remote-debugging-port=9222' ]
+        flags: ['--headless', '--disable-gpu', '--remote-debugging-port=9222']
       }
     },
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
     browsers: process.env.CONTINUOUS_INTEGRATION
-      ? [ 'ChromeHeadless', 'Firefox' ]
-      : [ 'Chrome', 'Firefox', 'Safari' ],
+      ? ['ChromeHeadless', 'Firefox']
+      : ['Chrome', 'Firefox', 'Safari'],
 
     captureTimeout: 120000,
     browserNoActivityTimeout: 60000,

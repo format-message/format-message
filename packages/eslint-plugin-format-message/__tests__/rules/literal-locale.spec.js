@@ -14,7 +14,7 @@ tester.run('literal-locale', rule, {
   invalid: [
     {
       code: 'var f=require("format-message");f("f", null, locale)',
-      errors: [ { message: 'Locale is not a string literal' } ]
+      errors: [{ message: 'Locale is not a string literal' }]
     }
   ]
 })

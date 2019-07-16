@@ -176,12 +176,12 @@ module.exports = function (bbl) {
                 return t.objectProperty(
                   t.identifier(name),
                   selfClosing ? node : t.arrowFunctionExpression(
-                    [ t.objectPattern([ t.objectProperty(
+                    [t.objectPattern([t.objectProperty(
                       t.identifier('children'),
                       childrenId,
                       false,
                       true
-                    ) ]) ],
+                    )])],
                     node
                   )
                 )

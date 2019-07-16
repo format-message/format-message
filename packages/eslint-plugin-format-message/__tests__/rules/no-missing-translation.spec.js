@@ -29,7 +29,7 @@ tester.run('no-missing-translation', rule, {
     {
       code: 'var f=require("format-message");f("d")',
       settings: settings,
-      errors: [ { message: 'Translation for "d" in "pt" is missing' } ]
+      errors: [{ message: 'Translation for "d" in "pt" is missing' }]
     },
     {
       code: 'var f=require("format-message");f("e")',
@@ -43,7 +43,7 @@ tester.run('no-missing-translation', rule, {
       code: '<a translate="yes">d</a>',
       settings: settings,
       parserOptions: { ecmaFeatures: { jsx: true } },
-      errors: [ { message: 'Translation for "d" in "pt" is missing' } ]
+      errors: [{ message: 'Translation for "d" in "pt" is missing' }]
     }
   ]
 })

@@ -23,12 +23,12 @@ tester.run('no-empty-jsx-message', rule, {
     {
       code: '<a translate="yes"></a>',
       parserOptions: { ecmaFeatures: { jsx: true } },
-      errors: [ { message: 'JSX element has nothing to translate' } ]
+      errors: [{ message: 'JSX element has nothing to translate' }]
     },
     {
       code: '<a translate="yes" />',
       parserOptions: { ecmaFeatures: { jsx: true } },
-      errors: [ { message: 'JSX element has nothing to translate' } ]
+      errors: [{ message: 'JSX element has nothing to translate' }]
     }
   ]
 })
