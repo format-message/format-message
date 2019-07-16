@@ -5,16 +5,14 @@ var CLIEngine = require('eslint').CLIEngine
 
 module.exports = function extractFiles (files, options) {
   var baseConfig = {
-    ecmaFeatures: {
-      modules: true,
-      experimentalObjectRestSpread: true,
-      jsx: true
-    },
     parserOptions: {
-      ecmaVersion: 6,
+      ecmaFeatures: {
+        jsx: true
+      },
+      ecmaVersion: 2019,
       sourceType: 'module'
     },
-    plugins: [ 'format-message' ],
+    plugins: ['format-message'],
     settings: {
       'format-message': {
         sourceLocale: options.locale,
@@ -34,7 +32,7 @@ module.exports = function extractFiles (files, options) {
   }
   var cli = new CLIEngine({
     useEslintrc: false,
-    envs: [ 'es6', 'browser', 'node' ],
+    envs: ['es6', 'browser', 'node'],
     baseConfig: baseConfig
   })
 

@@ -16,11 +16,11 @@ tester.run('no-top-scope', rule, {
     {
       code: 'import f from "format-message"; f("f");',
       parserOptions: { ecmaVersion: 6, sourceType: 'module' },
-      errors: [ { message: 'Translation will never be re-evaluated if locale changes' } ]
+      errors: [{ message: 'Translation will never be re-evaluated if locale changes' }]
     },
     {
       code: 'var f = require("format-message"); f("f");',
-      errors: [ { message: 'Translation will never be re-evaluated if locale changes' } ]
+      errors: [{ message: 'Translation will never be re-evaluated if locale changes' }]
     }
   ]
 })

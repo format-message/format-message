@@ -62,27 +62,27 @@ describe('MessageFormat', function () {
     })
 
     it('accepts a single string', function () {
-      expect(MessageFormat.supportedLocalesOf('en')).to.eql([ 'en' ])
+      expect(MessageFormat.supportedLocalesOf('en')).to.eql(['en'])
     })
 
     it('accepts an array', function () {
-      expect(MessageFormat.supportedLocalesOf([ 'en' ])).to.eql([ 'en' ])
+      expect(MessageFormat.supportedLocalesOf(['en'])).to.eql(['en'])
     })
 
     it('removes duplicates', function () {
-      expect(MessageFormat.supportedLocalesOf([ 'en', 'en' ])).to.eql([ 'en' ])
+      expect(MessageFormat.supportedLocalesOf(['en', 'en'])).to.eql(['en'])
     })
 
     it('removes unsupported locales', function () {
-      expect(MessageFormat.supportedLocalesOf([ 'en', 'tlh' ])).to.eql([ 'en' ])
+      expect(MessageFormat.supportedLocalesOf(['en', 'tlh'])).to.eql(['en'])
     })
 
     it('supports multiple locales', function () {
-      expect(MessageFormat.supportedLocalesOf([ 'en', 'es', 'de', 'ar' ])).to.eql([ 'en', 'es', 'de', 'ar' ])
+      expect(MessageFormat.supportedLocalesOf(['en', 'es', 'de', 'ar'])).to.eql(['en', 'es', 'de', 'ar'])
     })
 
     it('ignores and preserves extensions', function () {
-      expect(MessageFormat.supportedLocalesOf('en-US-u-nu-latn')).to.eql([ 'en-US-u-nu-latn' ])
+      expect(MessageFormat.supportedLocalesOf('en-US-u-nu-latn')).to.eql(['en-US-u-nu-latn'])
     })
   })
 
@@ -236,8 +236,8 @@ describe('MessageFormat', function () {
     })
 
     it('returns an array of message parts', function () {
-      expect(new MessageFormat('hi').formatToParts()).to.eql([ 'hi' ])
-      expect(new MessageFormat('{n}').formatToParts({ n: 1 })).to.eql([ 1 ])
+      expect(new MessageFormat('hi').formatToParts()).to.eql(['hi'])
+      expect(new MessageFormat('{n}').formatToParts({ n: 1 })).to.eql([1])
     })
 
     it('handles custom placeholder types', function () {
@@ -250,8 +250,8 @@ describe('MessageFormat', function () {
           }
         }
       })
-      expect(message.formatToParts()).to.eql([ 'a-b-c' ])
-      expect(message.formatToParts({ a: 1 })).to.eql([ 'a-b-c' ])
+      expect(message.formatToParts()).to.eql(['a-b-c'])
+      expect(message.formatToParts({ a: 1 })).to.eql(['a-b-c'])
     })
   })
 })

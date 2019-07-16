@@ -11,7 +11,7 @@ function applyChildren (key/*: string */, element/*: any */, children/*: ?mixed[
   // $FlowFixMe it doesn't think any arguments are passed
   return React.cloneElement.apply(
     React,
-    [ element, { key: element.key || key } ].concat(children || [])
+    [element, { key: element.key || key }].concat(children || [])
   )
 }
 

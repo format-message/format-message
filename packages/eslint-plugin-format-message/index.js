@@ -25,7 +25,7 @@ module.exports = {
         'format-message/no-identical-translation': 1,
         'format-message/no-invalid-pattern': 2,
         'format-message/no-invalid-translation': 2,
-        'format-message/no-missing-params': [ 2, { allowNonLiteral: true } ],
+        'format-message/no-missing-params': [2, { allowNonLiteral: true }],
         'format-message/no-missing-translation': 1,
         'format-message/no-top-scope': 0,
         'format-message/translation-match-params': 2,

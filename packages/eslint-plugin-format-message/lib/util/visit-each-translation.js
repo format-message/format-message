@@ -17,7 +17,7 @@ module.exports = function visitEachTranslation (context, visitor) {
     var id = info.id || settings.generateId(pattern)
 
     // if a literal locale is specified, only validate that locale
-    var locales = locale ? [ locale ] : Object.keys(translations)
+    var locales = locale ? [locale] : Object.keys(translations)
     locales.forEach(function (locale) {
       var translation = translations[locale] && translations[locale][id]
       if (translation && translation.message) translation = translation.message

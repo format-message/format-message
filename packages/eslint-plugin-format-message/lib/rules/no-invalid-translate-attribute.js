@@ -6,7 +6,7 @@ module.exports = {
   },
   create: function (context) {
     return {
-      'JSXElement': function (node) {
+      JSXElement: function (node) {
         var attributes = node.openingElement.attributes || []
         attributes.forEach(function (attribute) {
           var isTranslate = (

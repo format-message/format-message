@@ -79,7 +79,7 @@ function interpretElement (
   if (parent && element[0] === '#') {
     id = parent[0]
     var offset = parent[2]
-    var formatter = (types.number || defaults.number)([ id, 'number' ], locale)
+    var formatter = (types.number || defaults.number)([id, 'number'], locale)
     return function format (args) {
       return formatter(getArg(id, args) - offset, args)
     }
@@ -92,13 +92,13 @@ function interpretElement (
     Object.keys(element[3]).forEach(function (key) {
       children[key] = interpretAST(element[3][key], element, locale, types, join)
     })
-    element = [ element[0], element[1], element[2], children ]
+    element = [element[0], element[1], element[2], children]
   } else if (element[2] && typeof element[2] === 'object') {
     children = {}
     Object.keys(element[2]).forEach(function (key) {
       children[key] = interpretAST(element[2][key], element, locale, types, join)
     })
-    element = [ element[0], element[1], children ]
+    element = [element[0], element[1], children]
   }
 
   var getFrmt = type && (types[type] || defaults[type])

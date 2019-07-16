@@ -82,13 +82,13 @@ describe('react formatChildren with numeric index tags', function () {
 
   it('throws when mappings aren\'t valid elements', function () {
     expect(function () {
-      formatChildren('<0>test</0>', [ 'span' ])
+      formatChildren('<0>test</0>', ['span'])
     }).to.throw()
     expect(function () {
-      formatChildren('<0>test</0>', [ {} ])
+      formatChildren('<0>test</0>', [{}])
     }).to.throw()
     expect(function () {
-      formatChildren('<0>test</0>', [ 1 ])
+      formatChildren('<0>test</0>', [1])
     }).to.throw()
   })
 })

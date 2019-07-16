@@ -17,7 +17,7 @@ module.exports = function exec (cmd, stdin) {
   var process = global.process
   var fake = global.process = {
     exit: function (c) { code = c },
-    argv: [ process.execPath ].concat(cmd.split(' ').map(arg =>
+    argv: [process.execPath].concat(cmd.split(' ').map(arg =>
       arg[0] === '"' ? JSON.parse(arg) : arg
     )),
     stdin: SyncReadable(stdin),

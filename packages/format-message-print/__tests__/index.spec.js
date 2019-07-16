@@ -8,11 +8,11 @@ describe('print()', function () {
   it('normalizes escaping', function () {
     var pattern = print([
       'can\'t escape {}',
-      [ 's', 'date', 'MM dd yy' ],
-      [ 't', 't', '\'' ],
-      [ 'p', 'plural', 1, {
-        other: [ '#', [ '#' ] ]
-      } ]
+      ['s', 'date', 'MM dd yy'],
+      ['t', 't', '\''],
+      ['p', 'plural', 1, {
+        other: ['#', ['#']]
+      }]
     ])
     expect(pattern).to.equal(
       'can\'\'t escape \'{}\'{ s, date, \'MM dd yy\' }{ t, t, \'\' }' +
@@ -25,19 +25,19 @@ describe('print()', function () {
   it('consistently escapes style', function () {
     // regress stateful regex bug
     var pattern = print([
-      [ 'a', 'b', 'c d' ],
-      [ 'a', 'b', 'c d' ]
+      ['a', 'b', 'c d'],
+      ['a', 'b', 'c d']
     ])
     expect(pattern).to.equal('{ a, b, \'c d\' }{ a, b, \'c d\' }')
   })
 
   it('pretty formats plurals', function () {
     var pattern = print([
-      [ 'bananas', 'plural', 0, {
-        '=0': [ 'no bananas' ],
-        one: [ [ '#' ], ' banana' ],
-        other: [ [ '#' ], ' bananas' ]
-      } ]
+      ['bananas', 'plural', 0, {
+        '=0': ['no bananas'],
+        one: [['#'], ' banana'],
+        other: [['#'], ' bananas']
+      }]
     ])
     expect(pattern).to.equal(
       '{ bananas, plural,\n' +
@@ -50,12 +50,12 @@ describe('print()', function () {
 
   it('pretty prints selectordinal', function () {
     var pattern = print([
-      [ 'place', 'selectordinal', 0, {
-        one: [ [ '#' ], 'st place' ],
-        two: [ [ '#' ], 'nd place' ],
-        few: [ [ '#' ], 'rd place' ],
-        other: [ [ '#' ], 'th place' ]
-      } ]
+      ['place', 'selectordinal', 0, {
+        one: [['#'], 'st place'],
+        two: [['#'], 'nd place'],
+        few: [['#'], 'rd place'],
+        other: [['#'], 'th place']
+      }]
     ])
     expect(pattern).to.equal(
       '{ place, selectordinal,\n' +
@@ -69,11 +69,11 @@ describe('print()', function () {
 
   it('pretty prints select', function () {
     var pattern = print([
-      [ 'gender', 'select', {
-        male: [ 'invite him' ],
-        female: [ 'invite her' ],
-        other: [ 'invite them' ]
-      } ]
+      ['gender', 'select', {
+        male: ['invite him'],
+        female: ['invite her'],
+        other: ['invite them']
+      }]
     ])
     expect(pattern).to.equal(
       '{ gender, select,\n' +
@@ -85,8 +85,8 @@ describe('print()', function () {
   })
 
   it('pretty prints other placeholders', function () {
-    expect(print([[ 'a', 'b', 'c' ]])).to.equal('{ a, b, c }')
-    expect(print([[ 'a', 'b' ]])).to.equal('{ a, b }')
-    expect(print([[ 'a' ]])).to.equal('{ a }')
+    expect(print([['a', 'b', 'c']])).to.equal('{ a, b, c }')
+    expect(print([['a', 'b']])).to.equal('{ a, b }')
+    expect(print([['a']])).to.equal('{ a }')
   })
 })

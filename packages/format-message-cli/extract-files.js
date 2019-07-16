@@ -34,7 +34,7 @@ function extract (source, options) {
       plugins: plugins
     },
     plugins: [
-      [ require('babel-plugin-extract-format-message'), options ]
+      [require('babel-plugin-extract-format-message'), options]
     ]
   })
 }

@@ -116,7 +116,7 @@ function transform (source, options) {
       plugins: plugins
     },
     plugins: [
-      [ require('babel-plugin-transform-format-message'), options ]
+      [require('babel-plugin-transform-format-message'), options]
     ]
   })
 }

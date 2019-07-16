@@ -168,13 +168,13 @@ function transformNumber (state, id, offset, style) {
     value = t.binaryExpression('-', value, t.numericLiteral(offset))
   }
   var callee = addHelper(state, 'number', style, state.locale)
-  return t.callExpression(callee, [ value ])
+  return t.callExpression(callee, [value])
 }
 
 function transformDateTime (state, id, type, style) {
   var t = state.t
   var callee = addHelper(state, type, style, state.locale)
-  return t.callExpression(callee, [ transformArgument(state, id) ])
+  return t.callExpression(callee, [transformArgument(state, id)])
 }
 
 function transformCustom (state, placeholder) {
@@ -201,7 +201,7 @@ function transformCustom (state, placeholder) {
 function transformPlural (state, id, type, offset, children) {
   var t = state.t
   var scope = state.path.scope
-  var parent = [ id, type, offset ]
+  var parent = [id, type, offset]
   var closest = lookupClosestLocale(state.locale, cldr.locales)
   var ptype = type === 'selectordinal' ? 'ordinal' : 'cardinal'
   var conditions = (closest && cldr.locales[closest].plurals[ptype]) || {}

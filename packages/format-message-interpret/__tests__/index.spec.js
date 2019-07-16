@@ -12,17 +12,17 @@ describe('interpret()', function () {
   })
 
   it('interprets simple strings', function () {
-    var format = interpret([ 'just some text' ])
+    var format = interpret(['just some text'])
     expect(format()).to.equal('just some text')
   })
 
   it('interprets simple placeholders', function () {
-    var format = interpret([ 'Welcome to ', ['place'], '!' ])
+    var format = interpret(['Welcome to ', ['place'], '!'])
     expect(format({ place: 'nowhere' })).to.equal('Welcome to nowhere!')
   })
 
   it('handles missing arguments', function () {
-    var format = interpret([[ 'a' ]])
+    var format = interpret([['a']])
     expect(format()).to.equal('undefined')
     expect(format({})).to.equal('undefined')
     expect(format({ a: null })).to.equal('null')
@@ -43,14 +43,14 @@ describe('interpret()', function () {
   })
 
   it('interprets number placeholders', function () {
-    var format = interpret([[ 'n', 'number' ]], 'en')
+    var format = interpret([['n', 'number']], 'en')
     expect(format({ n: 1234.56 })).to.equal('1,234.56')
-    format = interpret([[ 'n', 'number', 'integer' ]], 'en')
+    format = interpret([['n', 'number', 'integer']], 'en')
     expect(format({ n: 1234.56 })).to.equal('1,235')
   })
 
   it('interprets bad number values gracefully', function () {
-    var format = interpret([[ 'n', 'number' ]], 'en')
+    var format = interpret([['n', 'number']], 'en')
     expect(format({ n: 0 })).to.equal('0')
     expect(format({ n: -0 })).to.equal('0')
     expect(format({ n: '' })).to.equal('0')
@@ -63,22 +63,22 @@ describe('interpret()', function () {
   })
 
   it('interprets number pattern placeholders', function () {
-    var format = interpret([[ 'n', 'number', '0 ¤¤ EUR' ]], 'en')
+    var format = interpret([['n', 'number', '0 ¤¤ EUR']], 'en')
     expect(format({ n: 1234.5 })).to.match(/EUR\s*1235/)
   })
 
   it('interprets ordinal placeholders (as plain numbers)', function () {
-    var format = interpret([[ 'n', 'ordinal' ]], 'en')
+    var format = interpret([['n', 'ordinal']], 'en')
     expect(format({ n: 1234.56 })).to.equal('1,234.56')
   })
 
   it('interprets spellout placeholders (as plain numbers)', function () {
-    var format = interpret([[ 'n', 'spellout' ]], 'en')
+    var format = interpret([['n', 'spellout']], 'en')
     expect(format({ n: 1234.56 })).to.equal('1,234.56')
   })
 
   it('interprets duration placeholders', function () {
-    var format = interpret([ [ 'd', 'duration' ] ], 'en')
+    var format = interpret([['d', 'duration']], 'en')
     expect(format({ d: -123456789 })).to.equal('-34,293:33:09')
     expect(format({ d: 12345.6789 })).to.equal('3:25:45.679')
     expect(format({ d: 12.3456 })).to.equal('00:12.346')
@@ -86,34 +86,34 @@ describe('interpret()', function () {
     expect(format({ d: -60 })).to.equal('-01:00')
     expect(format({ d: -0 })).to.equal('00:00')
     expect(format({ d: 60 * 60 })).to.equal('1:00:00')
-    expect(format({ d: Infinity })).to.be.oneOf([ '∞', 'Infinity' ])
+    expect(format({ d: Infinity })).to.be.oneOf(['∞', 'Infinity'])
 
-    var formatDa = interpret([ [ 'd', 'duration' ] ], 'da')
+    var formatDa = interpret([['d', 'duration']], 'da')
     expect(formatDa({ d: 60 * 60 })).to.equal('1.00.00')
 
-    var formatFi = interpret([ [ 'd', 'duration' ] ], 'fi')
+    var formatFi = interpret([['d', 'duration']], 'fi')
     expect(formatFi({ d: 60 * 60 })).to.equal('1.00.00')
 
-    var formatFil = interpret([ [ 'd', 'duration' ] ], 'fil')
+    var formatFil = interpret([['d', 'duration']], 'fil')
     expect(formatFil({ d: 60 * 60 })).to.equal('1:00:00')
   })
 
   if (Intl.NumberFormat.supportedLocalesOf('ar')[0] === 'ar') {
     it('puts the duration sign on the correct side of the number', function () {
-      var format = interpret([ [ 'd', 'duration' ] ], 'ar')
+      var format = interpret([['d', 'duration']], 'ar')
       expect(format({ d: -12.3456 })).to.equal('؜-٠٠:١٢٫٣٤٦')
     })
   }
 
   it('interprets date placeholders', function () {
-    var format = interpret([[ 'd', 'date' ]], 'en')
+    var format = interpret([['d', 'date']], 'en')
     expect(format({ d: new Date(0) })).to.match(/1/)
-    format = interpret([[ 'd', 'date', 'full' ]], 'en')
+    format = interpret([['d', 'date', 'full']], 'en')
     expect(format({ d: new Date(0) })).to.match(/Jan|Dec/)
   })
 
   it('interprets bad date values gracefully', function () {
-    var format = interpret([[ 'd', 'date' ]], 'en')
+    var format = interpret([['d', 'date']], 'en')
     expect(format({ d: 0 })).to.be.a('string')
     expect(format({ d: -0 })).to.be.a('string')
     expect(format({ d: '' })).to.be.a('string')
@@ -125,14 +125,14 @@ describe('interpret()', function () {
   })
 
   it('interprets time placeholders', function () {
-    var format = interpret([[ 'd', 'time' ]])
+    var format = interpret([['d', 'time']])
     expect(format({ d: new Date(0) })).to.contain('00')
-    format = interpret([[ 'd', 'time', 'full' ]])
+    format = interpret([['d', 'time', 'full']])
     expect(format({ d: new Date(0) })).to.contain('00')
   })
 
   it('interprets bad time values gracefully', function () {
-    var format = interpret([[ 'd', 'time' ]], 'en')
+    var format = interpret([['d', 'time']], 'en')
     expect(format({ d: 0 })).to.be.a('string')
     expect(format({ d: -0 })).to.be.a('string')
     expect(format({ d: '' })).to.be.a('string')
@@ -144,33 +144,33 @@ describe('interpret()', function () {
   })
 
   it('interprets date pattern placeholders', function () {
-    var format = interpret([[ 'n', 'time', 'yyyy' ]], 'en')
+    var format = interpret([['n', 'time', 'yyyy']], 'en')
     expect(format({ n: new Date(2000, 6, 6) })).to.contain('2000')
   })
 
   it('interprets select placeholders', function () {
-    var format = interpret([[ 's', 'select', {
-      a: [ 'a' ],
-      other: [ 'b' ]
-    } ]])
+    var format = interpret([['s', 'select', {
+      a: ['a'],
+      other: ['b']
+    }]])
     expect(format({ s: 'b' })).to.equal('b')
   })
 
   it('interprets plural placeholders', function () {
-    var format = interpret([[ 'p', 'plural', 0, {
-      one: [ 'one' ],
-      other: [ 'other' ]
-    } ]])
+    var format = interpret([['p', 'plural', 0, {
+      one: ['one'],
+      other: ['other']
+    }]])
     expect(format({ p: 1 })).to.equal('one')
     expect(format({ p: 2 })).to.equal('other')
   })
 
   it('interprets selectordinal placeholders', function () {
-    var format = interpret([[ 'p', 'selectordinal', 0, {
-      one: [ 'one' ],
-      few: [ [ '#' ], 'rd' ],
-      other: [ 'other' ]
-    } ]])
+    var format = interpret([['p', 'selectordinal', 0, {
+      one: ['one'],
+      few: [['#'], 'rd'],
+      other: ['other']
+    }]])
     expect(format({ p: 3 })).to.equal('3rd')
     expect(format({ p: 2 })).to.equal('other')
   })
@@ -183,10 +183,10 @@ describe('interpret()', function () {
     Intl.PluralRules.prototype = {
       select: function () { return 'one' }
     }
-    var format = interpret([[ 'p', 'plural', 0, {
-      one: [ 'one' ],
-      other: [ 'other' ]
-    } ]])
+    var format = interpret([['p', 'plural', 0, {
+      one: ['one'],
+      other: ['other']
+    }]])
     expect(format({ p: 200 })).to.equal('one')
   })
 
@@ -198,18 +198,18 @@ describe('interpret()', function () {
     Intl.PluralRules.prototype = {
       select: function () { return 'one' }
     }
-    var format = interpret([[ 'p', 'plural', 0, {
-      one: [ 'one' ],
-      other: [ 'other' ]
-    } ]], 'pt')
+    var format = interpret([['p', 'plural', 0, {
+      one: ['one'],
+      other: ['other']
+    }]], 'pt')
     expect(format({ p: 200 })).to.equal('other')
   })
 
   it('defaults to other if no plural rules', function () {
-    var format = interpret([[ 'p', 'selectordinal', 0, {
-      one: [ 'one' ],
-      other: [ 'other' ]
-    } ]], 'ar')
+    var format = interpret([['p', 'selectordinal', 0, {
+      one: ['one'],
+      other: ['other']
+    }]], 'ar')
     expect(format({ p: 1 })).to.equal('other')
   })
 
@@ -222,7 +222,7 @@ describe('interpret()', function () {
     var format = interpret([['a', 'b', 'c']], 'en', {
       b: function (element, locale) {
         return function (value, args) {
-          return JSON.stringify([ locale, element, value, args ])
+          return JSON.stringify([locale, element, value, args])
         }
       }
     })
@@ -231,11 +231,11 @@ describe('interpret()', function () {
 
   it('interprets custom placeholders with sub-messages', function () {
     var format = interpret([['a', 'sub', {
-      s: [ 'm' ]
+      s: ['m']
     }]], 'en', {
       sub: function (element, locale) {
         return function (value, args) {
-          return JSON.stringify([ locale, element, value, args ]) + element[2].s(args)
+          return JSON.stringify([locale, element, value, args]) + element[2].s(args)
         }
       }
     })
@@ -245,16 +245,16 @@ describe('interpret()', function () {
 
 describe('interpret.toParts()', function () {
   it('does not coerce arguments to strings', function () {
-    var format = toParts([[ 'a' ]])
-    expect(format({ a: 1 })).to.deep.equal([ 1 ])
-    expect(format({})).to.deep.equal([ undefined ])
-    expect(format()).to.deep.equal([ undefined ])
+    var format = toParts([['a']])
+    expect(format({ a: 1 })).to.deep.equal([1])
+    expect(format({})).to.deep.equal([undefined])
+    expect(format()).to.deep.equal([undefined])
   })
 
   it('can be used to create rich messages', function () {
-    var format = toParts([ 'click ', [ 'a', 'jsx', {
-      children: [ 'here' ]
-    } ]], 'en', {
+    var format = toParts(['click ', ['a', 'jsx', {
+      children: ['here']
+    }]], 'en', {
       jsx: function (node, locales) {
         return function (fn, args) {
           return fn(node[2].children(args))
@@ -265,7 +265,7 @@ describe('interpret.toParts()', function () {
       return { type: 'a', props: { children: children } }
     } })).to.deep.equal([
       'click ',
-      { type: 'a', props: { children: [ 'here' ] } }
+      { type: 'a', props: { children: ['here'] } }
     ])
   })
 })

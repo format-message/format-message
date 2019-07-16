@@ -27,12 +27,12 @@ tester.run('no-invalid-translate-attribute', rule, {
     {
       code: '<a translate="bogus"></a>',
       parserOptions: { ecmaFeatures: { jsx: true } },
-      errors: [ { message: 'Attribute translate should be "yes" or "no"' } ]
+      errors: [{ message: 'Attribute translate should be "yes" or "no"' }]
     },
     {
       code: '<a translate><b><s>bad3</s></b></a>',
       parserOptions: { ecmaFeatures: { jsx: true } },
-      errors: [ { message: 'Attribute translate should be "yes" or "no"' } ]
+      errors: [{ message: 'Attribute translate should be "yes" or "no"' }]
     }
   ]
 })

@@ -70,14 +70,14 @@ describe('formatMessage', function () {
       var parts = formatMessage.rich('Click <a>Here</a>!', {
         a: function (props) { return props }
       })
-      expect(parts).to.deep.equal([ 'Click ', { children: [ 'Here' ] }, '!' ])
+      expect(parts).to.deep.equal(['Click ', { children: ['Here'] }, '!'])
     })
 
     it('can use <> type directly', function () {
       var parts = formatMessage.rich('Click {a,<>,p{there}}!', {
         a: function (props) { return props }
       })
-      expect(parts).to.deep.equal([ 'Click ', { p: [ 'there' ] }, '!' ])
+      expect(parts).to.deep.equal(['Click ', { p: ['there'] }, '!'])
     })
 
     it('handles string style in <> type', function () {
@@ -86,14 +86,14 @@ describe('formatMessage', function () {
       var parts = formatMessage.rich('Click {a,<>,styl}!', {
         a: function (props) { return props }
       })
-      expect(parts).to.deep.equal([ 'Click ', 'styl', '!' ])
+      expect(parts).to.deep.equal(['Click ', 'styl', '!'])
     })
 
     it('handles message objects', function () {
       var parts = formatMessage.rich({ default: '{ icon }' }, {
         icon: '*icon*'
       })
-      expect(parts).to.deep.equal([ '*icon*' ])
+      expect(parts).to.deep.equal(['*icon*'])
     })
 
     it('handles self-closing tags', function () {
@@ -101,7 +101,7 @@ describe('formatMessage', function () {
         a: function (props) { return props },
         b: '/b/'
       })
-      expect(parts).to.deep.equal([ 'Click ', { children: [ '/b/', 'Here' ] }, '!' ])
+      expect(parts).to.deep.equal(['Click ', { children: ['/b/', 'Here'] }, '!'])
     })
 
     it('throws an error on mismatched tags', function () {
@@ -166,14 +166,14 @@ describe('formatMessage', function () {
         translations: { en: {} },
         missingTranslation: 'ignore',
         missingReplacement: function (pattern, id, locale) {
-          args = [ pattern, id, locale ]
+          args = [pattern, id, locale]
           return 'func'
         }
       })
 
       var id = 'test-' + Date.now() // cache bust
       var message = runtimeOnly({ id: id, default: 'translation-test' })
-      expect(args).to.deep.equal([ 'translation-test', id, 'en' ])
+      expect(args).to.deep.equal(['translation-test', id, 'en'])
       expect(options.missingTranslation).to.equal('ignore')
       expect(options.missingReplacement).to.be.a('function')
       expect(message).to.equal('func')
@@ -251,8 +251,8 @@ describe('formatMessage', function () {
     })
 
     it('handles bad values identically to interpret', function () {
-      var format = interpret([[ 'n', 'number' ]], 'en')
-      var values = [ 0, -0, '', false, true, null, NaN, undefined ]
+      var format = interpret([['n', 'number']], 'en')
+      var values = [0, -0, '', false, true, null, NaN, undefined]
       values.forEach(function (value) {
         expect(formatMessage.number(value)).to.equal(format({ n: value }))
       })
@@ -277,8 +277,8 @@ describe('formatMessage', function () {
     })
 
     it('handles bad values identically to interpret', function () {
-      var format = interpret([[ 'd', 'date' ]], 'en')
-      var values = [ 0, -0, '', false, true, null, undefined ]
+      var format = interpret([['d', 'date']], 'en')
+      var values = [0, -0, '', false, true, null, undefined]
       values.forEach(function (value) {
         expect(formatMessage.date(value)).to.equal(format({ d: value }))
       })
@@ -303,8 +303,8 @@ describe('formatMessage', function () {
     })
 
     it('handles bad values identically to interpret', function () {
-      var format = interpret([[ 'd', 'time' ]], 'en')
-      var values = [ 0, -0, '', false, true, null, undefined ]
+      var format = interpret([['d', 'time']], 'en')
+      var values = [0, -0, '', false, true, null, undefined]
       values.forEach(function (value) {
         expect(formatMessage.time(value)).to.equal(format({ d: value }))
       })

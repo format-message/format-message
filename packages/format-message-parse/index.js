@@ -114,7 +114,7 @@ function parseAST (current/*: Context */, parentType/*: string */)/*: AST */ {
   var start = current.index
   var text = parseText(current, parentType)
   if (text) elements.push(text)
-  if (text && current.tokens) current.tokens.push([ 'text', pattern.slice(start, current.index) ])
+  if (text && current.tokens) current.tokens.push(['text', pattern.slice(start, current.index)])
   while (current.index < length) {
     if (pattern[current.index] === ARG_CLS) {
       if (!parentType) throw expected(current)
@@ -125,7 +125,7 @@ function parseAST (current/*: Context */, parentType/*: string */)/*: AST */ {
     start = current.index
     text = parseText(current, parentType)
     if (text) elements.push(text)
-    if (text && current.tokens) current.tokens.push([ 'text', pattern.slice(start, current.index) ])
+    if (text && current.tokens) current.tokens.push(['text', pattern.slice(start, current.index)])
   }
   return elements
 }
@@ -201,16 +201,16 @@ function skipWhitespace (current/*: Context */)/*: void */ {
     ++current.index
   }
   if (start < current.index && current.tokens) {
-    current.tokens.push([ 'space', current.pattern.slice(start, current.index) ])
+    current.tokens.push(['space', current.pattern.slice(start, current.index)])
   }
 }
 
 function parsePlaceholder (current/*: Context */)/*: Placeholder */ {
   var pattern = current.pattern
   if (pattern[current.index] === NUM_ARG) {
-    if (current.tokens) current.tokens.push([ 'syntax', NUM_ARG ])
+    if (current.tokens) current.tokens.push(['syntax', NUM_ARG])
     ++current.index // move passed #
-    return [ NUM_ARG ]
+    return [NUM_ARG]
   }
 
   var tag = parseTag(current)
@@ -218,43 +218,43 @@ function parsePlaceholder (current/*: Context */)/*: Placeholder */ {
 
   /* istanbul ignore if should be unreachable if parseAST and parseText are right */
   if (pattern[current.index] !== ARG_OPN) throw expected(current, ARG_OPN)
-  if (current.tokens) current.tokens.push([ 'syntax', ARG_OPN ])
+  if (current.tokens) current.tokens.push(['syntax', ARG_OPN])
   ++current.index // move passed {
   skipWhitespace(current)
 
   var id = parseId(current)
   if (!id) throw expected(current, 'placeholder id')
-  if (current.tokens) current.tokens.push([ 'id', id ])
+  if (current.tokens) current.tokens.push(['id', id])
   skipWhitespace(current)
 
   var char = pattern[current.index]
   if (char === ARG_CLS) { // end placeholder
-    if (current.tokens) current.tokens.push([ 'syntax', ARG_CLS ])
+    if (current.tokens) current.tokens.push(['syntax', ARG_CLS])
     ++current.index // move passed }
-    return [ id ]
+    return [id]
   }
 
   if (char !== ARG_SEP) throw expected(current, ARG_SEP + ' or ' + ARG_CLS)
-  if (current.tokens) current.tokens.push([ 'syntax', ARG_SEP ])
+  if (current.tokens) current.tokens.push(['syntax', ARG_SEP])
   ++current.index // move passed ,
   skipWhitespace(current)
 
   var type = parseId(current)
   if (!type) throw expected(current, 'placeholder type')
-  if (current.tokens) current.tokens.push([ 'type', type ])
+  if (current.tokens) current.tokens.push(['type', type])
   skipWhitespace(current)
   char = pattern[current.index]
   if (char === ARG_CLS) { // end placeholder
-    if (current.tokens) current.tokens.push([ 'syntax', ARG_CLS ])
+    if (current.tokens) current.tokens.push(['syntax', ARG_CLS])
     if (type === 'plural' || type === 'selectordinal' || type === 'select') {
       throw expected(current, type + ' sub-messages')
     }
     ++current.index // move passed }
-    return [ id, type ]
+    return [id, type]
   }
 
   if (char !== ARG_SEP) throw expected(current, ARG_SEP + ' or ' + ARG_CLS)
-  if (current.tokens) current.tokens.push([ 'syntax', ARG_SEP ])
+  if (current.tokens) current.tokens.push(['syntax', ARG_SEP])
   ++current.index // move passed ,
   skipWhitespace(current)
 
@@ -262,11 +262,11 @@ function parsePlaceholder (current/*: Context */)/*: Placeholder */ {
   if (type === 'plural' || type === 'selectordinal') {
     var offset = parsePluralOffset(current)
     skipWhitespace(current)
-    arg = [ id, type, offset, parseSubMessages(current, type) ]
+    arg = [id, type, offset, parseSubMessages(current, type)]
   } else if (type === 'select') {
-    arg = [ id, type, parseSubMessages(current, type) ]
+    arg = [id, type, parseSubMessages(current, type)]
   } else if (simpleTypes.indexOf(type) >= 0) {
-    arg = [ id, type, parseSimpleFormat(current) ]
+    arg = [id, type, parseSimpleFormat(current)]
   } else { // custom placeholder type
     var index = current.index
     var format/*: string | SubMessages */ = parseSimpleFormat(current)
@@ -275,12 +275,12 @@ function parsePlaceholder (current/*: Context */)/*: Placeholder */ {
       current.index = index // rewind, since should have been submessages
       format = parseSubMessages(current, type)
     }
-    arg = [ id, type, format ]
+    arg = [id, type, format]
   }
 
   skipWhitespace(current)
   if (pattern[current.index] !== ARG_CLS) throw expected(current, ARG_CLS)
-  if (current.tokens) current.tokens.push([ 'syntax', ARG_CLS ])
+  if (current.tokens) current.tokens.push(['syntax', ARG_CLS])
   ++current.index // move passed }
   return arg
 }
@@ -292,41 +292,41 @@ function parseTag (current/*: Context */)/*: ?Placeholder */ {
   if (current.pattern.slice(current.index, current.index + TAG_END.length) === TAG_END) {
     throw expected(current, null, 'closing tag without matching opening tag')
   }
-  if (current.tokens) current.tokens.push([ 'syntax', TAG_OPN ])
+  if (current.tokens) current.tokens.push(['syntax', TAG_OPN])
   ++current.index // move passed <
 
   var id = parseId(current, true)
   if (!id) throw expected(current, 'placeholder id')
-  if (current.tokens) current.tokens.push([ 'id', id ])
+  if (current.tokens) current.tokens.push(['id', id])
   skipWhitespace(current)
 
   if (current.pattern.slice(current.index, current.index + TAG_SELF_CLS.length) === TAG_SELF_CLS) {
-    if (current.tokens) current.tokens.push([ 'syntax', TAG_SELF_CLS ])
+    if (current.tokens) current.tokens.push(['syntax', TAG_SELF_CLS])
     current.index += TAG_SELF_CLS.length
-    return [ id, tagsType ]
+    return [id, tagsType]
   }
   if (current.pattern[current.index] !== TAG_CLS) throw expected(current, TAG_CLS)
-  if (current.tokens) current.tokens.push([ 'syntax', TAG_CLS ])
+  if (current.tokens) current.tokens.push(['syntax', TAG_CLS])
   ++current.index // move passed >
 
   var children = parseAST(current, tagsType)
 
   var end = current.index
   if (current.pattern.slice(current.index, current.index + TAG_END.length) !== TAG_END) throw expected(current, TAG_END + id + TAG_CLS)
-  if (current.tokens) current.tokens.push([ 'syntax', TAG_END ])
+  if (current.tokens) current.tokens.push(['syntax', TAG_END])
   current.index += TAG_END.length
   var closeId = parseId(current, true)
-  if (closeId && current.tokens) current.tokens.push([ 'id', closeId ])
+  if (closeId && current.tokens) current.tokens.push(['id', closeId])
   if (id !== closeId) {
     current.index = end // rewind for better error message
     throw expected(current, TAG_END + id + TAG_CLS, TAG_END + closeId + TAG_CLS)
   }
   skipWhitespace(current)
   if (current.pattern[current.index] !== TAG_CLS) throw expected(current, TAG_CLS)
-  if (current.tokens) current.tokens.push([ 'syntax', TAG_CLS ])
+  if (current.tokens) current.tokens.push(['syntax', TAG_CLS])
   ++current.index // move passed >
 
-  return [ id, tagsType, { children: children } ]
+  return [id, tagsType, { children: children }]
 }
 
 function parseId (current/*: Context */, isTag/*:: ?: boolean */)/*: string */ {
@@ -350,7 +350,7 @@ function parseSimpleFormat (current/*: Context */)/*: string */ {
   var start = current.index
   var style = parseText(current, '{style}')
   if (!style) throw expected(current, 'placeholder style name')
-  if (current.tokens) current.tokens.push([ 'style', current.pattern.slice(start, current.index) ])
+  if (current.tokens) current.tokens.push(['style', current.pattern.slice(start, current.index)])
   return style
 }
 
@@ -359,7 +359,7 @@ function parsePluralOffset (current/*: Context */)/*: number */ {
   var length = pattern.length
   var offset = 0
   if (pattern.slice(current.index, current.index + OFFSET.length) === OFFSET) {
-    if (current.tokens) current.tokens.push([ 'offset', 'offset' ], [ 'syntax', ':' ])
+    if (current.tokens) current.tokens.push(['offset', 'offset'], ['syntax', ':'])
     current.index += OFFSET.length // move passed offset:
     skipWhitespace(current)
     var start = current.index
@@ -367,7 +367,7 @@ function parsePluralOffset (current/*: Context */)/*: number */ {
       ++current.index
     }
     if (start === current.index) throw expected(current, 'offset number')
-    if (current.tokens) current.tokens.push([ 'number', pattern.slice(start, current.index) ])
+    if (current.tokens) current.tokens.push(['number', pattern.slice(start, current.index)])
     offset = +pattern.slice(start, current.index)
   }
   return offset
@@ -384,7 +384,7 @@ function parseSubMessages (current/*: Context */, parentType/*: string */)/*: Su
   while (current.index < length && pattern[current.index] !== ARG_CLS) {
     var selector = parseId(current)
     if (!selector) throw expected(current, 'sub-message selector')
-    if (current.tokens) current.tokens.push([ 'selector', selector ])
+    if (current.tokens) current.tokens.push(['selector', selector])
     skipWhitespace(current)
     options[selector] = parseSubMessage(current, parentType)
     skipWhitespace(current)
@@ -397,11 +397,11 @@ function parseSubMessages (current/*: Context */, parentType/*: string */)/*: Su
 
 function parseSubMessage (current/*: Context */, parentType/*: string */)/*: AST */ {
   if (current.pattern[current.index] !== ARG_OPN) throw expected(current, ARG_OPN + ' to start sub-message')
-  if (current.tokens) current.tokens.push([ 'syntax', ARG_OPN ])
+  if (current.tokens) current.tokens.push(['syntax', ARG_OPN])
   ++current.index // move passed {
   var message = parseAST(current, parentType)
   if (current.pattern[current.index] !== ARG_CLS) throw expected(current, ARG_CLS + ' to end sub-message')
-  if (current.tokens) current.tokens.push([ 'syntax', ARG_CLS ])
+  if (current.tokens) current.tokens.push(['syntax', ARG_CLS])
   ++current.index // move passed }
   return message
 }

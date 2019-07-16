@@ -7,7 +7,7 @@ module.exports = function (config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: [ 'jasmine' ],
+    frameworks: ['jasmine'],
 
     // list of files / patterns to load in the browser
     files: [
@@ -21,7 +21,7 @@ module.exports = function (config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'benchmark.js': [ 'webpack', 'sourcemap' ]
+      'benchmark.js': ['webpack', 'sourcemap']
     },
 
     webpack: {
@@ -32,7 +32,7 @@ module.exports = function (config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: [ 'dots', 'coverage' ],
+    reporters: ['dots', 'coverage'],
 
     // web server port
     port: 9876,
@@ -49,7 +49,7 @@ module.exports = function (config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: [ 'Chrome', 'Firefox', 'Safari', 'PhantomJS' ],
+    browsers: ['Chrome', 'Firefox', 'Safari', 'PhantomJS'],
     browserNoActivityTimeout: 20000,
 
     // Continuous Integration mode
