@@ -23,7 +23,7 @@
     "eslint-plugin-node": "^9.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.0",
-    "flow-bin": "^0.104.0",
+    "flow-bin": "^0.105.0",
     "inferno": "^5.0.0",
     "inferno-create-element": "^5.0.0",
     "intl-messageformat": "^6.0.0",
