@@ -3657,23 +3657,23 @@ inquirer@^6.4.1:
     strip-ansi "^5.1.0"
     through "^2.3.6"
 
-intl-format-cache@^4.1.4:
-  version "4.1.4"
-  resolved "https://registry.yarnpkg.com/intl-format-cache/-/intl-format-cache-4.1.4.tgz#cd959e4ac5c7f5494a53880d8c856d636bd3e5b8"
-  integrity sha512-lT1EiDa0ISNhfwmCTAKTGC62yN6onDZQECJqGi1ekbOFlJzoaP3Vv2ZAtnt3Ar1kNWZB6MiElJ8mQrG4fsBB8Q==
+intl-format-cache@^4.1.15:
+  version "4.1.15"
+  resolved "https://registry.yarnpkg.com/intl-format-cache/-/intl-format-cache-4.1.15.tgz#325e6e45656ac12aa7ba528a800a57b0ee9c799a"
+  integrity sha512-b/wDoQRAV0wzwmYMMmUGt36pXNxTq4I4KVJa0q1CTvex2dsCpivCFwLcf44D+fhFQ09LMxq9a+P9F+4CYXTDIg==
 
-intl-messageformat-parser@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/intl-messageformat-parser/-/intl-messageformat-parser-3.0.0.tgz#efcfa588065622ec863807aa0f8d88d072df6fe0"
-  integrity sha512-ADvW4HkLgyBBh+Dr7pHHnLfLZLTpg4oF9FCQlZf5QZdhTIWgfmmbgDvbzRsw7Go235ypjQPMNFp0BrVda0v/Rw==
+intl-messageformat-parser@^3.0.7:
+  version "3.0.7"
+  resolved "https://registry.yarnpkg.com/intl-messageformat-parser/-/intl-messageformat-parser-3.0.7.tgz#d28493501a1bc40a094239b7ef26fe9412558e72"
+  integrity sha512-L16VbbV3NFaiZV65XwOIH9fBe52TS2EkOR0k8Y4ratsgTE7KPEbcUCUrz/iEQwJo7BcWY4ohkZbeYZRgAiPR1Q==
 
-intl-messageformat@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/intl-messageformat/-/intl-messageformat-6.0.0.tgz#974daf75bde3e50bfae4f4e9e23621676f6b9ceb"
-  integrity sha512-Ab750iWrkxOdG9+2pHTZEHXJWpIVj+JvQM403ciexBW1TjR61QRXzd0jPWOcCewEc0Mcbh+KIZ5Qllf3hy5HXw==
+intl-messageformat@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/intl-messageformat/-/intl-messageformat-7.0.0.tgz#72e8d716c7c58570485387370c9c43ca9005adcf"
+  integrity sha512-NTqh3odfMgtsK6JrAKMTdubk030mBz9e5TnnX1hXDu6hhMEkQPzQaqGN1naXSQd/RNZ+XyCHAzf2EnnjQAJmGw==
   dependencies:
-    intl-format-cache "^4.1.4"
-    intl-messageformat-parser "^3.0.0"
+    intl-format-cache "^4.1.15"
+    intl-messageformat-parser "^3.0.7"
 
 invert-kv@^1.0.0:
   version "1.0.0"
