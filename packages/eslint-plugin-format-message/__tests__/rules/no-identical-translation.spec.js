@@ -3,11 +3,13 @@
 var rule = require('../../lib/rules/no-identical-translation')
 var RuleTester = require('eslint').RuleTester
 
-var settings = { 'format-message': {
-  generateId: 'literal',
-  sourceLocale: 'en',
-  translations: './packages/eslint-plugin-format-message/__tests__/locales.json'
-} }
+var settings = {
+  'format-message': {
+    generateId: 'literal',
+    sourceLocale: 'en',
+    translations: './packages/eslint-plugin-format-message/__tests__/locales.json'
+  }
+}
 
 var tester = new RuleTester()
 tester.run('no-identical-translation', rule, {
