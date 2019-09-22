@@ -128,10 +128,12 @@ describe('formatMessage', function () {
     it('changes the translation', function () {
       formatMessage.setup({
         locale: 'en',
-        translations: { en: {
-          'trans-test': { message: 'test-success' },
-          'trans-test2': 'test-success2'
-        } },
+        translations: {
+          en: {
+            'trans-test': { message: 'test-success' },
+            'trans-test2': 'test-success2'
+          }
+        },
         generateId: function (pattern) { return pattern }
       })
       var message = runtimeOnly('trans-test')
@@ -200,19 +202,27 @@ describe('formatMessage', function () {
     })
 
     it('adds custom formats', function () {
-      formatMessage.setup({ formats: {
-        number: { perc: {
-          style: 'percent',
-          maximumSignificantDigits: 1
-        } },
-        date: { day: {
-          day: '2-digit'
-        } },
-        time: { minute: {
-          hour: 'numeric',
-          minute: 'numeric'
-        } }
-      } })
+      formatMessage.setup({
+        formats: {
+          number: {
+            perc: {
+              style: 'percent',
+              maximumSignificantDigits: 1
+            }
+          },
+          date: {
+            day: {
+              day: '2-digit'
+            }
+          },
+          time: {
+            minute: {
+              hour: 'numeric',
+              minute: 'numeric'
+            }
+          }
+        }
+      })
       var message = runtimeOnly('{ n, number, perc }', { n: 0.3672 })
       expect(message).to.include('%')
       message = runtimeOnly('{ d, date, day }', { d: new Date('2015/10/19') })

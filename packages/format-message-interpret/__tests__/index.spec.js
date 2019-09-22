@@ -261,9 +261,11 @@ describe('interpret.toParts()', function () {
         }
       }
     })
-    expect(format({ a: function (children) {
-      return { type: 'a', props: { children: children } }
-    } })).to.deep.equal([
+    expect(format({
+      a: function (children) {
+        return { type: 'a', props: { children: children } }
+      }
+    })).to.deep.equal([
       'click ',
       { type: 'a', props: { children: ['here'] } }
     ])

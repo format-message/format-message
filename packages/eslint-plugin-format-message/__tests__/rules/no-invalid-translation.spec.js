@@ -3,14 +3,16 @@
 var rule = require('../../lib/rules/no-invalid-translation')
 var RuleTester = require('eslint').RuleTester
 
-var settings = { 'format-message': {
-  generateId: 'literal',
-  sourceLocale: 'en',
-  translations: {
-    en: './packages/eslint-plugin-format-message/__tests__/en.json',
-    pt: './packages/eslint-plugin-format-message/__tests__/pt.json'
+var settings = {
+  'format-message': {
+    generateId: 'literal',
+    sourceLocale: 'en',
+    translations: {
+      en: './packages/eslint-plugin-format-message/__tests__/en.json',
+      pt: './packages/eslint-plugin-format-message/__tests__/pt.json'
+    }
   }
-} }
+}
 
 var tester = new RuleTester()
 tester.run('no-invalid-translation', rule, {
