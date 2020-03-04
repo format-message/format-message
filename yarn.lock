@@ -187,6 +187,18 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
+"@formatjs/intl-unified-numberformat@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@formatjs/intl-unified-numberformat/-/intl-unified-numberformat-3.2.0.tgz#5197987e61ba0972889105e525f1cbe6d91cf46f"
+  integrity sha512-SZMTV/tR0h7nYhS2x69S7zhHXaBmE0ZTR2OIiakt8W7uYWVgcRhu/LgUeVtGzpwPI2ChcOjNMtX/k6y1M9aDNA==
+  dependencies:
+    "@formatjs/intl-utils" "^2.2.0"
+
+"@formatjs/intl-utils@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@formatjs/intl-utils/-/intl-utils-2.2.0.tgz#ba6e12fe64ff7fd160be392007c47d24b7ae5c75"
+  integrity sha512-+Az7tR1av1DHZu9668D8uh9atT6vp+FFmEF8BrEssv0OqzpVjpVBGVmcgPzQP8k2PQjVlm/h2w8cTt0knn132w==
+
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@istanbuljs/load-nyc-config/-/load-nyc-config-1.0.0.tgz#10602de5570baea82f8afbfa2630b24e7a8cfe5b"
@@ -3949,23 +3961,25 @@ inquirer@^6.4.1:
     strip-ansi "^5.1.0"
     through "^2.3.6"
 
-intl-format-cache@^4.2.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/intl-format-cache/-/intl-format-cache-4.2.0.tgz#a0dd7bf33c50ea531e242f86f06d4a21e6d69a4f"
-  integrity sha512-OePs43hKTwb7deaPGa6jF8EOIlMdfqrv7t5A9JIFgdFBGjaucuXlh5KXywGvVWjDTzBAU7/XMjkuOgutSOem6Q==
+intl-format-cache@^4.2.21:
+  version "4.2.21"
+  resolved "https://registry.yarnpkg.com/intl-format-cache/-/intl-format-cache-4.2.21.tgz#d8e0bdfc357448f48dc1ab44670dc64a19b24f51"
+  integrity sha512-6pZlBdqTRUuuwRWywPItHY1JQwzQxWcpBHv6w4M8T6bGzAsiL/QmI+XsdOhsqJLaL4ZmTATn1kIkNlMk4VzSLQ==
 
-intl-messageformat-parser@^3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/intl-messageformat-parser/-/intl-messageformat-parser-3.2.0.tgz#de7ba62cdc8edc80d2b21eb5ada1728b0fdff198"
-  integrity sha512-07G+OTgIEsYIPpy793/EU14Slz03nqouODE+CGXlojw1gOF1IaUXk99EOlVdKsPwl95hUJon4dsp9D7/XPBDCw==
-
-intl-messageformat@^7.3.0:
-  version "7.3.0"
-  resolved "https://registry.yarnpkg.com/intl-messageformat/-/intl-messageformat-7.3.0.tgz#ffc0a01a4afb8756b150278c4a26a5c14b632933"
-  integrity sha512-0oZmhfX6avRhGm4HKvaYIjLMdF8/ziqSX3yS6f/vKVPMAWu1MStoXX8HmA9qdRWVlOwtstFgLu7gXnElFDdV9w==
+intl-messageformat-parser@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/intl-messageformat-parser/-/intl-messageformat-parser-4.0.0.tgz#0afdedd0862c231a50db6bee5867933e4e37c3e2"
+  integrity sha512-tmHLvmIovDHbkWMhuyPA7LINq9yavvFDZVlYG3CgPxrBGIvby+hIhF7D+InaIRSzeAJQN5MaWgO2bUChshnD/g==
   dependencies:
-    intl-format-cache "^4.2.0"
-    intl-messageformat-parser "^3.2.0"
+    "@formatjs/intl-unified-numberformat" "^3.2.0"
+
+intl-messageformat@^8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/intl-messageformat/-/intl-messageformat-8.0.0.tgz#eb4fe90059288d60b48156e95a2abcdd14d492f1"
+  integrity sha512-eiElylUWAV6S8TYIRGUPfv4mUDTzPSprxmPESTikZ/f/lq29Czz+hwusO7k4vozKke+NOZyj/aPGW6qpd4ms4Q==
+  dependencies:
+    intl-format-cache "^4.2.21"
+    intl-messageformat-parser "^4.0.0"
 
 invert-kv@^1.0.0:
   version "1.0.0"
