@@ -5,7 +5,7 @@ declare class MessageFormat {
     format: (args?: object) => string;
     formatToParts: (args?: object) => Placeholder;
     resolvedOptions: () => { locale: string | string[] | undefined };
-    supportedLocalesOf: (requestedLocales?: string | string[]) => string[];
+    static supportedLocalesOf: (requestedLocales?: string | string[]) => string[];
 
     constructor(pattern: string, locales?: string | string[], options?: MessageFormat.MessageFormatOptions);
 }
