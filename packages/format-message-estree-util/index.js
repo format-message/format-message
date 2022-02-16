@@ -1,6 +1,6 @@
 'use strict'
 
-var MODULE_NAME_PATTERN = /(^|\/)format-message$/
+var MODULE_NAME_PATTERN = /\bformat-message$/
 
 exports = module.exports = {
   setBabelContext: function (path, state) {

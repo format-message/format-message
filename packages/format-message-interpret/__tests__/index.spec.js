@@ -52,7 +52,7 @@ describe('interpret()', function () {
   it('interprets bad number values gracefully', function () {
     var format = interpret([['n', 'number']], 'en')
     expect(format({ n: 0 })).to.equal('0')
-    expect(format({ n: -0 })).to.equal('0')
+    expect(format({ n: -0 })).to.equal('-0')
     expect(format({ n: '' })).to.equal('0')
     expect(format({ n: false })).to.equal('0')
     expect(format({ n: true })).to.equal('1')
