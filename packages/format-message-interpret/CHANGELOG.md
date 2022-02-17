@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.2.4
+
+Update specs to interpret signed zeroes properly.
+
 ## 6.2.0
 
 Add TypeScript type definitions.
