@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.2.4
+
+Update the TypeScript type definition for `MessageFormat.supportedLocalesOf()` to communicate that it is a static method.
+
 ## 6.2.0
 
 Add TypeScript type definitions.
