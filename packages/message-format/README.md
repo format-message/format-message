@@ -15,7 +15,7 @@ then use it as follows:
 ```js
 var MessageFormat = require('message-format');
 
-var message = new MessageFormat('en-US', 'Hello { place }!');
+var message = new MessageFormat('Hello { place }!','en-US',);
 var formatted = message.format({ place:'World' });
 ```
 
