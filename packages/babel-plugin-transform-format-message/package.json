@@ -19,6 +19,12 @@
     "format-message-generate-id": "^6.2.4",
     "format-message-parse": "^6.2.4",
     "lookup-closest-locale": "^6.2.0",
-    "source-map": "^0.5.7"
-  }
+    "source-map": "^0.5.7",
+    "snyk": "^1.316.1"
+  },
+  "scripts": {
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
+  },
+  "snyk": true
 }
