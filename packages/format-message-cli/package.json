@@ -37,6 +37,6 @@
     "js-yaml": "^3.10.0",
     "mkdirp": "^0.5.1",
     "safe-buffer": "^5.1.1",
-    "source-map": "^0.5.7"
+    "source-map": "^0.7.3"
   }
 }
