@@ -8,6 +8,9 @@
 [![JS Standard Style][style-image]][style]
 [![MIT License][license-image]][LICENSE]
 
+# LOOKING FOR MAINTAINERS
+
+The current maintainers are looking for someone to take over the maintaince of this package.  If you are interested please reach out to [vanwagonet](https://github.com/vanwagonet)
 
 ## Internationalization Made Easy
 
