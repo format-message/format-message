@@ -33,7 +33,7 @@
     "commander": "^2.11.0",
     "eslint": "^6.0.1",
     "eslint-plugin-format-message": "^6.2.4",
-    "glob": "^5.0.15",
+    "glob": "^9.0.0",
     "js-yaml": "^3.10.0",
     "mkdirp": "^0.5.1",
     "safe-buffer": "^5.1.1",
